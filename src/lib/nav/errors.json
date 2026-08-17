@@ -1,0 +1,96 @@
+{
+	"s401": {
+		"general": {
+			"title": "Brak dostępu",
+			"description": "Dostęp jest wyłącznie dla zalogowanych użytkowników. Aby uzyskać dostęp, <a href=\"/login\" class=\"fw-bold link\">zaloguj</a> się"
+		},
+		"login": {
+			"title": "Niepoprawne dane",
+			"description": "Login lub hasło są niepoprawne. Jeżeli nie pamiętasz hasła, spróbuj je <a href=\"/forgot\" class=\"fw-bold link\">zresetować</a> się"
+		},
+		"redirected": {
+			"title": "Dostęp tylko dla zalogowanych",
+			"description": "Dostęp do tej strony jest wyłącznie dla zalogowanych użytkowników. Wpisz swoje dane logowania, aby uzyskać dostęp"
+		}
+	},
+    "s402": {
+		"general": {
+			"title": "Brak subskrypcji",
+			"description": "Ten moduł wymaga aktywnej subskrypcji. Aby uzyskać dostęp, <a href=\"/accounts\" class=\"fw-bold link\">włącz subskrypcję</a>"
+		},
+		"feed": {
+			"title": "Limit feedów",
+			"description": "Limit feedów na tym koncie został osiągnięty. Nie można dodać ani aktywować feedów bez wyłączenia lub usunięcia istniejących lub zwiększania limitu"
+		},
+		"account": {
+			"title": "Konto demo",
+			"description": "Zmiana konfiguracja na koncie demonstracyjnym nie jest możliwa"
+		}
+	},
+	"s403": {
+		"general": {
+			"title": "Brak dostępu",
+			"description": "Dostęp do danego zasobu jest niedostępny przy obecnych uprawnieniach. Skontaktuj się z administratorem w celu wyjaśnienia"
+		},
+		"login": {
+			"title": "Błędne dane",
+			"description": "Podany login lub hasło jest niepoprawne"
+		}
+	},
+	"s404": {
+		"general": {
+			"title": "Nie odnaleziono",
+			"description": "Dany zasób nie został odnaleziony. Zmień kryteria wyszukiwania i spróbuj ponownie"
+		},
+		"report": {
+			"title": "Brak raportu",
+			"description": "Raport nie został odnaleziony. Upewnij się, że masz poprawny link"
+		},
+		"account": {
+			"title": "Konto zablokowane",
+			"description": "Konto, którego szukasz nie zostało odnalezione lub zostało zablokowane"
+		}
+	},
+	"s400": {
+		"general": {
+			"title": "Błędne dane",
+			"description": "Serwer otrzymał niepoprawne dane i nie mógł ich przetworzyć. Zweryfikuj informacje i spróbuj ponownie"
+		},
+		"auth": {
+			"title": "Błąd uprawnień",
+			"description": "Nie udało się rozszyfrować uprawnień. Zaloguj się ponowanie"
+		}
+	},
+	"s417": {
+		"general": {
+			"title": "Warunki niespełnione",
+			"description": "Warunki korzysania z tej strony nie zostały spełnione"
+		},
+		"sales": {
+			"title": "Brak magazynu",
+			"description": "Brak dostępu do systemu sprzedażowo magazynowego"
+		},
+		"colinked": {
+			"title": "Niepoprawny feed",
+			"description": "Wybrany feed nie jest skorelowany i nie może być wyświetlony w tym interfejsie"
+		}
+	},
+	"s500": {
+		"general": {
+			"title": "Błąd serwera",
+			"description": "Serwer natknął się na nieoczekiwany błąd podczas przetwarzania danych. Prosimy zgłosić ten problem wraz z informacją o czynności, która się odbywała przed wystąpieniem błędu"
+		}
+	},
+	"s501": {
+		"general": {
+			"title": "Funkcja niedostępna",
+			"description": "Funkcjonalność, której szukasz jest tymczasowo niedostępna"
+		}
+	},
+	"s504": {
+		"general": {
+			"title": "Reloading dependencies",
+			"description": "!@#$%^&*()_+"
+		}
+	}
+}

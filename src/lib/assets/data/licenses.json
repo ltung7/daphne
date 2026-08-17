@@ -1,0 +1,162 @@
+{
+    "categories": [
+        {
+            "code": "AM",
+            "name": "Motorower i lekki czterokołowiec",
+            "age": 14,
+            "covers": []
+        },
+        {
+            "code": "A1",
+            "name": "Lekki motocykl",
+            "age": 16,
+            "covers": [
+                "AM"
+            ]
+        },
+        {
+            "code": "A2",
+            "name": "Motocykl średniej mocy",
+            "age": 18,
+            "covers": [
+                "AM",
+                "A1"
+            ]
+        },
+        {
+            "code": "A",
+            "name": "Motocykl bez ograniczeń",
+            "age": 24,
+            "covers": [
+                "AM",
+                "A1",
+                "A2"
+            ]
+        },
+        {
+            "code": "B1",
+            "name": "Lekki pojazd silnikowy",
+            "age": 16,
+            "covers": [
+                "AM"
+            ]
+        },
+        {
+            "code": "B",
+            "name": "Samochód osobowy i lekki dostawczy",
+            "age": 18,
+            "covers": [
+                "AM",
+                "A1",
+                "B1",
+                "T"
+            ]
+        },
+        {
+            "code": "B+E",
+            "name": "Samochód osobowy z ciężką przyczepą",
+            "age": 18,
+            "covers": [
+                "AM",
+                "A1",
+                "B1",
+                "B",
+                "T"
+            ]
+        },
+        {
+            "code": "C1",
+            "name": "Mały samochód ciężarowy",
+            "age": 18,
+            "covers": [
+                "AM",
+                "T"
+            ]
+        },
+        {
+            "code": "C1+E",
+            "name": "Mały samochód ciężarowy z przyczepą",
+            "age": 18,
+            "covers": [
+                "AM",
+                "C1",
+                "B+E",
+                "T"
+            ]
+        },
+        {
+            "code": "C",
+            "name": "Samochód ciężarowy",
+            "age": 21,
+            "covers": [
+                "AM",
+                "C1",
+                "T"
+            ]
+        },
+        {
+            "code": "C+E",
+            "name": "Samochód ciężarowy z przyczepą / ciągnik siodłowy z naczepą",
+            "age": 21,
+            "covers": [
+                "AM",
+                "C",
+                "C1",
+                "C1+E",
+                "B+E",
+                "T"
+            ]
+        },
+        {
+            "code": "D1",
+            "name": "Mikrobus",
+            "age": 21,
+            "covers": [
+                "AM",
+                "T"
+            ]
+        },
+        {
+            "code": "D1+E",
+            "name": "Mikrobus z przyczepą",
+            "age": 21,
+            "covers": [
+                "AM",
+                "D1",
+                "B+E",
+                "T"
+            ]
+        },
+        {
+            "code": "D",
+            "name": "Autobus",
+            "age": 24,
+            "covers": [
+                "AM",
+                "D1",
+                "T"
+            ]
+        },
+        {
+            "code": "D+E",
+            "name": "Autobus z przyczepą",
+            "age": 24,
+            "covers": [
+                "AM",
+                "D",
+                "D1",
+                "D1+E",
+                "B+E",
+                "T"
+            ]
+        },
+        {
+            "code": "T",
+            "name": "Ciągnik rolniczy i pojazd wolnobieżny",
+            "age": 16,
+            "covers": [
+                "AM"
+            ]
+        }
+    ]
+}

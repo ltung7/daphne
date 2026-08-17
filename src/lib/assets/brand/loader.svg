@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-name="svgMacropartWait" xmlns="http://www.w3.org/2000/svg" viewBox="-63 -60 126.05 120.96" xmlns:xlink="http://www.w3.org/1999/xlink" id="svgMacropartWait">
+    <style>
+		  #svgMacropartWait use {
+			-webkit-animation:spin 3s steps(12, end) infinite;
+			-moz-animation:spin 3s steps(12, end) infinite;
+			animation:spin 3s steps(12, end) infinite;
+		}
+		
+		#svgMacropartWait .noamin {
+			-webkit-animation: none;
+			-moz-animation: none;
+			animation: none;
+		}
+
+		@-moz-keyframes spin { 
+			from {stroke: #364a68;}
+			to {stroke: #FFF;}
+		}
+		@-webkit-keyframes spin { 
+			from {stroke: #364a68;}
+			to {stroke: #FFF;}
+		}
+		@keyframes spin { 
+			from {stroke: #364a68;}
+			to {stroke: #FFF;}
+		}
+    </style>
+  <g stroke-linecap="round" stroke-width="15">
+    <path id="a" d="m0 52 0,0" />
+	<use transform="rotate(210)" xlink:href="#a" style="animation-delay: -2.75s"/>
+    <use transform="rotate(240)" xlink:href="#a" style="animation-delay: -2.50s"/>
+    <use transform="rotate(270)" xlink:href="#a" style="animation-delay: -2.25s"/>
+    <use transform="rotate(300)" xlink:href="#a" style="animation-delay: -2.00s"/>
+    <use transform="rotate(330)" xlink:href="#a" style="animation-delay: -1.75s"/>
+    <use transform="rotate(0)" xlink:href="#a" style="animation-delay: -1.50s"/>
+    <use transform="rotate(30)" xlink:href="#a" style="animation-delay: -1.25s"/>
+    <use transform="rotate(60)" xlink:href="#a" style="animation-delay: -1.00s"/>
+    <use transform="rotate(90)" xlink:href="#a" style="animation-delay: -0.75s"/>
+    <use transform="rotate(120)" xlink:href="#a" style="animation-delay: -0.50s"/>
+    <use transform="rotate(150)" xlink:href="#a" style="animation-delay: -0.25s"/>
+    <use transform="rotate(180)" xlink:href="#a"/>
+</g>
+</svg>
