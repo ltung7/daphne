@@ -1,0 +1,15 @@
+export const fuelNames: Record<Vehicle.FuelType, string> = {
+    gas: "Benzyna",
+    hybrid: "Hybryda",
+    electric: "Elektryczny",
+    phev: "Hybryda plug-in",
+    mhev: "Miękka hybryda",
+    diesel: "Diesel",
+    cng: "Gaz ziemny (CNG)",
+    "hybrid-gas": "Hybryda benzynowa",
+    "mhev-diesel": "Miękka hybryda diesel",
+    ethanol: "Etanol",
+    "hybrid-diesel": "Hybryda diesel",
+    lpg: "Gaz płynny (LPG)",
+    hydrogen: "Wodór"
+}

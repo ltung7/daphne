@@ -4,17 +4,17 @@
 	import { Nav, NavItem, NavLink } from '@sveltestrap/sveltestrap';
 	import dayjs from 'dayjs';
 	import ClosableModal from './ClosableModal.svelte';
-	import * as m from '$lib/paraglide/messages.js';
 
-	const lldate: Record<string, string> = {
-		yesterday: m.yesterday(),
-		lastweek: m.lastweek(),
-		last2weeks: m.last2weeks(),
-		last30d: m.last30d(),
-		last60d: m.last60d(),
-		thismonth: m.thismonth(),
-		lastmonth: m.lastmonth(),
-	};
+	const lldate: Record<string,string> = {
+        yesterday: 'Wczoraj',
+        lastweek: 'Ostatni tydzień',
+        last2weeks: 'Ostatnie dwa tygodnie',
+        last30d: 'Ostatnie 30 dni',
+        last60d: 'Ostatnie 60 dni',
+        thismonth: 'Bieżący miesiąc',
+        lastmonth: 'Poprzedni miesiąc',
+        fromto: 'od {0:Date|dateLocaleShort} do {1:Date|dateLocaleShort}',
+    }
 
 	interface DatePreset {
 		from: string;

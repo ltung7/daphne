@@ -66,17 +66,10 @@ declare global {
 	}
 
 	namespace Vehicle {
-		enum Status {
-			Available = 'available',
-			Assigned = 'assigned',
-			Broken = 'broken',
-			Unmovable = 'unmovable',
-			UnderMaintenance = 'under_maintenance',
-			Retired = 'retired'
-		}
+		type Status = 'available' | 'assigned' | 'broken' | 'unmovable' | 'under_maintenance' | 'retired' | 'precheck';
 
 		type FuelType = "gas" | "hybrid" | "electric" | "phev" | "mhev" | "diesel" | "cng" | "hybrid-gas" | "mhev-diesel" | "ethanol" | "hybrid-diesel" | "lpg" | "hydrogen";
-		
+
 		interface Type {
 			id: string;
 			// Common Configuration (shared across all instances)
@@ -87,37 +80,46 @@ declare global {
 			image: string;
 
 			// Platform Configurations
-			spec: {
-				maxPassengers: number; // e.g., 5
-				premium: boolean;
-				xl: boolean;
-				eco: boolean;
-				foodDelivery: boolean;
-			};
+			maxPassengers: number; // e.g., 5
+			premium: boolean;
+			xl: boolean;
+			eco: boolean;
+			foodDelivery: boolean;
 
 			// Optional Metadata
 			notes?: string;
 		}
 
-		interface Vehicle {
+		interface NewVehicleData {
 			// Identification
-			id: string; // System-generated UUID
+			id: string;
+			name: string;
 			registrationNumber: string; // Polish VIN/license plate (UNIQUE per vehicle)
 			vin: string; // Full VIN (can be optional for legacy)
 			firstRegistrationDate: string; // ISO date (YYYY-MM-DD)
+
+			// Instance-Specific Metrics
+			mileage: number; // Kilometers driven (kms)
+			insuranceExpiration: string; // ISO date (YYYY-MM-DD)
+			technicalExpiration: string; // ISO date (badanie techniczne)
+
+			notes: string;
+			modelMake: string;
+			typeId: string; // Reference to the shared blueprint (was VehicleType)
+		}
+
+		interface Vehicle extends NewVehicleData {
 			imageUrl?: string; // Photo reference
 
 			// Current State
 			status: Status; // available | assigned | broken | unmovable | etc.
 			assignedDriver?: string; // Driver ID if currently assigned
-
-			// Instance-Specific Metrics
-			mileage: number; // Kilometers driven (kms)
-			fuelConsumption: number; // L/100km avg for this vehicle
-			batteryHealth?: number; // % (for electric/hybrid)
+			fuelConsumption?: number; // L/100km avg for this vehicle
+			taxiRegistration?: number;
 
 			// Digital Identity
-			telemetryId: string; // GPS/telematics tracking ID
+			telemetryId?: string; // GPS/telematics tracking ID
+			markingsVerified: number;
 
 			// Financial
 			fuelCardId?: string; // Unique fuel card attached
@@ -135,18 +137,54 @@ declare global {
 			};
 
 			// Food Delivery (optional, per-instance)
-			deliveryTrips?: {
+			deliveryTrips: {
 				completed: number;
 				totalDeliveryFees: number; // In PLN
 			};
 
-			// Platform References
-			type: Type; // Reference to the shared blueprint (was VehicleType)
-			insuranceExpiration: string; // ISO date (YYYY-MM-DD)
-			technicalExpiration: string; // ISO date (badanie techniczne)
+			platformStatus: {
+				[platform: string]: 'pending' | 'approved' | 'rejected' | 'suspended';
+			};
+		}
 
-			// Optional additional data
-			notes?: string;
+		type DocumentType =
+			// Registration & ownership
+			| 'registration_certificate'
+			| 'ownership_proof'
+			| 'lease_agreement'
+
+			// Insurance
+			| 'oc_insurance_policy'
+			| 'ac_insurance_policy'
+
+			// Technical / safety
+			| 'technical_inspection_certificate'
+			| 'internal_checkup_report'
+			| 'damage_incident_report'
+
+			// Fleet-level licensing
+			| 'fleet_taxi_license'
+			| 'taxi_marking_confirmation'
+
+			// Platform onboarding
+			| 'vehicle_photo_exterior'
+			| 'vehicle_photo_interior'
+			| 'platform_approval_uber'
+			| 'platform_approval_bolt'
+			| 'platform_approval_freenow'
+
+			// Equipment
+			| 'telematics_installation_certificate'
+			| 'fuel_card_agreement';
+
+		interface VehicleDocument {
+			id: string;
+			timestamp: number;              // epoch ms, upload time
+			uploader: string;                // user/account ID who uploaded it
+			type: DocumentType;
+			registrationNumber: string;      // links to Vehicle
+			name: string;
+			url: string;
 		}
 	}
 
@@ -217,7 +255,7 @@ declare global {
 	}
 
 	namespace SvelteCustom {
-		type DatatableHeaders = [string, string][];
+		type DatatableHeaders<T = string> = [T, string][];
 
 		type DatatableRangeFilterOption = { min: number, max: number };
 

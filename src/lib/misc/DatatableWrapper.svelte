@@ -8,17 +8,16 @@
 	import { fade } from 'svelte/transition';
 	import plTimezone from '$lib/utils/tz';
 	import type { Snippet } from 'svelte';
-	import * as m from '$lib/paraglide/messages.js';
 
 	const tableCaptions = {
-		search: m.search(),
-		show: m.show(),
-		entries: m.entries(),
-		filter: m.filter(),
-		rowCount: m.rowCount(),
-		noRows: m.noRows(),
-		previous: m.previous(),
-		next: m.next()
+		search: 'Szukaj...',
+		show: 'Pokaż',
+		entries: 'wpisów',
+		filter: 'Filtruj',
+		rowCount: 'Pokazuję od {start} do {end} wśród {total} wpisów',
+		noRows: 'Brak wyników',
+		previous: 'Poprzednie',
+		next: 'Następne'
 	};
 
 	type T = $$Generic;
@@ -113,7 +112,7 @@
 				<thead>
 					<tr>
 						{#if !noActionRow}
-							<th style="background: inherit; padding: 8px 20px; white-space: nowrap; font-size: 13px; user-select: none; border-bottom: 1px solid #e0e0e0;"><strong>{m.tableActions()}</strong></th>
+							<th style="background: inherit; padding: 8px 20px; white-space: nowrap; font-size: 13px; user-select: none; border-bottom: 1px solid #e0e0e0;"><strong>Akcje</strong></th>
 						{/if}
 						{#each headers as [ orderBy, caption ]}
 							<Th {handler} {orderBy}>{caption}</Th>
@@ -134,7 +133,7 @@
 				</thead>
 				<tbody>
 					{#if browser && rows && $rows}
-						{#each $rows as row(row)}
+						{#each $rows as row (row)}
 							<tr out:fade={{ duration: 250 }}>
 								{@render rowSnippet?.(row)}
 							</tr>
@@ -144,7 +143,7 @@
 			</table>
 		</Datatable>
 	{:else if loaded && Array.isArray(data)}
-		<h3 class="flex-center p-3 my-3 position-absolute top-0 w-100 h-100 left-0 z-index-2" transition:fade={{ duration: 500 }}>{m.tableNoData()}</h3>
+		<h3 class="flex-center p-3 my-3 position-absolute top-0 w-100 h-100 left-0 z-index-2" transition:fade={{ duration: 500 }}>Brak danych</h3>
 	{:else}
 		<div class="flex-center p-3 my-3 position-absolute top-0 w-100 h-100 left-0 z-index-2" transition:fade={{ duration: 500 }}>
 			<Spinner />

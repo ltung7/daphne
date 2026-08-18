@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages.js';
     interface Props {
         name?: string;
         value?: string;
@@ -33,7 +32,7 @@
 
 <div class="mb-3 {addClass}">
     {#if caption || !valid}
-        <label for={id} class="form-label small" class:text-danger={!valid} class:is-focused={isFocused}>{caption + ' '}{valid ? "" : m.notvalidmail()}</label>
+        <label for={id} class="form-label small" class:text-danger={!valid} class:is-focused={isFocused}>{caption + ' '}{valid ? "" : "Niepoprawny adres e-mail"}</label>
     {/if}
     <input type="text" class="form-control fs-{size} {valid ? '' : 'text-danger'}" bind:value={value} id="input_text_{name}" name="{name}" onfocus={onFocus} onblur={onBlur} oninput={validate}>
 </div>

@@ -2,7 +2,6 @@
     import UIcon from "$lib/misc/UIcon.svelte";
     import { Modal } from '@sveltestrap/sveltestrap';
     import CustomFormText from "./CustomFormText.svelte";
-    import * as m from '$lib/paraglide/messages.js';
 
     interface Props {
         action: any;
@@ -15,13 +14,13 @@
 
     let {
         action,
-        keyword = $bindable(m.confirmdeletekeyword()),
+        keyword = $bindable('Usuwam'),
         confirmBtnText = '',
         isOpen = $bindable(false),
         confirmed = $bindable(false),
         children
     }: Props = $props();
-    if (!keyword || keyword.length === 0) keyword = m.confirmdeletekeyword();
+    if (!keyword || keyword.length === 0) keyword = 'Usuwam';
     else keyword = keyword.trim();
     let deleteInput = $state(''), deleteReady = $state(false);
 
@@ -49,24 +48,24 @@
     }
 </script>
 
-<Modal body centered size="sm" header={m.confirmdeletelbl()} {isOpen} {toggle}>
+<Modal body centered size="sm" header="Potwierdź usuwanie" {isOpen} {toggle}>
     {#if confirmed}
-        <h5 class="text-danger mt-2 mb-4 text-center">{m.confirmdeletedone()}</h5>
-        <button class="btn btn-sm btn-secondary w-100">{m.close()}</button>
+        <h5 class="text-danger mt-2 mb-4 text-center">Usunięto</h5>
+        <button class="btn btn-sm btn-secondary w-100">Zamknij</button>
     {:else}
         <p class="text-center">
             {#if children}{@render children()}{:else}
-                {@html m.confirmdelete({ keyword })}
+                Potwierdź usuwanie poprzez przepisanie: <strong>{keyword}</strong>
             {/if}
         </p>
         <form onsubmit={send}>
-            <CustomFormText name="confirmDelete" caption={m.confirmdeletelbl()} bind:value={deleteInput} onInput={checkConfirm}/>
+            <CustomFormText name="confirmDelete" caption="Potwierdź usuwanie" bind:value={deleteInput} onInput={checkConfirm}/>
             <button class="btn btn-danger w-100 mb-0" disabled={!deleteReady}>
                 <UIcon name="trash" size={4} />
                 {#if confirmBtnText.length}
                     {@html confirmBtnText}
                 {:else}
-                    {m.confirmdeletebtn()}
+                    Potwierdź
                 {/if}
             </button>
         </form>

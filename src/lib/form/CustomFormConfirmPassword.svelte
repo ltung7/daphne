@@ -3,7 +3,6 @@
     import { InputGroup } from '@sveltestrap/sveltestrap';
     import UIcon from "$lib/misc/UIcon.svelte";
 	import { fly } from "svelte/transition";
-	import * as m from '$lib/paraglide/messages.js';
 
     interface Props {
         name?: string;
@@ -80,18 +79,18 @@
 </script>
 
 <div>
-    <CustomFormPassword bind:value={password} {name} caption={m.password()} onInput={verifyPassword} />
-    <CustomFormPassword bind:value={confirm} name="confirm" caption={m.confirmpass()} onInput={verifyPassword} />
+    <CustomFormPassword bind:value={password} {name} caption="Hasło" onInput={verifyPassword} />
+    <CustomFormPassword bind:value={confirm} name="confirm" caption="Powtórz hasło" onInput={verifyPassword} />
     {#if random}
         <InputGroup class="mb-2 justify-content-end w-100">
             {#if randomizedPassword.length}
                 <input type="text" class="form-control text-center btn-pill border border-primary {randomizedPassword.length === 0 ? 'opacity-0' : 'opacity-10'}" readonly value={randomizedPassword} style="width: calc(100% - 48px); padding: 5px;">
             {:else}
                 <button class="my-0 d-flex justify-content-center align-items-center btn-sm disabled btn btn-outline-secondary" onclick={() => generatePassword()} style="width: calc(100% - 48px)">
-                    {m.randompass()}
+                    "Generuj losowe hasło"
                 </button>
             {/if}
-            <button class="btn btn-primary mb-0 px-3 py-2" title={m.randompass()} onclick={() => generatePassword()}>
+            <button class="btn btn-primary mb-0 px-3 py-2" title="Generuj losowe hasło" onclick={() => generatePassword()}>
                 <UIcon name="dice-alt"/>
             </button>
         </InputGroup>

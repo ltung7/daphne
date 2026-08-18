@@ -45,12 +45,12 @@
     };
 </script>
 
+{#if caption?.length}
+    <label for={id} class="d-block mb-1 form-label form-label-numeric">{caption}</label>
+{/if}
 <div class="btn-group" class:w-100={fullwidth}>
     <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={() => { value = Number(Math.max(min, value - step).toFixed(precision)); dispatchChange(); }} disabled={readonly}>-</button>
     <div class="input-group input-group-outline my-{7 - size} {addClass} {(value ?? '0').toString().length ? 'is-filled' : ''} {isFocused ? 'is-focused' : ''}">
-        {#if caption?.length}
-            <label class="form-label fs-{size + 2} form-label-numeric" class:readonly class:empty={!caption || caption.length === 0} for={id}>{caption}</label>
-        {/if}
         <input type="number" {min} {max} {step} class="form-control fs-{size} text-center form-input-numeric p-{8 - size}" bind:value={value} {id} name={name} onfocus={onFocus} onblur={onBlur} {readonly} onchange={dispatchChange} oninput={dispatchChange}>
     </div>
     <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={() => { value = Number(Math.min(max, value + step).toFixed(precision)); dispatchChange(); }} disabled={readonly}>+</button>

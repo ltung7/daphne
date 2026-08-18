@@ -1,6 +1,5 @@
 <script lang="ts">
     import { Modal, ModalBody, ModalFooter, ModalHeader } from '@sveltestrap/sveltestrap';
-	import * as m from '$lib/paraglide/messages.js';
 
     interface Props {
         headerText?: string;
@@ -45,6 +44,6 @@
         {#if buttonCaption} 
             <button class="btn btn-primary mb-0" onclick={onClick}>{buttonCaption}</button>
         {/if}
-        <button class="btn btn-secondary mb-0" onclick={toggle}>{m.close()}</button>
+        <button class="btn btn-secondary mb-0" onclick={toggle}>Zamknij</button>
 	</ModalFooter>
 </Modal>

@@ -2,21 +2,6 @@
 	--bs-primary-bg: #292a26;
 }
 
-.basket-height {
-	height: calc(100vh - 320px);
-	overflow-y: auto;
-}
-
-.catalog-height {
-	height: calc(100vh - 250px);
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-.basket-height .datatable {
-	height: calc(100vh - 320px) !important;
-}
-
 .mw-75 {
 	max-width: 75%;
 }
@@ -963,6 +948,13 @@ a:not(.text-decoration-underline):not(.underline) {
     padding-left: calc(var(--bs-gutter-x) * 0.5);
 }
 
+.card.full-width-card {
+	margin-left: calc(50% - 50vw + 1rem);
+    margin-right: calc(50% - 50vw + 1rem);
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+    padding-left: calc(var(--bs-gutter-x) * 0.5);
+}
+
 .bg-gradient-money { background-image: linear-gradient(310deg, #1b5e20, #3cbd42); }
 
 .searchBar [data-svelte-search]::after {
@@ -996,7 +988,7 @@ h5.card-header {
 	font-size: 1.25rem;
     line-height: 1.375;
 	position: relative;
-    padding: 1rem 1rem 1rem 1.5rem !important;
+    padding: 1rem 2rem !important;
 	color: var(--bs-gray-900)
 }
 
@@ -1030,4 +1022,78 @@ h5.card-header ~ .card-footer:after, h6.card-header ~ .card-footer:after {
 }
 h5.card-header ~.card-footer, h6.card-header ~ .card-footer {
     position: relative;
+}
+
+.modal.date-pick .modal-dialog {
+	max-width: calc(310px + 2rem);
+}
+
+.input-group.has-date-picker input {
+	max-width: 200px;
+	text-align: center;
+	padding-right: 1rem !important;
+}
+
+.table.table-between {
+	margin-bottom: 0;
+}
+
+.table.table-between > thead > tr > td,
+.table.table-between > thead > tr > th,
+.table.table-between > tbody > tr > td,
+.table.table-between > tbody > tr > th {
+	padding: 0;
+	padding-bottom: 2px;
+	border-bottom: none;
+}
+
+.table.table-between > thead > tr > td:first-child,
+.table.table-between > thead > tr > th:first-child,
+.table.table-between > tbody > tr > td:first-child,
+.table.table-between > tbody > tr > th:first-child {
+	text-align: left;
+}
+
+.table.table-between > thead > tr > td:last-child,
+.table.table-between > thead > tr > th:last-child,
+.table.table-between > tbody > tr > td:last-child,
+.table.table-between > tbody > tr > th:last-child {
+	text-align: right;
+}
+
+.table.table-centered {
+	margin-bottom: 0;
+}
+
+.table.table-centered > thead > tr > td,
+.table.table-centered > thead > tr > th,
+.table.table-centered > tbody > tr > td,
+.table.table-centered > tbody > tr > th {
+	padding: 2px 5px;
+	padding-bottom: 2px;
+	border-bottom: none;
+}
+
+.table.table-centered > thead > tr > td:first-child,
+.table.table-centered > thead > tr > th:first-child,
+.table.table-centered > tbody > tr > td:first-child,
+.table.table-centered > tbody > tr > th:first-child {
+	text-align: right;
+	width: 50%;
+}
+
+.table.table-centered > thead > tr > td:last-child,
+.table.table-centered > thead > tr > th:last-child,
+.table.table-centered > tbody > tr > td:last-child,
+.table.table-centered > tbody > tr > th:last-child {
+	text-align: left;
+	width: 50%;
+}
+
+.badge.fs-7 {
+	font-size: 0.75rem !important;
+}
+
+.badge.fs-8 {
+	font-size: 0.6rem !important;
 }

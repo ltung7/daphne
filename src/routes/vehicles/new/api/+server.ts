@@ -1,11 +1,9 @@
-import { setVehicleType } from "$lib/server/db/firebase/vehicleType.fdb";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
+import { addNewVehicle } from "$lib/server/db/firebase/vehicles.fdb";
 
 export const POST: RequestHandler = async ({ request }) => {
     const { data } = await request.json();
-    const id = data?.id || (Date.now() - 1780000000000).toString(36)
-    delete data.id;
-    await setVehicleType(id, data);
+    const id = await addNewVehicle(data);
     return json({ success: true, id })
 };
