@@ -19,6 +19,10 @@
     onMount(loadTypes);
 </script>
 
+<svelte:head>
+    <title>Rodzaje pojazdów</title>
+</svelte:head>
+
 <div class="card">
     <h5 class="card-header flex-between">
         <div>Rodzaje pojazdów</div>

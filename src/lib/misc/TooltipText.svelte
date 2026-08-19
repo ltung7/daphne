@@ -14,7 +14,7 @@
 
     let {
         text = '',
-        class: className = 'cursor-pointer',
+        class: className = 'cursor-help',
         placement = "bottom",
         hoverText = '',
         tooltipClass = '',

@@ -57,3 +57,10 @@ export enum VEHICLE_DOCUMENT_TYPE {
     TELEMATICS_INSTALLATION_CERTIFICATE = 'telematics_installation_certificate',
     FUEL_CARD_AGREEMENT = 'fuel_card_agreement',
 }
+
+export enum SERVICE_PROVIDERS {
+    Uber = 'Uber',
+    Bolt = 'Bolt',
+    FreeNow = 'FreeNow',
+    iTaxi = 'iTaxi',
+}

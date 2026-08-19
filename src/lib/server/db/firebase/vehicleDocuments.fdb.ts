@@ -10,6 +10,6 @@ export const getVehicleDocuments = async <T=Vehicle.VehicleDocument> (id: string
     return getItemById(id, collectionName);
 }
 
-export const findVehicleDocuments = async <T=Vehicle.VehicleDocument> (query: App.FirebaseItemsQuery = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
+export const findVehicleDocuments = async <T=Vehicle.VehicleDocument> (query: App.FirebaseItemsQuery<keyof Vehicle.VehicleDocument> = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
     return getItems(collectionName, query, select);
 }

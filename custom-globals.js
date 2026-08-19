@@ -4,6 +4,7 @@ export default {
     ExplicitAnyToExtend: "readonly",
     Vehicle: "readonly",
     Driver: "readonly",
+    RideServices: "readonly",
     SvelteCustom: "readonly",
     '$$Generic':  "readonly",
 };

@@ -27,26 +27,26 @@ const replace = {
 }
 
 const runApiTest = async () => {
-    const models = await loadJson('models');
-    const fuels: Set<string> = new Set();
-    const types: Set<string> = new Set();
-    for (const list of Object.values(models)) {
-        for (const model of list) {
-            if (model.type.length && model.type.endsWith('s')) {
-                model.type = model.type.slice(0, -1)
-            }
-            model.fuel = model.fuel.map(item => replace[item] ?? item);
-            for (const fuel of model.fuel) {
-                fuels.add(fuel);
-            }
-            types.add(model.type)
-        }
-    };
-    await saveJson({ 
-        fuels: [ ...fuels ],
-        types: [ ...types ]
-    }, 'carcas')
-    await saveJson(models, 'models', 0)
+    // const models = await loadJson('models');
+    // const fuels: Set<string> = new Set();
+    // const types: Set<string> = new Set();
+    // for (const list of Object.values(models)) {
+    //     for (const model of list) {
+    //         if (model.type.length && model.type.endsWith('s')) {
+    //             model.type = model.type.slice(0, -1)
+    //         }
+    //         model.fuel = model.fuel.map(item => replace[item] ?? item);
+    //         for (const fuel of model.fuel) {
+    //             fuels.add(fuel);
+    //         }
+    //         types.add(model.type)
+    //     }
+    // };
+    // await saveJson({ 
+    //     fuels: [ ...fuels ],
+    //     types: [ ...types ]
+    // }, 'carcas')
+    // await saveJson(models, 'models', 0)
 }
 
 

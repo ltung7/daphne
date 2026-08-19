@@ -66,6 +66,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Utwórz nowy pojazd</title>
+</svelte:head>
+
 <CardForm title="Nowy pojazdu" item={vehicle} cleanItem={cleanVehicle} {onResponse} {testData}>
 	<CustomFormSelect bind:value={vehicle.typeId} caption="Rodzaj pojazdu" list={typeSelect} size={6} onchange={handleTypeChange} />
 	<div class="row mt-3">

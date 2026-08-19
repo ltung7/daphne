@@ -73,7 +73,7 @@
     </Tooltip>
 {/if}
 
-<div class="d-inline-flex align-items-center justify-contents-center fs-{size} badge cursor-pointer" style="background-color: {current.color};" bind:this={element}>
+<div class="d-inline-flex align-items-center justify-contents-center fs-{size} badge cursor-help" style="background-color: {current.color};" bind:this={element}>
     <UIcon name={current.icon}  />
 	<span class="ms-2">{current.caption}</span>
 </div>

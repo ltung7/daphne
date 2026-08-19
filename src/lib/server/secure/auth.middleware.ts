@@ -87,7 +87,7 @@ export const handleRoleCheck: Kit.Handle = async ({ event, resolve }: HandlePara
     const roles = rolePaths.get(primaryGroup);
     if (roles) {
         try {
-            const authData = await checkRole(roles, event.cookies, event.params.account);
+            const authData = await checkRole(roles, event.cookies, "");
             event.locals.auth = { role: authData.role, user: authData.user, accounts: authData.accounts };
         } catch (err: unknown) {
             logger.error(err);

@@ -119,7 +119,6 @@ declare global {
 
 			// Digital Identity
 			telemetryId?: string; // GPS/telematics tracking ID
-			markingsVerified: number;
 
 			// Financial
 			fuelCardId?: string; // Unique fuel card attached
@@ -147,11 +146,14 @@ declare global {
 			};
 		}
 
+		type VehicleRequirementVerification = Vehicle & Type;
+
 		type DocumentType =
 			// Registration & ownership
 			| 'registration_certificate'
 			| 'ownership_proof'
 			| 'lease_agreement'
+			| 'taxi_license_excerpt'
 
 			// Insurance
 			| 'oc_insurance_policy'
@@ -161,6 +163,7 @@ declare global {
 			| 'technical_inspection_certificate'
 			| 'internal_checkup_report'
 			| 'damage_incident_report'
+			| 'vehicle_history'
 
 			// Fleet-level licensing
 			| 'fleet_taxi_license'
@@ -175,7 +178,8 @@ declare global {
 
 			// Equipment
 			| 'telematics_installation_certificate'
-			| 'fuel_card_agreement';
+			| 'fuel_card_agreement'
+			| 'taximeter_legalization_certificate'
 
 		interface VehicleDocument {
 			id: string;
@@ -186,6 +190,71 @@ declare global {
 			name: string;
 			url: string;
 		}
+	}
+
+	namespace RideServices {
+		type Provider = 'Uber' | 'Bolt' | 'FreeNow' | 'iTaxi';
+
+		type CalculationMethod = 'days' | 'number' | 'years';
+
+		interface BaseRequirement {
+			node: RideServices.VerificationState;
+			name: string;
+			text: string;
+			service: Provider[];
+		}
+
+		interface DocumentRequirement extends BaseRequirement {
+			type: 'document';
+			document: Vehicle.DocumentType;
+		}
+
+		interface CheckRequirement extends BaseRequirement {
+			type: 'check';
+			variable?: keyof Vehicle.VehicleRequirementVerification;
+		}
+
+		interface CalculateRequirement extends BaseRequirement {
+			type: 'calculate';
+			calculation_method: CalculationMethod;
+			value: number;
+			variable: keyof Vehicle.VehicleRequirementVerification;
+		}
+
+		// Full array item type
+		type RequirementItem =
+			| DocumentRequirement
+			| CheckRequirement
+			| CalculateRequirement;
+
+		type VerificationState =
+			| 'registrationCertificateStamped'
+			| 'taxiLicenseExcerpt'
+			| 'ocInsurancePolicy'
+			| 'technicalInspectionCertificate'
+			| 'vehicleVerificationPhotos'
+			| 'taximeterLegalizationCertificate'
+			| 'warsawSideStripesCheck'
+			| 'warsawCoatOfArmsCheck'
+			| 'warsawSideNumberCheck'
+			| 'tariffCardCheck'
+			| 'rooftopLampCheck'
+			| 'driverIdDisplayCheck'
+			| 'virtualCashRegisterActive'
+			| 'hardwareTaximeterInstalled'
+			| 'bodyworkConditionCheck'
+			| 'leftHandDriveCheck'
+			| 'telemetryHardwareInstallation'
+			| 'telemetrySystemAssignment'
+			| 'fuelCardAssignment'
+			| 'maxVehicleAgeStandardUberBolt'
+			| 'maxVehicleAgeStandardFreeNow'
+			| 'maxVehicleAgeStandardITaxi'
+			| 'maxVehicleAgeComfortUberBolt'
+			| 'maxVehicleAgeComfortFreeNow'
+			| 'ocInsuranceExpirationBuffer'
+			| 'technicalInspectionExpirationBuffer'
+			| 'minPassengerCapacity';
 	}
 
 	namespace Driver {

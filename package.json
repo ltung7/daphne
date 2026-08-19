@@ -15,7 +15,7 @@
         "test:unit": "vitest",
         "test": "npm run test:unit -- --run",
         "deploy": "vite build && node build.js && gcloud app deploy build/app.yaml --project=ecomsupportapp && npm --no-git-tag-version version patch",
-        "redeploy": "gcloud app deploy build/app.yaml --project=taxi --no-cache"
+        "redeploy": "gcloud app deploy build/app.yaml --project=ecomsupportapp --no-cache"
     },
     "devDependencies": {
         "@eslint/compat": "2.0.2",
@@ -50,6 +50,7 @@
         "dayjs": "1.11.20",
         "firebase": "12.10.0",
         "firebase-admin": "13.7.0",
+        "hash-wasm": "^4.12.0",
         "idosell": "0.4.43",
         "jsonwebtoken": "9.0.3",
         "mysql-bricks": "2.0.0",

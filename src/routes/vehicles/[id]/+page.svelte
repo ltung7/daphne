@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import type { PageProps } from './$types';
-	import { fuelNames } from '$lib/assets/constants';
+	import { fuelNames, documentNames, updatableVehicleVariables } from '$lib/assets/constants';
 	import { formatCurrency } from '$lib/utils/numberFormatter';
 	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
 	import UploadVehicleDatafiles from '$lib/form/UploadVehicleDatafiles.svelte';
+	import PrecheckVerification from '$lib/components/PrecheckVerification.svelte';
+	import plTimezone from '$lib/utils/tz';
+	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
+	import type { VehicleDocumentResult } from '$lib/datafiles/vehicle';
+	import { confirmSuccess, internal } from '$lib/nav/internal';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
-	let documents: Vehicle.VehicleDocument[] = $state([]);
+	let documents: Vehicle.VehicleDocument[] = $state(untrack(() => data.documents));
 	const type = untrack(() => data.type!);
 
 	const toDate = (iso: string): Date => {
@@ -23,13 +28,41 @@
 	};
 
 	const onFinished = (doc: Vehicle.VehicleDocument) => {
-		documents.push(doc);
+		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
+	};
+
+	const onProcessed = (result: VehicleDocumentResult) => {
+		let hasUpdates = false;
+		const updateItems: Partial<Vehicle.Vehicle> = {};
+
+		for (const key of updatableVehicleVariables) {
+			if (!(key in result)) continue;
+			
+			// @ts-expect-error type mismatch
+			const value = result[key as keyof Vehicle.Vehicle];
+			if (typeof value === 'undefined') continue;
+			if (typeof value === 'string' && value.length === 0) continue;
+			if (value === vehicle[key]) continue;
+			
+			hasUpdates = true;
+			updateItems[key] = value;
+		}
+
+		if (hasUpdates) {
+			confirmSuccess(internal.postApi(updateItems, 'patch')).then(() => {
+				Object.assign(vehicle, updateItems);
+			});
+		}
 	};
 </script>
 
-<div class="row">
+<svelte:head>
+	<title>Dane pojazdu {vehicle.registrationNumber}</title>
+</svelte:head>
+
+<div class="row mt-n3">
 	<div class="col-12 col-md-6">
-		<div class="card">
+		<div class="card mt-3">
 			<h5 class="card-header">Dane pojazdu {vehicle.registrationNumber}</h5>
 			<div class="card-body">
 				{#if vehicle.imageUrl?.length}
@@ -61,27 +94,38 @@
 					</table>
 				</div>
 			</div>
+			{#if vehicle.status === 'precheck'}
+				<div class="card-footer flex-center">
+					<PrecheckVerification {vehicle} {type} {documents} />
+				</div>
+			{/if}
 		</div>
 		<div class="card mt-3">
 			<h5 class="card-header">Dodane dokumenty</h5>
 			<div class="card-body">
 				{#if documents?.length}
+				<ul class="list-group">
 					{#each documents as doc}
-						<div class="border rounded p-2">
-							{doc.name} {doc.registrationNumber}
-						</div>
+						<li class="list-group-item flex-between">
+							<div>
+								<div class="text-muted xsmall">{documentNames[doc.type]} ({plTimezone(doc.timestamp)})</div>
+								<div class="fw-bold text-dark">{doc.name}</div>
+							</div>
+							<TooltipSquareIconLink class="me-n2" href={doc.url} download icon="cloud-download-alt" hoverText="Pobierz" blank />
+						</li>
 					{/each}
+					</ul>
 				{:else}
 					Brak dodanych dokumentów
 				{/if}
 			</div>
 			<div class="card-footer d-flex justify-content-end">
-				<UploadVehicleDatafiles {onFinished} />
+				<UploadVehicleDatafiles {onFinished} {onProcessed} registrationNumber={vehicle.registrationNumber} />
 			</div>
 		</div>
 	</div>
 	<div class="col-12 col-md-6">
-		<div class="card">
+		<div class="card mt-3">
 			<h5 class="card-header">Kierowca</h5>
 			<div class="card-body">
 				{#if vehicle.assignedDriver}

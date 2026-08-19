@@ -6,7 +6,7 @@ export const headerLength = 180;
 export const headers = [ 'UNIQA Towarzystwo Ubezpieczeń S.A., ul. Chłodna 51, 00-867 Warszawa,' ];
 
 const allDone = (result: VehicleInsuranceResult) => {
-    const keys: (keyof VehicleInsuranceResult)[] = [ 'name', 'vehicle', 'expirationDate' ];
+    const keys: (keyof VehicleInsuranceResult)[] = [ 'name', 'vehicle', 'insuranceExpiration' ];
     for (const key of keys) {
         if (!result[key]?.length) return false;
     }
@@ -15,7 +15,7 @@ const allDone = (result: VehicleInsuranceResult) => {
 
 export const process: DataFilesProcessor = async (lines: string[]) => {
     const result: VehicleInsuranceResult = {
-        expirationDate: '',
+        insuranceExpiration: '',
         type: 'oc_insurance_policy',
         name: '',
         vehicle: ''
@@ -51,7 +51,7 @@ export const process: DataFilesProcessor = async (lines: string[]) => {
             const datesRange = lines[current];
             const match = datesRange.match(/^[0-9.]{10} - ([0-9]{2})\.([0-9]{2})\.([0-9]{4})$/);
             if (match) {
-                result.expirationDate = `${match[3]}-${match[2]}-${match[1]}`;
+                result.insuranceExpiration = `${match[3]}-${match[2]}-${match[1]}`;
             }
             if (allDone(result)) return result;
             continue;

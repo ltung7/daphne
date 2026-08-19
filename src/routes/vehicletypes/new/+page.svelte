@@ -82,6 +82,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>Nowy rodzaj pojazdu</title>
+</svelte:head>
+
 <div class="card z-index-5">
 	<h5 class="card-header">Dodaj nowy model samochodu</h5>
 	<div class="card-body">

@@ -541,6 +541,10 @@ td.highlight-blue ~ td {
 	cursor: default;
 }
 
+.cursor-help {
+	cursor: help;
+}
+
 .pagination-nav .option.number.active {
 	font-weight: bold;
 	color: var(--bs-dark);
@@ -1096,4 +1100,99 @@ h5.card-header ~.card-footer, h6.card-header ~ .card-footer {
 
 .badge.fs-8 {
 	font-size: 0.6rem !important;
+}
+
+i.rotating-checker.small:before {
+	font-size: 0.875rem;
+	line-height: 0.8rem;
+	width: 1rem;
+	height: 1rem;
+}
+
+.rotating-checker,
+.rotating-checker::before {
+	width: 1.5rem;
+	height: 1.5rem;
+	white-space: nowrap;
+}
+.rotating-checker::before {
+	transition:
+		transform 0.5s,
+		background-color 0.5s;
+	color: var(--bs-white);
+	border-radius: 50%;
+	font-size: 0.9rem;
+	line-height: 9.8rem;
+	font-family: uicons-regular-rounded !important;
+	font-style: normal;
+	font-weight: 400;
+	display: inline-flex;
+	text-align: center;
+	text-transform: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	content: '\e5e8';
+	background-color: var(--bs-secondary);
+	transform: rotate(90deg);
+	animation-name: changeUnchecked;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	justify-content: center;
+	align-items: center;
+}
+
+.rotating-checker.require::before {
+	background-color: var(--bs-danger);
+}
+
+.rotating-checker.checked::before {
+	background-color: var(--bs-success);
+	animation-name: changeChecked;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	content: '\e430';
+	background-color: var(--bs-success);
+	transform: none;
+}
+
+@keyframes changeChecked {
+	0% {
+		content: '\e5e8';
+		color: var(--bs-white);
+	}
+
+	50% {
+		content: '\e5e8';
+		color: rgba(255, 255, 255, 0.2);
+	}
+
+	100% {
+		content: '\e430';
+		color: var(--bs-white);
+	}
+}
+
+@keyframes changeUnchecked {
+	0% {
+		content: '\e430';
+		color: var(--bs-white);
+	}
+
+	50% {
+		content: '\e5e8';
+		color: rgba(255, 255, 255, 0.2);
+	}
+
+	100% {
+		content: '\e5e8';
+		color: var(--bs-white);
+	}
+}
+
+label.d-flex.w-100 > .ms-2.flex-center {
+	width: 100%;
+}
+
+.form-check:not(.form-switch) .form-check-input[type="radio"]:after, .form-check:not(.form-switch) .form-check-input[type="checkbox"]:after {
+	content: '\e430';
 }

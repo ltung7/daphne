@@ -1,10 +1,14 @@
 import { VEHICLE_STATUS } from "$lib/assets/enums";
-import { setItem, getItemById, getItems } from "./firebase";
+import { setItem, getItemById, getItems, updateItem } from "./firebase";
 
 const collectionName: string = 'vehicles';
 
-export const setVehicles = async (id: string, data: Partial<Vehicle.Vehicle>) => {
+export const setVehicle = async (id: string, data: Partial<Vehicle.Vehicle>) => {
     return setItem(id, data, collectionName, true);
+}
+
+export const updateVehicle = async (id: string, data: Partial<Vehicle.Vehicle>) => {
+    return updateItem(id, data, collectionName);
 }
 
 export const getVehicle = async <T=Vehicle.Vehicle> (id: string): Promise<T|null> => {
@@ -34,7 +38,8 @@ export const addNewVehicle = async (newVehicleData: Vehicle.NewVehicleData) => {
         deliveryTrips: {
             completed: 0,
             totalDeliveryFees: 0
-        }
+        },
+        platformStatus: {}
     }
     await setItem(newVehicleData.registrationNumber, vehicle, collectionName);
     return newVehicleData.registrationNumber;

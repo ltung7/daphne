@@ -3,7 +3,7 @@
 	import Flatpickr, { type HookProps } from 'svelte-flatpickr';
 	import { Nav, NavItem, NavLink } from '@sveltestrap/sveltestrap';
 	import dayjs from 'dayjs';
-	import ClosableModal from './ClosableModal.svelte';
+	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 
 	const lldate: Record<string,string> = {
         yesterday: 'Wczoraj',
