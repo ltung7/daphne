@@ -52,6 +52,8 @@ export const addNewDriver = async (newDriverData: Driver.NewDriverData) => {
         tripsCompleted: 0,
         uptimePercentage: 0,
     }
+    // @ts-expect-error auto generated
+    delete driver.id;
     console.log({ driver, collectionName })
     const id = await addItem(driver, collectionName);
     console.log({ id })

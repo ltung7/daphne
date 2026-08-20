@@ -37,13 +37,13 @@
 
 		for (const key of updatableVehicleVariables) {
 			if (!(key in result)) continue;
-			
+
 			// @ts-expect-error type mismatch
 			const value = result[key as keyof Vehicle.Vehicle];
 			if (typeof value === 'undefined') continue;
 			if (typeof value === 'string' && value.length === 0) continue;
 			if (value === vehicle[key]) continue;
-			
+
 			hasUpdates = true;
 			updateItems[key] = value;
 		}
@@ -104,16 +104,16 @@
 			<h5 class="card-header">Dodane dokumenty</h5>
 			<div class="card-body">
 				{#if documents?.length}
-				<ul class="list-group">
-					{#each documents as doc}
-						<li class="list-group-item flex-between">
-							<div>
-								<div class="text-muted xsmall">{documentNames[doc.type]} ({plTimezone(doc.timestamp)})</div>
-								<div class="fw-bold text-dark">{doc.name}</div>
-							</div>
-							<TooltipSquareIconLink class="me-n2" href={doc.url} download icon="cloud-download-alt" hoverText="Pobierz" blank />
-						</li>
-					{/each}
+					<ul class="list-group">
+						{#each documents as doc}
+							<li class="list-group-item flex-between">
+								<div>
+									<div class="text-muted xsmall">{documentNames[doc.type]} ({plTimezone(doc.timestamp)})</div>
+									<div class="fw-bold text-dark">{doc.name}</div>
+								</div>
+								<TooltipSquareIconLink class="me-n2" href={doc.url} download icon="cloud-download-alt" hoverText="Pobierz" blank />
+							</li>
+						{/each}
 					</ul>
 				{:else}
 					Brak dodanych dokumentów
@@ -179,6 +179,16 @@
 						</tbody>
 					</table>
 				</div>
+			</div>
+		</div>
+		<div class="card mt-3">
+			<h5 class="card-header">Notatki</h5>
+			<div class="card-body">
+				{#if vehicle.notes.length}
+					{vehicle.notes}
+				{:else}
+					<div class="font-italic text-muted text-center">- Brak notatki -</div>
+				{/if}
 			</div>
 		</div>
 	</div>

@@ -36,7 +36,7 @@
 			<TooltipSquareIconLink icon="add" hoverText="Dodaj nowy pojazd" href="/vehicles/new" size={2} />
 		</div>
 	</h5>
-	<div class="card-body text-center basket-height">
+	<div class="card-body text-center">
 		<DatatableWrapper {loaded} data={vehicles} {headers}>
 			{#snippet row(row)}
 				<td class="py-1">
