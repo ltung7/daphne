@@ -64,3 +64,24 @@ export enum SERVICE_PROVIDERS {
     FreeNow = 'FreeNow',
     iTaxi = 'iTaxi',
 }
+
+export enum DRIVER_STATUS {
+    // Onboarding
+    PendingVerification = 'pending_verification', // documents submitted, awaiting review
+    Rejected = 'rejected',                         // failed onboarding checks
+
+    // Normal lifecycle
+    Active = 'active',                             // approved, eligible to drive
+    Inactive = 'inactive',                         // driver-initiated pause (e.g. vacation)
+
+    // Compliance/expiry driven
+    DocumentsExpiring = 'documents_expiring',       // license/authorization nearing expiry, still allowed to drive but flagged
+    DocumentsExpired = 'documents_expired',         // blocked from driving until renewed
+
+    // Admin action
+    Suspended = 'suspended',                       // temporary block, e.g. investigation or policy violation
+    Banned = 'banned',                             // permanent removal from platform
+
+    // Terminal
+    Archived = 'archived',                         // account closed/deleted, kept for records
+}

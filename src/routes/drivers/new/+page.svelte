@@ -1,0 +1,200 @@
+<script lang="ts">
+	/* eslint-disable svelte/prefer-svelte-reactivity */
+	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
+	import { cleanDriver } from '$lib/assets/cleanItems';
+	import CardForm from '$lib/form/CardForm.svelte';
+	import CustomFormText from '$lib/form/CustomFormText.svelte';
+	import CustomFormRadio from '$lib/form/CustomFormRadio.svelte';
+	import licensesRaw from '$lib/assets/data/licenses.json';
+	import { addToast } from '$lib/toast';
+	import CustomFormSelect from '$lib/form/CustomFormSelect.svelte';
+	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
+	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
+	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import randomString from '$lib/utils/randomString';
+	import randomNumber from '$lib/utils/randomNumber';
+    import { list } from '$lib/assets/data/markets.json'
+	import ClosableModal from '$lib/misc/ClosableModal.svelte';
+	import { goto } from '$app/navigation';
+    
+	const licenses = licensesRaw.categories.reduce(
+		(obj, item) => {
+			obj[item.code] = `${item.code}: ${item.name}`;
+			return obj;
+		},
+		{ '': 'Wybierz kategorię', taxi: 'Uprawnienia do kierowania taksówką' } as Record<string, string>
+	);
+
+	let driver: Driver.NewDriverData = $state({ ...cleanDriver });
+    let createdId: string | undefined = $state();
+    let createdPassword: string | undefined = $state();
+    let showCreated = $state(false)
+
+	const onResponse = async (response: any) => {
+        if (response.id) createdId = response.id;
+        if (response.password) createdPassword = response.password;
+        showCreated = true;
+    };
+
+	const onReset = () => {
+		addDrivingLicense('B');
+		addDrivingLicense('taxi');
+	};
+
+	const addDrivingLicense = (type: string) => {
+		if (type === 'taxi') {
+			if (driver.taxiAuthorization) return addToast('Takie uprawnienie zostało już dodane');
+			const date = new Date().toLocaleDateString('en-CA');
+			driver.taxiAuthorization = {
+				expirationDate: date,
+				market: 'WAW',
+				registryEntryNumber: ''
+			};
+			return;
+		}
+
+		if (!licenses[type]) return addToast('Niepoprawny rodzaj prawa jazdy');
+		if (driver.drivingLicenses.some((item) => item.category === type)) return addToast('Takie uprawnienie zostało już dodane');
+		const date = new Date().toLocaleDateString('en-CA');
+		driver.drivingLicenses.push({
+			category: type as Driver.DrivingLicenseCategory,
+			expirationDate: date,
+			number: '',
+			issuingCountry: 'PL'
+		});
+	};
+
+	const removeDrivingLicense = (type: string) => {
+		if (type === 'taxi') {
+			driver.taxiAuthorization = undefined;
+			return;
+		}
+		const category = type as Driver.DrivingLicenseCategory;
+		driver.drivingLicenses = driver.drivingLicenses.filter((item) => {
+			return item.category !== category;
+		});
+	};
+
+    const testData = () => {
+        function randomDateString (min: number, max: number) {
+			const number = randomNumber(min, max);
+			const dt = new Date()
+			dt.setDate(number)
+			return dt.toISOString().substring(0, 10);
+		}
+        
+        driver = {
+            address: randomString(16) + ' ' + randomNumber(10, 99),
+            drivingLicenses: [ {
+                category: 'B',
+                expirationDate: randomDateString(100, 200),
+                issuingCountry: 'PL',
+                number: randomString(10)
+            } ],
+            email: randomString(10) + '@mail.pl',
+            login: randomString(10),
+            name: randomString(10) + ' ' + randomString(10),
+            phone: randomNumber(500000000, 999999999).toString(),
+            polishLanguage: 'basic',
+            sex: 'm',
+            notes: `Test ${randomNumber(10000, 99999)}`,
+            id: '',
+            taxiAuthorization: {
+                expirationDate: randomDateString(300, 600),
+                market: "WAW",
+                registryEntryNumber: randomString(10)
+            }
+        }
+    }
+
+	onMount(onReset);
+</script>
+
+<svelte:head>
+	<title>Nowy kierowca</title>
+</svelte:head>
+
+<CardForm title="Nowy kierowca" item={driver} cleanItem={cleanDriver} {onResponse} {onReset} {testData}>
+	<div class="row">
+		<div class="col-12 col-md-6">
+			<section class="mb-3">
+				<h5>Podstawowe informacje</h5>
+				<div>
+					<CustomFormText bind:value={driver.name} caption="Imię i nazwisko" />
+					<CustomFormText bind:value={driver.login} caption="Login" />
+					<label for="sexSelect">Płeć</label>
+					<div class="d-flex small">
+						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="m" caption="Mężczyzna" class="me-5" />
+						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="f" caption="Kobieta" class="me-5" />
+						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="o" caption="Inna" />
+					</div>
+                    <label for="sexSelect">Języl polski</label>
+					<div class="d-flex small">
+						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="basic" caption="Podstawowy" class="me-5" />
+						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="fluent" caption="Biegły" class="me-5" />
+						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="native" caption="Ojczysty" class="me-5" />
+					</div>
+				</div>
+			</section>
+			<section class="mb-3">
+				<h5>Kontakt</h5>
+				<div>
+					<CustomFormText bind:value={driver.phone} caption="Numer telefonu" />
+					<CustomFormText bind:value={driver.email} caption="Adres E-mail" />
+					<CustomFormText bind:value={driver.address} caption="Adres" />
+				</div>
+			</section>
+		</div>
+
+		<div class="col-12 col-md-6">
+			<section class="mb-3">
+				<h5>Licencje i pozwolenia</h5>
+				<div>
+					<CustomFormSelect caption="Wybierz kategorię pozwolenia z listy aby dodać" list={licenses} onchange={addDrivingLicense} size={6} class="mb-3" />
+					{#if driver.taxiAuthorization}
+						<div class="border border-dark rounded mb-3 p-2 position-relative" transition:fly>
+							<div class="position-absolute end-0 top-0">
+								<TooltipSquareIconButton icon="cross-circle" hoverText="Usuń" color="dark" size={6} onClick={() => removeDrivingLicense('taxi')} />
+							</div>
+							<div class="small">Uprawnienie do prowadzenia <b class="text-dark">Taxi</b></div>
+							<CustomFormText bind:value={driver.taxiAuthorization.registryEntryNumber} caption="Numer pozwolenia" />
+							<CustomFormSelect {list} bind:value={driver.taxiAuthorization.market} caption="Obszar" class="mb-3" size={6} />
+							<CustomFormDate bind:value={driver.taxiAuthorization.expirationDate} caption="Data ważności" />
+						</div>
+					{/if}
+					<div class="mt-3">
+						{#each driver.drivingLicenses as license (license.category)}
+							<div class="border border-dark rounded mb-3 p-2 position-relative" transition:fly animate:flip>
+								<div class="position-absolute end-0 top-0">
+									<TooltipSquareIconButton icon="cross-circle" hoverText="Usuń" color="dark" size={6} onClick={() => removeDrivingLicense(license.category)} />
+								</div>
+								<div class="small">Uprawnienie kategorii: <b class="text-dark">{licenses[license.category]}</b></div>
+								<div class="row">
+									<div class="col-6">
+										<CustomFormText bind:value={license.number} caption="Numer prawa jazdy" />
+									</div>
+									<div class="col-6">
+										<CustomFormDate bind:value={license.expirationDate} caption="Data ważności" />
+									</div>
+								</div>
+							</div>
+						{/each}
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+	<CustomFormTextarea bind:value={driver.notes} caption="Notatka" />
+</CardForm>
+
+<ClosableModal bind:isOpen={showCreated} headerText="Kierowaca dodany" buttonCaption={createdId?.length ? "Przejdź" : false}  onClick={() => createdId && goto('/drivers/' + createdId)}>
+<div class="text-center">
+    <h5 class="text-success">Kierowaca został dodany</h5>
+    <div class="fw-bold">Wygenerowane hasło to:</div>
+    <div class="mt-3 border p-3 fs-6 text-dark">
+        {createdPassword || ""}
+    </div>
+</div>
+</ClosableModal>

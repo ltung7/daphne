@@ -9,14 +9,16 @@
 		name?: string;
 		title: string;
 		onResponse?: (response: any) => any;
+		onReset?: () => any;
 		testData?: () => any;
 		children: import('svelte').Snippet<[T]>;
 	}
 
-	let { item, cleanItem, title, onResponse, testData, name = 'data', children }: Props = $props();
+	let { item, cleanItem, title, onReset, onResponse, testData, name = 'data', children }: Props = $props();
 
 	const resetForm = () => {
 		Object.assign(item, cleanItem);
+		onReset?.()
 	};
 
 	const handleSubmit = async (e: Event) => {

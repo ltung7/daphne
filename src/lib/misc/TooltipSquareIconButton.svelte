@@ -33,7 +33,7 @@
 </script>
 
 <TooltipText {hoverText} class="hover-zoom-contents flex-center mx-2 d-inline-flex whs-{size} {className} {disabled ? 'disabled' : ''}" {placement}>
-    <svelte:element this={type} {href} class="flex-center btn-clear" onclick={onClick} role="button" tabindex="-1" {disabled}>
+    <svelte:element this={type} {href} class="flex-center btn-clear" onclick={onClick} role="button" type="button" tabindex="-1" {disabled}>
         <UIcon name={icon} {size} {color} gradient />
     </svelte:element>
 </TooltipText>

@@ -37,7 +37,7 @@
 <div class="flex-between input-group input-group-outline border-secondary is-filled z-index-3 me-4 {className}" class:cursor-pointer={!readonly}>
 	<select id="select_{name}" {name} bind:value disabled={readonly} class="form-control fs-{size} text-dark w-100" onchange={handleChange}>
 		{#each Object.entries(list) as [ lvalue, lcaption ]}
-			<option value={lvalue}>
+			<option value={lvalue} disabled={lvalue.length === 0}>
 				{@html lcaption}
 			</option>
 		{/each}

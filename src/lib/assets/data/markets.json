@@ -1,0 +1,240 @@
+{
+    "arr": [
+        {
+            "code": "WAW",
+            "name": "Aglomeracja Warszawska",
+            "description": "Warszawa oraz gminy ościenne (m.in. Piaseczno, Pruszków, Legionowo, Łomianki, Otwock, Marki, Ząbki)."
+        },
+        {
+            "code": "KRK",
+            "name": "Kraków",
+            "description": "Kraków oraz obszary przyległe (m.in. Wieliczka, Skawina, Krzeszowice, Niepołomice)."
+        },
+        {
+            "code": "3CITY",
+            "name": "Trójmiasto",
+            "description": "Gdańsk, Gdynia, Sopot oraz Małe Trójmiasto Kaszubskie (Rumia, Reda, Wejherowo)."
+        },
+        {
+            "code": "GZM",
+            "name": "Aglomeracja Śląska (GZM)",
+            "description": "Katowice, Sosnowiec, Gliwice, Zabrze, Bytom, Chorzów, Tychy, Dąbrowa Górnicza, Ruda Śląska i okolice."
+        },
+        {
+            "code": "WRO",
+            "name": "Wrocław",
+            "description": "Wrocław oraz ościenne gminy (m.in. Kąty Wrocławskie, Kobierzyce, Siechnice, Długołęka)."
+        },
+        {
+            "code": "POZ",
+            "name": "Poznań",
+            "description": "Poznań oraz powiat poznański (m.in. Swarzędz, Luboń, Tarnowo Podgórne, Kórnik)."
+        },
+        {
+            "code": "LDZ",
+            "name": "Łódź",
+            "description": "Łódź, Zgierz, Pabianice, Aleksandrów Łódzki i Konstantynów Łódzki."
+        },
+        {
+            "code": "SZZ",
+            "name": "Szczecin",
+            "description": "Szczecin, Stargard oraz Police."
+        },
+        {
+            "code": "BYD",
+            "name": "Bydgoszcz",
+            "description": "Bydgoszcz oraz Solec Kujawski i obszary przyległe."
+        },
+        {
+            "code": "TOR",
+            "name": "Toruń",
+            "description": "Gmina Miejska Toruń oraz strefy podmiejskie."
+        },
+        {
+            "code": "LBL",
+            "name": "Lublin",
+            "description": "Lublin oraz Świdnik."
+        },
+        {
+            "code": "RZE",
+            "name": "Rzeszów",
+            "description": "Rzeszów, Łańcut oraz Boguchwała."
+        },
+        {
+            "code": "BIA",
+            "name": "Białystok",
+            "description": "Białystok, Wasilków i Supraśl."
+        },
+        {
+            "code": "CZE",
+            "name": "Częstochowa",
+            "description": "Częstochowa i sąsiadujące miejscowości."
+        },
+        {
+            "code": "RDM",
+            "name": "Radom",
+            "description": "Gmina Miejska Radom."
+        },
+        {
+            "code": "KLC",
+            "name": "Kielce",
+            "description": "Gmina Miejska Kielce i okolice."
+        },
+        {
+            "code": "OLS",
+            "name": "Olsztyn",
+            "description": "Olsztyn oraz powiat olsztyński."
+        },
+        {
+            "code": "OPL",
+            "name": "Opole",
+            "description": "Gmina Miejska Opole."
+        },
+        {
+            "code": "ZG",
+            "name": "Zielona Góra",
+            "description": "Zielona Góra i pobliskie gminy."
+        },
+        {
+            "code": "GOW",
+            "name": "Gorzów Wielkopolski",
+            "description": "Gorzów Wielkopolski i okolice."
+        },
+        {
+            "code": "BBL",
+            "name": "Bielsko-Biała",
+            "description": "Bielsko-Biała oraz rejon Beskidów."
+        },
+        {
+            "code": "KOS",
+            "name": "Koszalin i Pas Nadmorski",
+            "description": "Koszalin, Kołobrzeg, Mielno i Świnoujście (rynek o wysokiej sezonowości)."
+        },
+        {
+            "code": "LEG",
+            "name": "Zagłębie Miedziowe",
+            "description": "Legnica, Lubin oraz Głogów."
+        },
+        {
+            "code": "RYB",
+            "name": "Subregion Południowy Śląska",
+            "description": "Rybnik, Jastrzębie-Zdrój, Żory i Wodzisław Śląski."
+        },
+        {
+            "code": "WLB",
+            "name": "Wałbrzych",
+            "description": "Wałbrzych, Szczawno-Zdrój i Świebodzice."
+        },
+        {
+            "code": "JGG",
+            "name": "Jelenia Góra",
+            "description": "Jelenia Góra, Karpacz, Szklarska Poręba."
+        },
+        {
+            "code": "ZAK",
+            "name": "Podhale",
+            "description": "Zakopane, Nowy Targ i okoliczne gminy turystyczne."
+        },
+        {
+            "code": "KLS",
+            "name": "Kalisz i Ostrów",
+            "description": "Aglomeracja kalisko-ostrowska (Kalisz, Ostrów Wielkopolski)."
+        },
+        {
+            "code": "PLC",
+            "name": "Płock",
+            "description": "Gmina Miejska Płock."
+        },
+        {
+            "code": "WLC",
+            "name": "Włocławek",
+            "description": "Gmina Miejska Włocławek."
+        },
+        {
+            "code": "PTK",
+            "name": "Piotrków Trybunalski",
+            "description": "Piotrków Trybunalski i Bełchatów."
+        },
+        {
+            "code": "SSU",
+            "name": "Suwałki",
+            "description": "Suwałki i Augustów."
+        },
+        {
+            "code": "BAP",
+            "name": "Biała Podlaska",
+            "description": "Gmina Miejska Biała Podlaska."
+        },
+        {
+            "code": "CHM",
+            "name": "Chełm",
+            "description": "Gmina Miejska Chełm."
+        },
+        {
+            "code": "ZAM",
+            "name": "Zamość",
+            "description": "Gmina Miejska Zamość."
+        },
+        {
+            "code": "TAR",
+            "name": "Tarnów",
+            "description": "Gmina Miejska Tarnów."
+        },
+        {
+            "code": "NSC",
+            "name": "Nowy Sącz",
+            "description": "Nowy Sącz i okolice."
+        },
+        {
+            "code": "SLU",
+            "name": "Słupsk",
+            "description": "Słupsk i Ustka."
+        },
+        {
+            "code": "ELB",
+            "name": "Elbląg",
+            "description": "Gmina Miejska Elbląg."
+        }
+    ],
+    "list": {
+        "WAW": "Aglomeracja Warszawska",
+        "KRK": "Kraków",
+        "3CITY": "Trójmiasto",
+        "GZM": "Aglomeracja Śląska (GZM)",
+        "WRO": "Wrocław",
+        "POZ": "Poznań",
+        "LDZ": "Łódź",
+        "SZZ": "Szczecin",
+        "BYD": "Bydgoszcz",
+        "TOR": "Toruń",
+        "LBL": "Lublin",
+        "RZE": "Rzeszów",
+        "BIA": "Białystok",
+        "CZE": "Częstochowa",
+        "RDM": "Radom",
+        "KLC": "Kielce",
+        "OLS": "Olsztyn",
+        "OPL": "Opole",
+        "ZG": "Zielona Góra",
+        "GOW": "Gorzów Wielkopolski",
+        "BBL": "Bielsko-Biała",
+        "KOS": "Koszalin i Pas Nadmorski",
+        "LEG": "Zagłębie Miedziowe",
+        "RYB": "Subregion Południowy Śląska",
+        "WLB": "Wałbrzych",
+        "JGG": "Jelenia Góra",
+        "ZAK": "Podhale",
+        "KLS": "Kalisz i Ostrów",
+        "PLC": "Płock",
+        "WLC": "Włocławek",
+        "PTK": "Piotrków Trybunalski",
+        "SSU": "Suwałki",
+        "BAP": "Biała Podlaska",
+        "CHM": "Chełm",
+        "ZAM": "Zamość",
+        "TAR": "Tarnów",
+        "NSC": "Nowy Sącz",
+        "SLU": "Słupsk",
+        "ELB": "Elbląg"
+    }
+}

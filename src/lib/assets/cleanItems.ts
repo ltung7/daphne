@@ -26,3 +26,16 @@ export const cleanVehicleType: Vehicle.Type = {
     taxClass: 'B',
     notes: ''
 }
+
+export const cleanDriver: Driver.NewDriverData = {
+	id: '',
+	login: '',
+	name: '',
+	sex: 'm',
+	phone: '',
+	email: '',
+	address: '',
+	drivingLicenses: [],
+	polishLanguage: 'basic',
+	notes: ''
+}

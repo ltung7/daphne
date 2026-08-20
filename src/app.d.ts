@@ -87,7 +87,7 @@ declare global {
 			foodDelivery: boolean;
 
 			// Optional Metadata
-			notes?: string;
+			notes: string;
 		}
 
 		interface NewVehicleData {
@@ -258,68 +258,90 @@ declare global {
 	}
 
 	namespace Driver {
-		interface Data {
-			id: string; // Unique identifier (PESEL or system-generated)
+		type DriverStatusType =
+			| 'pending_verification'
+			| 'rejected'
+			| 'active'
+			| 'inactive'
+			| 'documents_expiring'
+			| 'documents_expired'
+			| 'suspended'
+			| 'banned'
+			| 'archived';
+
+		type DrivingLicenseCategory =
+			| 'AM' | 'A1' | 'A2' | 'A'   // mopeds / motorcycles
+			| 'B1' | 'B' | 'B+E'          // cars
+			| 'C1' | 'C1+E' | 'C' | 'C+E'  // trucks
+			| 'D1' | 'D1+E' | 'D' | 'D+E'  // buses
+			| 'T';                        // tractors/agricultural
+
+		interface DrivingLicense {
+			number: string;
+			category: DrivingLicenseCategory;
+			expirationDate: string;     // ISO date
+			issuingCountry: string;    // default 'PL', relevant for foreign drivers
+		}
+
+		interface TaxiAuthorization {
+			registryEntryNumber: string;
+			market: string;       // issuing gmina/city
+			expirationDate: string;
+		}
+
+		// --- What you actually collect when onboarding a driver ---
+
+		interface NewDriverData {
+			id: string; // PESEL, or system-generated if you don't collect it at intake
 			login: string;
-			password: string;
 			name: string;
-			profileImageUrl: string;
-			sex: 'm' | 'f' | 'o'
+			sex: 'm' | 'f' | 'o';
 
 			// Contact Data
-			contact: {
-				phone: string; // Main contact number
-				email: string;
-				address: string; // Required for delivery addresses
-			};
+			phone: string;
+			email: string;
+			address: string;
 
-			// Driving Licence Data (Uber/Bolt + Taxi)
-			licenses: {
-				carDrivingLicense: {
-					number: string; // Unique license number
-					expirationDate: string; // ISO date string (YYYY-MM-DD)
-					category: string; // e.g., "B", "C", "D" - driving licence category
-				};
-				motorcycleDrivingLicense: {
-					number: string; // Unique license number
-					expirationDate: string; // ISO date string (YYYY-MM-DD)
-					category: string; // e.g., "A", "A1" - motorcycle licence category
-				};
-				taxiLicense?: {
-					number: string; // Specific to taxi operations
-					expirationDate: string; // ISO date string
-				};
-			};
+			// Licensing
+			drivingLicenses: DrivingLicense[];
+			taxiAuthorization?: TaxiAuthorization; // only present if driver does taxi/rideshare work
+
+			// Declared language skills (accrued stats like experience/ratings live on Driver)
+			polishLanguage: 'native' | 'fluent' | 'basic';
+			additionalLanguages?: { [language: string]: 'native' | 'fluent' };
+
+			notes: string; // optional intake notes
+		}
+
+		// --- Full driver record, once account is active ---
+
+		interface Driver extends NewDriverData {
+			password: string;
+			profileImageUrl: string;
 
 			// KPI Metrics (Critical for provider scoring)
-			kpis: {
-				tripsCompleted: number; // Total trips driven
-				earnings: number; // In grosze (PLN * 100) for precise calculations
-				safetyScore: number; // 0-100 based on incident reports
-				uptimePercentage: number; // % of scheduled shifts completed
-			};
+			tripsCompleted: number;     // Total trips driven
+			earnings: number;           // In grosze (PLN * 100)
+			safetyScore: number;        // 0-100 based on incident reports
+			uptimePercentage: number;   // % of scheduled shifts completed
 
-			// Platform-Specific Optimization Data
-			optimization: {
-				experience: number; // Hours of platform experience
-				polishLanguage: 'native' | 'fluent' | 'basic'; // Required for polish-speaking passengers
-				additionalLanguages?: { [language: string]: 'native' | 'fluent' };
-				passengerRatings: number; // Average rating from users
-			};
+			// Platform-Specific Optimization Data (accrued over time)
+			experience: number;         // Hours of platform experience
+			passengerRatings: number;   // Average rating from users
 
 			// Financial Tracking
-			balance: number; // In grosze (PLN * 100) - never use floating point
+			balance: number;            // In grosze (PLN * 100) - never use floating point
 			pendingWithdrawals: number; // Pending withdrawals in grosze
 
 			// Current Vehicle Assignment
-			assignedVehicle?: {
-				registrationNumber: string; // Polish VIN/ registration
-				model: string; // e.g., "Toyota Yaris"
-				imageUrl: string; // URL to vehicle image
-			};
+			assignedVehicle: false | {
+				registrationNumber: string; // Polish registration number
+				model: string;              // e.g., "Toyota Yaris"
+				imageUrl: string;           // URL to vehicle image
+				date: string;
+			}
 
-			// Status Flags
-			status: Status; // Must match enum above
+			status: DriverStatusType; // Must match enum defined elsewhere
 		}
 	}
 
