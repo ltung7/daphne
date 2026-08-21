@@ -1196,3 +1196,8 @@ label.d-flex.w-100 > .ms-2.flex-center {
 .form-check:not(.form-switch) .form-check-input[type="radio"]:after, .form-check:not(.form-switch) .form-check-input[type="checkbox"]:after {
 	content: '\e430';
 }
+
+input.form-control:read-only {
+	background-color: var(--bs-light);
+	cursor: 'not-allowed'
+}

@@ -43,6 +43,8 @@
 
 
 <div class="mb-3 {addClass}">
-    <label for={id} class="form-label small" class:is-focused={isFocused}>{caption}</label>
+    {#if caption?.length}
+        <label for={id} class="form-label small" class:is-focused={isFocused}>{caption}</label>
+    {/if}
     <textarea bind:value class="form-control" rows={size} {id} {name} onfocus={onFocus} onblur={onBlur} autocomplete={noauto ? 'off' : ''} {readonly} oninput={onInput} onchange={onChange}></textarea>
 </div>

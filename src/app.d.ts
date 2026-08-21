@@ -345,6 +345,44 @@ declare global {
 		}
 	}
 
+	namespace DocumentGenerator {
+		type Locale = 'pl' | 'en' | 'uk' | 'be' | 'ne';
+		
+		interface HandoverDocument {
+			place: string
+			date: string
+			owner: string;
+			managerName: string
+			managerEmail: string;
+			driverName: string;
+			driverEmail: string;
+			driverIdentification: string;
+			model: string
+			registrationNumber: string
+			vin: string
+			milage: string
+			remaining: string
+			visual: string
+			isElectric: boolean
+			locale?: DocumentGenerator.Locale
+			send?: boolean;
+			key: boolean
+			spareKey: boolean
+			registration: boolean
+			roofSign: boolean
+			tire: boolean
+			fuelCard: boolean
+			exinguisher: boolean
+			triangle: boolean
+			firstAidKit: boolean
+			vest: boolean
+			mats: boolean
+			phoneHolder: boolean
+			phoneCharger: boolean
+			carWashCard: boolean
+		}
+	}
+
 	namespace SvelteCustom {
 		type DatatableHeaders<T = string> = [T, string][];
 

@@ -10,6 +10,7 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import type { VehicleDocumentResult } from '$lib/datafiles/vehicle';
 	import { confirmSuccess, internal } from '$lib/nav/internal';
+	import EditNotesCard from '$lib/form/EditNotesCard.svelte';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
@@ -181,15 +182,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="card mt-3">
-			<h5 class="card-header">Notatki</h5>
-			<div class="card-body">
-				{#if vehicle.notes.length}
-					{vehicle.notes}
-				{:else}
-					<div class="font-italic text-muted text-center">- Brak notatki -</div>
-				{/if}
-			</div>
-		</div>
+		<EditNotesCard bind:notes={vehicle.notes} />
 	</div>
 </div>

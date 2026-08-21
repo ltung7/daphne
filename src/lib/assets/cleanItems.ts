@@ -28,14 +28,48 @@ export const cleanVehicleType: Vehicle.Type = {
 }
 
 export const cleanDriver: Driver.NewDriverData = {
-	id: '',
-	login: '',
-	name: '',
-	sex: 'm',
-	phone: '',
-	email: '',
-	address: '',
-	drivingLicenses: [],
-	polishLanguage: 'basic',
-	notes: ''
+    id: '',
+    login: '',
+    name: '',
+    sex: 'm',
+    phone: '',
+    email: '',
+    address: '',
+    drivingLicenses: [],
+    polishLanguage: 'basic',
+    notes: ''
+}
+
+export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
+    place: 'Warszawa',
+    date: new Date().toLocaleDateString('en-CA'),
+    owner: 'APT, NIP 1234567890',
+    managerName: '',
+    managerEmail: '',
+    driverName: '',
+    driverIdentification: '',
+    driverEmail: '',
+    model: '',
+    registrationNumber: '',
+    vin: '',
+    milage: '',
+    remaining: '100%',
+    isElectric: false,
+    locale: 'pl',
+    send: true,
+    key: true,
+    spareKey: false,
+    registration: false,
+    roofSign: true,
+    tire: true,
+    fuelCard: true,
+    exinguisher: true,
+    triangle: true,
+    firstAidKit: true,
+    vest: true,
+    mats: true,
+    phoneHolder: false,
+    phoneCharger: false,
+    carWashCard: false,
+    visual: 'Brak uwag - pojazd czysty i sprawny'
 }

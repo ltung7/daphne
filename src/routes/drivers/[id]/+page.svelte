@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
+	import EditNotesCard from "$lib/form/EditNotesCard.svelte";
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -79,15 +80,6 @@
 				{/if}
 			</div>
 		</div>
-        <div class="card mt-3">
-			<h5 class="card-header">Notatki</h5>
-			<div class="card-body">
-				{#if driver.notes.length}
-					{driver.notes}
-				{:else}
-					<div class="font-italic text-muted text-center">- Brak notatki -</div>
-				{/if}
-			</div>
-		</div>
+        <EditNotesCard bind:notes={driver.notes} />
 	</div>
 </div>
