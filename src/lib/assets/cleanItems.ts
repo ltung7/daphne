@@ -37,7 +37,11 @@ export const cleanDriver: Driver.NewDriverData = {
     address: '',
     drivingLicenses: [],
     polishLanguage: 'basic',
-    notes: ''
+    nationality: '',
+    identificationDocumentType: 'passport',
+    identificationDocumentNumber: '',
+    notes: '',
+    additionalLanguages: {}
 }
 
 export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {

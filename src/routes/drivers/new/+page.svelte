@@ -1,5 +1,4 @@
 <script lang="ts">
-	/* eslint-disable svelte/prefer-svelte-reactivity */
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import { cleanDriver } from '$lib/assets/cleanItems';
 	import CardForm from '$lib/form/CardForm.svelte';
@@ -13,12 +12,12 @@
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import randomString from '$lib/utils/randomString';
-	import randomNumber from '$lib/utils/randomNumber';
-    import { list } from '$lib/assets/data/markets.json'
+	import { list } from '$lib/assets/data/markets.json';
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import { goto } from '$app/navigation';
-    
+	import { Faker, uk, ne, en, cs_CZ as cs, fakerPL } from '@faker-js/faker';
+	import { identificationDocumentNames } from '$lib/assets/constants';
+
 	const licenses = licensesRaw.categories.reduce(
 		(obj, item) => {
 			obj[item.code] = `${item.code}: ${item.name}`;
@@ -28,15 +27,15 @@
 	);
 
 	let driver: Driver.NewDriverData = $state({ ...cleanDriver });
-    let createdId: string | undefined = $state();
-    let createdPassword: string | undefined = $state();
-    let showCreated = $state(false)
+	let createdId: string | undefined = $state();
+	let createdPassword: string | undefined = $state();
+	let showCreated = $state(false);
 
 	const onResponse = async (response: any) => {
-        if (response.id) createdId = response.id;
-        if (response.password) createdPassword = response.password;
-        showCreated = true;
-    };
+		if (response.id) createdId = response.id;
+		if (response.password) createdPassword = response.password;
+		showCreated = true;
+	};
 
 	const onReset = () => {
 		addDrivingLicense('B');
@@ -76,40 +75,66 @@
 			return item.category !== category;
 		});
 	};
-
-    const testData = () => {
-        function randomDateString (min: number, max: number) {
-			const number = randomNumber(min, max);
-			const dt = new Date()
-			dt.setDate(number)
-			return dt.toISOString().substring(0, 10);
-		}
-        
-        driver = {
-            address: randomString(16) + ' ' + randomNumber(10, 99),
-            drivingLicenses: [ {
-                category: 'B',
-                expirationDate: randomDateString(100, 200),
-                issuingCountry: 'PL',
-                number: randomString(10)
-            } ],
-            email: randomString(10) + '@mail.pl',
-            login: randomString(10),
-            name: randomString(10) + ' ' + randomString(10),
-            phone: randomNumber(500000000, 999999999).toString(),
-            polishLanguage: 'basic',
-            sex: 'm',
-            notes: `Test ${randomNumber(10000, 99999)}`,
-            id: '',
-            taxiAuthorization: {
-                expirationDate: randomDateString(300, 600),
-                market: "WAW",
-                registryEntryNumber: randomString(10)
-            }
-        }
-    }
-
 	onMount(onReset);
+
+	const testData = () => {
+		const availableLocales = [ uk, ne, en, cs ];
+		const selectedLocale = availableLocales[Math.floor(Math.random() * availableLocales.length)];
+		const localeCode = selectedLocale.metadata?.code as string;
+		const faker = new Faker({ locale: selectedLocale });
+
+		const sex = faker.helpers.arrayElement([ 'm', 'f' ] as const);
+		const fakerSex = sex === 'm' ? 'male' : 'female';
+
+		const firstName = faker.person.firstName(fakerSex);
+		const lastName = faker.person.lastName(fakerSex);
+		const fullName = `${firstName} ${lastName}`;
+
+		const emailLocalPart = faker.internet
+			.username({ firstName, lastName })
+			.toLowerCase()
+			.replace(/[^a-z0-9]/g, '');
+		const email = `${emailLocalPart}@mail.pl`;
+
+		const address = `${fakerPL.location.streetAddress()}, ${faker.location.zipCode()}, ${fakerPL.location.city()}`;
+
+		const nationality = localeCode === 'uk' ? 'UA' : localeCode === 'ne' ? 'NP' : localeCode === 'en' ? 'GB' : localeCode === 'cs' ? 'CZ' : 'PL';
+
+		const drivingLicenseExpiry = new Date(Date.now() + (Math.random() * (365 * 2 - 365) + 365) * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+
+		const taxiExpiry = new Date(Date.now() + (Math.random() * (365 * 3 - 365) + 365) * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
+
+		driver = {
+			address,
+			drivingLicenses: [
+				{
+					category: 'B',
+					expirationDate: drivingLicenseExpiry,
+					issuingCountry: 'PL',
+					number: faker.string.alphanumeric(10).toUpperCase()
+				}
+			],
+			email,
+			login: emailLocalPart,
+			name: fullName,
+			phone: fakerPL.phone.number().replace(/\s/g, ''),
+			polishLanguage: 'basic',
+			identificationDocumentType: 'passport',
+			identificationDocumentNumber: faker.string.alphanumeric(10).toUpperCase(),
+			nationality,
+			additionalLanguages: {
+				[localeCode as string]: 'native'
+			},
+			sex,
+			notes: `Test ${faker.number.int({ min: 10000, max: 99999 })}`,
+			id: '',
+			taxiAuthorization: {
+				expirationDate: taxiExpiry,
+				market: 'WAW',
+				registryEntryNumber: faker.string.alphanumeric(10).toUpperCase()
+			}
+		};
+	};
 </script>
 
 <svelte:head>
@@ -124,20 +149,35 @@
 				<div>
 					<CustomFormText bind:value={driver.name} caption="Imię i nazwisko" />
 					<CustomFormText bind:value={driver.login} caption="Login" />
+					<CustomFormSelect caption="Rodzaj dokumentu tożsamości" bind:value={driver.identificationDocumentType} list={identificationDocumentNames} size={6} />
+					<CustomFormText bind:value={driver.identificationDocumentNumber} caption="Numer dokumentu tożsamości" />
 					<label for="sexSelect">Płeć</label>
 					<div class="d-flex small">
 						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="m" caption="Mężczyzna" class="me-5" />
 						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="f" caption="Kobieta" class="me-5" />
 						<CustomFormRadio bind:selected={driver.sex} name="sexSelect" value="o" caption="Inna" />
 					</div>
-                    <label for="sexSelect">Języl polski</label>
+					<label for="plLanguage">Język polski</label>
 					<div class="d-flex small">
 						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="basic" caption="Podstawowy" class="me-5" />
 						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="fluent" caption="Biegły" class="me-5" />
 						<CustomFormRadio bind:selected={driver.polishLanguage} name="languageSelect" value="native" caption="Ojczysty" class="me-5" />
 					</div>
+					<label for="addLanguage">Dodatkowe języki</label>
+					{#each Object.keys(driver.additionalLanguages) as language}
+						<div class="d-flex small">
+							<CustomFormRadio bind:selected={driver.additionalLanguages[language]} name="languageSelect{language}" value="fluent" caption="Biegły" class="me-5" />
+							<CustomFormRadio bind:selected={driver.additionalLanguages[language]} name="languageSelect{language}" value="native" caption="Ojczysty" class="me-5" />
+						</div>
+					{/each}
+					<div>
+						<button class="btn btn-primary btn-sm" type="button"> Dodaj język </button>
+					</div>
 				</div>
 			</section>
+		</div>
+
+		<div class="col-12 col-md-6">
 			<section class="mb-3">
 				<h5>Kontakt</h5>
 				<div>
@@ -146,9 +186,6 @@
 					<CustomFormText bind:value={driver.address} caption="Adres" />
 				</div>
 			</section>
-		</div>
-
-		<div class="col-12 col-md-6">
 			<section class="mb-3">
 				<h5>Licencje i pozwolenia</h5>
 				<div>
@@ -189,12 +226,12 @@
 	<CustomFormTextarea bind:value={driver.notes} caption="Notatka" />
 </CardForm>
 
-<ClosableModal bind:isOpen={showCreated} headerText="Kierowaca dodany" buttonCaption={createdId?.length ? "Przejdź" : false}  onClick={() => createdId && goto('/drivers/' + createdId)}>
-<div class="text-center">
-    <h5 class="text-success">Kierowaca został dodany</h5>
-    <div class="fw-bold">Wygenerowane hasło to:</div>
-    <div class="mt-3 border p-3 fs-6 text-dark">
-        {createdPassword || ""}
-    </div>
-</div>
+<ClosableModal bind:isOpen={showCreated} headerText="Kierowaca dodany" buttonCaption={createdId?.length ? 'Przejdź' : false} onClick={() => createdId && goto('/drivers/' + createdId)}>
+	<div class="text-center">
+		<h5 class="text-success">Kierowaca został dodany</h5>
+		<div class="fw-bold">Wygenerowane hasło to:</div>
+		<div class="mt-3 border p-3 fs-6 text-dark">
+			{createdPassword || ''}
+		</div>
+	</div>
 </ClosableModal>

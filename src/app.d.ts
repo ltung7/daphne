@@ -283,6 +283,18 @@ declare global {
 			issuingCountry: string;    // default 'PL', relevant for foreign drivers
 		}
 
+		/**
+		 * Identity document types legally acceptable for driver identification in Poland.
+		 * Based on the Polish Passport Documents Act (ustawa o dokumentach paszportowych)
+		 * and the Foreigners Act (ustawa o cudzoziemcach).
+		 */
+		type IdentificationDocumentType =
+			| 'polish_id_card'          // Dowód osobisty — Polish identity card
+			| 'passport'                // Paszport — Polish or foreign passport
+			| 'residence_card'          // Karta pobytu — residence card (EU / foreign national)
+			| 'temporary_residence_card' // Tymczasowa karta pobytu — temporary residence card
+			| 'travel_document';        // Document podróży — travel document issued to foreigners
+
 		interface TaxiAuthorization {
 			registryEntryNumber: string;
 			market: string;       // issuing gmina/city
@@ -292,7 +304,7 @@ declare global {
 		// --- What you actually collect when onboarding a driver ---
 
 		interface NewDriverData {
-			id: string; // PESEL, or system-generated if you don't collect it at intake
+			id: string;
 			login: string;
 			name: string;
 			sex: 'm' | 'f' | 'o';
@@ -304,11 +316,14 @@ declare global {
 
 			// Licensing
 			drivingLicenses: DrivingLicense[];
+			nationality: string; // ISO 3166-1 alpha-2, e.g. 'PL'
+			identificationDocumentType: IdentificationDocumentType;
+			identificationDocumentNumber: string;
 			taxiAuthorization?: TaxiAuthorization; // only present if driver does taxi/rideshare work
 
 			// Declared language skills (accrued stats like experience/ratings live on Driver)
 			polishLanguage: 'native' | 'fluent' | 'basic';
-			additionalLanguages?: { [language: string]: 'native' | 'fluent' };
+			additionalLanguages: { [language: string]: 'native' | 'fluent' };
 
 			notes: string; // optional intake notes
 		}

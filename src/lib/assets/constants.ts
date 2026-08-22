@@ -48,6 +48,14 @@ export const documentNames: Record<Vehicle.DocumentType, string> = {
     taximeter_legalization_certificate: 'Świadectwo legalizacji taksometru',
 }
 
+export const identificationDocumentNames: Record<Driver.IdentificationDocumentType, string> = {
+    polish_id_card: 'Dowód osobisty',
+    passport: 'Paszport',
+    residence_card: 'Karta pobytu',
+    temporary_residence_card: 'Tymczasowa karta pobytu',
+    travel_document: 'Document podróży',
+}
+
 interface DocumentCategory {
     name: string;
     fields: Vehicle.DocumentType[]

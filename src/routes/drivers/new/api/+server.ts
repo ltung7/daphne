@@ -4,6 +4,6 @@ import { addNewDriver } from "$lib/server/db/firebase/drivers.fdb";
 
 export const POST: RequestHandler = async ({ request }) => {
     const { data } = await request.json();
-    const driver = await addNewDriver(data);
-    return json({ success: true, id: driver.id, password: driver.password })
+    const { id, password } = await addNewDriver(data);
+    return json({ success: true, id, password })
 };

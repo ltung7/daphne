@@ -26,7 +26,7 @@ export const addNewDriver = async (newDriverData: Driver.NewDriverData) => {
         const existing = await getItemById(newDriverData.id, collectionName);
         if (existing) {
             await setItem(newDriverData.id, newDriverData, collectionName, true);
-            return newDriverData;
+            return { id: newDriverData.id, password: '' };
         }
     }
 
@@ -54,9 +54,7 @@ export const addNewDriver = async (newDriverData: Driver.NewDriverData) => {
     }
     // @ts-expect-error auto generated
     delete driver.id;
-    console.log({ driver, collectionName })
     const id = await addItem(driver, collectionName);
-    console.log({ id })
     if (!id) throw new Error("Error adding new driver")
     return { id, password };
 }

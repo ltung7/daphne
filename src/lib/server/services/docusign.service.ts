@@ -117,7 +117,6 @@ export async function sendEnvelope({ buffer, name, rightSigner, leftSigner, page
             envelopeDefinition,
         });
 
-        console.log("Envelope sent:", results.envelopeId);
         return results;
     } catch (err) {
         console.log(err)

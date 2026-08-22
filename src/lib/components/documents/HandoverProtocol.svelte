@@ -4,6 +4,7 @@
 	import CustomFormCheckSwitch from '$lib/form/CustomFormCheckSwitch.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
+	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import SearchBar from '$lib/misc/SearchBar.svelte';
 	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
 	import { fetchDrivers, fetchVehicles } from '$lib/nav/fetchData';
@@ -138,7 +139,13 @@
 			<CustomFormCheckSwitch caption="Ładowarka telefonu" bind:checked={handoverProtocol.phoneCharger} />
 		</div>
 		<div class="col-12 border-top pt-3">
-			<h5>4. Potwierdź adres email</h5>
+			<h5>4. STAN WIZUALNY, TECHNICZNY I UWAGI</h5>
+		</div>
+		<div class="col-12">
+			<CustomFormTextarea bind:value={handoverProtocol.visual} size={4} />
+		</div>
+		<div class="col-12 border-top pt-3">
+			<h5>5. Potwierdź adres email</h5>
 		</div>
 		<div class="col-12 col-md-6">
 			<CustomFormText caption="Adres e‑mail kierownika" bind:value={handoverProtocol.managerEmail} />
