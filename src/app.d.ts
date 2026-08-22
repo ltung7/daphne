@@ -362,6 +362,7 @@ declare global {
 
 	namespace DocumentGenerator {
 		type Locale = 'pl' | 'en' | 'uk' | 'be' | 'ne';
+		type AllLocalesTuple = [ 'pl', 'en', 'uk', 'be', 'ne' ];
 		
 		interface HandoverDocument {
 			place: string

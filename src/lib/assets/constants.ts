@@ -108,3 +108,36 @@ export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>
     technicalExpiration: 'Ważność badania technicznego',
     firstRegistrationDate: 'Data pierwszej rejestracji'
 }
+
+export const languages: Array<[string, string, string, string]> = [
+    [ 'en', 'en', 'Angielski', 'English' ],
+    [ 'hi', 'in', 'Hindi', 'हिन्दी' ],
+    [ 'cs', 'cz', 'Czeski', 'Čeština' ],
+    [ 'ne', 'ne', 'Nepalski', 'नेपाली' ],
+    [ 'hr', 'hr', 'Chorwacki', 'Hrvatski' ],
+    [ 'uk', 'ua', 'Ukraiński', 'Українська' ],
+    [ 'be', 'by', 'Białoruski', 'Беларуская' ],
+    [ 'tl', 'ph', 'Filipiński', 'Filipino' ],
+    [ 'es', 'co', 'Hiszpański', 'Español' ],
+    [ 'uz', 'uz', 'Uzbecki', 'Oʻzbekcha' ],
+    [ 'bn', 'bd', 'Bengalski', 'বাংলা' ],
+    [ 'ka', 'ge', 'Gruziński', 'ქართული' ],
+    [ 'ro', 'md', 'Rumuński', 'Română' ],
+]
+
+export const countryNames: Record<string, string> = {
+    pl: 'Polska',
+    gb: 'Wielka Brytania',
+    in: 'Indie',
+    cz: 'Czechy',
+    ne: 'Nepal',
+    hr: 'Chorwacja',
+    ua: 'Ukraina',
+    by: 'Białoruś',
+    ph: 'Filipiny',
+    co: 'Kolumbia',
+    uz: 'Uzbekistan',
+    bd: 'Bangladesz',
+    ge: 'Gruzja',
+    md: 'Mołdawia',
+};

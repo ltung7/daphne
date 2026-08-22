@@ -37,7 +37,7 @@ export const cleanDriver: Driver.NewDriverData = {
     address: '',
     drivingLicenses: [],
     polishLanguage: 'basic',
-    nationality: '',
+    nationality: 'pl',
     identificationDocumentType: 'passport',
     identificationDocumentNumber: '',
     notes: '',

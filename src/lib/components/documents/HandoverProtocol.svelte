@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { cleanHandoverProtocol } from '$lib/assets/cleanItems';
+	import { identificationDocumentNames } from '$lib/assets/constants';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import CustomFormCheckSwitch from '$lib/form/CustomFormCheckSwitch.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
+	import Flag from '$lib/misc/Flag.svelte';
 	import SearchBar from '$lib/misc/SearchBar.svelte';
 	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
 	import { fetchDrivers, fetchVehicles } from '$lib/nav/fetchData';
@@ -30,10 +32,21 @@
 	};
 
 	const updateDriver = (event: SelectEventDetail<Driver.Driver>) => {
-		const driverData = event.original;
+		setDriverData(event.original);
+	};
+
+	const setDriverData = (driverData: Driver.Driver) => {
 		handoverProtocol.driverName = driverData.name;
-		handoverProtocol.driverIdentification = 'Paszport XOA789465';
+		handoverProtocol.driverIdentification = identificationDocumentNames[driverData.identificationDocumentType] + ' ' + driverData.identificationDocumentNumber;
 		handoverProtocol.driverEmail = driverData.email;
+		if (driverData.polishLanguage === 'basic') {
+			const locales: DocumentGenerator.AllLocalesTuple = [ 'pl', 'en', 'uk', 'be', 'ne' ];
+			const foundLocale = locales.find((locale) => driverData.additionalLanguages[locale]);
+			if (foundLocale) handoverProtocol.locale = foundLocale;
+			else handoverProtocol.locale = 'en';
+		} else {
+			handoverProtocol.locale = 'pl';
+		}
 	};
 
 	onMount(async () => {
@@ -41,7 +54,7 @@
 			// !vehicle && fetchVehicles({ status: 'available' }).then(list => vehicles = list),
 			// !driver && fetchDrivers({ status: 'inactive' }).then(list => drivers = list)
 			!vehicle && fetchVehicles({}, [ 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
-			!driver && fetchDrivers({}, [ 'email', 'name', 'polishLanguage', 'additionalLanguages' ]).then((list) => (drivers = list))
+			!driver && fetchDrivers({}, [ 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list))
 		]);
 
 		if (vehicle) {
@@ -51,15 +64,13 @@
 		}
 
 		if (driver) {
-			handoverProtocol.driverName = driver.name;
-			handoverProtocol.driverIdentification = 'Paszport XOA789465';
-			handoverProtocol.driverEmail = driver.email;
+			setDriverData(driver);
 		}
 	});
 </script>
 
 <svelte:head>
-    <title>Wygeneruj protokół wydania pojazdu</title>
+	<title>Wygeneruj protokół wydania pojazdu</title>
 </svelte:head>
 
 <CardForm title="Wygeneruj protokół wydania pojazdu" item={handoverProtocol} cleanItem={cleanHandoverProtocol}>
@@ -81,6 +92,9 @@
 			<h5>1. Data i strony umowy</h5>
 		</div>
 		<div class="col-12 col-md-6">
+			<Flag country={handoverProtocol.locale} size={4} />
+		</div>
+		<div class="col-12 col-md-6">
 			<CustomFormText caption="Miejsce" bind:value={handoverProtocol.place} />
 		</div>
 		<div class="col-12 col-md-6">
@@ -90,7 +104,7 @@
 			<CustomFormText caption="Właściciel" bind:value={handoverProtocol.owner} readonly />
 		</div>
 		<div class="col-12 col-md-6">
-			<CustomFormText caption="Imię i nazwisko kierownika" bind:value={handoverProtocol.managerName} readonly />
+			<CustomFormText caption="Imię i nazwisko menadżera" bind:value={handoverProtocol.managerName} readonly />
 		</div>
 		<div class="col-12 col-md-6">
 			<CustomFormText caption="Imię i nazwisko kierowcy" bind:value={handoverProtocol.driverName} readonly />

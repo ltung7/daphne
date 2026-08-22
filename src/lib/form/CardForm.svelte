@@ -2,6 +2,8 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import { wrapLoader } from '$lib/nav/loader';
+	import type { Snippet } from 'svelte';
+	import type { ZodType } from 'zod';
 
 	interface Props {
 		item: T;
@@ -11,27 +13,72 @@
 		onResponse?: (response: any) => any;
 		onReset?: () => any;
 		testData?: () => any;
-		children: import('svelte').Snippet<[T]>;
+		schema?: ZodType<T>;
+		children: Snippet<[{
+			errors: Partial<Record<keyof T, string>>;
+			allErrors: Partial<Record<keyof T, string>>;
+			isValid: boolean;
+			touch: (field: keyof T) => void;
+		}]>;
 	}
 
-	let { item, cleanItem, title, onReset, onResponse, testData, name = 'data', children }: Props = $props();
+	let { item, cleanItem, title, onReset, onResponse, testData, name = 'data', children, schema }: Props = $props();
+
+	let touched = $state<Partial<Record<keyof T, boolean>>>({});
 
 	const resetForm = () => {
 		Object.assign(item, cleanItem);
-		onReset?.()
+		touched = {};
+		onReset?.();
 	};
 
 	const handleSubmit = async (e: Event) => {
 		if (e.preventDefault) e.preventDefault();
+		touchAll();
+		if (!isValid) {
+			console.log(errors)
+			return false;
+		}
 		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item })));
 		if (response.success) onResponse?.(response);
 	};
+
+	let errors = $derived.by((): Partial<Record<keyof T, string>> => {
+		if (!schema) return {};
+		const result = schema.safeParse(item);
+		if (result.success) return {};
+		const map: Partial<Record<keyof T, string>> = {};
+		for (const issue of result.error.issues) {
+			const key = issue.path[0] as keyof T;
+			if (!(key in map)) map[key] = issue.message;
+		}
+		return map;
+	});
+
+	let visibleErrors = $derived.by((): Partial<Record<keyof T, string>> => {
+		const out: Partial<Record<keyof T, string>> = {};
+		for (const key in errors) {
+			if (touched[key]) out[key] = errors[key];
+		}
+		return out;
+	});
+
+
+	let isValid = $derived(Object.keys(errors).length === 0);
+
+	function touch(field: keyof T) {
+		touched[field] = true;
+	}
+
+	function touchAll() {
+		for (const key of Object.keys(item) as (keyof T)[]) touched[key] = true;
+	}
 </script>
 
 <div class="card mt-3">
 	<h5 class="card-header">{title}</h5>
 	<form class="card-body" onsubmit={handleSubmit}>
-		{@render children(item)}
+		{@render children({ errors: visibleErrors, allErrors: errors, isValid, touch })}
 	</form>
 	<div class="card-footer">
 		<div class="d-flex justify-content-end">

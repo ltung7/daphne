@@ -1,7 +1,7 @@
 {
     "name": "daphne",
     "private": true,
-    "version": "0.1.4",
+    "version": "0.1.5",
     "type": "module",
     "scripts": {
         "dev": "vite dev --port 4800",
@@ -69,7 +69,8 @@
         "sveltefire": "0.4.5",
         "upload-datafiles-comp": "file:../upload-datafiles-comp",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-        "xlsx-js-style": "1.2.0"
+        "xlsx-js-style": "1.2.0",
+        "zod": "^4.4.3"
     },
     "overrides": {
         "@sveltestrap/sveltestrap": {
