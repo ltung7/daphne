@@ -3,6 +3,7 @@
 	import Flatpickr, { type HookProps } from 'svelte-flatpickr';
 	import { Modal, ModalBody, ModalFooter, ModalHeader } from '@sveltestrap/sveltestrap';
 	import UIcon from '$lib/misc/UIcon.svelte';
+	import { slide } from 'svelte/transition';
 
 	/** Props definition */
 	interface Props {
@@ -25,10 +26,11 @@
 		setMaxDate?: boolean | string;
 		/** Readonly attribute */
 		onChange?: null | ((value: string) => any);
+		error?: string;
 	}
 
 	/** Destructure incoming props – Svelte 5 runes */
-	let { name, value: dateValue = $bindable(''), setMaxDate = false, disabled = false, placeholder = 'Wybierz datę', caption = '', size = 6, class: className = '', id = 'flatpickr_' + Math.random().toString().slice(2), onChange }: Props = $props();
+	let { name, error, value: dateValue = $bindable(''), setMaxDate = false, disabled = false, placeholder = 'Wybierz datę', caption = '', size = 6, class: className = '', id = 'flatpickr_' + Math.random().toString().slice(2), onChange }: Props = $props();
 
 	/** Local state for the flatpickr calendar (bound to the same string) */
 	let isOpen = $state(false);
@@ -60,6 +62,10 @@
 		isOpen = !disabled && !isOpen;
 	};
 
+	const handleManualChange = () => {
+		onChange?.(dateValue);
+	}
+
 	function handleChange(event: CustomEvent<HookProps>) {
 		const [ selectedDates ] = event.detail;
 		if (selectedDates.length < 1) return;
@@ -85,13 +91,14 @@
 {/if}
 <!-- Input group wrapper -->
 <div class="input-group has-date-picker mb-3 {className}">
-	<input {id} {name} type="text" {placeholder} readonly={disabled} class="form-control fs-{size} text-dark" value={dateValue} onclick={toggle} autocomplete="off" />
+	<input {id} {name} type="text" {placeholder} readonly={disabled} class="form-control fs-{size} text-dark" bind:value={dateValue} onclick={toggle} autocomplete="off" onchange={handleManualChange} />
 
 	<!-- Button to open the modal picker -->
 	<button class="btn btn-secondary mb-0 flex-center" type="button" onclick={toggle}>
 		<UIcon name="calendar" />
 	</button>
 </div>
+{#if error}<div class="xsmall text-danger mt-n3 mb-3" transition:slide>{error}</div>{/if}
 
 <!-- Modal with Flatpickr -->
 {#if isOpen}

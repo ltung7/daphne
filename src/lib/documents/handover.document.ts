@@ -1,6 +1,8 @@
+import { identificationDocumentNames } from "$lib/assets/constants";
 import { sendEnvelope } from "$lib/server/services/docusign.service";
-import { getTranslations, translations } from "./handover.lang";
+import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
+import { translations } from "./handover.translations";
 
 const PAPER = {
     margins: { top: 20, left: 20, right: 20, bottom: 20 },
@@ -8,9 +10,10 @@ const PAPER = {
 }
 
 const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDocument) => {
+    const translation = await getTranslations(variables.locale);
     const buffer = await preparePdf(PAPER, (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
-        const translation = getTranslations(variables.locale);
+        
 
         helpers.title(translation.title);
         helpers.subtitle(translation.handoverSubtitle);
@@ -19,7 +22,8 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.sectionHeader(translation.section1Header);
         helpers.twoColLabeledLines(translation.place, translation.date, { valueA: variables.place, valueB: variables.date });
         helpers.labeledLine(translation.manager + ':', { value: variables.owner + ', ' + variables.managerName });
-        helpers.labeledLine(translation.driver + ":", { value: variables.driverName +', ' + variables.driverIdentification });
+        const idType = identificationDocumentNames[variables.identificationDocumentType as Driver.IdentificationDocumentType];
+        helpers.labeledLine(translation.driver + ":", { value: variables.driverName +', ' + idType + ' ' + variables.identificationDocumentNumber });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section2Header);
@@ -61,7 +65,7 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         if (!variables.locale || variables.locale === 'pl') {
             helpers.numberedClauses(translations.pl.handoverClauses)
         } else {
-            const clauseLocale = translations[variables.locale] ?? translations.en;
+            const clauseLocale = translation._foreign!;
             helpers.twoColNumberedClauses(translations.pl.handoverClauses, clauseLocale.handoverClauses)
         }
 

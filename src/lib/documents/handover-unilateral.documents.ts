@@ -1,4 +1,4 @@
-import { translations } from "./handover.lang";
+import { translations } from "./handover.translations";
 import { PdfHelpers, preparePdf } from "./pdf";
 
 const PAPER = {

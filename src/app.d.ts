@@ -362,8 +362,8 @@ declare global {
 
 	namespace DocumentGenerator {
 		type Locale = 'pl' | 'en' | 'uk' | 'be' | 'ne';
-		type AllLocalesTuple = [ 'pl', 'en', 'uk', 'be', 'ne' ];
-		
+		type AllLocalesTuple = ['pl', 'en', 'uk', 'be', 'ne'];
+
 		interface HandoverDocument {
 			place: string
 			date: string
@@ -372,7 +372,8 @@ declare global {
 			managerEmail: string;
 			driverName: string;
 			driverEmail: string;
-			driverIdentification: string;
+			identificationDocumentType: IdentificationDocumentType;
+			identificationDocumentNumber: string;
 			model: string
 			registrationNumber: string
 			vin: string
@@ -380,7 +381,7 @@ declare global {
 			remaining: string
 			visual: string
 			isElectric: boolean
-			locale?: DocumentGenerator.Locale
+			locale: DocumentGenerator.Locale
 			send?: boolean;
 			key: boolean
 			spareKey: boolean
@@ -396,6 +397,54 @@ declare global {
 			phoneHolder: boolean
 			phoneCharger: boolean
 			carWashCard: boolean
+		}
+
+		interface HandoverDocumentTranslations {
+			title: string
+			handoverSubtitle: string
+			returnSubtitle: string
+			unilateralSubtitle: string
+			recoveryLocation: string
+			witness: string
+			reasonForRecovery: string
+			section1Header: string
+			place: string
+			date: string
+			manager: string
+			retriever: string
+			driver: string
+			section2Header: string
+			model: string
+			plate: string
+			mileage: string
+			fuel: string
+			battery: string
+			section3Header: string
+			equipmentKey: string
+			equipmentSpareKey: string
+			equipmentRegistration: string
+			equipmentRoofSign: string
+			equipmentTire: string
+			equipmentFuelCard: string
+			equipmentCarWashCard: string
+			equipmentExtinguisher: string
+			equipmentTriangle: string
+			equipmentVest: string
+			equipmentFirstAidKit: string
+			equipmentMats: string
+			equipmentPhoneHolder: string
+			equipmentPhoneCharger: string
+			section4Header: string
+			section4Paragraph: string
+			section5Header: string
+			handoverClauses: string[]
+			returnClauses: string[]
+			unilateralClauses: string[]
+			signatureDriver: string
+			signatureManager: string
+			signatureWitness: string
+			signatureRetriever: string
+			_foreign?: HandoverDocumentTranslations
 		}
 	}
 

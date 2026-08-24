@@ -28,6 +28,13 @@
 		onchange?.(value);
 	}
 
+	$effect(() => {
+		if (value && value !== current[0]) {
+			const found = languages.find(item => item[0] === value);
+			if (found) current = found;
+		}
+	})
+
 	onMount(() => {
 		if (value && value !== current[0]) {
 			const found = languages.find(item => item[0] === value);

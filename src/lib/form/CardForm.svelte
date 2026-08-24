@@ -14,15 +14,21 @@
 		onReset?: () => any;
 		testData?: () => any;
 		schema?: ZodType<T>;
-		children: Snippet<[{
-			errors: Partial<Record<keyof T, string>>;
-			allErrors: Partial<Record<keyof T, string>>;
-			isValid: boolean;
-			touch: (field: keyof T) => void;
-		}]>;
+		footer?: Snippet;
+		submitSnippet?: Snippet<[{ isValid: boolean, errors: Partial<Record<keyof T, string>>; touchAll: () => void }]>;
+		children: Snippet<
+			[
+				{
+					errors: Partial<Record<keyof T, string>>;
+					allErrors: Partial<Record<keyof T, string>>;
+					isValid: boolean;
+					touch: (field: keyof T) => void;
+				}
+			]
+		>;
 	}
 
-	let { item, cleanItem, title, onReset, onResponse, testData, name = 'data', children, schema }: Props = $props();
+	let { item, cleanItem, title, onReset, submitSnippet, onResponse, testData, name = 'data', children, schema, footer }: Props = $props();
 
 	let touched = $state<Partial<Record<keyof T, boolean>>>({});
 
@@ -36,7 +42,6 @@
 		if (e.preventDefault) e.preventDefault();
 		touchAll();
 		if (!isValid) {
-			console.log(errors)
 			return false;
 		}
 		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item })));
@@ -63,7 +68,6 @@
 		return out;
 	});
 
-
 	let isValid = $derived(Object.keys(errors).length === 0);
 
 	function touch(field: keyof T) {
@@ -82,11 +86,18 @@
 	</form>
 	<div class="card-footer">
 		<div class="d-flex justify-content-end">
+			{#if footer}
+				{@render footer()}
+			{/if}
 			{#if testData}
 				<IconButton icon="undo" caption="Testowe dane" onclick={testData} color="dark" size={6} class="me-2 mb-0" />
 			{/if}
 			<IconButton icon="undo" caption="Resetuj" outline onclick={resetForm} color="dark" size={6} />
-			<IconButton icon="disk" caption="Zapisz" onclick={handleSubmit} size={6} class="ms-2 mb-0" />
+			{#if submitSnippet}
+				{@render submitSnippet({ isValid, errors, touchAll })}
+			{:else}
+				<IconButton icon="disk" caption="Zapisz" onclick={handleSubmit} size={6} class="ms-2 mb-0" />
+			{/if}
 		</div>
 	</div>
 </div>

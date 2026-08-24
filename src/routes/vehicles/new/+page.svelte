@@ -9,6 +9,8 @@
 	import CustomFormSelect from '$lib/form/CustomFormSelect.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
+	import AztecDecoderModal from '$lib/misc/AztecDecoderModal.svelte';
+	import IconButton from '$lib/misc/IconButton.svelte';
 	import { fetchVehicleTypes } from '$lib/nav/fetchData';
 	import randomNumber from '$lib/utils/randomNumber';
 	import randomString from '$lib/utils/randomString';
@@ -16,6 +18,7 @@
 
 	let typeSelect: Record<string, string> = $state({});
 	let vehicle: Vehicle.NewVehicleData = $state({ ...cleanVehicle });
+	let aztecOpen: boolean = $state(false);
 
 	const handleTypeChange = (typeId: string) => {
 		vehicle.name = typeSelect[typeId];
@@ -24,18 +27,18 @@
 
 	const onResponse = (response: any) => {
 		if (response.id) goto('/vehicles/' + response.id);
-	}
+	};
 
 	const testData = () => {
-		function randomDateString (min: number, max: number) {
+		function randomDateString(min: number, max: number) {
 			const number = randomNumber(min, max);
-			const dt = new Date()
-			dt.setDate(number)
+			const dt = new Date();
+			dt.setDate(number);
 			return dt.toISOString().substring(0, 10);
 		}
 
 		vehicle = {
-			...vehicle, 
+			...vehicle,
 			mileage: randomNumber(100, 50000),
 			firstRegistrationDate: randomDateString(-100, -300),
 			insuranceExpiration: randomDateString(20, 150),
@@ -43,7 +46,13 @@
 			registrationNumber: [ randomString(2), randomNumber(100, 999), randomString(2) ].join('').toUpperCase(),
 			vin: randomString(17).toUpperCase(),
 			notes: `Test ${randomNumber(10000, 99999)}`
-		}
+		};
+	};
+
+	const handleSelect = ({ vehicle: newVehicle, type }: { vehicle: Vehicle.Vehicle, type: Vehicle.Type }) => {
+		Object.assign(vehicle, newVehicle);
+		if (!typeSelect[type.id]) typeSelect[type.id]  = type.name;
+		vehicle.typeId = type.id;
 	}
 
 	onMount(async () => {
@@ -62,7 +71,7 @@
 		} else {
 			vehicle.typeId = types[0].id;
 		}
-		handleTypeChange(vehicle.typeId)
+		handleTypeChange(vehicle.typeId);
 	});
 </script>
 
@@ -85,4 +94,18 @@
 		</div>
 	</div>
 	<CustomFormTextarea bind:value={vehicle.notes} caption="Notatka" />
+	{#snippet footer()}
+		<IconButton
+			icon="scanner-gun"
+			caption="Skanuj dowód rejestracyjny"
+			onclick={() => {
+				aztecOpen = !aztecOpen;
+			}}
+			color="info"
+			size={6}
+			class="me-2 mb-0"
+		/>
+	{/snippet}
 </CardForm>
+
+<AztecDecoderModal bind:isOpen={aztecOpen} onselect={handleSelect} />

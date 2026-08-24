@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
+	import { slide } from 'svelte/transition';
 
     interface Props {
         name?: string;
@@ -12,6 +13,8 @@
         readonly?: boolean;
         onInput?: () => void;
         onChange?: () => void;
+        error?: string;
+		onblur?: () => void;
     }
 
     let {
@@ -24,12 +27,17 @@
         id = $bindable(undefined),
         readonly = false,
         onInput,
-        onChange
+        onChange,
+        error,
+        onblur
     }: Props = $props();
 
     let isFocused = $state(false);
-    const onFocus =()=>isFocused=true;
-	const onBlur =()=>isFocused=false;
+    const onFocus = () => isFocused = true;
+	const onBlur = () => {
+        isFocused = false;
+        onblur?.()
+    };
 
     if (!id) {
         if (name.length === 0) {
@@ -47,4 +55,5 @@
         <label for={id} class="form-label small" class:is-focused={isFocused}>{caption}</label>
     {/if}
     <textarea bind:value class="form-control" rows={size} {id} {name} onfocus={onFocus} onblur={onBlur} autocomplete={noauto ? 'off' : ''} {readonly} oninput={onInput} onchange={onChange}></textarea>
+    {#if error}<div class="xsmall text-danger" transition:slide>{error}</div>{/if}
 </div>

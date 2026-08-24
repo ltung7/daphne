@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import c from './common.zod'
 
 const drivingLicenseCategorySchema = z.enum([
     'AM', 'A1', 'A2', 'A',
@@ -69,14 +70,7 @@ export const newDriverDataSchema = z
             .string()
             .min(6, { error: 'Login musi mieć co najmniej 6 znaków' })
             .regex(/^[a-zA-Z0-9]+$/, { error: 'Login może zawierać tylko litery i cyfry' }),
-        name: z
-            .string()
-            .trim()
-            .min(3, { error: 'Imię i nazwisko jest za krótkie' })
-            .refine(
-                (val) => val.split(/\s+/).length >= 2,
-                { error: 'Wymagane jest podanie co najmniej imienia i nazwiska' }
-            ),
+        name: c.firstAndLastName(),
         sex: z.enum([ 'm', 'f', 'o' ]),
 
         // Dane kontaktowe (użycie top-level validatorów Zod 4)

@@ -1,5 +1,7 @@
-import { getTranslations, translations } from "./handover.lang";
+import { identificationDocumentNames } from "$lib/assets/constants";
+import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
+import { translations } from "./handover.translations";
 
 const PAPER = {
     margins: { top: 20, left: 20, right: 20, bottom: 20 },
@@ -7,9 +9,9 @@ const PAPER = {
 }
 
 const generateHandoverReturnDocument = async (variables: DocumentGenerator.HandoverDocument, locale?: DocumentGenerator.Locale) => {
+    const translation = await getTranslations(locale);
     return preparePdf(PAPER, (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
-        const translation = getTranslations(locale);
 
         helpers.title(translation.title);
         helpers.subtitle(translation.returnSubtitle);
@@ -18,7 +20,8 @@ const generateHandoverReturnDocument = async (variables: DocumentGenerator.Hando
         helpers.sectionHeader(translation.section1Header);
         helpers.twoColLabeledLines(translation.place, translation.date, { valueA: variables.place, valueB: variables.date });
         helpers.labeledLine(translation.manager + ':', { value: variables.owner + ', ' + variables.managerName });
-        helpers.labeledLine(translation.driver + ":", { value: variables.driverName +', ' + variables.driverIdentification });
+        const idType = identificationDocumentNames[variables.identificationDocumentType as Driver.IdentificationDocumentType];
+        helpers.labeledLine(translation.driver + ":", { value: variables.driverName + ', ' + idType + ' ' + variables.identificationDocumentNumber });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section2Header);
@@ -60,7 +63,7 @@ const generateHandoverReturnDocument = async (variables: DocumentGenerator.Hando
         if (!locale || locale === 'pl') {
             helpers.numberedClauses(translations.pl.returnClauses)
         } else {
-            const clauseLocale = translations[locale] ?? translations.en;
+            const clauseLocale = translation._foreign!;
             helpers.twoColNumberedClauses(translations.pl.returnClauses, clauseLocale.returnClauses)
         }
 

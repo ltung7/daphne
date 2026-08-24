@@ -18,7 +18,7 @@
 	import { identificationDocumentNames, languages } from '$lib/assets/constants';
 	import CustomFormLanguage from '$lib/form/CustomFormLanguage.svelte';
 	import AbsoluteRemoveButton from '$lib/misc/AbsoluteRemoveButton.svelte';
-	import { newDriverDataSchema } from '$lib/assets/zodschemas/newdriver.schema';
+	import { newDriverDataSchema } from '$lib/assets/zodschemas/newdriver.zod';
 	import randomNumber from '$lib/utils/randomNumber';
 	import CustomFormCountry from '$lib/form/CustomFormCountry.svelte';
 
