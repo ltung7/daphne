@@ -22,7 +22,7 @@
 	let result: VehicleDocumentResult | undefined = $state();
 	let processed: boolean = $state(false);
 	let fileExists: boolean = $state(false);
-	let isUnidentified: boolean = $state(true);
+	let isUnidentified: boolean = $state(false);
 	let selectedType: string | undefined = $state();
 	let uploadable: boolean = $derived((processed && !fileExists) || (isUnidentified && Boolean(selectedType)));
 

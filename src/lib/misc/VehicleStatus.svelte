@@ -2,10 +2,8 @@
 	import { Tooltip } from '@sveltestrap/sveltestrap';
 	import UIcon from "./UIcon.svelte";
 
-	type Status = 'available' | 'assigned' | 'broken' | 'unmovable' | 'under_maintenance' | 'retired' | 'precheck';
-
 	interface Props {
-		status: Status;
+		status: Vehicle.Status;
 		size?: number;
 	}
 
@@ -18,7 +16,7 @@
 		color: string;
 	}
 
-	const statusMap: Record<Status, StatusConfig> = {
+	const statusMap: Record<Vehicle.Status, StatusConfig> = {
 		available: {
 			icon: 'check-circle',
 			caption: 'Dostępny',
@@ -50,7 +48,7 @@
 			color: '#f59e0b'
 		},
 		retired: {
-			icon: 'box-archive',
+			icon: 'archive',
 			caption: 'Wycofany',
 			text: 'Pojazd został trwale wycofany z eksploatacji.',
 			color: '#6b7280'

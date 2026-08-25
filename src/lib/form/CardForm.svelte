@@ -2,7 +2,7 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import { wrapLoader } from '$lib/nav/loader';
-	import type { Snippet } from 'svelte';
+	import { tick, type Snippet } from 'svelte';
 	import type { ZodType } from 'zod';
 
 	interface Props {
@@ -13,6 +13,7 @@
 		onResponse?: (response: any) => any;
 		onReset?: () => any;
 		testData?: () => any;
+		beforeSubmit?: (obj: T) => Partial<T>;
 		schema?: ZodType<T>;
 		footer?: Snippet;
 		submitSnippet?: Snippet<[{ isValid: boolean, errors: Partial<Record<keyof T, string>>; touchAll: () => void }]>;
@@ -28,7 +29,7 @@
 		>;
 	}
 
-	let { item, cleanItem, title, onReset, submitSnippet, onResponse, testData, name = 'data', children, schema, footer }: Props = $props();
+	let { item, cleanItem, title, onReset, submitSnippet, onResponse, beforeSubmit, testData, name = 'data', children, schema, footer }: Props = $props();
 
 	let touched = $state<Partial<Record<keyof T, boolean>>>({});
 
@@ -41,6 +42,12 @@
 	const handleSubmit = async (e: Event) => {
 		if (e.preventDefault) e.preventDefault();
 		touchAll();
+		if (beforeSubmit) {
+			const newValues = beforeSubmit(item);
+			Object.assign(item, newValues)
+		}
+		await tick();
+		
 		if (!isValid) {
 			return false;
 		}

@@ -9,11 +9,12 @@
 		onchange?: (locale: string) => void;
 		value?: string;
 		class?: string;
+		readonly?: boolean;
 	}
 
 	type LocaleTuple = [ string, string, string, string ];
 
-	let { onchange, value = $bindable('en'), class: className = 'w-100' }: Props = $props()
+	let { onchange, value = $bindable('en'), class: className = 'w-100', readonly = false }: Props = $props()
 
 	let isOpen = $state(false);
 	let current: LocaleTuple = $state(languages[0])
@@ -45,7 +46,7 @@
 </script>
 
 <Dropdown {isOpen} {toggle}>
-	<DropdownToggle class="d-flex align-items-center gap-2 flex-between p-1 {className}" color="dark" outline size="sm">
+	<DropdownToggle class="d-flex align-items-center gap-2 flex-between p-1 {readonly ? "disabled " : ''}{className}" color="dark" outline size="sm" disabled={readonly}>
 		<Flag country={current[1]} size={3} />
 		<span class="text-uppercase">{current[2]} / {current[3]}</span>
 		<UIcon name="caret-circle-down" />

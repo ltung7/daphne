@@ -4,11 +4,12 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { fetchDrivers } from '$lib/nav/fetchData';
 	import { formatCurrency } from '$lib/utils/numberFormatter';
+	import DriverStatus from '$lib/misc/DriverStatus.svelte';
 
 	let drivers: Driver.Driver[] = $state([]);
 	let loaded = $state(false);
 
-	const loadTypes = () => {
+	const loadDrivers = () => {
 		fetchDrivers().then((list) => (drivers = list));
 	};
 
@@ -21,7 +22,7 @@
 		[ 'notes', 'Notatki' ]
 	];
 
-	onMount(loadTypes);
+	onMount(loadDrivers);
 </script>
 
 <svelte:head>
@@ -42,7 +43,7 @@
 					<TooltipSquareIconLink icon="link" hoverText="Pokaż szczegóły" href="/drivers/{row.id}" size={5} />
 				</td>
 				<td>{row.login}</td>
-				<td>{row.status}</td>
+				<td><DriverStatus status={row.status} /></td>
 				<td>{row.name}</td>
 				<td>{formatCurrency(row.balance)}</td>
                 <td><a href="tel:{row.phone}">{row.phone}</a></td>

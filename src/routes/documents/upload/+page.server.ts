@@ -1,9 +1,7 @@
 import type { Actions } from './$types';
 import type { VehicleDocumentResult } from '$lib/datafiles/vehicle';
-import { uploadContents } from '$lib/server/services/storage.service';
-import { setVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.fdb';
-import { createHash } from 'crypto';
 import { extname } from 'path';
+import { uploadVehicleDocument } from '$lib/server/services/uploadVehicleDocument.service';
 
 export const actions: Actions = {
     default: async ({ request }) => {
@@ -17,21 +15,15 @@ export const actions: Actions = {
 
         const arr = await file.arrayBuffer();
         const buffer = Buffer.from(arr);
-        const hash = createHash('md5').update(buffer).digest('hex');
-        const extension = extname(file.name);
-        const filename = `v/${data.vehicle}/${hash}${extension}`;
-        const url = await uploadContents(new Uint8Array(arr), filename);
+        const extension = extname(file.name).slice(1);
 
-        const doc: Partial<Vehicle.VehicleDocument> = {
-            timestamp: Date.now(),
+        const doc = await uploadVehicleDocument({
+            buffer,
+            extension,
             name: data.name,
             registrationNumber: data.vehicle,
             type: data.type,
-            uploader: '',
-            url
-        }
-        await setVehicleDocuments(hash, doc)
-        doc.id = hash;
+        })
 
         return { success: true, doc }
     }

@@ -15,16 +15,16 @@ export const slackError = async (promise : Promise<any>) => {
 }
 
 export const slackErrorMessage = (error: ExplicitAnyToExtend) => {
-    if (error?.message) slackMessage('Sybil error: ' + error.message);
-    if (typeof error === 'string') slackMessage('Sybil error: ' + error);
-    slackMessage('Sybil error: ' + JSON.stringify(error));
+    if (error?.message) slackMessage('Daphne error: ' + error.message);
+    if (typeof error === 'string') slackMessage('Daphne error: ' + error);
+    slackMessage('Daphne error: ' + JSON.stringify(error));
 }
 
 export const slackMessage = async (message : string) => {
     if (!message || message.length === 0) return false;
     try {
         const hook = getHook();
-        return axios.post(hook, { text: '[TS] ' + message.toString() }).then(response => response.data).catch(dumpAxiosError);
+        return axios.post(hook, { text: '[DA] ' + message.toString() }).then(response => response.data).catch(dumpAxiosError);
     } catch (err: unknown) { console.error('SLACK ERROR: ' + err) };
 }
 

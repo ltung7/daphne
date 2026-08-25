@@ -1197,7 +1197,7 @@ label.d-flex.w-100 > .ms-2.flex-center {
 	content: '\e430';
 }
 
-input.form-control:read-only {
-	background-color: var(--bs-light);
-	cursor: 'not-allowed'
+input.form-control:read-only, textarea.form-control:read-only {
+	background-color: var(--bs-gray-100);
+	cursor: not-allowed
 }

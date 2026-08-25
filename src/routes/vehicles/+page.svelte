@@ -16,7 +16,7 @@
 		[ 'registrationNumber', 'Numer rejestracyjny' ],
 		[ 'name', 'Nazwa' ],
 		[ 'status', 'Status' ],
-		[ 'assignedDriver', 'Kierowca' ],
+		[ 'assignedDriverName', 'Kierowca' ],
 		[ 'fuelCardId', 'Karta paliwowa' ],
 		[ 'firstRegistrationDate', 'Data pierwszej rejestracji' ],
 		[ 'notes', 'Notatki' ]
@@ -47,7 +47,7 @@
 				<td class="py-1">
 					<VehicleStatus status={row.status} />
 				</td>
-				<td>{row.assignedDriver}</td>
+				<td>{row.assignedDriverName}</td>
 				<td>{row.fuelCardId}</td>
 				<td>{row.firstRegistrationDate}</td>
 				<td>{row.notes}</td>

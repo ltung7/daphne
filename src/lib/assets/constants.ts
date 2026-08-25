@@ -46,6 +46,10 @@ export const documentNames: Record<Vehicle.DocumentType, string> = {
     telematics_installation_certificate: 'Zaświadczenie o montażu telematyki',
     fuel_card_agreement: 'Umowa o kartę paliwową',
     taximeter_legalization_certificate: 'Świadectwo legalizacji taksometru',
+
+    vehicle_handover_document: "Protokół wydania pojazdu",
+    vehicle_handover_return_document: 'Protokół zwrotu pojazdu',
+    vehicle_handover_unilateral_document: 'Protokół jednostronnego odbioru pojazdu'
 }
 
 export const identificationDocumentNames: Record<Driver.IdentificationDocumentType, string> = {
@@ -130,7 +134,7 @@ export const countryNames: Record<string, string> = {
     gb: 'Wielka Brytania',
     in: 'Indie',
     cz: 'Czechy',
-    ne: 'Nepal',
+    np: 'Nepal',
     hr: 'Chorwacja',
     ua: 'Ukraina',
     by: 'Białoruś',

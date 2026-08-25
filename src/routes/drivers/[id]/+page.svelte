@@ -2,6 +2,7 @@
 	import { untrack } from "svelte";
 	import type { PageProps } from "./$types";
 	import EditNotesCard from "$lib/form/EditNotesCard.svelte";
+	import { formatTimezone } from "$lib/utils/tz";
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -74,9 +75,15 @@
 			<h5 class="card-header">Pojazd</h5>
 			<div class="card-body">
 				{#if driver.assignedVehicle}
-					Przypisano {driver.assignedVehicle.registrationNumber}
+					<a class="flex-center flex-column" href="/vehicles/{driver.assignedVehicle.registrationNumber}">
+						{#if driver.assignedVehicle.imageUrl}
+						<img src={driver.assignedVehicle.imageUrl} alt={driver.assignedVehicle.model} style="max-height: 200px;">
+						{/if}
+						<h6>{driver.assignedVehicle.registrationNumber}</h6>
+						<div class="text-muted small">Od {formatTimezone(driver.assignedVehicle.timestamp)}</div>
+					</a>
 				{:else}
-					Nie przypisano żadnego kierowcy
+					Nie przypisano żadnego pojazdu
 				{/if}
 			</div>
 		</div>

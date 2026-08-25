@@ -65,7 +65,7 @@ const polishMobilePhoneSchema = z
 
 export const newDriverDataSchema = z
     .object({
-        // id: z.string().min(1, { error: 'Identyfikator jest wymagany' }),
+        id: z.string(),
         login: z
             .string()
             .min(6, { error: 'Login musi mieć co najmniej 6 znaków' })
@@ -78,6 +78,7 @@ export const newDriverDataSchema = z
         email: z.email({ error: 'Nieprawidłowy adres e-mail' }),
         address: z.string().min(1, { error: 'Adres jest wymagany' }),
 
+        nationality: z.string().length(2),
         // Uprawnienia i dokumenty
         drivingLicenses: z
             .array(drivingLicenseSchema),

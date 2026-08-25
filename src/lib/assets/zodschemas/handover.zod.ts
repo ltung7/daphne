@@ -13,6 +13,7 @@ export const handoverDocumentSchema = z.object({
 
     // Driver details
     driverName: c.firstAndLastName(),
+    driverId: c.nonEmptyString('driverId'),
     driverEmail: z.email('Niepoprawny format adresu email kierowcy'),
 
     // Identification document
@@ -36,9 +37,6 @@ export const handoverDocumentSchema = z.object({
     locale: z.custom<DocumentGenerator.Locale>((val) => typeof val === 'string' && val.length > 0, {
         message: 'Język dokumentu jest wymagany',
     }),
-
-    // Optional boolean
-    send: z.boolean().optional(),
 
     // Equipment booleans
     key: z.boolean(),

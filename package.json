@@ -1,7 +1,7 @@
 {
     "name": "daphne",
     "private": true,
-    "version": "0.1.5",
+    "version": "0.1.6",
     "type": "module",
     "scripts": {
         "dev": "vite dev --port 4800",
@@ -66,6 +66,7 @@
         "svelte-paginate": "0.1.0",
         "svelte-typeahead": "5.0.2",
         "sveltefire": "0.4.5",
+        "transliteration": "^2.6.1",
         "upload-datafiles-comp": "file:../upload-datafiles-comp",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
         "xlsx-js-style": "1.2.0",

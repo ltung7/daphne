@@ -1,7 +1,7 @@
 import { DRIVER_STATUS } from "$lib/assets/enums";
 import hash from "$lib/server/secure/hash";
 import randomString from "$lib/utils/randomString";
-import { setItem, getItemById, getItems, addItem, countItems } from "./firebase";
+import { setItem, getItemById, getItems, addItem, countItems, updateItem } from "./firebase";
 
 const collectionName: string = 'vehicleDriver';
 
@@ -11,6 +11,10 @@ export const setDriver = async (id: string, data: Partial<Driver.Driver>) => {
 
 export const getDriver = async <T=Driver.Driver> (id: string): Promise<T|null> => {
     return getItemById(id, collectionName);
+}
+
+export const updateDriver = async (id: string, data: Partial<Driver.Driver>) => {
+    return updateItem(id, data, collectionName);
 }
 
 export const findDrivers = async <T=Driver.Driver> (query: App.FirebaseItemsQuery<keyof Driver.Driver> = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {

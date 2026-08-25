@@ -21,6 +21,7 @@
 	import { newDriverDataSchema } from '$lib/assets/zodschemas/newdriver.zod';
 	import randomNumber from '$lib/utils/randomNumber';
 	import CustomFormCountry from '$lib/form/CustomFormCountry.svelte';
+	import { transliterate } from 'transliteration';
 
 	const licenses = licensesRaw.categories.reduce(
 		(obj, item) => {
@@ -116,10 +117,19 @@
 
 	onMount(onReset);
 
+	const beforeSubmit = (driver: Driver.NewDriverData): Partial<Driver.NewDriverData> => {
+		const tl: Array<keyof Driver.NewDriverData> = [ 'name' ];
+		return tl.reduce((obj, field) => {
+			// @ts-expect-error Type too wide
+			obj[field] = transliterate(driver[field]);
+			return obj;
+		}, {} as Partial<Driver.NewDriverData>)
+	}
+
 	const testData = () => {
 		const availableLocales = [ uk, ne, en, cs ];
 		const selectedLocale = availableLocales[Math.floor(Math.random() * availableLocales.length)];
-		const localeCode = selectedLocale.metadata?.code as string;
+		const localeCode = (selectedLocale.metadata?.code as string).slice(0, 2);
 		const faker = new Faker({ locale: selectedLocale });
 
 		const sex = faker.helpers.arrayElement([ 'm', 'f' ] as const);
@@ -129,16 +139,16 @@
 		const lastName = faker.person.lastName(fakerSex);
 		const fullName = `${firstName} ${lastName}`;
 
-		const emailLocalPart = faker.internet
-			.username({ firstName, lastName })
-			.toLowerCase()
-			.replace(/[^a-z0-9]/g, '');
+		const emailLocalPart = transliterate([ firstName, lastName, randomNumber(10, 999) ].join('')).toLowerCase();
 		const email = `${emailLocalPart}@mail.pl`;
 		const address = `${fakerPL.location.streetAddress()}, ${faker.location.zipCode()}, ${fakerPL.location.city()}`;
-		const nationality = localeCode === 'uk' ? 'UA' : localeCode === 'ne' ? 'NP' : localeCode === 'en' ? 'GB' : localeCode === 'cs' ? 'CZ' : 'PL';
+		const nationality = localeCode === 'uk' ? 'ua' : localeCode === 'ne' ? 'np' : localeCode === 'en' ? 'gb' : localeCode === 'cs' ? 'cz' : 'pl';
 		const drivingLicenseExpiry = new Date(Date.now() + (Math.random() * (365 * 2 - 365) + 365) * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
 		const taxiExpiry = new Date(Date.now() + (Math.random() * (365 * 3 - 365) + 365) * 24 * 60 * 60 * 1000).toISOString().substring(0, 10);
 		const phone = faker.helpers.arrayElement([ 45, 50, 51, 60, 66, 69, 72, 79, 88 ]).toString() + randomNumber(1000000, 9999999);
+
+		const additionalLanguages: Record<string, 'native'> = {}
+		if (localeCode !== 'pl') additionalLanguages[localeCode] = 'native';
 
 		driver = {
 			address,
@@ -158,9 +168,7 @@
 			identificationDocumentType: 'passport',
 			identificationDocumentNumber: faker.string.alphanumeric(10).toUpperCase(),
 			nationality,
-			additionalLanguages: {
-				[localeCode as string]: 'native'
-			},
+			additionalLanguages,
 			sex,
 			notes: `Test ${faker.number.int({ min: 10000, max: 99999 })}`,
 			id: '',
@@ -177,7 +185,7 @@
 	<title>Nowy kierowca</title>
 </svelte:head>
 
-<CardForm title="Nowy kierowca" item={driver} cleanItem={cleanDriver} {onResponse} {onReset} {testData} schema={newDriverDataSchema}>
+<CardForm title="Nowy kierowca" item={driver} cleanItem={cleanDriver} {onResponse} {onReset} {testData} {beforeSubmit} schema={newDriverDataSchema}>
 	{#snippet children({ errors, touch })}
 		<div class="row">
 			<div class="col-12 col-md-6">

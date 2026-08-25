@@ -113,7 +113,8 @@ declare global {
 
 			// Current State
 			status: Status; // available | assigned | broken | unmovable | etc.
-			assignedDriver?: string; // Driver ID if currently assigned
+			assignedDriverName?: string; // Driver name if currently assigned
+			assignedDriverId?: string; // Driver ID if currently assigned
 			fuelConsumption?: number; // L/100km avg for this vehicle
 			taxiRegistration?: number;
 
@@ -181,6 +182,11 @@ declare global {
 			| 'fuel_card_agreement'
 			| 'taximeter_legalization_certificate'
 
+			// VehicleManagement
+			| 'vehicle_handover_document'
+			| 'vehicle_handover_return_document'
+			| 'vehicle_handover_unilateral_document'
+
 		interface VehicleDocument {
 			id: string;
 			timestamp: number;              // epoch ms, upload time
@@ -189,6 +195,16 @@ declare global {
 			registrationNumber: string;      // links to Vehicle
 			name: string;
 			url: string;
+		}
+
+		type HandoverDocumentType = 'assign' | 'return' | 'unilateral';
+
+		interface VehicleAssignmentData {
+			registrationNumber: string;
+			driverId: string;
+			handoverId: string;
+			timestamp: number;
+			type: 'assign' | 'return' | 'unilateral'
 		}
 	}
 
@@ -258,7 +274,7 @@ declare global {
 	}
 
 	namespace Driver {
-		type DriverStatusType =
+		type Status =
 			| 'pending_verification'
 			| 'rejected'
 			| 'active'
@@ -352,11 +368,11 @@ declare global {
 			assignedVehicle: false | {
 				registrationNumber: string; // Polish registration number
 				model: string;              // e.g., "Toyota Yaris"
-				imageUrl: string;           // URL to vehicle image
-				date: string;
+				imageUrl?: string;           // URL to vehicle image
+				timestamp: number;
 			}
 
-			status: DriverStatusType; // Must match enum defined elsewhere
+			status: Status; // Must match enum defined elsewhere
 		}
 	}
 
@@ -372,6 +388,7 @@ declare global {
 			managerEmail: string;
 			driverName: string;
 			driverEmail: string;
+			driverId: string;
 			identificationDocumentType: IdentificationDocumentType;
 			identificationDocumentNumber: string;
 			model: string
@@ -382,7 +399,6 @@ declare global {
 			visual: string
 			isElectric: boolean
 			locale: DocumentGenerator.Locale
-			send?: boolean;
 			key: boolean
 			spareKey: boolean
 			registration: boolean
@@ -397,6 +413,19 @@ declare global {
 			phoneHolder: boolean
 			phoneCharger: boolean
 			carWashCard: boolean
+		}
+
+		interface HandoverDocumentRecord extends HandoverDocument {
+			id: string;
+			timestamp: number;
+			manualClose: boolean;
+			type: Vehicle.HandoverDocumentType;
+			docusignId?: string;
+			docusignSent?: number;
+			docusignSigned?: number;
+			printed?: number;
+			closed: false | number;
+			url?: string;
 		}
 
 		interface HandoverDocumentTranslations {

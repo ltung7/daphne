@@ -1,15 +1,16 @@
 import { identificationDocumentNames } from "$lib/assets/constants";
-import { sendEnvelope } from "$lib/server/services/docusign.service";
+import { sendEnvelope } from "$lib/server/services/docusign/docusign.service";
 import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
 import { translations } from "./handover.translations";
+import { setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
 
 const PAPER = {
     margins: { top: 20, left: 20, right: 20, bottom: 20 },
     size: [ 595, 840 ],
 }
 
-const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDocument) => {
+const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDocument, handoverId: string, send: boolean = false) => {
     const translation = await getTranslations(variables.locale);
     const buffer = await preparePdf(PAPER, (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
@@ -73,8 +74,8 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.signatureLine(translation.signatureDriver, translation.signatureManager);
     })
 
-    if (variables.send) {
-        await sendEnvelope({
+    if (send) {
+        const envelope = await sendEnvelope({
             buffer,
             name: `Protoków wydania pojazdu ${variables.registrationNumber} ${variables.driverName}`,
             page: 1,
@@ -85,8 +86,19 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
             leftSigner: {
                 email: variables.managerEmail,
                 name: variables.managerName
+            },
+            metadata: {
+                driver: variables.driverId,
+                vehicle: variables.registrationNumber,
+                handoverId
             }
         })
+        if (envelope?.envelopeId && handoverId.length) {
+            await setVehicleHandovers(handoverId, {
+                docusignId: envelope.envelopeId,
+                docusignSent: Date.now()
+            })
+        }
     }
 
     return buffer;

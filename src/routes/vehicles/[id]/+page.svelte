@@ -30,6 +30,10 @@
 
 	const onFinished = (doc: Vehicle.VehicleDocument) => {
 		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
+		if (doc.type === 'vehicle_photo_exterior' && !vehicle.imageUrl?.length) {
+			internal.postApi({ imageUrl: doc.url }, 'patch')
+			vehicle.imageUrl = doc.url;
+		}
 	};
 
 	const onProcessed = (result: VehicleDocumentResult) => {
@@ -67,7 +71,7 @@
 			<h5 class="card-header">Dane pojazdu {vehicle.registrationNumber}</h5>
 			<div class="card-body">
 				{#if vehicle.imageUrl?.length}
-					<img src={vehicle.imageUrl} alt={vehicle.name} />
+					<img src={vehicle.imageUrl} alt={vehicle.name} class="mw-100" />
 				{/if}
 				<h6>{vehicle.name}</h6>
 				<div class="datatable">
@@ -129,8 +133,8 @@
 		<div class="card mt-3">
 			<h5 class="card-header">Kierowca</h5>
 			<div class="card-body">
-				{#if vehicle.assignedDriver}
-					Przypisano {vehicle.assignedDriver}
+				{#if vehicle.assignedDriverId}
+					Przypisano do <a href="/drivers/{vehicle.assignedDriverId}">{vehicle.assignedDriverName}</a>
 				{:else}
 					Nie przypisano żadnego kierowcy
 				{/if}
