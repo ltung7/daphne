@@ -15,7 +15,7 @@ export const fetchVehicles = async (filters: Partial<Vehicle.Vehicle> = {}, fiel
 }
 
 export const fetchDrivers = async (filters: Partial<Driver.Driver> = {}, fields?: (keyof Driver.Driver)[]) => {
-    const DEFAULT_FIELDS: (keyof Driver.Driver)[] = [ 'name', 'notes', 'status', 'login', 'balance', 'phone' ];
+    const DEFAULT_FIELDS: (keyof Driver.Driver)[] = [ 'name', 'notes', 'status', 'login', 'balance', 'phone', 'assignedVehicle', 'cashBalance' ];
     const fieldsString = (fields ?? DEFAULT_FIELDS).join(',')
     const response = await internal.get('/drivers/api', { fields: fieldsString, ...filters  })
     return response.vehicles as Driver.Driver[];

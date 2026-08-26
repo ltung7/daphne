@@ -2,12 +2,13 @@ import type { DocusignWebhookEvent, EventCustomFields } from "./docusign";
 import { isDev } from "$lib/utils/isDev";
 import { thrower } from "$lib/utils/logger";
 import { insertRandomLog } from "$lib/server/db/tables/randomLogs.db";
-import { uploadVehicleDocument } from "../uploadVehicleDocument.service";
+import { uploadVehicleDocument } from "../uploadDocument.service";
 import { setVehicleHandovers } from "../../db/firebase/vehicleHandovers.fdb";
 import { assignVehicleAndCloseHandover } from "../vehicleStatus.service";
 import { getDocusignApi } from "./docusign.token";
 
 const processEnvelopeCompleted = async (payload: DocusignWebhookEvent<[EventCustomFields]>) => {
+    console.log("EVENT ENVELOPE COMPLETED")
         if (!payload.data.envelopeSummary.customFields?.textCustomFields?.length) {
         throw new Error("No custom fields");
     }
@@ -16,8 +17,10 @@ const processEnvelopeCompleted = async (payload: DocusignWebhookEvent<[EventCust
         return obj;
     }, {} as Record<string, string>)
     let uploadedDocumentUrl: string | undefined;
+    console.log('CUSTOM FIELDS:' + JSON.stringify(customFields))
 
     if (customFields.vehicle) {
+        console.log("SAVEHEHICLE COX")
         const { envelopesApi, accountId } = await getDocusignApi();
         
         const buffer: Buffer = await envelopesApi.getDocument(accountId, payload.data.envelopeId, 'combined', {}) as unknown as Buffer;
@@ -32,10 +35,12 @@ const processEnvelopeCompleted = async (payload: DocusignWebhookEvent<[EventCust
     }
     
     if (customFields.handoverId) {
+        console.log("SET HANDOVER")
         await setVehicleHandovers(customFields.handoverId, { docusignSigned: Date.now() });
     }
 
     if (customFields.handoverId && customFields.vehicle && customFields.driver) {
+        console.log("ASSIGN ALL")
         const afterVehicle = payload.data.envelopeSummary.emailSubject.indexOf(customFields.vehicle) + customFields.vehicle.length + 1;
         const driverName = payload.data.envelopeSummary.emailSubject.substring(afterVehicle).trim();
         await assignVehicleAndCloseHandover({

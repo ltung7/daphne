@@ -63,6 +63,14 @@ declare global {
 		 * Specifies a field key of type K (defaults to string) and direction.
 		 */
 		type FirebaseOrderQuery<K extends string = string> = [K, 'asc' | 'desc'] | false;
+
+		interface DownloadableDocument {
+			id: string;
+			timestamp: number;              // epoch ms, upload time
+			uploader: string;                // user/account ID who uploaded it
+			name: string;
+			url: string;
+		}
 	}
 
 	namespace Vehicle {
@@ -187,14 +195,9 @@ declare global {
 			| 'vehicle_handover_return_document'
 			| 'vehicle_handover_unilateral_document'
 
-		interface VehicleDocument {
-			id: string;
-			timestamp: number;              // epoch ms, upload time
-			uploader: string;                // user/account ID who uploaded it
+		interface VehicleDocument extends App.DownloadableDocument {
 			type: DocumentType;
 			registrationNumber: string;      // links to Vehicle
-			name: string;
-			url: string;
 		}
 
 		type HandoverDocumentType = 'assign' | 'return' | 'unilateral';
@@ -213,37 +216,60 @@ declare global {
 
 		type CalculationMethod = 'days' | 'number' | 'years';
 
-		interface BaseRequirement {
-			node: RideServices.VerificationState;
+		// Generic base requirement with type parameters
+		interface BaseRequirement<
+			TVerificationState extends string,
+			TDocumentType extends string,
+			TVehicleRequirementVerification
+		> {
+			node: TVerificationState;
 			name: string;
 			text: string;
-			service: Provider[];
+			service: Provider[] | [ 'System' ];
+			required?: boolean;
 		}
 
-		interface DocumentRequirement extends BaseRequirement {
+		interface DocumentRequirement<
+			TVerificationState extends string,
+			TDocumentType extends string,
+			TVehicleRequirementVerification
+		> extends BaseRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification> {
 			type: 'document';
-			document: Vehicle.DocumentType;
+			document: TDocumentType;
 		}
 
-		interface CheckRequirement extends BaseRequirement {
+		interface CheckRequirement<
+			TVerificationState extends string,
+			TDocumentType extends string,
+			TVehicleRequirementVerification
+		> extends BaseRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification> {
 			type: 'check';
-			variable?: keyof Vehicle.VehicleRequirementVerification;
+			variable?: keyof TVehicleRequirementVerification;
 		}
 
-		interface CalculateRequirement extends BaseRequirement {
+		interface CalculateRequirement<
+			TVerificationState extends string,
+			TDocumentType extends string,
+			TVehicleRequirementVerification
+		> extends BaseRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification> {
 			type: 'calculate';
 			calculation_method: CalculationMethod;
 			value: number;
-			variable: keyof Vehicle.VehicleRequirementVerification;
+			variable: keyof TVehicleRequirementVerification;
 		}
 
 		// Full array item type
-		type RequirementItem =
-			| DocumentRequirement
-			| CheckRequirement
-			| CalculateRequirement;
+		type RequirementItem<
+			TVerificationState extends string,
+			TDocumentType extends string,
+			TVehicleRequirementVerification
+		> =
+			| DocumentRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification>
+			| CheckRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification>
+			| CalculateRequirement<TVerificationState, TDocumentType, TVehicleRequirementVerification>;
 
-		type VerificationState =
+		// Specific types for vehicle requirements
+		type VehicleVerificationState =
 			| 'registrationCertificateStamped'
 			| 'taxiLicenseExcerpt'
 			| 'ocInsurancePolicy'
@@ -271,6 +297,37 @@ declare global {
 			| 'ocInsuranceExpirationBuffer'
 			| 'technicalInspectionExpirationBuffer'
 			| 'minPassengerCapacity';
+
+		// Specific requirement item type for vehicles
+		type VehicleRequirementItem = RequirementItem<
+			VehicleVerificationState,
+			Vehicle.DocumentType,
+			Vehicle.VehicleRequirementVerification
+		>;
+
+		// Driver verification state
+		type DriverVerificationState =
+			| 'drivingLicenseFront'
+			| 'drivingLicenseBack'
+			| 'idCardFront'
+			| 'idCardBack'
+			| 'residencePermitFront'
+			| 'residencePermitBack'
+			| 'passportMainPage'
+			| 'polishCriminalRecordCertificate'
+			| 'foreignCriminalRecordCertificate'
+			| 'medicalCertificate'
+			| 'psychologicalCertificate'
+			| 'taxiDriverIdFront'
+			| 'taxiDriverIdBack'
+			| 'taxiDriverIdDecision';
+
+		// Specific requirement item type for drivers
+		type DriverRequirementItem = RequirementItem<
+			DriverVerificationState,
+			Driver.DocumentType,
+			Driver.DriverRequirementVerification
+		>;
 	}
 
 	namespace Driver {
@@ -329,6 +386,7 @@ declare global {
 			phone: string;
 			email: string;
 			address: string;
+			pesel: string;
 
 			// Licensing
 			drivingLicenses: DrivingLicense[];
@@ -361,7 +419,9 @@ declare global {
 			passengerRatings: number;   // Average rating from users
 
 			// Financial Tracking
-			balance: number;            // In grosze (PLN * 100) - never use floating point
+			balance: number;
+			cashBalance: number;
+
 			pendingWithdrawals: number; // Pending withdrawals in grosze
 
 			// Current Vehicle Assignment
@@ -374,6 +434,41 @@ declare global {
 
 			status: Status; // Must match enum defined elsewhere
 		}
+
+		type DocumentType =
+			// Driving qualifications
+			| 'driving_license_front'
+			| 'driving_license_back'
+
+			// Personal identification
+			| 'id_card_front'
+			| 'id_card_back'
+			| 'residence_permit_front'
+			| 'residence_permit_back'
+			| 'passport_main_page'
+
+			// Background checks
+			| 'polish_criminal_record_certificate'
+			| 'foreign_criminal_record_certificate'
+
+			// Medical approvals
+			| 'medical_certificate'
+			| 'psychological_certificate'
+
+			// City TAXI permissions
+			| 'taxi_driver_id_front'
+			| 'taxi_driver_id_back'
+			| 'taxi_driver_id_decision'
+
+		interface DriverDocument extends App.DownloadableDocument {
+			type: DocumentType;
+			driverId: string;
+		}
+
+		// Type for driver requirement verification (extends Driver with license data)
+		type DriverRequirementVerification = Driver & {
+			drivingLicenses: DrivingLicense[];
+		};
 	}
 
 	namespace DocumentGenerator {

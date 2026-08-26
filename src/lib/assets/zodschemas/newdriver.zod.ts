@@ -34,7 +34,7 @@ const taxiAuthorizationSchema = z.object({
     expirationDate: z
         .string()
         .regex(/^\d{4}-\d{2}-\d{2}$/, { error: 'Wymagany format daty to YYYY-MM-DD' }),
-});
+}).optional();
 
 const polishMobilePhoneSchema = z
     .string()
@@ -63,6 +63,22 @@ const polishMobilePhoneSchema = z
         { error: 'Wymagany jest prawidłowy polski numer komórkowy (9 cyfr)' }
     );
 
+const peselSchema = z
+    .string()
+    .regex(/^\d{11}$/, "PESEL wymaga 11 cyfr")
+    // .refine((pesel) => {
+    //     const weights = [ 1, 3, 7, 9, 1, 3, 7, 9, 1, 3 ];
+
+    //     const sum = weights.reduce(
+    //         (acc, weight, i) => acc + Number(pesel[i]) * weight,
+    //         0
+    //     );
+
+    //     const checksum = (10 - (sum % 10)) % 10;
+
+    //     return checksum === Number(pesel[10]);
+    // }, "Niepoprawny numer PESEL");
+
 export const newDriverDataSchema = z
     .object({
         id: z.string(),
@@ -77,7 +93,7 @@ export const newDriverDataSchema = z
         phone: polishMobilePhoneSchema,
         email: z.email({ error: 'Nieprawidłowy adres e-mail' }),
         address: z.string().min(1, { error: 'Adres jest wymagany' }),
-
+        pesel: peselSchema,
         nationality: z.string().length(2),
         // Uprawnienia i dokumenty
         drivingLicenses: z

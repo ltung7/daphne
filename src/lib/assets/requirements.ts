@@ -1,4 +1,7 @@
-export const vehicleRequirements: Array<RideServices.RequirementItem> = [
+// ==========================================
+// VEHICLE REQUIREMENTS
+// ==========================================
+export const vehicleRequirements: Array<RideServices.VehicleRequirementItem> = [
     // ==========================================
     // DOCUMENTS
     // ==========================================
@@ -8,7 +11,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Dowód rejestracyjny pojazdu z oficjalnym wpisem / pieczątką 'TAXI' wydanym przez Wydział Komunikacji.",
         type: "document",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        document: "registration_certificate"
+        document: "registration_certificate",
+        required: true
     },
     {
         node: "taxiLicenseExcerpt",
@@ -16,7 +20,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Papierowy wypis z licencji na przewóz osób taksówką, wydany przez Urząd m.st. Warszawy dla konkretnego numeru rejestracyjnego.",
         type: "document",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        document: "taxi_license_excerpt"
+        document: "taxi_license_excerpt",
+        required: true
     },
     {
         node: "ocInsurancePolicy",
@@ -24,7 +29,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Ważna polisa ubezpieczenia OC z wyraźnym zaznaczeniem, że pojazd służy do zarobkowego przewozu osób (TAXI).",
         type: "document",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        document: "oc_insurance_policy"
+        document: "oc_insurance_policy",
+        required: true
     },
     {
         node: "technicalInspectionCertificate",
@@ -32,7 +38,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Zaświadczenie z Okręgowej Stacji Kontroli Pojazdów potwierdzające zaliczenie rygorystycznego badania technicznego pod kątem TAXI.",
         type: "document",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        document: "technical_inspection_certificate"
+        document: "technical_inspection_certificate",
+        required: true
     },
     {
         node: "vehicleVerificationPhotos",
@@ -40,7 +47,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Zdjęcia ukazujące tablice rejestracyjne, oświetloną lampę 'TAXI' oraz naklejone oznakowanie miejskie Warszawy na drzwiach.",
         type: "document",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        document: "vehicle_photo_exterior"
+        document: "vehicle_photo_exterior",
+        required: true
     },
     {
         node: "taximeterLegalizationCertificate",
@@ -59,14 +67,16 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         name: "Oznakowanie: Żółto-czerwone pasy",
         text: "Czy pojazd posiada naklejone żółto-czerwone pasy (barwy m.st. Warszawy) na przednich drzwiach pod linią szyb?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "warsawCoatOfArmsCheck",
         name: "Oznakowanie: Herb Warszawy",
         text: "Czy pod żółto-czerwonym pasem na przednich drzwiach znajduje się oficjalny herb m.st. Warszawy?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "warsawSideNumberCheck",
@@ -74,35 +84,40 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         text: "Czy na przednich drzwiach umieszczono numer boczny w formacie 'Nr Licencji - Nr Wypisu'?",
         type: "check",
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        variable: "taxiRegistration"
+        variable: "taxiRegistration",
+        required: true
     },
     {
         node: "tariffCardCheck",
         name: "Oznakowanie: Cennik taryf",
         text: "Czy oficjalna dwustronna naklejka z cennikiem jest umieszczona w prawym górnym rogu szyby tylnych prawych drzwi?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "rooftopLampCheck",
         name: "Lampa dachowa TAXI",
         text: "Czy pojazd posiada podświetlanego 'koguta' TAXI na dachu pojazdu?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "driverIdDisplayCheck",
         name: "Identyfikator kierowcy",
         text: "Czy identyfikator kierowcy taksówki jest wyeksponowany w kabinie, widoczny dla pasażerów?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "virtualCashRegisterActive",
         name: "Integracja wirtualnej kasy fiskalnej",
         text: "Czy aplikacja e-Kasa jest w pełni skonfigurowana i aktywna na profilu kierowcy w aplikacji?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow" ]
+        service: [ "Uber", "Bolt", "FreeNow" ],
+        required: true
     },
     {
         node: "hardwareTaximeterInstalled",
@@ -116,37 +131,39 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         name: "Stan blacharsko-lakierniczy",
         text: "Czy karoseria jest w 100% wolna od powypadkowych uszkodzeń, wgnieceń, ognisk rdzy oraz reklam konkurencyjnych sieci?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "leftHandDriveCheck",
         name: "Położenie kierownicy",
         text: "Czy kierownica znajduje się po lewej stronie pojazdu (LHD)?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        required: true
     },
     {
         node: "telemetryHardwareInstallation",
         name: "Fizyczny montaż lokalizatora GPS",
         text: "Czy moduł telemetrii/GPS został fizycznie zamontowany w pojeździe i podłączony do zasilania?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ]
+        service: [ "System" ],
     },
     {
         node: "telemetrySystemAssignment",
         name: "Przypisanie identyfikatora telemetrii",
         text: "Czy identyfikator zainstalowanego modułu telemetrii został powiązany z profilem pojazdu w systemie?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        variable: "telemetryId"
+        service: [ "System" ],
+        variable: "telemetryId",
     },
     {
         node: "fuelCardAssignment",
         name: "Przypisanie karty paliwowej",
         text: "Czy do pojazdu została przypisana unikalna karta flotowa (np. DKV) umożliwiająca bezgotówkowe tankowanie?",
         type: "check",
-        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
-        variable: "fuelCardId"
+        service: [ "System" ],
+        variable: "fuelCardId",
     },
 
     // ==========================================
@@ -160,7 +177,8 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
         service: [ "Uber", "Bolt" ],
         calculation_method: "years",
         value: 20,
-        variable: "firstRegistrationDate"
+        variable: "firstRegistrationDate",
+        required: true
     },
     {
         node: "maxVehicleAgeStandardFreeNow",
@@ -235,15 +253,159 @@ export const vehicleRequirements: Array<RideServices.RequirementItem> = [
 ];
 
 // ==========================================
+// DRIVER REQUIREMENTS
+// ==========================================
+export const driverRequirements: Array<RideServices.DriverRequirementItem> = [
+    // ==========================================
+    // DRIVING QUALIFICATIONS
+    // ==========================================
+    {
+        node: "drivingLicenseFront",
+        name: "Prawo jazdy (awers)",
+        text: "Skan lub zdjęcie awersu ważnego prawa jazdy z widocznymi danymi kierowcy oraz kategoriami uprawnień.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "driving_license_front",
+        required: true
+    },
+    {
+        node: "drivingLicenseBack",
+        name: "Prawo jazdy (rewers)",
+        text: "Skan lub zdjęcie rewersu ważnego prawa jazdy z widocznymi datami ważności oraz ograniczeniami.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "driving_license_back",
+        required: true
+    },
+
+    // ==========================================
+    // PERSONAL IDENTIFICATION
+    // ==========================================
+    {
+        node: "idCardFront",
+        name: "Dowód osobisty (awers)",
+        text: "Skan lub zdjęcie awersu dowodu osobistego kierowcy.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "id_card_front",
+    },
+    {
+        node: "idCardBack",
+        name: "Dowód osobisty (rewers)",
+        text: "Skan lub zdjęcie rewersu dowodu osobistego kierowcy.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "id_card_back",
+    },
+    {
+        node: "residencePermitFront",
+        name: "Karta pobytu (awers)",
+        text: "Skan lub zdjęcie awersu karty pobytu — wymagana w przypadku cudzoziemców spoza UE.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "residence_permit_front"
+    },
+    {
+        node: "residencePermitBack",
+        name: "Karta pobytu (rewers)",
+        text: "Skan lub zdjęcie rewersu karty pobytu — wymagana w przypadku cudzoziemców spoza UE.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "residence_permit_back"
+    },
+    {
+        node: "passportMainPage",
+        name: "Strona główna paszportu",
+        text: "Skan lub zdjęcie strony głównej paszportu z danymi osobowymi — wymagana w przypadku cudzoziemców.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "passport_main_page"
+    },
+
+    // ==========================================
+    // BACKGROUND CHECKS
+    // ==========================================
+    {
+        node: "polishCriminalRecordCertificate",
+        name: "Zaświadczenie o niekaralności (PL)",
+        text: "Aktualne zaświadczenie o niekaralności z Krajowego Rejestru Karnego — wymagane dla obywateli Polski.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "polish_criminal_record_certificate",
+        required: true
+    },
+    {
+        node: "foreignCriminalRecordCertificate",
+        name: "Zaświadczenie o niekaralności (zagranica)",
+        text: "Zaświadczenie o niekaralności z kraju pochodzenia — wymagane dla cudzoziemców.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "foreign_criminal_record_certificate"
+    },
+
+    // ==========================================
+    // MEDICAL APPROVALS
+    // ==========================================
+    {
+        node: "medicalCertificate",
+        name: "Zaświadczenie lekarskie",
+        text: "Aktualne zaświadczenie lekarskie potwierdzające zdolność do wykonywania przewozu osób.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "medical_certificate",
+        required: true
+    },
+    {
+        node: "psychologicalCertificate",
+        name: "Zaświadczenie psychologiczne",
+        text: "Aktualne zaświadczenie z badań psychologicznych wymagane do wykonywania zawodu kierowcy taksówki.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "psychological_certificate",
+        required: true
+    },
+
+    // ==========================================
+    // CITY TAXI PERMISSIONS
+    // ==========================================
+    {
+        node: "taxiDriverIdFront",
+        name: "Legitymacja TAXI (awers)",
+        text: "Skan lub zdjęcie awersu legitymacji kierowcy taksówki wydanej przez Urząd m.st. Warszawy.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "taxi_driver_id_front",
+        required: true
+    },
+    {
+        node: "taxiDriverIdBack",
+        name: "Legitymacja TAXI (rewers)",
+        text: "Skan lub zdjęcie rewersu legitymacji kierowcy taksówki wydanej przez Urząd m.st. Warszawy.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "taxi_driver_id_back",
+        required: true
+    },
+    {
+        node: "taxiDriverIdDecision",
+        name: "Decyzja o wpisie do rejestru kierowców TAXI",
+        text: "Decyzja administracyjna o wpisie do rejestru kierowców taksówek — wydana przez właściwy organ gminy.",
+        type: "document",
+        service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
+        document: "taxi_driver_id_decision"
+    }
+];
+
+// ==========================================
 // VALIDATION SUBFUNCTIONS
 // ==========================================
 
 /**
  * Validates if the required document type exists in the provided documents array.
  */
-const validateDocumentRequirement = (
-    requirement: RideServices.DocumentRequirement,
-    documents: Vehicle.VehicleDocument[]
+const validateDocumentRequirement = <T extends string>(
+    requirement: RideServices.DocumentRequirement<any, T, any>,
+    documents: {type: T}[]
 ): boolean => {
     return documents.some((doc) => doc.type === requirement.document);
 };
@@ -251,9 +413,9 @@ const validateDocumentRequirement = (
 /**
  * Validates if the linked variable exists on the vehicle and is truthy.
  */
-const validateCheckRequirement = (
-    requirement: RideServices.CheckRequirement,
-    vehicle: Vehicle.VehicleRequirementVerification
+const validateCheckRequirement = <T = any>(
+    requirement: RideServices.CheckRequirement<any, any, T>,
+    vehicle: T
 ): boolean => {
     if (!requirement.variable) return false;
     return Boolean(vehicle[requirement.variable]);
@@ -262,9 +424,9 @@ const validateCheckRequirement = (
 /**
  * Validates calculated thresholds (days, years, number) using equal or more comparisons.
  */
-const validateCalculateRequirement = (
-    requirement: RideServices.CalculateRequirement,
-    vehicle: Vehicle.VehicleRequirementVerification
+const validateCalculateRequirement = <T = any>(
+    requirement: RideServices.CalculateRequirement<any, any, T>,
+    vehicle: T
 ): boolean => {
     const rawValue = vehicle[requirement.variable];
     if (rawValue === undefined || rawValue === null) return false;
@@ -309,8 +471,8 @@ const validateCalculateRequirement = (
 /**
  * Master dispatcher function to validate any requirement item.
  */
-const validateRequirement = (
-    requirement: RideServices.RequirementItem,
+const verifyVehicleRequirement = (
+    requirement: RideServices.VehicleRequirementItem,
     vehicle: Vehicle.VehicleRequirementVerification,
     documents: Vehicle.VehicleDocument[]
 ): boolean => {
@@ -334,12 +496,50 @@ const validateRequirement = (
  * @param requirements The requirement configuration dictionary (defaults to vehicleRequirements)
  * @returns A record mapping each RideServices.VerificationState key to its boolean pass/fail result
  */
-export const verifyAllRequirements = (
+export const verifyVehicleRequirements = (
     vehicle: Vehicle.VehicleRequirementVerification,
     documents: Vehicle.VehicleDocument[]
-): Record<RideServices.VerificationState, boolean> => {
+): Record<RideServices.VehicleVerificationState, boolean> => {
     return vehicleRequirements.reduce((acc, requirement) => {
-        acc[requirement.node] = validateRequirement(requirement, vehicle, documents);
+        acc[requirement.node] = verifyVehicleRequirement(requirement, vehicle, documents);
         return acc;
-    }, {} as Record<RideServices.VerificationState, boolean>);
+    }, {} as Record<RideServices.VehicleVerificationState, boolean>);
+};
+
+/**
+ * Master dispatcher function to validate any requirement item.
+ */
+const verifyDriverRequirement = (
+    requirement: RideServices.DriverRequirementItem,
+    driver: Driver.DriverRequirementVerification,
+    documents: Driver.DriverDocument[]
+): boolean => {
+    switch (requirement.type) {
+        case 'document':
+            return validateDocumentRequirement(requirement, documents);
+        case 'check':
+            return validateCheckRequirement(requirement, driver);
+        case 'calculate':
+            return validateCalculateRequirement(requirement, driver);
+        default:
+            return false;
+    }
+};
+
+/**
+ * Verifies all requirement points for a given driver and document set.
+ *
+ * @param driver The target driver instance
+ * @param documents Uploaded documents for the driver
+ * @param requirements The requirement configuration dictionary (defaults to driverRequirements)
+ * @returns A record mapping each RideServices.VerificationState key to its boolean pass/fail result
+ */
+export const verifyDriverRequirements = (
+    driver: Driver.DriverRequirementVerification,
+    documents: Driver.DriverDocument[]
+): Record<RideServices.DriverVerificationState, boolean> => {
+    return driverRequirements.reduce((acc, requirement) => {
+        acc[requirement.node] = verifyDriverRequirement(requirement, driver, documents);
+        return acc;
+    }, {} as Record<RideServices.DriverVerificationState, boolean>);
 };

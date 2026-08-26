@@ -8,6 +8,6 @@
         <a href="/drivers">Kierowcy</a>
         <a href="/vehicles">Pojazdy</a>
         <a href="/vehicletypes">Rodzaje pojazdów</a>
-        <a href="/handover">Generuj protokół wydania pojazdu</a>
+        <a href="/handovers">Protokół wydania pojazdu</a>
     </div>
 </div>

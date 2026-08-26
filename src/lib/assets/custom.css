@@ -1046,8 +1046,7 @@ h5.card-header ~.card-footer, h6.card-header ~ .card-footer {
 .table.table-between > thead > tr > th,
 .table.table-between > tbody > tr > td,
 .table.table-between > tbody > tr > th {
-	padding: 0;
-	padding-bottom: 2px;
+	padding: 2px 5px;
 	border-bottom: none;
 }
 
@@ -1074,7 +1073,6 @@ h5.card-header ~.card-footer, h6.card-header ~ .card-footer {
 .table.table-centered > tbody > tr > td,
 .table.table-centered > tbody > tr > th {
 	padding: 2px 5px;
-	padding-bottom: 2px;
 	border-bottom: none;
 }
 

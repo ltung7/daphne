@@ -16,10 +16,10 @@
 	let { handoverProtocol }: Props = $props();
 
 	const downloadBlob = async () => {
-		if (!handoverProtocol.url) return
-		const pdfBlob: Blob = await axios.get(handoverProtocol.url, { responseType: 'blob' }).then(res => res.data);
+		if (!handoverProtocol.url) return;
+		const pdfBlob: Blob = await axios.get(handoverProtocol.url, { responseType: 'blob' }).then((res) => res.data);
 		downloadFileBlob(pdfBlob, `Protokół wydania pojazdu ${handoverProtocol.registrationNumber} ${handoverProtocol.driverName}`, pdfBlob.type);
-	}
+	};
 
 	const sendAction = async (action: 'pdf' | 'docusign' | 'close') => {
 		startLoad();
@@ -43,23 +43,27 @@
 	<h5 class="card-header">Protokół zdawczo - odbiorczy</h5>
 	<div class="card-body">
 		<section class="pb-3 mb-3 border-bottom text-dark">
-			<div style="max-width: 400px" class="mx-auto">
-				<div class="flex-between">
-					<div>Status protokołu</div>
-					<HandoverStatus handover={handoverProtocol} />
-				</div>
-				<div class="flex-between">
-					<div>Data wydruku</div>
-					<div>{optionalTimestamp(handoverProtocol.printed)}</div>
-				</div>
-				<div class="flex-between">
-					<div>Data wysyłki DocusSign</div>
-					<div>{optionalTimestamp(handoverProtocol.docusignSent)}</div>
-				</div>
-				<div class="flex-between">
-					<div>Data podpisu DocusSign</div>
-					<div>{optionalTimestamp(handoverProtocol.docusignSigned)}</div>
-				</div>
+			<div style="max-width: 400px" class="mx-auto datatable">
+				<table class="table table-striped table-between">
+					<tbody>
+						<tr>
+							<td>Status protokołu</td>
+							<td><HandoverStatus handover={handoverProtocol} /></td>
+						</tr>
+						<tr>
+							<td>Data wydruku</td>
+							<td>{optionalTimestamp(handoverProtocol.printed)}</td>
+						</tr>
+						<tr>
+							<td>Data wysyłki DocusSign</td>
+							<td>{optionalTimestamp(handoverProtocol.docusignSent)}</td>
+						</tr>
+						<tr>
+							<td>Data podpisu DocusSign</td>
+							<td>{optionalTimestamp(handoverProtocol.docusignSigned)}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</section>
 		<HandoverProtocolFields {handoverProtocol} readonly />

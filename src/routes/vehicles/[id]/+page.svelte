@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import type { PageProps } from './$types';
-	import { fuelNames, documentNames, updatableVehicleVariables } from '$lib/assets/constants';
+	import { fuelNames, vehicleDocumentNames, updatableVehicleVariables } from '$lib/assets/constants';
 	import { formatCurrency } from '$lib/utils/numberFormatter';
 	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
 	import UploadVehicleDatafiles from '$lib/form/UploadVehicleDatafiles.svelte';
@@ -113,7 +113,7 @@
 						{#each documents as doc}
 							<li class="list-group-item flex-between">
 								<div>
-									<div class="text-muted xsmall">{documentNames[doc.type]} ({plTimezone(doc.timestamp)})</div>
+									<div class="text-muted xsmall">{vehicleDocumentNames[doc.type]} ({plTimezone(doc.timestamp)})</div>
 									<div class="fw-bold text-dark">{doc.name}</div>
 								</div>
 								<TooltipSquareIconLink class="me-n2" href={doc.url} download icon="cloud-download-alt" hoverText="Pobierz" blank />

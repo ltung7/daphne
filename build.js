@@ -38,6 +38,7 @@ copyFolder('./data', './build/data');
 inspect('Rewriting abort error')
 let indexContent = await fs.promises.readFile('./build/index.js', 'utf-8');
 indexContent = indexContent.replace('!isAbortSignal(signal)', 'false');
+indexContent = indexContent.replace('!isAbortSignal4(signal)', 'false');
 await fs.promises.writeFile('./build/index.js', indexContent);
 
 inspect('Adding version number')

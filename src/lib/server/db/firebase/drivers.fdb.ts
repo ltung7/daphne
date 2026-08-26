@@ -45,6 +45,7 @@ export const addNewDriver = async (newDriverData: Driver.NewDriverData) => {
         ...newDriverData,
         status: DRIVER_STATUS.PendingVerification,
         balance: 0,
+        cashBalance: 0,
         assignedVehicle: false,
         earnings: 0,
         experience: 0,

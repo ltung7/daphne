@@ -34,6 +34,7 @@ export const cleanDriver: Driver.NewDriverData = {
     sex: 'm',
     phone: '',
     email: '',
+    pesel: '',
     address: '',
     drivingLicenses: [],
     polishLanguage: 'basic',

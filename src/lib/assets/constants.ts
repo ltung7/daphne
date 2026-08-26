@@ -14,7 +14,7 @@ export const fuelNames: Record<Vehicle.FuelType, string> = {
     hydrogen: "Wodór"
 }
 
-export const documentNames: Record<Vehicle.DocumentType, string> = {
+export const vehicleDocumentNames: Record<Vehicle.DocumentType, string> = {
     // Registration & ownership
     registration_certificate: 'Dowód rejestracyjny',
     ownership_proof: 'Dowód własności',
@@ -52,6 +52,32 @@ export const documentNames: Record<Vehicle.DocumentType, string> = {
     vehicle_handover_unilateral_document: 'Protokół jednostronnego odbioru pojazdu'
 }
 
+export const driverDocumentNames: Record<Driver.DocumentType, string> = {
+    // Driving qualifications
+    driving_license_front: 'Prawo jazdy (przód)',
+    driving_license_back: 'Prawo jazdy (tył)',
+
+    // Personal identification
+    id_card_front: 'Dowód osobisty (przód)',
+    id_card_back: 'Dowód osobisty (tył)',
+    residence_permit_front: 'Karta pobytu (przód)',
+    residence_permit_back: 'Karta pobytu (tył)',
+    passport_main_page: 'Paszport (strona ze zdjęciem)',
+
+    // Background checks
+    polish_criminal_record_certificate: 'Zaświadczenie o niekaralności (KRK)',
+    foreign_criminal_record_certificate: 'Zagraniczne zaświadczenie o niekaralności',
+
+    // Medical approvals
+    medical_certificate: 'Orzeczenie lekarskie',
+    psychological_certificate: 'Orzeczenie psychologiczne',
+
+    // City TAXI permissions
+    taxi_driver_id_front: 'Identyfikator kierowcy TAXI (przód)',
+    taxi_driver_id_back: 'Identyfikator kierowcy TAXI (tył)',
+    taxi_driver_id_decision: 'Decyzja o wydaniu identyfikatora TAXI'
+};
+
 export const identificationDocumentNames: Record<Driver.IdentificationDocumentType, string> = {
     polish_id_card: 'Dowód osobisty',
     passport: 'Paszport',
@@ -60,12 +86,12 @@ export const identificationDocumentNames: Record<Driver.IdentificationDocumentTy
     travel_document: 'Document podróży',
 }
 
-interface DocumentCategory {
+interface VehicleDocumentCategory {
     name: string;
     fields: Vehicle.DocumentType[]
 }
 
-export const documentCategories: Array<DocumentCategory> = [
+export const vehicleDocumentCategories: Array<VehicleDocumentCategory> = [
     {
         name: 'Rejestracja i licencje',
         fields: [
@@ -105,6 +131,46 @@ export const documentCategories: Array<DocumentCategory> = [
     },
 ];
 
+interface DriverDocumentCategory {
+    name: string;
+    fields: Driver.DocumentType[]
+}
+
+export const driverDocumentCategories: Array<DriverDocumentCategory> = [
+    {
+        name: 'Uprawnienia i licencje',
+        fields: [
+            'driving_license_front',
+            'driving_license_back',
+            'taxi_driver_id_front',
+            'taxi_driver_id_back',
+        ],
+    },
+    {
+        name: 'Tożsamość i prawo pobytu',
+        fields: [
+            'id_card_front',
+            'id_card_back',
+            'residence_permit_front',
+            'residence_permit_back',
+            'passport_main_page',
+        ],
+    },
+    {
+        name: 'Zaświadczenia o niekaralności',
+        fields: [
+            'polish_criminal_record_certificate',
+            'foreign_criminal_record_certificate',
+        ],
+    },
+    {
+        name: 'Badania lekarskie i psychologiczne',
+        fields: [
+            'medical_certificate',
+            'psychological_certificate',
+        ],
+    },
+];
 export const updatableVehicleVariables: Array<keyof Vehicle.Vehicle> = [ 'insuranceExpiration', 'technicalExpiration', 'firstRegistrationDate' ];
 
 export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>> = {
@@ -128,6 +194,12 @@ export const languages: Array<[string, string, string, string]> = [
     [ 'ka', 'ge', 'Gruziński', 'ქართული' ],
     [ 'ro', 'md', 'Rumuński', 'Română' ],
 ]
+
+export const languageLevels: Record<string, string> = {
+    basic: 'Podstawowy',
+    fluent: 'Biegły',
+    native: 'Ojczysty'
+}
 
 export const countryNames: Record<string, string> = {
     pl: 'Polska',

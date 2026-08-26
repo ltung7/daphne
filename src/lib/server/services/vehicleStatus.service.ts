@@ -1,6 +1,7 @@
 import { db } from '$lib/server/db/firebase/firebase';
 import { getVehicle } from '../db/firebase/vehicles.fdb';
 import admin from 'firebase-admin';
+import { insertRandomLog } from '../db/tables/randomLogs.db';
 
 export interface AssignVehicleData {
 	registrationNumber: string; // registration number
@@ -60,7 +61,9 @@ export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Pr
     }
 	if (uploadedDocumentUrl?.length) updateHandoverData.url = uploadedDocumentUrl;
 
+	insertRandomLog('AssignTransaction', { updateVehicleData, updateDriverData, vehicleAssignmentData, updateHandoverData })
 	try {
+		console.log("ASSIGNTRANSATION")
 		await firestore.runTransaction(async (transaction) => {
 			// 1. Update vehicle document
 			const vehicleRef = firestore.collection('vehicles').doc(registrationNumber);
@@ -81,7 +84,7 @@ export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Pr
 			// Return assignment ID for caller reference
 			return assignmentRef.id;
 		});
-
+		console.log("DONE")
 		return { success: true };
 	} catch (error) {
 		console.error('Transaction failed:', error);
