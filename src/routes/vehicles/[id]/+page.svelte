@@ -11,11 +11,15 @@
 	import type { VehicleDocumentResult } from '$lib/datafiles/vehicle';
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import EditNotesCard from '$lib/form/EditNotesCard.svelte';
+	import IconButton from '$lib/misc/IconButton.svelte';
+	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
+	import { fly } from 'svelte/transition';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
 	let documents: Vehicle.VehicleDocument[] = $state(untrack(() => data.documents));
 	const type = untrack(() => data.type!);
+	let handoverModal: boolean = $state(false);
 
 	const toDate = (iso: string): Date => {
 		const [ y, m, d ] = iso.split('-').map(Number);
@@ -136,7 +140,10 @@
 				{#if vehicle.assignedDriverId}
 					Przypisano do <a href="/drivers/{vehicle.assignedDriverId}">{vehicle.assignedDriverName}</a>
 				{:else}
-					Nie przypisano żadnego kierowcy
+					<div class="flex-center flex-column">
+						<div class="mb-3">Nie przypisano żadnego pojazdu</div>
+						<IconButton icon="search" caption="Przypisz" onclick={() => (handoverModal = true)} size={6} />
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -189,3 +196,9 @@
 		<EditNotesCard bind:notes={vehicle.notes} />
 	</div>
 </div>
+
+{#if handoverModal}
+	<div class="position-fixed w-100 h-100 top-0 start-0 overflow-auto px-3 pb-3" style="z-index: 10" transition:fly>
+		<NewHandoverProtocol {vehicle} />
+	</div>
+{/if}

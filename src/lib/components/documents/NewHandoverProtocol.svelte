@@ -54,9 +54,9 @@
 		handoverProtocol.identificationDocumentNumber = driverData.identificationDocumentNumber;
 		handoverProtocol.driverEmail = driverData.email;
 		if (driverData.polishLanguage === 'basic') {
-			const locales: DocumentGenerator.AllLocalesTuple = [ 'pl', 'en', 'uk', 'be', 'ne' ];
+			const locales = [ 'pl', 'en', 'uk', 'be', 'ne', 'cs' ];
 			const foundLocale = locales.find((locale) => driverData.additionalLanguages[locale]);
-			if (foundLocale) handoverProtocol.locale = foundLocale;
+			if (foundLocale) handoverProtocol.locale = foundLocale as DocumentGenerator.Locale;
 			else handoverProtocol.locale = 'en';
 		} else {
 			handoverProtocol.locale = 'pl';
@@ -66,10 +66,10 @@
 	const sendAction = async (action: 'pdf' | 'docusign' | 'close' | 'save') => {
 		startLoad();
 		if (action === 'pdf') {
-			const response = await internal.postApi({ id, action: 'save', handover: handoverProtocol });
+			const response = await internal.post('/handovers/new/api', { id, action: 'save', handover: handoverProtocol });
 			if (response.id) id = response.id;
 
-			const pdfBlob: Blob = await internal.postApi({ id, action, handover: handoverProtocol }, 'post', { responseType: 'blob' });
+			const pdfBlob: Blob = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol }, { responseType: 'blob' });
 			if (pdfBlob.type === 'application/json') {
 				endLoad();
 				return addToast('Nie udało się wygenerować wydruku');
@@ -83,7 +83,7 @@
 				}, 500);
 			}
 		} else {
-			const response = await internal.postApi({ id, action, handover: handoverProtocol }, 'post');
+			const response = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol });
 			endLoad();
 			if (response.id) goto(`/handovers/${response.id}`);
 		}
@@ -117,8 +117,8 @@
 		}
 
 		managers = [
-			{ name: 'Test Manager 1', email: 'admin@macropart.com' },
-			{ name: 'Test Manager 2', email: 'veleanor@finnergroup.com' }
+			{ name: 'Janusz Brzęczyszczykiewicz', email: 'admin@macropart.com' },
+			{ name: 'Grażyna Chrząszcz', email: 'veleanor@finnergroup.com' }
 		];
 
 		handoverProtocol.managerName = managers[0].name;
@@ -138,9 +138,6 @@
 			{/if}
 			{#if driver}
 				<h4>Kierowca <strong>{driver.name}</strong></h4>
-			{/if}
-			{#if driver}
-				<h4>Menadżer floty <strong>{driver.name}</strong></h4>
 			{/if}
 			{#if vehicles.length}
 				<SearchBar data={vehicles} caption="Wybierz pojazd" search="registrationNumber" onselect={(e) => updateVehicle(e)} />

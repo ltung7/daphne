@@ -8,19 +8,26 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { driverDocumentNames, languageLevels, languages } from '$lib/assets/constants';
 	import DriverVerification from '$lib/components/DriverVerification.svelte';
+	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
+	import IconButton from '$lib/misc/IconButton.svelte';
+	import { fly } from 'svelte/transition';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
 	let documents: Driver.DriverDocument[] = $state(untrack(() => data.documents));
+	let handoverModal: boolean = $state(false);
 
 	const onFinished = (doc: Driver.DriverDocument) => {
 		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
 	};
 
-	const languageNames = languages.reduce((obj, item) => {
-		obj[item[0]] = item[2];
-		return obj;
-	}, {} as Record<string, string>)
+	const languageNames = languages.reduce(
+		(obj, item) => {
+			obj[item[0]] = item[2];
+			return obj;
+		},
+		{} as Record<string, string>
+	);
 </script>
 
 <svelte:head>
@@ -118,10 +125,19 @@
 						<div class="text-muted small">Od {formatTimezone(driver.assignedVehicle.timestamp)}</div>
 					</a>
 				{:else}
-					Nie przypisano żadnego pojazdu
+					<div class="flex-center flex-column">
+						<div class="mb-3">Nie przypisano żadnego pojazdu</div>
+						<IconButton icon="search" caption="Przypisz" onclick={() => (handoverModal = true)} size={6} />
+					</div>
 				{/if}
 			</div>
 		</div>
 		<EditNotesCard bind:notes={driver.notes} />
 	</div>
 </div>
+
+{#if handoverModal}
+	<div class="position-fixed w-100 h-100 top-0 start-0 overflow-auto px-3 pb-3" style="z-index: 10" transition:fly>
+		<NewHandoverProtocol {driver} />
+	</div>
+{/if}
