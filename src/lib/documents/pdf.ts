@@ -1,4 +1,4 @@
-import pdfkit from 'pdfkit';
+import PDFDocument from 'pdfkit';
 import { writeFile } from "fs/promises";
 
 // PAPER_SIZES.BARCODE
@@ -27,7 +27,12 @@ export const PAPER_SIZES: Record<DefaultPaperSizes, PDFKit.PDFDocumentOptions> =
 
 export const preparePdf = (options: PDFKit.PDFDocumentOptions = PAPER_SIZES.A4, callback: (_pdf: PDFKit.PDFDocument) => void): Promise<Buffer> => {
     return new Promise((resolve, reject) => {
-        const pdf = new pdfkit(options);
+        const pdf = new PDFDocument({
+            ...options,
+            // @ts-expect-error type mismatch
+            font: false
+        });
+
         const buffers: Buffer[] = [];
         pdf.on('data', buffers.push.bind(buffers));
         pdf.on('end', () => {
