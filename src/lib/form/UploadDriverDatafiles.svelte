@@ -31,7 +31,8 @@
 		const arr = await uploaded.arrayBuffer();
 		const buffer = new Uint8Array(arr);
 		const hash = await md5(buffer);
-		fileExists = await checkHashUrl(hash);
+		const extenstion = uploaded.name.split('.').pop();
+		fileExists = await checkHashUrl(hash, extenstion!);
 	};
 
 	const startNewFile = () => {
@@ -90,8 +91,8 @@
 		onFinished(response.data.doc);
 	};
 
-	const checkHashUrl = async (hash: string) => {
-		const url = `https://storage.googleapis.com/feed-cdn-files/d/${driverId}/${hash}.pdf`;
+	const checkHashUrl = async (hash: string, extenstion: string) => {
+		const url = `https://storage.googleapis.com/feed-cdn-files/d/${driverId}/${hash}.${extenstion}`;
 		try {
 			const response = await fetch(url, {
 				method: 'HEAD'

@@ -47,6 +47,11 @@ export const translations: Record<string, DocumentGenerator.HandoverDocumentTran
         signatureWitness: 'Podpis świadka',
         signatureRetriever: 'Podpis menadżera floty (Przejmujący)',
 
+        imagesAttachment: 'Do protokołu dołączono Załącznik nr 1 – Dokumentację fotograficzną stanu pojazdu',
+        imagesAttachmentHeader: 'ZAŁĄCZNIK NR 1 DO PROTOKOŁU ZDAWCZO-ODBIORCZEGO POJAZDU',
+        imagesAttachmentText: 'Sporządzony w dniu: {date} w {place} Dotyczy pojazdu marki {model}, nr rejestracyjny: {registrationNumber}, nr VIN: {vin}.',
+        imageNumer: 'Zdjęcie numer #{i}',
+
         handoverClauses: [
             'Odbierający potwierdza odbiór pojazdu wraz z wyposażeniem wymienionym w Sekcji 3, zapoznał się z jego stanem faktycznym i technicznym oraz nie wnosi zastrzeżeń poza uwagami wymienionymi w Sekcji 4.',
             'Pracownik przyjmuje pojazd z obowiązkiem zwrotu i potwierdza przyjęcie pełnej odpowiedzialności materialnej za powierzone mienie z obowiązkiem zwrotu zgodnie z art. 124 Kodeksu Pracy, na podstawie odrębnej umowy o odpowiedzialności materialnej.',
@@ -107,6 +112,12 @@ export const translations: Record<string, DocumentGenerator.HandoverDocumentTran
         section4Paragraph: 'Scratches, paintwork damage, glass damage, interior remarks:',
 
         section5Header: '5. STATEMENTS AND FINAL CLAUSES',
+
+        imagesAttachment: 'Appendix No. 1 – Photographic documentation of the vehicle\'s condition is attached to the report.',
+        imagesAttachmentHeader: 'Appendix No. 1 to the vehicle handover report.',
+        imagesAttachmentText: 'Prepared on: {date} at {place}. Applies to vehicle brand {model}, registration number: {registrationNumber}, VIN number: {vin}.',
+        imageNumer: 'Photo number ',
+
         handoverClauses: [
             'The Recipient confirms receipt of the vehicle with equipment listed in Section 3, has familiarized himself with its actual and technical condition and raises no objections except those listed in Section 4.',
             'The Employee accepts the vehicle with obligation to return and confirms full material responsibility for entrusted property in accordance with Art. 124 of the Polish Labour Code, based on a separate material responsibility agreement.',

@@ -71,6 +71,8 @@ declare global {
 			name: string;
 			url: string;
 		}
+
+		type BucketName = "feed-cdn-files" | "mpt_tmp_imgs";
 	}
 
 	namespace Vehicle {
@@ -334,6 +336,7 @@ declare global {
 		type Status =
 			| 'pending_verification'
 			| 'rejected'
+			| 'available'
 			| 'active'
 			| 'inactive'
 			| 'documents_expiring'
@@ -491,6 +494,7 @@ declare global {
 			milage: string
 			remaining: string
 			visual: string
+			translatedVisual: string
 			isElectric: boolean
 			locale: DocumentGenerator.Locale
 			key: boolean
@@ -507,6 +511,7 @@ declare global {
 			phoneHolder: boolean
 			phoneCharger: boolean
 			carWashCard: boolean
+			images: string[]
 		}
 
 		interface HandoverDocumentRecord extends HandoverDocument {
@@ -520,6 +525,13 @@ declare global {
 			printed?: number;
 			closed: false | number;
 			url?: string;
+		}
+
+		type HandoverImageType = 'signedprintout' | 'image';
+
+		interface HandoverImage extends App.DownloadableDocument {
+			type: HandoverImageType;
+			handoverId: string;
 		}
 
 		interface HandoverDocumentTranslations {
@@ -567,6 +579,10 @@ declare global {
 			signatureManager: string
 			signatureWitness: string
 			signatureRetriever: string
+			imagesAttachment: string;
+			imagesAttachmentHeader: string;
+			imagesAttachmentText: string;
+			imageNumer: string;
 			_foreign?: HandoverDocumentTranslations
 		}
 	}

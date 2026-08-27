@@ -180,6 +180,7 @@ export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>
 }
 
 export const languages: Array<[string, string, string, string]> = [
+    [ 'pl', 'pl', 'Polski', 'Polski' ],
     [ 'en', 'en', 'Angielski', 'English' ],
     [ 'hi', 'in', 'Hindi', 'हिन्दी' ],
     [ 'cs', 'cz', 'Czeski', 'Čeština' ],

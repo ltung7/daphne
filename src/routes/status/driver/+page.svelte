@@ -4,6 +4,7 @@
     const allStatus: Array<Driver.Status> = [
         'pending_verification',
 		'rejected',
+        'available',
 		'active',
 		'inactive',
 		'documents_expiring',

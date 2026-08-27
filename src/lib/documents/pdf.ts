@@ -72,6 +72,11 @@ export class PdfHelpers {
     private pageRight: number;
     private contentWidth: number;
 
+    private static readonly PAGE_HEIGHT = 840;
+    private static readonly PAGE_MARGIN_TOP = 20;
+    private static readonly PAGE_MARGIN_BOTTOM = 20;
+    private static readonly IMAGE_HEIGHT = PdfHelpers.PAGE_HEIGHT / 4;
+
     // Constructor calculates page dimensions from PDF object
     constructor(pdf: PDFKit.PDFDocument, startY: number) {
         this.pdf = pdf;
@@ -104,7 +109,7 @@ export class PdfHelpers {
 
     line() {
         this.pdf.moveTo(this.pageLeft, this.y).lineTo(this.pageRight, this.y).lineWidth(1.2).strokeColor('#000').stroke();
-        this.y += 12;
+        this.y += 6;
     }
 
     subtitle(text: string, size: number = 10): number {
@@ -113,7 +118,7 @@ export class PdfHelpers {
             width: this.contentWidth,
             align: 'center'
         });
-        this.y = this.pdf.y + 10;
+        this.y = this.pdf.y + 6;
         return this.y;
     }
 
@@ -129,7 +134,7 @@ export class PdfHelpers {
             width: this.contentWidth - 12
         });
 
-        this.y = newY + 27; // 17 height + 10 padding
+        this.y = newY + 23; // 13 height + 10 padding
         return this.y;
     }
 
@@ -139,7 +144,7 @@ export class PdfHelpers {
 
     labeledLine(label: string, opts: { value?: string } = {}): number {
         const labelWidth = this.pdf.widthOfString(label);
-        this.pdf.font('Regular').fontSize(9.5).fillColor('#000');
+        this.pdf.font('Regular').fontSize(9).fillColor('#000');
         this.pdf.text(label, this.pageLeft, this.y, {
             width: labelWidth + 1
         });
@@ -177,7 +182,7 @@ export class PdfHelpers {
         const labelWidthB = this.pdf.widthOfString(labelB);
 
         // Left column
-        this.pdf.font('Regular').text(labelA, this.pageLeft, this.y, {
+        this.pdf.fontSize(9).font('Regular').text(labelA, this.pageLeft, this.y, {
             width: labelWidthA + 1,
             lineBreak: false
         });
@@ -307,7 +312,7 @@ export class PdfHelpers {
         }
 
         // 3. Update vertical layout offset
-        this.y += calculatedBoxHeight + 8;
+        this.y += calculatedBoxHeight + 4;
         return this.y;
     }
 
@@ -460,5 +465,36 @@ export class PdfHelpers {
 
         this.y += half * rowH + 6;
         return this.y;
+    }
+
+    drawImage(photoNumber: number, imageBuffer: Buffer, photoLabel: string): void {
+        // Caption
+        this.pdf.fontSize(12).text(photoLabel.replaceAll('{i}', photoNumber.toString()), this.pageLeft, this.y, {
+            width: this.contentWidth,
+            align: 'center',
+        });
+        this.y = this.pdf.y + 10;
+
+        // Fit image into fixed height, capped at content width, centered horizontally
+        const { width: imgW, height: imgH } = (this.pdf as any).openImage(imageBuffer);
+        const scale = Math.min(this.contentWidth / imgW, PdfHelpers.IMAGE_HEIGHT / imgH);
+        const drawWidth = imgW * scale;
+        const drawHeight = imgH * scale;
+        const x = this.pageLeft + (this.contentWidth - drawWidth) / 2;
+
+        this.pdf.image(imageBuffer, x, this.y, {
+            width: drawWidth,
+            height: drawHeight,
+        });
+
+        this.y += drawHeight + 10;
+    }
+
+    addAttachmentPage(title: string, subtitle: string) {
+        this.pdf.addPage();
+        this.setY(20)
+        this.title(title);
+        this.subtitle(subtitle);
+        this.line();
     }
 }

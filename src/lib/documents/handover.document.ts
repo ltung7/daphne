@@ -10,11 +10,23 @@ const PAPER = {
     size: [ 595, 840 ],
 }
 
+async function fetchImageBuffer(url: string): Promise<Buffer> {
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${url} (${response.status})`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+}
+
 const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDocument, handoverId: string, send: boolean = false) => {
     const translation = await getTranslations(variables.locale);
-    const buffer = await preparePdf(PAPER, (pdf) => {
+    let images: Array<Buffer> = [];
+    if (variables.images.length) {
+        images = await Promise.all(variables.images.map(item => fetchImageBuffer(item)))
+    }
+    const buffer = await preparePdf(PAPER, async (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
-        
 
         helpers.title(translation.title);
         helpers.subtitle(translation.handoverSubtitle);
@@ -24,7 +36,7 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.twoColLabeledLines(translation.place, translation.date, { valueA: variables.place, valueB: variables.date });
         helpers.labeledLine(translation.manager + ':', { value: variables.owner + ', ' + variables.managerName });
         const idType = identificationDocumentNames[variables.identificationDocumentType as Driver.IdentificationDocumentType];
-        helpers.labeledLine(translation.driver + ":", { value: variables.driverName +', ' + idType + ' ' + variables.identificationDocumentNumber });
+        helpers.labeledLine(translation.driver + ":", { value: variables.driverName + ', ' + idType + ' ' + variables.identificationDocumentNumber });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section2Header);
@@ -59,7 +71,14 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.sectionHeader(translation.section4Header);
         helpers.paragraph(translation.section4Paragraph + ":");
         helpers.padY(6);
-        helpers.notesBox(4, variables.visual);
+        let visual = variables.visual;
+        if (variables.locale !== 'pl' && variables.translatedVisual) {
+            visual += " / " + variables.translatedVisual;
+        }
+        helpers.notesBox(4, visual);
+        if (variables.images.length) {
+            helpers.paragraph(translation.imagesAttachment)
+        }
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section5Header);
@@ -72,6 +91,21 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
 
         helpers.setY(770);
         helpers.signatureLine(translation.signatureDriver, translation.signatureManager);
+
+        if (images.length) {
+            const subtitle = translation.imagesAttachmentText
+                .replaceAll('{date}', variables.date)
+                .replaceAll('{place}', variables.place)
+                .replaceAll('{model}', variables.model)
+                .replaceAll('{registrationNumber}', variables.registrationNumber)
+                .replaceAll('{vin}', variables.vin)
+
+            for (let i = 0; i < images.length; i++) {
+                if (i % 2 === 0) helpers.addAttachmentPage(translation.imagesAttachmentHeader, subtitle)
+                helpers.padY(10);
+                helpers.drawImage(i + 1, images[i], translation.imageNumer);
+            }
+        }
     })
 
     if (send) {

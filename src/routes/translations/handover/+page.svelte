@@ -10,6 +10,7 @@
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import { wrapLoader } from '$lib/nav/loader';
 	import LanguageFlag from '$lib/misc/LanguageFlag.svelte';
+	import CustomFormTextTranslate from '$lib/form/CustomFormTextTranslate.svelte';
 
 	let { data }: PageProps = $props();
 	let locales: string[] = $state(untrack(() => data.locales));
@@ -34,7 +35,7 @@
 
 		setTimeout(() => {
 			language = newLocale;
-            newLocale = ""
+			newLocale = '';
 		}, 250);
 	};
 
@@ -112,12 +113,12 @@
 	<div class="card-body border-top">
 		{#if translated[language]}
 			{#each stringKeys as key}
-				<CustomFormText bind:value={translated[language][key]} caption={translations.pl[key]} />
+				<CustomFormTextTranslate bind:value={translated[language][key]} caption={translations.pl[key]} targetLocale={language} />
 			{/each}
-            {#each stringArrayKeys as [ key ]}
-                {#each translations.pl[key] as caption, i}
-				<CustomFormText bind:value={translated[language][key][i]} {caption} />
-                {/each}
+			{#each stringArrayKeys as [ key ]}
+				{#each translations.pl[key] as caption, i}
+					<CustomFormTextTranslate bind:value={translated[language][key][i]} {caption} targetLocale={language} />
+				{/each}
 			{/each}
 		{/if}
 	</div>

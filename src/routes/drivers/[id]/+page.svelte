@@ -11,6 +11,7 @@
 	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { fly } from 'svelte/transition';
+	import UIcon from '$lib/misc/UIcon.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -58,11 +59,21 @@
 							</tr>
 							<tr>
 								<td>Adres e-mail</td>
-								<td><a href="mailto:{driver.email}">{driver.email}</a></td>
+								<td>
+									<a href="mailto:{driver.email}" class="d-flex">
+										<UIcon name="envelope" class="me-2" size={7} />
+										{driver.email}
+									</a>
+								</td>
 							</tr>
 							<tr>
 								<td>Numer telefonu</td>
-								<td><a href="tel:{driver.phone}">{driver.phone}</a></td>
+								<td>
+									<a href="tel:{driver.phone}" class="d-flex">
+										<UIcon name="phone-call" class="me-2" size={7} />
+										{driver.phone}
+									</a>
+								</td>
 							</tr>
 							<tr>
 								<td>Adres korespondencyjny</td>
@@ -74,7 +85,7 @@
 							</tr>
 							{#each Object.entries(driver.additionalLanguages) as [ lang, level ]}
 								<tr>
-									<td>Język {languageNames[lang] ?? lang.toLowerCase()}</td>
+									<td>Język {(languageNames[lang] ?? lang).toLowerCase()}</td>
 									<td>{languageLevels[level] ?? level}</td>
 								</tr>
 							{/each}

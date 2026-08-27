@@ -5,16 +5,37 @@
 	import CustomFormLanguage from '$lib/form/CustomFormLanguage.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
+	import UploadHandoverImages from '$lib/form/UploadHandoverImages.svelte';
+	import translate from '$lib/nav/translate';
+	import { addToast } from '$lib/toast';
 
 	interface Props {
 		handoverProtocol: DocumentGenerator.HandoverDocument;
 		errors?: Record<string, string>;
-        touch?: (field: keyof DocumentGenerator.HandoverDocument) => void;
-        readonly?: boolean;
+		touch?: (field: keyof DocumentGenerator.HandoverDocument) => void;
+		readonly?: boolean;
+		handoverId?: string;
 	}
 
-	let { handoverProtocol = $bindable(), errors = {}, touch, readonly }: Props = $props();
+	let { handoverProtocol = $bindable(), handoverId = '', errors = {}, touch, readonly }: Props = $props();
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
+
+	const onUploaded = (url: string) => {
+		if (handoverProtocol.images.includes(url)) return;
+		handoverProtocol.images.push(url);
+	};
+
+	const translateVisual = async () => {
+		if (handoverProtocol.locale === 'pl') return;
+		const translation = await translate.chrome(handoverProtocol.visual, 'pl', handoverProtocol.locale);
+		if (translation?.length) handoverProtocol.translatedVisual = translation;
+		else addToast('Nie udało się przetłumaczyć opisu');
+	};
+
+	$effect(() => {
+		handoverProtocol.locale;
+		translateVisual();
+	});
 </script>
 
 <div class="row">
@@ -85,11 +106,33 @@
 	<div class="col-12 border-top pt-3">
 		<h5>4. STAN WIZUALNY, TECHNICZNY I UWAGI</h5>
 	</div>
-	<div class="col-12">
-		<CustomFormTextarea bind:value={handoverProtocol.visual} size={4} error={errors.visual} onblur={() => touch?.('visual')} {readonly} />
+	<div class="col-12 col-md-6">
+		<CustomFormTextarea caption="Język polski" bind:value={handoverProtocol.visual} size={4} error={errors.visual} onblur={() => touch?.('visual')} {readonly} onChange={translateVisual} />
+	</div>
+	<div class="col-12 col-md-6">
+		<CustomFormTextarea caption="Język obcy" bind:value={handoverProtocol.translatedVisual} size={4} error={errors.visual} {readonly} />
 	</div>
 	<div class="col-12 border-top pt-3">
-		<h5>5. Potwierdź adres email</h5>
+		<h5>5. ZDJĘCIA POJAZDU</h5>
+	</div>
+	{#if handoverProtocol.images.length}
+		{#each handoverProtocol.images as src, i}
+			<div class="col-12 col-md-6 col-lg-3 my-2">
+				<img {src} class="mw-100 border rounded" alt="Img {i}" />
+			</div>
+		{/each}
+	{:else if readonly}
+		<div class="col-12">
+			<div class="fs-5 fw-bold text-center text-dark mb-3">Brak dodanych zdjęć</div>
+		</div>
+	{/if}
+	{#if !readonly}
+		<div class="col-12 mb-3">
+			<UploadHandoverImages {onUploaded} {handoverId} />
+		</div>
+	{/if}
+	<div class="col-12 border-top pt-3">
+		<h5>6. POTWIERDŹ ADRES EMAIL</h5>
 	</div>
 	<div class="col-12 col-md-6">
 		<CustomFormText caption="Adres e‑mail kierownika" bind:value={handoverProtocol.managerEmail} {readonly} />

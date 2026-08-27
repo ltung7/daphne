@@ -29,11 +29,17 @@
 			text: 'Zgłoszenie zostało odrzucone. Proszę sprawdzić szczegóły.',
 			color: '#ef4444'
 		},
+		available: {
+			icon: 'check-circle',
+			caption: 'Dostępny',
+			text: 'Kierowca jest dostępny i oczekuje na przydzielnie pojazdu.',
+			color: '#22c55e'
+		},
 		active: {
 			icon: 'user-check',
 			caption: 'Aktywny',
 			text: 'Kierowca jest aktywny i upoważniony do odbierania zleceń.',
-			color: '#22c55e'
+			color: '#3b82f6'
 		},
 		inactive: {
 			icon: 'user-forbidden-alt',

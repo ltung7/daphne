@@ -1,7 +1,8 @@
-import { uploadContents } from '$lib/server/services/storage.service';
+import { BUCKETS, uploadContents } from '$lib/server/services/storage.service';
 import { setVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.fdb';
 import { createHash } from 'crypto';
 import { setDriverDocuments } from '../db/firebase/driverDocuments.fdb';
+import { setVehicleHandoverImage } from '../db/firebase/vehicleHandoverImage.fdb';
 
 interface UploadDocumentParams {
     buffer: Buffer;
@@ -57,3 +58,35 @@ export const uploadDriverDocument = async ({ buffer, extension, name, driverId, 
 
     return doc as Driver.DriverDocument;
 } 
+
+interface UploadHandoverImageParams extends UploadDocumentParams { 
+    handoverId: string;
+    type?: DocumentGenerator.HandoverImageType;
+}
+
+export const uploadHandoverImage = async ({ buffer, extension, name, handoverId, type, uploader = '' }: UploadHandoverImageParams): Promise<DocumentGenerator.HandoverImage> => {
+    const hash = createHash('md5').update(buffer).digest('hex');
+    const filename = `h/${handoverId}/${hash}.${extension}`;
+    const url = await uploadContents(buffer, filename);
+    if (!type) type = "image";
+
+    const doc: Partial<DocumentGenerator.HandoverImage> = {
+        timestamp: Date.now(),
+        name,
+        handoverId,
+        type,
+        uploader,
+        url
+    }
+    await setVehicleHandoverImage(hash, doc)
+    doc.id = hash;
+
+    return doc as DocumentGenerator.HandoverImage;
+} 
+
+export const uploadTempImage = async (buffer: Buffer, extension: string) => {
+    const hash = createHash('md5').update(buffer).digest('hex');
+    const filename = `${hash}.${extension}`;
+    const url = await uploadContents(buffer, filename, BUCKETS.TEMP);
+    return url;
+}

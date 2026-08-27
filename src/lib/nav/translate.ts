@@ -13,7 +13,7 @@ const translateGoogle: TranslateFunction = async (sentence, from = 'en', to = 'p
 
 const translateChrome: TranslateFunction = async (sentence, from = 'en', to = 'pl') => {
     sentence = encodeURIComponent(sentence);
-    const num = Math.ceil(Math.random() * 4) + 2;
+    const num = Math.ceil(Math.random() * 3) + 2;
     const url = `https://clients${num}.google.com/translate_a/t?client=dict-chrome-ex&sl=${from}&tl=${to}&dt=t&q=${sentence}`;
     const response = await axios.get(url);
     const result = response.data[0];

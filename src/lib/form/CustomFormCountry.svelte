@@ -34,7 +34,7 @@
 	<DropdownMenu end>
 		{#each Object.keys(countryNames) as country (country)}
 			<DropdownItem active={country === value} class="d-flex align-items-center gap-2" on:click={() => setCountry(country)}>
-				<Flag country={country} size={1.5} />
+				<Flag country={country} size={2.5} />
 				<span class="text-uppercase">{countryNames[country]}</span>
 			</DropdownItem>
 		{/each}

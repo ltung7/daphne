@@ -77,5 +77,7 @@ export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
     phoneHolder: false,
     phoneCharger: false,
     carWashCard: false,
-    visual: 'Brak uwag - pojazd czysty i sprawny'
+    visual: 'Brak uwag - pojazd czysty i sprawny',
+    translatedVisual: '',
+    images: []
 }

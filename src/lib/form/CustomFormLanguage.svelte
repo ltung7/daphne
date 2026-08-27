@@ -55,7 +55,7 @@
 	<DropdownMenu end>
 		{#each languages as locale (locale[0])}
 			<DropdownItem active={locale[0] === value} class="d-flex align-items-center gap-2" on:click={() => selectLocale(locale)}>
-				<Flag country={locale[1]} size={1.5} />
+				<Flag country={locale[1]} size={2.5} />
 				<span class="text-uppercase">{locale[2]} / {locale[3]}</span>
 			</DropdownItem>
 		{/each}

@@ -1199,3 +1199,8 @@ input.form-control:read-only, textarea.form-control:read-only {
 	background-color: var(--bs-gray-100);
 	cursor: not-allowed
 }
+
+.input-group .btn:hover:not(.btn-icon-only) {
+    box-shadow: none !important;
+    transform: unset !important;
+}

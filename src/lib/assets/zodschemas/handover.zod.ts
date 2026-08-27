@@ -31,12 +31,14 @@ export const handoverDocumentSchema = z.object({
         .regex(/^\d+$/, 'Przebieg musi składać się wyłącznie z cyfr'),
     remaining: c.nonEmptyString('Stan paliwa/baterii'),
     visual: c.nonEmptyString('Stan wizualny'),
+    translatedVisual: z.string(),
     isElectric: z.boolean(),
 
     // Locale (Replace z.string() with z.nativeEnum(DocumentGenerator.Locale) if it is a TS enum)
     locale: z.custom<DocumentGenerator.Locale>((val) => typeof val === 'string' && val.length > 0, {
         message: 'Język dokumentu jest wymagany',
     }),
+    images: z.array(z.string()),
 
     // Equipment booleans
     key: z.boolean(),
