@@ -73,6 +73,8 @@ declare global {
 		}
 
 		type BucketName = "feed-cdn-files" | "mpt_tmp_imgs";
+
+		type TranslateFunction = (sentence: string, from: string, to: string) => Promise<string | null>
 	}
 
 	namespace Vehicle {
@@ -227,7 +229,7 @@ declare global {
 			node: TVerificationState;
 			name: string;
 			text: string;
-			service: Provider[] | [ 'System' ];
+			service: Provider[] | ['System'];
 			required?: boolean;
 		}
 

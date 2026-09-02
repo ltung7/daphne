@@ -17,7 +17,7 @@
 	let canvasEl = $state<HTMLCanvasElement | null>(null);
 	let stream: MediaStream | null = null;
 	let capturedImage = $state<string | ArrayBuffer | null>(null); // data URL or ArrayBuffer of captured photo
-	let facingMode = $state<'user' | 'environment'>('user');
+	let facingMode = $state<'user' | 'environment'>('environment');
 	let error = $state<string>('');
 	let isStreaming = $state<boolean>(false);
 	let disabled = $state<boolean>(true);
@@ -176,6 +176,10 @@
 		<!-- Live preview -->
 		<div class="ratio {ratioClass} rounded overflow-hidden bg-dark" style={ratioStyle}>
 			<video bind:this={videoEl} class="w-100 h-100 object-fit-cover" playsinline muted></video>
+			<!-- <svg class="guide" viewBox="0 0 100 100" preserveAspectRatio="none"> -->
+				<!-- credit-card aspect ratio ~ 1.586:1, centered -->
+				<!-- <rect x="10" y="35" width="80" height="30" rx="3" fill="none" stroke="white" stroke-width="0.6" stroke-dasharray="2,1.5" /> -->
+			<!-- </svg> -->
 		</div>
 
 		<div class="d-flex gap-2 flex-wrap justify-content-center mt-3">

@@ -3,7 +3,7 @@
 // in the document template. Add more locales by adding another key
 
 import { getVehicleHandoverTranslation } from "$lib/server/db/firebase/vehicleHandoverTranslation.fdb";
-import { translations } from "./handover.translations";
+import translations from "./handover.translations";
 
 export function fuseTranslations(
     primary: DocumentGenerator.HandoverDocumentTranslations,

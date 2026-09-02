@@ -2,7 +2,7 @@ import { identificationDocumentNames } from "$lib/assets/constants";
 import { sendEnvelope } from "$lib/server/services/docusign/docusign.service";
 import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
-import { translations } from "./handover.translations";
+import translations from "./handover.translations";
 import { setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
 
 const PAPER = {

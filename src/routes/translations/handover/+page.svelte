@@ -4,7 +4,7 @@
 	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
 	import { untrack } from 'svelte';
 	import type { PageProps } from './$types';
-	import { translations } from '$lib/documents/handover.translations';
+	import translations from '$lib/documents/handover.translations';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import { confirmSuccess, internal } from '$lib/nav/internal';

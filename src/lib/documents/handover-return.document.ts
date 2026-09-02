@@ -1,7 +1,7 @@
 import { identificationDocumentNames } from "$lib/assets/constants";
 import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
-import { translations } from "./handover.translations";
+import translations from "./handover.translations";
 
 const PAPER = {
     margins: { top: 20, left: 20, right: 20, bottom: 20 },

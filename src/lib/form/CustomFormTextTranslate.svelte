@@ -1,6 +1,6 @@
 <script lang="ts">
 	import UIcon from '$lib/misc/UIcon.svelte';
-	import translate from '$lib/nav/translate';
+	import { browserTranslate } from '$lib/nav/translate';
 	import { untrack } from 'svelte';
 	import { slide } from 'svelte/transition';
 
@@ -42,7 +42,7 @@
 	let effectiveError = $derived(error || (value.length === 0 ? 'Wymaga tłumaczenia' : undefined))
 
 	const handleTranslate = async () => {
-		const translation = await translate.chrome(caption, 'pl', targetLocale)
+		const translation = await browserTranslate.chrome(caption, 'pl', targetLocale)
 		if (!translation?.length) return;
 		value = translation;
 		onChange?.();

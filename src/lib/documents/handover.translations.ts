@@ -1,4 +1,4 @@
-export const translations: Record<string, DocumentGenerator.HandoverDocumentTranslations> = {
+export const handoverTranslations: Record<string, DocumentGenerator.HandoverDocumentTranslations> = {
     pl: {
         title: 'PROTOKÓŁ ZDAWCZO-ODBIORCZY',
         handoverSubtitle: 'Wydanie pojazdu',
@@ -141,3 +141,5 @@ export const translations: Record<string, DocumentGenerator.HandoverDocumentTran
         signatureRetriever: 'Fleet Manager (Recipient)',
     }
 };
+
+export default handoverTranslations;

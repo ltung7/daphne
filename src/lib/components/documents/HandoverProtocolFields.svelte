@@ -6,7 +6,7 @@
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import UploadHandoverImages from '$lib/form/UploadHandoverImages.svelte';
-	import translate from '$lib/nav/translate';
+	import { browserTranslate } from '$lib/nav/translate';
 	import { addToast } from '$lib/toast';
 
 	interface Props {
@@ -27,7 +27,7 @@
 
 	const translateVisual = async () => {
 		if (handoverProtocol.locale === 'pl') return;
-		const translation = await translate.chrome(handoverProtocol.visual, 'pl', handoverProtocol.locale);
+		const translation = await browserTranslate.chrome(handoverProtocol.visual, 'pl', handoverProtocol.locale);
 		if (translation?.length) handoverProtocol.translatedVisual = translation;
 		else addToast('Nie udało się przetłumaczyć opisu');
 	};
