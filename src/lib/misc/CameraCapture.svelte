@@ -181,7 +181,7 @@
 		<div class="ratio {ratioClass} rounded overflow-hidden bg-dark" style={ratioStyle}>
 			<video bind:this={videoEl} class="w-100 h-100 object-fit-cover" playsinline muted></video>
 			{#if overlay}
-				<img src={overlay} alt="Overlay guide" />
+				<img src={overlay} alt="Overlay guide" class="opacity-7" />
 			{/if}
 		</div>
 

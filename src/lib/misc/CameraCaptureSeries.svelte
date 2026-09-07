@@ -3,6 +3,7 @@
 	import CameraCapture from './CameraCapture.svelte';
 	import IconButton from './IconButton.svelte';
 	import { untrack } from 'svelte';
+	import HeadlessModal from './HeadlessModal.svelte';
 
 	interface CameraCaptureSeriesStep<T extends string> {
 		src: any;
@@ -53,7 +54,7 @@
 	);
 </script>
 
-<ClosableModal bind:isOpen fullscreen headerText="Zdjęcia kontrolne samochodu">
+<HeadlessModal bind:isOpen fullscreen>
     <h3 class="text-center">{step.caption}</h3>
 	<CameraCapture overlay={step.src} onaccept={handleAccept} bind:this={cameraCapture} />
 	<hr />
@@ -67,6 +68,6 @@
 			</div>
 		{/each}
 	</div>
-</ClosableModal>
+</HeadlessModal>
 
 <IconButton icon="camera" caption="Wykonaj zdjęcia" size={6} onclick={() => (isOpen = !isOpen)} />
