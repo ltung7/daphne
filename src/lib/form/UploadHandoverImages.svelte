@@ -157,5 +157,5 @@
 </ClosableModal>
 
 <ClosableModal bind:isOpen={showCamera} headerText="Zwrób zdjęcie" size="lg" buttonCaption={capturedImage && 'Zapisz'} onClick={saveImage}>
-	<CameraCapture {oncapture} asArrayBuffer onreset={() => capturedImage = undefined } onclose={() => capturedImage = undefined } />
+	<CameraCapture {oncapture} asArrayBuffer onreset={() => capturedImage = undefined } onaccept={() => capturedImage = undefined } />
 </ClosableModal>

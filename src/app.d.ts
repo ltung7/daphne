@@ -109,6 +109,7 @@ declare global {
 			registrationNumber: string; // Polish VIN/license plate (UNIQUE per vehicle)
 			vin: string; // Full VIN (can be optional for legacy)
 			firstRegistrationDate: string; // ISO date (YYYY-MM-DD)
+			fuelType: FuelType;
 
 			// Instance-Specific Metrics
 			mileage: number; // Kilometers driven (kms)
@@ -212,6 +213,42 @@ declare global {
 			handoverId: string;
 			timestamp: number;
 			type: 'assign' | 'return' | 'unilateral'
+		}
+
+		type ImageInspectionCategory =
+			| 'photo_dashboard'
+			| 'photo_front'
+			| 'photo_rear'
+			| 'photo_left_side'
+			| 'photo_right_side'
+
+		type DailyInspectionCategory =
+			| 'tires'
+			| 'cleanliness'
+			| 'lost_property'
+			| 'dashboard_alerts';
+
+		// Monthly / Periodic categories
+		type MonthlyInspectionCategory =
+			| 'lighting'
+			| 'safety_gear'
+			| 'fluids'
+			| 'brakes'
+			| 'documentation';
+
+		// All inspection categories combined
+		type InspectionCategory =
+			| ImageInspectionCategory
+			| DailyInspectionCategory
+			| MonthlyInspectionCategory;
+
+		interface InspectionChecklistItem {
+			categoryKey: InspectionCategory;
+			label: string;
+			description: string;
+			frequency: 'daily' | 'monthly';
+			requiresPhoto: boolean;
+			isMandatory: boolean;
 		}
 	}
 
@@ -405,6 +442,7 @@ declare global {
 			additionalLanguages: { [language: string]: 'native' | 'fluent' };
 
 			notes: string; // optional intake notes
+			imageUrl?: string;
 		}
 
 		// --- Full driver record, once account is active ---

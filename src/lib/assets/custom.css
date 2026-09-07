@@ -1071,3 +1071,33 @@ aside nav .nav-btn.active {
 .sidebar-transition.sidebar-expanded {
 	min-width: 280px;
 }
+
+.driver-image {
+	width: 100%;
+	max-width: 400px;
+	aspect-ratio: 1;
+	overflow: hidden;
+}
+
+.vehicle-image {
+	width: 100%;
+	max-width: 400px;
+	aspect-ratio: 16 / 9;
+	overflow: hidden;
+}
+
+.vehicle-image img, .driver-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.section-card + .section-card {
+	margin-top: 2rem;
+}
+
+.section-card h4 {
+	border-left: 0.5rem solid var(--bs-primary);
+	padding-left: 0.5rem;
+}

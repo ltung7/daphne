@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { driverRequirements, verifyDriverRequirements } from '$lib/assets/requirements';
-	import CustomFormChecker from '$lib/form/CustomFormChecker.svelte';
+	import InspectionCheckItem from '$lib/form/InspectionCheckItem.svelte';
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { onMount } from 'svelte';
@@ -33,21 +33,13 @@
 <ClosableModal bind:isOpen size="xl" headerText="Status weryfikacji">
 	<ul class="list-group">
 		{#each driverRequirements as requirement}
-			<li class="list-group-item d-flex">
-				<CustomFormChecker class="mb-0 w-100" bind:checked={verificationResult[requirement.node]} required={requirement.required}>
-					<div class="w-100">
-						<div class="flex-between">
-							<div class="fw-bold text-dark fs-6">
-								{requirement.name}
-							</div>
-							<div class="text-muted">
-								{requirement.service.join(' | ')}
-							</div>
-						</div>
-						<div class="text-muted text-normal">{requirement.text}</div>
-					</div>
-				</CustomFormChecker>
-			</li>
+			<InspectionCheckItem 
+				bind:checked={verificationResult[requirement.node]}
+				caption={requirement.name}
+				service={requirement.service}
+				required={requirement.required}
+				text={requirement.text}
+			/>
 		{/each}
 	</ul>
 </ClosableModal>

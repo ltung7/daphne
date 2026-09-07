@@ -4,14 +4,15 @@
 
 	type CommonProps<T> = {
 		oncapture?: (image: T) => void;
-		onclose?: (image: T) => void;
+		onaccept?: (image: T) => void;
 		onreset?: () => void;
+		overlay?: string;
 	};
 
 	type ComponentProps = (CommonProps<ArrayBuffer> & { asArrayBuffer: true }) | (CommonProps<string> & { asArrayBuffer?: false });
 
 	// Annotate the declaration, not the $props rune function
-	let { oncapture, onclose, onreset, asArrayBuffer }: ComponentProps = $props();
+	let { oncapture, onaccept, onreset, asArrayBuffer, overlay }: ComponentProps = $props();
 	// --- state ---
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let canvasEl = $state<HTMLCanvasElement | null>(null);
@@ -136,7 +137,7 @@
 		disabled = true;
 	}
 
-	function retake(): void {
+	export function retake(): void {
 		capturedImage = null;
 		capturedImageUrl = null;
 		onreset?.();
@@ -149,11 +150,14 @@
 		orientationQuery.addEventListener('change', updateRatio);
 	}
 
-	onDestroy(() => {
+	const handleAccept = () => { 
 		if (capturedImage) {
 			// @ts-expect-error Types mix
-			onclose?.(capturedImage);
+			onaccept?.(capturedImage);
 		}
+	}
+
+	onDestroy(() => {
 		stopCamera();
 		if (orientationQuery) {
 			orientationQuery.removeEventListener('change', updateRatio);
@@ -176,17 +180,16 @@
 		<!-- Live preview -->
 		<div class="ratio {ratioClass} rounded overflow-hidden bg-dark" style={ratioStyle}>
 			<video bind:this={videoEl} class="w-100 h-100 object-fit-cover" playsinline muted></video>
-			<!-- <svg class="guide" viewBox="0 0 100 100" preserveAspectRatio="none"> -->
-				<!-- credit-card aspect ratio ~ 1.586:1, centered -->
-				<!-- <rect x="10" y="35" width="80" height="30" rx="3" fill="none" stroke="white" stroke-width="0.6" stroke-dasharray="2,1.5" /> -->
-			<!-- </svg> -->
+			{#if overlay}
+				<img src={overlay} alt="Overlay guide" />
+			{/if}
 		</div>
 
 		<div class="d-flex gap-2 flex-wrap justify-content-center mt-3">
 			{#if !isStreaming}
 				<IconButton icon="camera" caption="Otwórz aparat" onclick={startCamera} {disabled} size={5} />
 			{:else}
-				<IconButton icon="mode-landscape" caption="Zrob zdjęcie" onclick={capturePhoto} {disabled} size={5} />
+				<IconButton icon="mode-landscape" caption="Zrób zdjęcie" onclick={capturePhoto} {disabled} size={5} />
 				{#if isMobile}
 					<IconButton icon="camera-rotate" caption="Przełącz aparat" onclick={switchCamera} {disabled} outline size={6} />
 				{/if}
@@ -199,7 +202,8 @@
 		</div>
 
 		<div class="d-flex gap-2 flex-wrap justify-content-center mt-3">
-			<button class="btn btn-outline-secondary" onclick={retake}>Zrób ponownie</button>
+			<IconButton icon="check-circle" onclick={handleAccept} caption="Zaakceptuj" disabled={!capturedImage} size={5} />
+			<IconButton icon="redo" onclick={retake} caption="Zrób ponownie" color="dark" outline size={5} />
 		</div>
 	{/if}
 

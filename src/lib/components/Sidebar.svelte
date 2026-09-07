@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Collapse } from '@sveltestrap/sveltestrap';
 	import { layoutState } from '$lib/nav/stores.svelte';
 	import UIcon from '$lib/misc/UIcon.svelte'; // Assuming this is your icon component
@@ -35,6 +36,7 @@
 		{ id: 2, title: 'Flota', icon: 'cars', link: '/vehicles' },
 		{ id: 3, title: 'Kierowcy', icon: 'users-alt', link: '/drivers' },
 		{ id: 4, title: 'Wydania', icon: 'user-key', link: '/handovers' },
+		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspection' },
 	]);
 
 	function toggleSidebar() {
@@ -55,6 +57,22 @@
 	function setActive(id: number) {
 		layoutState.activeMenuId = id;
 	}
+
+	// Set active menu item based on current URL on mount
+	onMount(() => {
+		const currentPath = window.location.pathname;
+		const matchingItem = menuItems.find((item) => {
+			if (!item.link) return false;
+			// Exact match for root, prefix match for others
+			if (item.link === '/') {
+				return currentPath === '/';
+			}
+			return currentPath.startsWith(item.link);
+		});
+		if (matchingItem) {
+			setActive(matchingItem.id);
+		}
+	});
 </script>
 
 <aside class="position-sticky top-0 bg-white border-end shadow-sm d-flex flex-column sidebar-transition" class:sidebar-expanded={layoutState.isSidebarExpanded}>

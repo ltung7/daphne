@@ -29,7 +29,7 @@
 </script>
 
 <TooltipText {hoverText} class="hover-zoom-contents flex-center d-inline-flex whs-{size} {className} {disabled ? 'disabled' : ''}" {placement}>
-	<a {href} class="flex-center btn-clear" onclick={onClick} role="button" tabindex="0" target={blank ? '_blank' : '_self'} {download}>
+	<a {href} class="flex-center btn-clear" onclick={onClick} role="button" tabindex="0" target={blank ? '_blank' : ''} {download}>
 		<UIcon name={icon} {size} {color} gradient />
 	</a>
 </TooltipText>

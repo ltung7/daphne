@@ -1,5 +1,6 @@
 export const cleanVehicle: Vehicle.NewVehicleData = {
     id: '',
+    fuelType: 'gas',
     firstRegistrationDate: '',
     vin: '',
     mileage: 0,

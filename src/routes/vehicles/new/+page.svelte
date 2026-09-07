@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { cleanVehicle } from '$lib/assets/cleanItems';
+	import { fuelNames } from '$lib/assets/constants';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import CustomFormNumeric from '$lib/form/CustomFormNumeric.svelte';
@@ -20,12 +21,15 @@
 	import { onMount } from 'svelte';
 
 	let typeSelect: Record<string, string> = $state({});
+	let typeData: Record<string, { name: string, fuelType: Vehicle.FuelType}> = $state({});
 	let vehicle: Vehicle.NewVehicleData = $state({ ...cleanVehicle });
 	let aztecOpen: boolean = $state(false);
 
 	const handleTypeChange = (typeId: string) => {
-		vehicle.name = typeSelect[typeId];
-		vehicle.modelMake = typeSelect[typeId];
+		const data = typeData[typeId]
+		vehicle.name = data.name;
+		vehicle.modelMake = data.name;
+		vehicle.fuelType = data.fuelType;
 	};
 
 	const onResponse = (response: any) => {
@@ -59,14 +63,22 @@
 	};
 
 	onMount(async () => {
-		const types = await fetchVehicleTypes([ 'id', 'name' ]);
+		const types = await fetchVehicleTypes([ 'id', 'name', 'fuelType' ]);
 		typeSelect = types.reduce(
 			(obj, item) => {
-				obj[item.id] = item.name;
+				obj[item.id] = `${item.name} (${fuelNames[item.fuelType]})`;
 				return obj;
 			},
 			{} as Record<string, string>
 		);
+		typeData = types.reduce(
+			(obj, item) => {
+				obj[item.id] = { name: item.name, fuelType: item.fuelType };
+				return obj;
+			},
+			{} as Record<string, { name: string, fuelType: Vehicle.FuelType}>
+		);
+		
 
 		const typeParam = $page.url.searchParams.get('type');
 		if (typeParam && typeSelect[typeParam]) {

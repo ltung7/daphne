@@ -50,7 +50,7 @@
 </script>
 
 
-<div class="mb-3 {addClass}">
+<div class="{addClass}">
     {#if caption?.length}
         <label for={id} class="form-label small" class:is-focused={isFocused}>{caption}</label>
     {/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
+	import IconButton from '$lib/misc/IconButton.svelte';
+	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import CustomFormTextarea from './CustomFormTextarea.svelte';
 
 	interface Props {
@@ -14,20 +15,16 @@
 	};
 </script>
 
-<div class="card mt-3">
-	<h5 class="card-header flex-between">
-		Notatki
-		<div class="my-n3">
-			<TooltipSquareIconButton icon="edit" onClick={toggle} hoverText="Edytuj" />
-		</div>
-	</h5>
-	<div class="card-body">
-		{#if editMode}
-			<CustomFormTextarea bind:value={notes} size={4} class="" />
-		{:else if notes.length}
-			{notes}
-		{:else}
-			<div class="font-italic text-muted text-center">- Brak notatki -</div>
-		{/if}
-	</div>
-</div>
+<SectionCard title="Notatki">
+	{#snippet cta()}
+		<IconButton caption="Edytuj" icon="edit" onclick={toggle} size={6} />
+	{/snippet}
+
+	{#if editMode}
+		<CustomFormTextarea bind:value={notes} size={4} class="mb-0" />
+	{:else if notes.length}
+		{notes}
+	{:else}
+		<div class="font-italic text-muted text-center">- Brak notatki -</div>
+	{/if}
+</SectionCard>

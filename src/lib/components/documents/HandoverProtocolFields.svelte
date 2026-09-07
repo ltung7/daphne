@@ -115,7 +115,7 @@
 	<div class="col-12 border-top pt-3">
 		<h5>5. ZDJĘCIA POJAZDU</h5>
 	</div>
-	{#if handoverProtocol.images.length}
+	{#if handoverProtocol.images?.length}
 		{#each handoverProtocol.images as src, i}
 			<div class="col-12 col-md-6 col-lg-3 my-2">
 				<img {src} class="mw-100 border rounded" alt="Img {i}" />
