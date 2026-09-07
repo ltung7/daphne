@@ -5,6 +5,8 @@
 	import { internal } from '$lib/nav/internal';
 	import HandoverStatus from '$lib/misc/HandoverStatus.svelte';
 	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
 
 	let handovers: DocumentGenerator.HandoverDocumentRecord[] = $state([]);
 	let loaded = $state(false);
@@ -35,17 +37,11 @@
 	onMount(loadData);
 </script>
 
-<svelte:head>
-	<title>Protokoły zdawczo odbiorcze</title>
-</svelte:head>
+<PageTitle title="Wydania pojazdów" subtitle="Lista protokołów zdawczo odboirczych">
+	<IconLink icon="add" caption="Nowy protokół" href="/handovers/new" />
+</PageTitle>
 
-<div class="card full-width-card">
-	<h5 class="card-header flex-between">
-		<div>Protokoły zdawczo odbiorcze</div>
-		<div class="my-n3">
-			<TooltipSquareIconLink icon="add" hoverText="Dodaj nowy protokół wydania" href="/handovers/new" size={2} />
-		</div>
-	</h5>
+<div class="card">
 	<div class="card-body text-center">
 		<DatatableWrapper {loaded} data={handovers} {headers} hasTimestamp>
 			{#snippet row(row)}

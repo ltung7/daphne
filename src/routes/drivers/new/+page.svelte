@@ -9,6 +9,8 @@
 	import CustomFormSelect from '$lib/form/CustomFormSelect.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import { onMount } from 'svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import { fly, slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { list } from '$lib/assets/data/markets.json';
@@ -182,11 +184,11 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Nowy kierowca</title>
-</svelte:head>
+<PageTitle title="Nowy kierowca" subtitle="Wprowadź dane nowego kierowcy do systemu">
+	<IconLink icon="left" caption="Powrót do listy" href="/drivers" />
+</PageTitle>
 
-<CardForm title="Nowy kierowca" item={driver} cleanItem={cleanDriver} {onResponse} {onReset} {testData} {beforeSubmit} schema={newDriverDataSchema}>
+<CardForm item={driver} cleanItem={cleanDriver} {onResponse} {onReset} {testData} {beforeSubmit} schema={newDriverDataSchema}>
 	{#snippet children({ errors, touch })}
 		<div class="row">
 			<div class="col-12 col-md-6">

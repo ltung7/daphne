@@ -9,7 +9,6 @@
 		item: T;
 		cleanItem: T;
 		name?: string;
-		title: string;
 		onResponse?: (response: any) => any;
 		onReset?: () => any;
 		testData?: () => any;
@@ -29,7 +28,7 @@
 		>;
 	}
 
-	let { item, cleanItem, title, onReset, submitSnippet, onResponse, beforeSubmit, testData, name = 'data', children, schema, footer }: Props = $props();
+	let { item, cleanItem, onReset, submitSnippet, onResponse, beforeSubmit, testData, name = 'data', children, schema, footer }: Props = $props();
 
 	let touched = $state<Partial<Record<keyof T, boolean>>>({});
 
@@ -88,7 +87,6 @@
 </script>
 
 <div class="card mt-3">
-	<h5 class="card-header">{title}</h5>
 	<form class="card-body" onsubmit={handleSubmit}>
 		{@render children({ errors: visibleErrors, allErrors: errors, isValid, touch })}
 	</form>

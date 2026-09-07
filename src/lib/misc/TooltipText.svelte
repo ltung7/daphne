@@ -10,6 +10,7 @@
         tooltipClass?: string;
         children?: import('svelte').Snippet;
         hover?: import('svelte').Snippet;
+        hide?: boolean;
     }
 
     let {
@@ -19,7 +20,8 @@
         hoverText = '',
         tooltipClass = '',
         children,
-        hover
+        hover,
+        hide
     }: Props = $props();
     
     let element = $state<HTMLElement>();
@@ -31,6 +33,8 @@
     {/if}
 </span>
 
-<Tooltip target={element} {placement}>
-    <span class="tooltip-text {tooltipClass}">{#if hover}{@render hover()}{:else}{@html hoverText}{/if}</span>
-</Tooltip>
+{#if hide !== true}
+    <Tooltip target={element} {placement}>
+        <span class="tooltip-text {tooltipClass}">{#if hover}{@render hover()}{:else}{@html hoverText}{/if}</span>
+    </Tooltip>
+{/if}

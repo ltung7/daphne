@@ -4,6 +4,8 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { fetchVehicles } from '$lib/nav/fetchData';
 	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
 
 	let vehicles: Vehicle.Vehicle[] = $state([]);
 	let loaded = $state(false);
@@ -25,17 +27,11 @@
 	onMount(loadTypes);
 </script>
 
-<svelte:head>
-	<title>Pojazdy</title>
-</svelte:head>
+<PageTitle title="Pojazdy" subtitle="Lista zarejestrowanych pojazdów">
+	<IconLink icon="add" caption="Nowy pojazd" href="/vehicles/new" />
+</PageTitle>
 
-<div class="card full-width-card">
-	<h5 class="card-header flex-between">
-		<div>Zarejestrowane pojazdy</div>
-		<div class="my-n3">
-			<TooltipSquareIconLink icon="add" hoverText="Dodaj nowy pojazd" href="/vehicles/new" size={2} />
-		</div>
-	</h5>
+<div class="card">
 	<div class="card-body text-center">
 		<DatatableWrapper {loaded} data={vehicles} {headers}>
 			{#snippet row(row)}

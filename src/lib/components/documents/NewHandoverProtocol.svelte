@@ -130,7 +130,7 @@
 	<title>Wygeneruj protokół wydania pojazdu</title>
 </svelte:head>
 
-<CardForm title="Wygeneruj protokół wydania pojazdu" item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
+<CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
 	{#snippet children({ errors, touch })}
 		<section class="pb-3 mb-3 border-bottom">
 			{#if vehicle}

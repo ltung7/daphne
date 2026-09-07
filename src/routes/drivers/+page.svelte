@@ -5,6 +5,8 @@
 	import { fetchDrivers } from '$lib/nav/fetchData';
 	import { formatCurrency } from '$lib/utils/numberFormatter';
 	import DriverStatus from '$lib/misc/DriverStatus.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
 
 	let drivers: Driver.Driver[] = $state([]);
 	let loaded = $state(false);
@@ -26,17 +28,11 @@
 	onMount(loadDrivers);
 </script>
 
-<svelte:head>
-	<title>Kierowcy</title>
-</svelte:head>
+<PageTitle title="Kierowcy" subtitle="Lista zarejestrowanych kierowcow">
+	<IconLink icon="add" caption="Nowy kierowca" href="/drivers/new" />
+</PageTitle>
 
-<div class="card full-width-card">
-	<h5 class="card-header flex-between">
-		<div>Zarejestrowani kierowcy</div>
-		<div class="my-n3">
-			<TooltipSquareIconLink icon="add" hoverText="Dodaj nowego kierowcą" href="/drivers/new" size={2} />
-		</div>
-	</h5>
+<div class="card">
 	<div class="card-body text-center">
 		<DatatableWrapper {loaded} data={drivers} {headers}>
 			{#snippet row(row)}

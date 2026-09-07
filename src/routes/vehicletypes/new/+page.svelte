@@ -17,6 +17,8 @@
 	import { cleanVehicleType } from '$lib/assets/cleanItems';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import { fuelNames } from '$lib/assets/constants';
+	import IconLink from '$lib/misc/IconLink.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
 
 	const licenses = licensesRaw.categories.reduce(
 		(obj, item) => {
@@ -82,12 +84,11 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Nowy rodzaj pojazdu</title>
-</svelte:head>
+<PageTitle title="Nowy rodzaj pojazdu" subtitle="Dodaj nowy typ pojazdu do systemu">
+	<IconLink icon="left" caption="Powrót do listy" href="/vehicletypes" />
+</PageTitle>
 
 <div class="card z-index-5">
-	<h5 class="card-header">Dodaj nowy model samochodu</h5>
 	<div class="card-body">
 		<div class="row">
 			<div class="col-12 col-md-6">
@@ -105,7 +106,7 @@
 	</div>
 </div>
 
-<CardForm title="Nowy rodzaj pojazdu" item={newVehicleType} cleanItem={cleanVehicleType} {onResponse}>
+<CardForm item={newVehicleType} cleanItem={cleanVehicleType} {onResponse}>
 	<div class="row">
 		<div class="col-12 col-md-6">
 			{#if newVehicleType.image.length}

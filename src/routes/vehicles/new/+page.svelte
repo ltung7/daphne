@@ -11,6 +11,9 @@
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import AztecDecoderModal from '$lib/misc/AztecDecoderModal.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
+	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { fetchVehicleTypes } from '$lib/nav/fetchData';
 	import randomNumber from '$lib/utils/randomNumber';
 	import randomString from '$lib/utils/randomString';
@@ -49,11 +52,11 @@
 		};
 	};
 
-	const handleSelect = ({ vehicle: newVehicle, type }: { vehicle: Vehicle.Vehicle, type: Vehicle.Type }) => {
+	const handleSelect = ({ vehicle: newVehicle, type }: { vehicle: Vehicle.Vehicle; type: Vehicle.Type }) => {
 		Object.assign(vehicle, newVehicle);
-		if (!typeSelect[type.id]) typeSelect[type.id]  = type.name;
+		if (!typeSelect[type.id]) typeSelect[type.id] = type.name;
 		vehicle.typeId = type.id;
-	}
+	};
 
 	onMount(async () => {
 		const types = await fetchVehicleTypes([ 'id', 'name' ]);
@@ -75,12 +78,19 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Utwórz nowy pojazd</title>
-</svelte:head>
+<PageTitle title="Nowy pojazd" subtitle="Wprowadź dane nowego pojazdu do systemu">
+	<IconLink icon="left" caption="Powrót do listy" href="/vehicles" />
+</PageTitle>
 
-<CardForm title="Nowy pojazdu" item={vehicle} cleanItem={cleanVehicle} {onResponse} {testData}>
-	<CustomFormSelect bind:value={vehicle.typeId} caption="Rodzaj pojazdu" list={typeSelect} size={6} onchange={handleTypeChange} />
+<CardForm item={vehicle} cleanItem={cleanVehicle} {onResponse} {testData}>
+	<div class="flex-between">
+		<div class="w-100">
+			<CustomFormSelect bind:value={vehicle.typeId} caption="Rodzaj pojazdu" list={typeSelect} size={6} onchange={handleTypeChange} />
+		</div>
+		<div class="p-2">
+			<TooltipSquareIconLink href="/vehicletypes" icon="add" hoverText="Nowy rodzaj pojazdu" />
+		</div>
+	</div>
 	<div class="row mt-3">
 		<div class="col-12 col-md-6">
 			<CustomFormText name="vehicleRegistrationNumber" caption="Numer rejestracyjny" bind:value={vehicle.registrationNumber} />

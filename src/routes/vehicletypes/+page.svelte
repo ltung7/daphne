@@ -5,6 +5,8 @@
     import names from '$lib/assets/names.json'
 	import TooltipSquareIconLink from "$lib/misc/TooltipSquareIconLink.svelte";
 	import { fetchVehicleTypes } from "$lib/nav/fetchData";
+	import IconLink from "$lib/misc/IconLink.svelte";
+	import PageTitle from "$lib/misc/PageTitle.svelte";
     const fuelNames: Record<Vehicle.FuelType, string> = names.fuel as any;
 
     let types: Vehicle.Type[] = $state([]);
@@ -19,17 +21,11 @@
     onMount(loadTypes);
 </script>
 
-<svelte:head>
-    <title>Rodzaje pojazdów</title>
-</svelte:head>
+<PageTitle title="Rodzaje pojazdów" subtitle="Lista zdefiniowanych typów pojazdów">
+	<IconLink icon="add" caption="Nowy rodzaj" href="/vehicletypes/new" />
+</PageTitle>
 
 <div class="card">
-    <h5 class="card-header flex-between">
-        <div>Rodzaje pojazdów</div>
-        <div class="my-n3">
-            <TooltipSquareIconLink icon="add" hoverText="Dodaj nowy rodzaj pojazdu" href="/vehicletypes/new" size={2} />
-        </div>
-    </h5>
     <div class="card-body text-center">
         <DatatableWrapper {loaded} data={types} {headers}>
             {#snippet row(row)}
