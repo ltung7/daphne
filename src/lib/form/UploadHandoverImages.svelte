@@ -73,7 +73,7 @@
 		const formData = new FormData();
 		formData.append('file', file);
 		const response = (await wrapLoader(
-			fetch('/documents/temp', {
+			fetch('/upload/temp', {
 				method: 'POST',
 				body: formData
 			})
@@ -95,7 +95,7 @@
 		formData.append('data', JSON.stringify({ type: selectedType, handoverId }));
 
 		const response = (await wrapLoader(
-			fetch('/documents/upload', {
+			fetch('/upload/documents', {
 				method: 'POST',
 				body: formData
 			})

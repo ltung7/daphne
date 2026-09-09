@@ -22,9 +22,9 @@
 	const daily = ALL_INSPECTION_ITEMS.filter((i) => i.frequency === 'daily' && !i.requiresPhoto);
 	const monthlyItems = ALL_INSPECTION_ITEMS.filter((i) => i.frequency === 'monthly');
 
-    const onFinished = (progress: Record<string, string>) => {
-        for (const [ type, img ] of Object.entries(progress)) {
-            if (img.length && type in checklist) checklist[type] = true;
+    const onFinished = (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => {
+        for (const [ type, { src } ] of Object.entries(progress)) {
+            if (src.length && type in checklist) checklist[type] = true;
         }
     }
 </script>

@@ -21,6 +21,7 @@
 		{ src: back, step: 5, type: 'photo_rear', caption: 'Tył' }
 	];
 
-	let { onfinished }: { onfinished?: (progress: Record<Vehicle.ImageInspectionCategory, string>) => void } = $props();
+	let { onfinished }: { onfinished?: (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => void } = $props();
+	
 </script>
 <CameraCaptureSeries {onfinished} {steps} />

@@ -81,7 +81,7 @@
 		}
 		formData.append('data', JSON.stringify(result));
 		const response = (await wrapLoader(
-			fetch('/documents/upload', {
+			fetch('/upload/documents', {
 				method: 'POST',
 				body: formData
 			})

@@ -75,6 +75,17 @@ declare global {
 		type BucketName = "feed-cdn-files" | "mpt_tmp_imgs";
 
 		type TranslateFunction = (sentence: string, from: string, to: string) => Promise<string | null>
+
+		interface BucketSignedLink {
+			signedUrl: string;
+			expires: number;
+		}
+
+		interface StoredTempFile {
+			bucket: BucketName;
+			fileName: string;
+			src: string;
+		}
 	}
 
 	namespace Vehicle {
@@ -705,6 +716,8 @@ declare global {
 		type DragBoxDrop = (event: DragEvent | ExplicitAnyToExtend, index: string, dragHoverItem: string, from: string) => void;
 
 		type DragMoveBetweenArrays<T, R = Record<string, T[]>> = (item: T, indexForm: keyof R, indexTo: keyof R, arrays: R, itemIndex: ((keyof T) | undefined)) => R;
+
+		type SavedProgress<T extends string> = Partial<Record<T, App.StoredTempFile>>;
 	}
 
 }

@@ -30,6 +30,8 @@ app.yaml
 *.temp.ts
 *.old.*
 *-old
+signer.json
+
 # Paraglide
 src/lib/paraglide
 project.inlang/cache/

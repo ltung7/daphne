@@ -1,5 +1,8 @@
+import { isDev } from '$lib/utils/isDev';
 import { Storage, type GetSignedUrlConfig } from '@google-cloud/storage';
+
 const storage = new Storage();
+let signerStorage: Storage | undefined;
 
 export const BUCKETS: Record<string, App.BucketName> = {
     FEED: "feed-cdn-files",
@@ -51,3 +54,46 @@ export const generateDownloadUrl = async (
 
     return signedUrl;
 };
+
+const getSignerStorage = () => {
+    if (!isDev) return storage;
+    if (signerStorage) return signerStorage;
+    signerStorage = new Storage({
+        keyFilename: `${process.cwd()}/signer.json`,
+    });
+    return signerStorage;
+}
+
+export const generateUploadUrl = async (
+    filename: string,
+    contentType?: string,
+    bucket: App.BucketName = BUCKETS.TEMP,
+): Promise<App.BucketSignedLink> => {
+    // 15 minutes converted to milliseconds
+    const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+    const expires = Date.now() + FIFTEEN_MINUTES_MS;
+
+    const options: GetSignedUrlConfig = {
+        version: 'v4',
+        action: 'write',
+        expires,
+        ...(contentType && { contentType }),
+    };
+
+    const signerStorage = getSignerStorage();
+    const [ signedUrl ] = await signerStorage
+        .bucket(bucket)
+        .file(filename)
+        .getSignedUrl(options);
+
+    return { signedUrl, expires };
+};
+
+export const generateDownloadLink = async (filename: string, bucket: App.BucketName = BUCKETS.FEED): Promise<App.BucketSignedLink> => {
+    const signerStorage = getSignerStorage();
+    const [ file ] = await signerStorage.bucket(bucket).file(filename).get();
+    const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+    const expires = Date.now() + FIFTEEN_MINUTES_MS;
+    const signedUrl = await file.getSignedUrl({ action: 'read', expires })
+    return { signedUrl: signedUrl[0], expires };
+}
