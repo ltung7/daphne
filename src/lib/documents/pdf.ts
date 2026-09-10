@@ -70,6 +70,14 @@ export const testZapfDingbats = async (fromChar: number = 0, toChar: number = 25
 
 // Helpers from proto.js - designed to work with pdf context
 export class PdfHelpers {
+    static async fetchImageBuffer(url: string): Promise<Buffer> {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${url} (${response.status})`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+    }
     // Class properties for page dimensions and cursor
     private pdf: PDFKit.PDFDocument;
     private y: number;
@@ -80,7 +88,9 @@ export class PdfHelpers {
     private static readonly PAGE_HEIGHT = 840;
     private static readonly PAGE_MARGIN_TOP = 20;
     private static readonly PAGE_MARGIN_BOTTOM = 20;
-    private static readonly IMAGE_HEIGHT = PdfHelpers.PAGE_HEIGHT / 4;
+    private static readonly HEADER_FOOTER_LINES = 3; // ~3 lines of text each
+    private static readonly LINE_HEIGHT = 12; // approximate line height
+    private static readonly LABEL_HEIGHT = 22; // caption text + padding
 
     // Constructor calculates page dimensions from PDF object
     constructor(pdf: PDFKit.PDFDocument, startY: number) {
@@ -472,7 +482,7 @@ export class PdfHelpers {
         return this.y;
     }
 
-    drawImage(photoNumber: number, imageBuffer: Buffer, photoLabel: string): void {
+drawImage(photoNumber: number, imageBuffer: Buffer, photoLabel: string, imagesPerPage: number = 2): void {
         // Caption
         this.pdf.fontSize(12).text(photoLabel.replaceAll('{i}', photoNumber.toString()), this.pageLeft, this.y, {
             width: this.contentWidth,
@@ -480,9 +490,17 @@ export class PdfHelpers {
         });
         this.y = this.pdf.y + 10;
 
-        // Fit image into fixed height, capped at content width, centered horizontally
+        // Calculate available height for images
+        // Page height minus top/bottom margins, minus header/footer space (3 lines each), minus label space per image
+        const headerFooterSpace = PdfHelpers.HEADER_FOOTER_LINES * PdfHelpers.LINE_HEIGHT * 2; // header + footer
+        const totalLabelSpace = PdfHelpers.LABEL_HEIGHT * imagesPerPage;
+        const availableHeight = PdfHelpers.PAGE_HEIGHT - PdfHelpers.PAGE_MARGIN_TOP - PdfHelpers.PAGE_MARGIN_BOTTOM - headerFooterSpace - totalLabelSpace;
+        const imageHeight = availableHeight / imagesPerPage;
+
+        // Fit image into calculated height, capped at content width, centered horizontally
         const { width: imgW, height: imgH } = (this.pdf as any).openImage(imageBuffer);
-        const scale = Math.min(this.contentWidth / imgW, PdfHelpers.IMAGE_HEIGHT / imgH);
+        const scale = Math.min(this.contentWidth / imgW, imageHeight / imgH);
+        console.log("🚀 ~ PdfHelpers ~ drawImage ~ scale:", scale);
         const drawWidth = imgW * scale;
         const drawHeight = imgH * scale;
         const x = this.pageLeft + (this.contentWidth - drawWidth) / 2;

@@ -1,3 +1,5 @@
+import { getVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
+import { testDocument } from "$lib/utils/testDocument";
 import translations from "./handover.translations";
 import { PdfHelpers, preparePdf } from "./pdf";
 
@@ -6,7 +8,7 @@ const PAPER = {
     size: [ 595, 840 ],
 }
 
-const generateHandoverUnilateralDocument = async (variables: DocumentGenerator.HandoverDocument) => {
+const generateHandoverUnilateralDocument = async (handoverDocument: DocumentGenerator.HandoverDocument) => {
     return preparePdf(PAPER, (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
         const translation = translations.pl;
@@ -16,37 +18,37 @@ const generateHandoverUnilateralDocument = async (variables: DocumentGenerator.H
         helpers.line();
 
         helpers.sectionHeader(translation.section1Header);
-        helpers.twoColLabeledLines(translation.date, translation.reasonForRecovery, { valueA: variables.date, valueB: 'Brak kontaktu' });
+        helpers.twoColLabeledLines(translation.date, translation.reasonForRecovery, { valueA: handoverDocument.date, valueB: 'Brak kontaktu' });
         helpers.labeledLine(translation.recoveryLocation + ':', { value: "Tutaj tamtaj" });
-        helpers.labeledLine(translation.retriever + ':', { value: variables.managerName });
+        helpers.labeledLine(translation.retriever + ':', { value: handoverDocument.managerName });
         helpers.labeledLine(translation.witness + ':', { value: 'Khar Khar' });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section2Header);
-        helpers.labeledLine(translation.model + ":", { value: variables.model });
-        helpers.twoColLabeledLines(translation.plate + ":", 'VIN:', { valueB: variables.vin, valueA: variables.registrationNumber });
-        const remainingType = variables.isElectric ? translation.battery : translation.fuel;
-        helpers.twoColLabeledLines(translation.mileage + ":", remainingType + ":", { valueA: variables.milage, valueB: variables.remaining });
+        helpers.labeledLine(translation.model + ":", { value: handoverDocument.model });
+        helpers.twoColLabeledLines(translation.plate + ":", 'VIN:', { valueB: handoverDocument.vin, valueA: handoverDocument.registrationNumber });
+        const remainingType = handoverDocument.isElectric ? translation.battery : translation.fuel;
+        helpers.twoColLabeledLines(translation.mileage + ":", remainingType + ":", { valueA: handoverDocument.milage, valueB: handoverDocument.remaining });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section3Header);
         helpers.equipmentGrid(
             [
-                [ translation.equipmentKey, variables.key ],
-                [ translation.equipmentSpareKey, variables.spareKey ],
-                [ translation.equipmentRegistration, variables.registration ],
-                [ translation.equipmentRoofSign, variables.roofSign ],
-                [ translation.equipmentFuelCard, variables.fuelCard ],
-                [ translation.equipmentCarWashCard, variables.carWashCard ],
-                [ translation.equipmentTire, variables.tire ],
+                [ translation.equipmentKey, handoverDocument.key ],
+                [ translation.equipmentSpareKey, handoverDocument.spareKey ],
+                [ translation.equipmentRegistration, handoverDocument.registration ],
+                [ translation.equipmentRoofSign, handoverDocument.roofSign ],
+                [ translation.equipmentFuelCard, handoverDocument.fuelCard ],
+                [ translation.equipmentCarWashCard, handoverDocument.carWashCard ],
+                [ translation.equipmentTire, handoverDocument.tire ],
 
-                [ translation.equipmentExtinguisher, variables.exinguisher ],
-                [ translation.equipmentTriangle, variables.triangle ],
-                [ translation.equipmentVest, variables.vest ],
-                [ translation.equipmentFirstAidKit, variables.firstAidKit ],
-                [ translation.equipmentMats, variables.mats ],
-                [ translation.equipmentPhoneHolder, variables.phoneHolder ],
-                [ translation.equipmentPhoneCharger, variables.phoneCharger ]
+                [ translation.equipmentExtinguisher, handoverDocument.exinguisher ],
+                [ translation.equipmentTriangle, handoverDocument.triangle ],
+                [ translation.equipmentVest, handoverDocument.vest ],
+                [ translation.equipmentFirstAidKit, handoverDocument.firstAidKit ],
+                [ translation.equipmentMats, handoverDocument.mats ],
+                [ translation.equipmentPhoneHolder, handoverDocument.phoneHolder ],
+                [ translation.equipmentPhoneCharger, handoverDocument.phoneCharger ]
             ]
         );
         helpers.padY(6);
@@ -54,7 +56,7 @@ const generateHandoverUnilateralDocument = async (variables: DocumentGenerator.H
         helpers.sectionHeader(translation.section4Header);
         helpers.paragraph(translation.section4Paragraph + ":");
         helpers.padY(6);
-        helpers.notesBox(4, variables.visual);
+        helpers.notesBox(4, handoverDocument.visual);
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section5Header);
@@ -63,6 +65,17 @@ const generateHandoverUnilateralDocument = async (variables: DocumentGenerator.H
         helpers.setY(770);
         helpers.signatureLine(translation.signatureWitness, translation.signatureManager);
     })
+}
+
+
+export const testHandoverUnilateralDocument = async (handoverDocument: DocumentGenerator.HandoverDocument | string) => {
+    const { filePath } = await testDocument(handoverDocument, {
+        getFunction: getVehicleHandovers<DocumentGenerator.HandoverDocumentRecord>,
+        generateFunction: (record) => generateHandoverUnilateralDocument(record),
+        description: "Unilateral Handover",
+        key: "registrationNumber",
+    });
+    return filePath;
 }
 
 export default generateHandoverUnilateralDocument;

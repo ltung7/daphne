@@ -3,27 +3,19 @@ import { sendEnvelope } from "$lib/server/services/docusign/docusign.service";
 import { getTranslations } from "./handover.lang";
 import { PdfHelpers, preparePdf } from "./pdf";
 import translations from "./handover.translations";
-import { setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
+import { setVehicleHandovers, getVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
+import { testDocument } from "$lib/utils/testDocument";
 
 const PAPER = {
     margins: { top: 20, left: 20, right: 20, bottom: 20 },
     size: [ 595, 840 ],
 }
 
-async function fetchImageBuffer(url: string): Promise<Buffer> {
-    const response = await fetch(url);
-    if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${url} (${response.status})`);
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
-}
-
-const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDocument, handoverId: string, send: boolean = false) => {
-    const translation = await getTranslations(variables.locale);
+const generateHandoverDocument = async (handoverDocument: DocumentGenerator.HandoverDocument, handoverId?: string, send: boolean = false) => {
+    const translation = await getTranslations(handoverDocument.locale);
     let images: Array<Buffer> = [];
-    if (variables.images.length) {
-        images = await Promise.all(variables.images.map(item => fetchImageBuffer(item)))
+    if (handoverDocument.images?.length) {
+        images = await Promise.all(handoverDocument.images.map(item => PdfHelpers.fetchImageBuffer(item)))
     }
     const buffer = await preparePdf(PAPER, async (pdf) => {
         const helpers = new PdfHelpers(pdf, pdf.y);
@@ -33,37 +25,37 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.line();
 
         helpers.sectionHeader(translation.section1Header);
-        helpers.twoColLabeledLines(translation.place, translation.date, { valueA: variables.place, valueB: variables.date });
-        helpers.labeledLine(translation.manager + ':', { value: variables.owner + ', ' + variables.managerName });
-        const idType = identificationDocumentNames[variables.identificationDocumentType as Driver.IdentificationDocumentType];
-        helpers.labeledLine(translation.driver + ":", { value: variables.driverName + ', ' + idType + ' ' + variables.identificationDocumentNumber });
+        helpers.twoColLabeledLines(translation.place, translation.date, { valueA: handoverDocument.place, valueB: handoverDocument.date });
+        helpers.labeledLine(translation.manager + ':', { value: handoverDocument.owner + ', ' + handoverDocument.managerName });
+        const idType = identificationDocumentNames[handoverDocument.identificationDocumentType as Driver.IdentificationDocumentType];
+        helpers.labeledLine(translation.driver + ":", { value: handoverDocument.driverName + ', ' + idType + ' ' + handoverDocument.identificationDocumentNumber });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section2Header);
-        helpers.labeledLine(translation.model + ":", { value: variables.model });
-        helpers.twoColLabeledLines(translation.plate + ":", 'VIN:', { valueB: variables.vin, valueA: variables.registrationNumber });
-        const remainingType = variables.isElectric ? translation.battery : translation.fuel;
-        helpers.twoColLabeledLines(translation.mileage + ":", remainingType + ":", { valueA: variables.milage, valueB: variables.remaining });
+        helpers.labeledLine(translation.model + ":", { value: handoverDocument.model });
+        helpers.twoColLabeledLines(translation.plate + ":", 'VIN:', { valueB: handoverDocument.vin, valueA: handoverDocument.registrationNumber });
+        const remainingType = handoverDocument.isElectric ? translation.battery : translation.fuel;
+        helpers.twoColLabeledLines(translation.mileage + ":", remainingType + ":", { valueA: handoverDocument.milage, valueB: handoverDocument.remaining });
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section3Header);
         helpers.equipmentGrid(
             [
-                [ translation.equipmentKey, variables.key ],
-                [ translation.equipmentSpareKey, variables.spareKey ],
-                [ translation.equipmentRegistration, variables.registration ],
-                [ translation.equipmentRoofSign, variables.roofSign ],
-                [ translation.equipmentFuelCard, variables.fuelCard ],
-                [ translation.equipmentCarWashCard, variables.carWashCard ],
-                [ translation.equipmentTire, variables.tire ],
+                [ translation.equipmentKey, handoverDocument.key ],
+                [ translation.equipmentSpareKey, handoverDocument.spareKey ],
+                [ translation.equipmentRegistration, handoverDocument.registration ],
+                [ translation.equipmentRoofSign, handoverDocument.roofSign ],
+                [ translation.equipmentFuelCard, handoverDocument.fuelCard ],
+                [ translation.equipmentCarWashCard, handoverDocument.carWashCard ],
+                [ translation.equipmentTire, handoverDocument.tire ],
 
-                [ translation.equipmentExtinguisher, variables.exinguisher ],
-                [ translation.equipmentTriangle, variables.triangle ],
-                [ translation.equipmentVest, variables.vest ],
-                [ translation.equipmentFirstAidKit, variables.firstAidKit ],
-                [ translation.equipmentMats, variables.mats ],
-                [ translation.equipmentPhoneHolder, variables.phoneHolder ],
-                [ translation.equipmentPhoneCharger, variables.phoneCharger ]
+                [ translation.equipmentExtinguisher, handoverDocument.exinguisher ],
+                [ translation.equipmentTriangle, handoverDocument.triangle ],
+                [ translation.equipmentVest, handoverDocument.vest ],
+                [ translation.equipmentFirstAidKit, handoverDocument.firstAidKit ],
+                [ translation.equipmentMats, handoverDocument.mats ],
+                [ translation.equipmentPhoneHolder, handoverDocument.phoneHolder ],
+                [ translation.equipmentPhoneCharger, handoverDocument.phoneCharger ]
             ]
         );
         helpers.padY(6);
@@ -71,18 +63,18 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         helpers.sectionHeader(translation.section4Header);
         helpers.paragraph(translation.section4Paragraph + ":");
         helpers.padY(6);
-        let visual = variables.visual;
-        if (variables.locale !== 'pl' && variables.translatedVisual) {
-            visual += " / " + variables.translatedVisual;
+        let visual = handoverDocument.visual;
+        if (handoverDocument.locale !== 'pl' && handoverDocument.translatedVisual) {
+            visual += " / " + handoverDocument.translatedVisual;
         }
         helpers.notesBox(4, visual);
-        if (variables.images.length) {
+        if (handoverDocument.images?.length) {
             helpers.paragraph(translation.imagesAttachment)
         }
         helpers.padY(6);
 
         helpers.sectionHeader(translation.section5Header);
-        if (!variables.locale || variables.locale === 'pl') {
+        if (!handoverDocument.locale || handoverDocument.locale === 'pl') {
             helpers.numberedClauses(translations.pl.handoverClauses)
         } else {
             const clauseLocale = translation._foreign!;
@@ -94,11 +86,11 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
 
         if (images.length) {
             const subtitle = translation.imagesAttachmentText
-                .replaceAll('{date}', variables.date)
-                .replaceAll('{place}', variables.place)
-                .replaceAll('{model}', variables.model)
-                .replaceAll('{registrationNumber}', variables.registrationNumber)
-                .replaceAll('{vin}', variables.vin)
+                .replaceAll('{date}', handoverDocument.date)
+                .replaceAll('{place}', handoverDocument.place)
+                .replaceAll('{model}', handoverDocument.model)
+                .replaceAll('{registrationNumber}', handoverDocument.registrationNumber)
+                .replaceAll('{vin}', handoverDocument.vin)
 
             for (let i = 0; i < images.length; i++) {
                 if (i % 2 === 0) helpers.addAttachmentPage(translation.imagesAttachmentHeader, subtitle)
@@ -108,22 +100,22 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
         }
     })
 
-    if (send) {
+    if (send && handoverId) {
         const envelope = await sendEnvelope({
             buffer,
-            name: `Protoków wydania pojazdu ${variables.registrationNumber} ${variables.driverName}`,
+            name: `Protoków wydania pojazdu ${handoverDocument.registrationNumber} ${handoverDocument.driverName}`,
             page: 1,
             rightSigner: {
-                email: variables.driverEmail,
-                name: variables.driverName
+                email: handoverDocument.driverEmail,
+                name: handoverDocument.driverName
             },
             leftSigner: {
-                email: variables.managerEmail,
-                name: variables.managerName
+                email: handoverDocument.managerEmail,
+                name: handoverDocument.managerName
             },
             metadata: {
-                driver: variables.driverId,
-                vehicle: variables.registrationNumber,
+                driver: handoverDocument.driverId,
+                vehicle: handoverDocument.registrationNumber,
                 handoverId
             }
         })
@@ -136,6 +128,16 @@ const generateHandoverDocument = async (variables: DocumentGenerator.HandoverDoc
     }
 
     return buffer;
+}
+
+export const testHandoverDocument = async (handoverDocument: DocumentGenerator.HandoverDocument | string) => {
+    const { filePath } = await testDocument(handoverDocument, {
+        getFunction: getVehicleHandovers<DocumentGenerator.HandoverDocumentRecord>,
+        generateFunction: (record) => generateHandoverDocument(record, undefined, false),
+        description: "Handover",
+        key: "registrationNumber",
+    });
+    return filePath;
 }
 
 export default generateHandoverDocument;
