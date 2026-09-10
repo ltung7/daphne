@@ -1,0 +1,13 @@
+[
+  {
+    "origin": [
+      "http://localhost:4800", 
+      "https://eisg.pl",
+      "https://macropart.com",
+      "https://cars.macropart.com"
+    ],
+    "method": ["PUT", "OPTIONS"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]

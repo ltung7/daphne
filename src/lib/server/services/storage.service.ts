@@ -96,4 +96,34 @@ export const generateDownloadLink = async (filename: string, bucket: App.BucketN
     const expires = Date.now() + FIFTEEN_MINUTES_MS;
     const signedUrl = await file.getSignedUrl({ action: 'read', expires })
     return { signedUrl: signedUrl[0], expires };
-}
+};
+
+export const moveFileCollection = async (
+    images: SvelteCustom.SavedProgress<string>,
+    bucketFrom: App.BucketName = BUCKETS.TEMP,
+    bucketTo: App.BucketName = BUCKETS.FEED
+): Promise<SvelteCustom.SavedProgress<string>> => {
+    const result: SvelteCustom.SavedProgress<string> = {};
+
+    for (const [ key, fileData ] of Object.entries(images)) {
+        if (!fileData) {
+            result[key] = undefined;
+            continue;
+        }
+
+        const sourceFile = storage.bucket(bucketFrom).file(fileData.fileName);
+        const destinationFile = storage.bucket(bucketTo).file(fileData.fileName);
+
+        await sourceFile.move(destinationFile);
+
+        const newUrl = `https://storage.googleapis.com/${bucketTo}/${fileData.fileName}`;
+
+        result[key] = {
+            ...fileData,
+            bucket: bucketTo,
+            src: newUrl,
+        };
+    }
+
+    return result;
+};

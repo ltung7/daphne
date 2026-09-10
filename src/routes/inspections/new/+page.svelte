@@ -1,6 +1,6 @@
 <script lang="ts">
-	import NewInspection from '$lib/components/inspection/NewInspection.svelte';
 	import SearchVehicle from '$lib/components/SearchVehicle.svelte';
+	import NewInspection from '$lib/components/inspection/NewInspection.svelte';
 	import VehicleImageAndData from '$lib/components/vehicle/VehicleImageAndData.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
@@ -10,7 +10,7 @@
 	let monthly: boolean = $state(false);
 </script>
 
-<PageTitle title="Inspekcja pojazdu" subtitle="Wypełnij dane inspekcji">
+<PageTitle title="Nowa inspekcja" subtitle="Wybierz pojazd i wypełnij inspekcję">
 	{#if monthly}
 		<IconButton icon="task-calendar" caption="Zmień na prostą" color="warning" onclick={() => (monthly = false)} />
 	{:else}
