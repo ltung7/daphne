@@ -636,6 +636,63 @@ declare global {
 			imageNumer: string;
 			_foreign?: HandoverDocumentTranslations
 		}
+
+		interface InspectionDocumentTranslations {
+			title: string;
+			dailySubtitle: string;
+			monthlySubtitle: string;
+			section1Header: string;
+			registrationNumber: string;
+			driver: string;
+			date: string;
+			uploader: string;
+			type: string;
+			section2Header: string;
+			checklistItemPass: string;
+			checklistItemFail: string;
+			checklistItemNa: string;
+			dailyCategory: string;
+			monthlyCategory: string;
+			daily_tires: string;
+			daily_cleanliness: string;
+			daily_lost_property: string;
+			daily_dashboard_alerts: string;
+			monthly_lighting: string;
+			monthly_safety_gear: string;
+			monthly_fluids: string;
+			monthly_brakes: string;
+			monthly_documentation: string;
+			photo_dashboard: string;
+			photo_front: string;
+			photo_rear: string;
+			photo_left_side: string;
+			photo_right_side: string;
+			section3Header: string;
+			imagesAttachment: string;
+			imagesAttachmentHeader: string;
+			imagesAttachmentText: string;
+			imageNumer: string;
+			signatureInspector: string;
+			signatureDriver: string;
+			_foreign?: InspectionDocumentTranslations;
+		}
+
+		type InspectionDocumentBase = {
+			registrationNumber: string;
+			assignedDriverId?: string;
+			assignedDriverName?: string;
+			images: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>;
+		};
+
+		type InspectionDocument =
+			| (InspectionDocumentBase & { monthly: true; checklist: Record<Vehicle.DailyInspectionCategory | Vehicle.MonthlyInspectionCategory, boolean> })
+			| (InspectionDocumentBase & { monthly: false; checklist: Record<Vehicle.DailyInspectionCategory, boolean> });
+
+		type InspectionDocumentRecord = InspectionDocument & {
+			id: string;
+			uploader: string;
+			timestamp: number;
+		}
 	}
 
 	namespace SvelteCustom {

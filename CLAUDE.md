@@ -26,7 +26,7 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 - **Fleet cost** — maintenance, insurance, fuel, fines, etc. attributed to a vehicle or driver, deducted from or billed against the driver's net
 - **Vehicle assignment** — the (usually time-bounded) link between a driver and a vehicle; a vehicle can rotate between drivers
 
-## Uber/Bolt integration conventions
+<!-- ## Uber/Bolt integration conventions
 - Keep each platform's client isolated (`src/lib/server/uber/`, `src/lib/server/bolt/`) behind a shared internal interface — the two APIs won't have identical shapes, auth, or rate limits
 - All external calls are idempotent or de-duplicated on replay; webhooks and polling can both redeliver the same event
 - API credentials and webhook secrets come from environment variables / a secret manager only, never committed
@@ -38,7 +38,7 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 - Every output breakdown keeps its line items (gross earnings, platform commission, fleet provision, cost deductions, net) — never collapse straight to a single number
 - Money as integer minor units (grosze) or a decimal type throughout — no floats
 - Treat this like billing code: it needs the heaviest test coverage in the app
-- Treat Uber/Bolt-reported earnings as the source of truth; reconcile, don't silently override, when internal calculations disagree
+- Treat Uber/Bolt-reported earnings as the source of truth; reconcile, don't silently override, when internal calculations disagree -->
 
 ## Data layer: BigQuery vs Firebase
 
@@ -56,7 +56,7 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 - Firestore security rules (`firestore.rules`) independently enforce the same scoping as the server-side auth checks below — never rely on client code alone to restrict access
 - Data-access code lives in `src/lib/server/db/` (one module per logical table/collection) — don't build ad hoc queries inline in routes
 
-## Auth & roles
+<!-- ## Auth & roles
 - Firebase Auth. Session/token verification is centralized in `src/lib/server/auth/`, not reimplemented per route
 - `admin` / staff role — gates every UI route in `hooks.server.ts`; there is no public admin route
 - If any endpoint here is called by a driver-facing surface, it needs its own driver-scoped check (never the staff role check) and must only ever return that driver's own data — enforce server-side, not just filtered in the UI
@@ -64,7 +64,7 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 
 ## Money and financial calculations
 - Never use floating point for money. Use integer minor units (grosze) or a decimal library end-to-end, from Uber/Bolt ingestion through to what's displayed
-- Currency/number formatting goes through one shared helper (`src/lib/format/` or similar) — don't reimplement it per component
+- Currency/number formatting goes through one shared helper (`src/lib/format/` or similar) — don't reimplement it per component -->
 
 ## Security & compliance
 - Driver PII (ID documents, addresses, bank details) and financial data are sensitive — never log full values; mask in any debug output
@@ -76,7 +76,7 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 - Keep components accessible by default (labels, focus states, sufficient contrast)
 - All user-facing strings go through `$i18n` (`m.*`) — never hardcode Polish (or any) text directly in markup
 
-## Key areas
+<!-- ## Key areas
 - `src/routes/fleet/` — vehicle & driver CRUD, assignment (UI)
 - `src/routes/finance/` — provision calculations, cost breakdowns, payout review (UI)
 - `src/routes/integrations/` — Uber/Bolt sync status and reconciliation issues (UI)
@@ -85,7 +85,17 @@ If a driver-facing app exists now or gets built later (separate repo or not), it
 - `src/lib/server/` — Uber/Bolt clients, calculations, auth, db access — anything server-only
 - `src/lib/components/` — shared UI components
 
-(Adjust the paths above once the real route tree exists.)
+(Adjust the paths above once the real route tree exists.) -->
+
+# Manager Delegation Protocol
+
+When given a non-trivial task, follow this multi-agent loop:
+
+1. **Context Phase (Small Model):** Call `@scout` to find relevant files, grep terms, and inspect codebase layout. Do not perform file searches directly.
+2. **Implementation Phase (Main Model):** Use the context provided by `@scout` to write or refactor the code.
+3. **Verification Phase (Reviewer Model):** Call `@reviewer` with the edited file paths. 
+   - If `@reviewer` returns issues, fix them.
+   - If `@reviewer` returns PASS, present the final output to the user.
 
 ## Commands
 - Install: `npm install`

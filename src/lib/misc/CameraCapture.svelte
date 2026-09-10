@@ -7,12 +7,13 @@
 		onaccept?: (image: T) => void;
 		onreset?: () => void;
 		overlay?: string;
+		asPng?: boolean;
 	};
 
 	type ComponentProps = (CommonProps<ArrayBuffer> & { asArrayBuffer: true }) | (CommonProps<string> & { asArrayBuffer?: false });
 
 	// Annotate the declaration, not the $props rune function
-	let { oncapture, onaccept, onreset, asArrayBuffer, overlay }: ComponentProps = $props();
+	let { oncapture, onaccept, onreset, asArrayBuffer, overlay, asPng = false }: ComponentProps = $props();
 	// --- state ---
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let canvasEl = $state<HTMLCanvasElement | null>(null);
@@ -59,8 +60,9 @@
 			stream = await navigator.mediaDevices.getUserMedia({
 				video: {
 					facingMode,
-					width: { ideal: 1280 },
-					height: { ideal: 720 }
+					aspectRatio: { ideal: 4 / 3 },
+					width: { ideal: 1920 },
+					height: { ideal: 1440 }
 				},
 				audio: false
 			});
@@ -113,7 +115,7 @@
 			if (!ctx) return;
 			ctx.drawImage(videoEl, 0, 0, width, height);
 
-			const dataUrl = canvasEl.toDataURL('image/png', 1);
+			const dataUrl = canvasEl.toDataURL(asPng ? 'image/png' : 'image/jpeg', 0.8);
 			capturedImageUrl = dataUrl; // always set for display
 
 			if (asArrayBuffer) {
@@ -158,6 +160,7 @@
 	}
 
 	onDestroy(() => {
+		console.log("DESTROY")
 		stopCamera();
 		if (orientationQuery) {
 			orientationQuery.removeEventListener('change', updateRatio);

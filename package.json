@@ -1,7 +1,7 @@
 {
     "name": "daphne",
     "private": true,
-    "version": "0.1.15",
+    "version": "0.1.16",
     "type": "module",
     "scripts": {
         "dev": "vite dev --port 4800",
@@ -49,6 +49,7 @@
         "@vincjo/datatables": "1.14.10",
         "axios": "1.19.0",
         "chart.js": "4.5.1",
+        "date-fns": "^4.4.0",
         "dayjs": "1.11.20",
         "docusign-esign": "^10.0.0",
         "firebase": "12.10.0",

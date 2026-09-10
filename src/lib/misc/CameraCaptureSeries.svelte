@@ -1,8 +1,7 @@
 <script lang="ts" generics="T extends string">
-	import CameraCapture from './CameraCapture.svelte';
+	import MobileCameraCapture from './MobileCameraCapture.svelte';
 	import IconButton from './IconButton.svelte';
 	import { untrack } from 'svelte';
-	import HeadlessModal from './HeadlessModal.svelte';
 	import { md5 } from 'hash-wasm';
 	import { uploadTempFile } from '$lib/utils/uploadTempFile';
 
@@ -52,26 +51,40 @@
 		cameraCapture?.retake();
 	};
 
+	const handleClose = () => {
+		onfinished?.(progress);
+		isOpen = false;
+	};
+
 	let step = $state(untrack(() => steps[0]));
 	let isOpen = $state(false);
 	let cameraCapture: { retake: () => void } | undefined = $state();
 	let progress: SvelteCustom.SavedProgress<T> = $state({});
 </script>
 
-<HeadlessModal bind:isOpen fullscreen>
-    <h3 class="text-center">{step.caption}</h3>
-	<CameraCapture overlay={step.src} onaccept={handleAccept} bind:this={cameraCapture} asArrayBuffer />
-	<hr />
-	<div class="row justify-content-center">
-		{#each steps as step}
-			<div class="col-12 col-md-6 col-lg-2">
-				<div class="flex-column d-flex">
-					<img src={progress[step.type]?.src || step.src} alt={step.caption} class="w-100 mw-100 rounded" />
-					<div class="text-center">{step.caption}</div>
-				</div>
+{#if isOpen}
+	<div class="position-fixed top-0 start-0 w-100 h-100 z-index-1050 bg-dark d-flex flex-column">
+		<!-- Desktop: caption above thumbnails -->
+		<div class="d-none d-md-block p-3 text-center">
+			<h5 class="mb-3">{step.caption}</h5>
+		</div>
+
+		<MobileCameraCapture overlay={step.src} overlayText={step.caption} onaccept={handleAccept} onclose={handleClose} bind:this={cameraCapture} asArrayBuffer />
+
+		<!-- Progress thumbnails at bottom -->
+		<div class="p-3 bg-dark border-top d-none d-md-block">
+			<div class="row justify-content-center">
+				{#each steps as s}
+					<div class="col-12 col-md-6 col-lg-2 mb-2">
+						<div class="flex-column d-flex">
+							<img src={progress[s.type]?.src || s.src} alt={s.caption} class="w-100 mw-100 rounded" />
+							<div class="text-center small text-white-50">{s.caption}</div>
+						</div>
+					</div>
+				{/each}
 			</div>
-		{/each}
+		</div>
 	</div>
-</HeadlessModal>
+{/if}
 
 <IconButton icon="camera" caption="Wykonaj zdjęcia" size={6} onclick={() => (isOpen = !isOpen)} />

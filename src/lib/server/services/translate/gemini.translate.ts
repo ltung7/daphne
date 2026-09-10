@@ -58,7 +58,7 @@ interface JsonTranslateResponse {
     nodes: TranslatedNode[];
 }
 
-export const translateObjectJson = async (
+export const translateObjectJsonWithGemini = async (
     jsonObject: Record<string, TranslatableValue>,
     from = 'en',
     to = 'pl'

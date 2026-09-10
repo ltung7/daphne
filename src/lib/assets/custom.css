@@ -1101,3 +1101,24 @@ aside nav .nav-btn.active {
 	border-left: 0.5rem solid var(--bs-primary);
 	padding-left: 0.5rem;
 }
+
+.z-index-1050 {
+	z-index: 1050;
+}
+
+.z-index-1051 {
+	z-index: 1051;
+}
+
+.text-burn {
+  color: #ffffff; /* Must set a bright base color for 'difference' to invert properly */
+  mix-blend-mode: difference;
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: #ffffff;
+    mix-blend-mode: difference;
+}
