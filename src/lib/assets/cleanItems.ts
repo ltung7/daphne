@@ -1,6 +1,7 @@
 export const cleanVehicle: Vehicle.NewVehicleData = {
     id: '',
     fuelType: 'gas',
+    transmission: 'manual',
     firstRegistrationDate: '',
     vin: '',
     mileage: 0,
@@ -10,21 +11,23 @@ export const cleanVehicle: Vehicle.NewVehicleData = {
     notes: '',
     technicalExpiration: '',
     modelMake: '',
-    typeId: ''
+    typeId: '',
+    color: 'black'
 }
 
 export const cleanVehicleType: Vehicle.Type = {
     id: '',
     fuelType: 'gas',
+    transmission: 'manual',
+    requiredDrivingLicense: 'B',
     image: '',
     makeModel: '',
     name: '',
     eco: false,
     foodDelivery: false,
-    maxPassengers: 4,
+    seats: 5,
     premium: false,
     xl: false,
-    taxClass: 'B',
     notes: ''
 }
 

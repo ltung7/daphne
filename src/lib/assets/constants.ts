@@ -14,6 +14,21 @@ export const fuelNames: Record<Vehicle.FuelType, string> = {
     hydrogen: "Wodór"
 }
 
+export const vehicleColorNames: Record<Vehicle.VehicleColorName, string> = {
+    black: "Czarny",
+    white: "Biały",
+    silver: "Srebrny",
+    grey: "Szary",
+    blue: "Niebieski",
+    red: "Czerwony",
+    green: "Zielony",
+    yellow: "Żółty",
+    brown: "Brązowy",
+    orange: "Pomarańczowy",
+    beige: "Beżowy",
+    gold: "Złoty"
+}
+
 export const vehicleDocumentNames: Record<Vehicle.DocumentType, string> = {
     // Registration & ownership
     registration_certificate: 'Dowód rejestracyjny',
@@ -171,12 +186,13 @@ export const driverDocumentCategories: Array<DriverDocumentCategory> = [
         ],
     },
 ];
-export const updatableVehicleVariables: Array<keyof Vehicle.Vehicle> = [ 'insuranceExpiration', 'technicalExpiration', 'firstRegistrationDate' ];
+export const updatableVehicleVariables: Array<keyof Vehicle.Vehicle> = [ 'insuranceExpiration', 'technicalExpiration', 'firstRegistrationDate', 'color' ];
 
 export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>> = {
     insuranceExpiration: 'Ważność polisy ubezpieczeniowej',
     technicalExpiration: 'Ważność badania technicznego',
-    firstRegistrationDate: 'Data pierwszej rejestracji'
+    firstRegistrationDate: 'Data pierwszej rejestracji',
+    color: 'Kolor pojazdu'
 }
 
 export const languages: Array<[string, string, string, string]> = [

@@ -28,6 +28,14 @@
 		{} as Record<string, string>
 	);
 
+	const transmissionTypes: Record<Vehicle.TransmissionType, string> = {
+		manual: 'Manualna',
+		automatic: 'Automatyczna',
+		cvt: 'CVT',
+		'semi-automatic': 'Półautomatyczna',
+		'dual-clutch': 'Dwusprzęgłowa'
+	};
+
 	const allnewVehicleTypes: Record<string, CarModel[]> = modelsAll as any;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -63,10 +71,11 @@
 			id: '',
 			name: e.original.name,
 			makeModel: e.original.name,
-			taxClass: 'B',
+			requiredDrivingLicense: 'B',
 			image: e.original.image,
 			fuelType: e.original.fuel[0] as Vehicle.FuelType,
-			maxPassengers: isBig ? 6 : 4,
+			transmission: 'manual',
+			seats: isBig ? 7 : 5,
 			premium: false,
 			eco: ECO_FUEL_TYPES.includes(e.original.fuel[0] as Vehicle.FuelType),
 			xl: isBig,
@@ -122,9 +131,10 @@
 			<div class="d-flex flex-column w-100">
 				<div class="mb-3">
 					<CustomFormSelect list={fuelTypes} caption="Rodzaj napędu" bind:value={newVehicleType.fuelType} size={6} onchange={handleSelectFuel} class="mb-2" />
-					<CustomFormSelect list={licenses} caption="Wymagany rodzaj prawa jazdy" bind:value={newVehicleType.taxClass} size={6} class="mb-2" />
+					<CustomFormSelect list={licenses} caption="Wymagany rodzaj prawa jazdy" bind:value={newVehicleType.requiredDrivingLicense} size={6} class="mb-2" />
+				<CustomFormSelect list={transmissionTypes} caption="Skrzynia biegów" bind:value={newVehicleType.transmission} size={6} class="mb-2" />
 				</div>
-				<CustomFormNumeric id="maxPassengers" bind:value={newVehicleType.maxPassengers} size={6} caption="Ilość pasażerów" />
+				<CustomFormNumeric id="seats" bind:value={newVehicleType.seats} size={6} caption="Liczba miejsc (włączając kierowcę)" />
 				<CustomFormCheckSwitch bind:checked={newVehicleType.premium} caption="Premium" />
 				<CustomFormCheckSwitch bind:checked={newVehicleType.xl} caption="XL / Van" />
 				<CustomFormCheckSwitch bind:checked={newVehicleType.eco} caption="Eco / Green" />

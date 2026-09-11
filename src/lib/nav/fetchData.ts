@@ -1,14 +1,14 @@
 import { internal } from "./internal"
 
 export const fetchVehicleTypes = async (fields?: (keyof Vehicle.Type)[]) => {
-    const DEFAULT_FIELDS: (keyof Vehicle.Type)[] = [ 'name', 'eco', 'fuelType', 'image', 'makeModel', 'maxPassengers', 'notes', 'premium', 'taxClass', "xl" ];
+    const DEFAULT_FIELDS: (keyof Vehicle.Type)[] = [ 'name', 'eco', 'fuelType', 'image', 'makeModel', 'seats', 'notes', 'premium', 'requiredDrivingLicense', "xl" ];
     const fieldsString = (fields ?? DEFAULT_FIELDS).join(',')
     const response = await internal.get('/vehicletypes/api', { fields: fieldsString })
     return response.types as Vehicle.Type[];
 }
 
 export const fetchVehicles = async (filters: Partial<Vehicle.Vehicle> = {}, fields?: (keyof Vehicle.Vehicle)[]) => {
-    const DEFAULT_FIELDS: (keyof Vehicle.Vehicle)[] = [ 'name', 'assignedDriverName', 'fuelCardId', 'imageUrl', 'firstRegistrationDate', 'notes', 'status', "registrationNumber" ];
+    const DEFAULT_FIELDS: (keyof Vehicle.Vehicle)[] = [ 'name', 'color', 'assignedDriverName', 'fuelCardId', 'imageUrl', 'firstRegistrationDate', 'notes', 'status', "registrationNumber" ];
     const fieldsString = (fields ?? DEFAULT_FIELDS).join(',')
     const response = await internal.get('/vehicles/api', { fields: fieldsString, ...filters  })
     return response.vehicles as Vehicle.Vehicle[];

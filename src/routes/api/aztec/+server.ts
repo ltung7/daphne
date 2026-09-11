@@ -103,7 +103,7 @@ const getVehicleType = async (data: PolishVehicleRegistrationCertificateNewForma
     if (types.length) return types[0];
 
     const seats = parseInt(data.liczbaMiejscSiedzacych.value);
-    const taxClass = discernDriverLicense({
+    const requiredDrivingLicense = discernDriverLicense({
         dopuszczalnaMasaCalkowita: parseInt(data.maksymalnaMasaCalkowitaPojazduKg.value),
         kategoriaPojazdu: ('kategoriaPojazdu' in data) ? data.kategoriaPojazdu.value : 'M1',
         liczbaMiejsc: seats,
@@ -116,10 +116,11 @@ const getVehicleType = async (data: PolishVehicleRegistrationCertificateNewForma
         makeModel,
         name: makeModel,
         fuelType: fuelType,
+        transmission: 'manual',
         eco: ECO_FUEL_TYPES.includes(fuelType),
-        maxPassengers: seats - 1,
+        seats: seats,
         foodDelivery: false,
-        taxClass,
+        requiredDrivingLicense,
         xl: seats >= 7,
         premium: false,
         image: '',

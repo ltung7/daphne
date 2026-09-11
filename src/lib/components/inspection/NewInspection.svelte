@@ -7,6 +7,7 @@
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import { addToast } from '$lib/toast';
 	import { goto } from '$app/navigation';
+	import EditNotesCard from '$lib/form/EditNotesCard.svelte';
 
 	interface Props {
 		vehicle: Vehicle.Vehicle;
@@ -18,6 +19,7 @@
 	/** single state keyed by categoryKey */
 	let checklist = $state<Record<string, boolean>>({});
 	let images: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory> = $state({});
+	let notes: string = $state('');
 
 	// initialise every item to unchecked
 	for (const item of ALL_INSPECTION_ITEMS) {
@@ -74,8 +76,8 @@
 			registrationNumber: vehicle.registrationNumber,
 			assignedDriverId: vehicle.assignedDriverId,
 			assignedDriverName: vehicle.assignedDriverName,
-					checklist: filteredChecklist,
-
+			checklist: filteredChecklist,
+			notes
 		};
 		
 		const response = await confirmSuccess(internal.postApi(document));
@@ -114,6 +116,8 @@
 		</ul>
 	</SectionCard>
 {/if}
+
+<EditNotesCard bind:notes editMode />
 
 <SectionCard title="Zatwierdź">
 	<div class="flex-between fs-6">

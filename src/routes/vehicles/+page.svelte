@@ -6,6 +6,7 @@
 	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
+	import CustomFormColorPicker from '$lib/form/CustomFormColorPicker.svelte';
 
 	let vehicles: Vehicle.Vehicle[] = $state([]);
 	let loaded = $state(false);
@@ -17,6 +18,7 @@
 	const headers: SvelteCustom.DatatableHeaders<keyof Vehicle.Vehicle> = [
 		[ 'registrationNumber', 'Numer rejestracyjny' ],
 		[ 'name', 'Nazwa' ],
+		[ 'color', 'Kolor' ],
 		[ 'status', 'Status' ],
 		[ 'assignedDriverName', 'Kierowca' ],
 		[ 'fuelCardId', 'Karta paliwowa' ],
@@ -40,6 +42,9 @@
 				</td>
 				<td class="fw-bold">{row.registrationNumber}</td>
 				<td>{row.name}</td>
+				<td class="py-1">
+					<CustomFormColorPicker value={row.color} disabled class="mb-0" />
+				</td>
 				<td class="py-1">
 					<VehicleStatus status={row.status} />
 				</td>

@@ -5,10 +5,10 @@
 
 	interface Props {
 		notes: string;
+		editMode?: boolean;
 	}
 
-	let { notes = $bindable() }: Props = $props();
-	let editMode: boolean = $state(false);
+	let { notes = $bindable(), editMode = $bindable(false) }: Props = $props();
 
 	const toggle = () => {
 		editMode = !editMode;
@@ -17,7 +17,9 @@
 
 <SectionCard title="Notatki">
 	{#snippet cta()}
-		<IconButton caption="Edytuj" icon="edit" onclick={toggle} size={6} />
+		{#if !editMode}
+			<IconButton caption="Edytuj" icon="edit" onclick={toggle} size={6} />
+		{/if}
 	{/snippet}
 
 	{#if editMode}

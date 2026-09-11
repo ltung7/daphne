@@ -5,33 +5,6 @@ declare global {
 	type ExplicitAnyToTest = any;
 
 	namespace App {
-		interface Error {
-			message: string;
-			account?: string;
-			[key: string]: unknown;
-		}
-
-		interface Locals {
-			admin: boolean;
-			subRoute?: string | undefined,
-			auth: BaseUserData;
-		}
-
-		type UserRoles = 'admin' | 'streamer' | 'revoked' | 'superadmin';
-
-		interface BaseUserData {
-			user: string;
-			role: UserRoles;
-			accounts: string[]
-			theme?: string;
-		}
-
-		interface User {
-			login: string;
-			role: UserRoles;
-			password?: string;
-			accounts: string[]
-		}
 
 		/**
 		 * Generic Firestore query element.
@@ -93,17 +66,34 @@ declare global {
 
 		type FuelType = "gas" | "hybrid" | "electric" | "phev" | "mhev" | "diesel" | "cng" | "hybrid-gas" | "mhev-diesel" | "ethanol" | "hybrid-diesel" | "lpg" | "hydrogen";
 
+		type TransmissionType = "manual" | "automatic" | "cvt" | "semi-automatic" | "dual-clutch";
+
+		type VehicleColorName =
+			| 'black'
+			| 'white'
+			| 'silver'
+			| 'grey'
+			| 'blue'
+			| 'red'
+			| 'green'
+			| 'yellow'
+			| 'brown'
+			| 'orange'
+			| 'beige'
+			| 'gold';
+			
 		interface Type {
 			id: string;
 			// Common Configuration (shared across all instances)
 			name: string;
 			makeModel: string; // e.g., "Toyota Prius", "Kawasaki Ninja 650"
 			fuelType: FuelType;
-			taxClass: string; // e.g., "B", "A1", "A"
+			transmission: TransmissionType;
+			requiredDrivingLicense: Driver.DrivingLicenseCategory;
 			image: string;
 
 			// Platform Configurations
-			maxPassengers: number; // e.g., 5
+			seats: number; // e.g., 5 (including driver)
 			premium: boolean;
 			xl: boolean;
 			eco: boolean;
@@ -113,7 +103,7 @@ declare global {
 			notes: string;
 		}
 
-		interface NewVehicleData {
+interface NewVehicleData {
 			// Identification
 			id: string;
 			name: string;
@@ -121,6 +111,8 @@ declare global {
 			vin: string; // Full VIN (can be optional for legacy)
 			firstRegistrationDate: string; // ISO date (YYYY-MM-DD)
 			fuelType: FuelType;
+			transmission: TransmissionType;
+			color: VehicleColorName;
 
 			// Instance-Specific Metrics
 			mileage: number; // Kilometers driven (kms)
@@ -135,6 +127,7 @@ declare global {
 		interface Vehicle extends NewVehicleData {
 			imageUrl?: string; // Photo reference
 
+			
 			// Current State
 			status: Status; // available | assigned | broken | unmovable | etc.
 			assignedDriverName?: string; // Driver name if currently assigned
@@ -380,6 +373,51 @@ declare global {
 			Driver.DocumentType,
 			Driver.DriverRequirementVerification
 		>;
+
+		type BoltFuelType = 'petrol' | 'diesel' | 'hybrid' | 'electric' | 'cng' | 'lpg';
+
+		type BoltCategoryTier = 'standard' | 'comfort' | 'green' | 'premium' | 'xl' | 'executive';
+
+		type BoltDocumentType =
+			| 'registration_certificate'
+			| 'commercial_insurance'
+			| 'taxi_permit'
+			| 'technical_inspection';
+
+		// Updated union permitting direct type checking or strict autocomplete
+		export type BoltVehicleColor = BoltVehicleColorName | (string & {});
+
+		type BoltVehicleColor = BoltVehicleColorName | (string & {});
+
+		interface BoltVehicleDocument {
+			documentType: BoltDocumentType;
+			documentNumber: string;
+			issueDate: string; // YYYY-MM-DD ISO format
+			expiryDate: string; // YYYY-MM-DD ISO format
+			fileUrl?: string; // Uploaded S3/Blob URL
+			fileContentBase64?: string; // Direct binary/Base64 payload
+		}
+
+		interface BoltCreateVehicleRequest {
+			// Vehicle Identification
+			vin: string;
+			licensePlate: string;
+			make: string;
+			model: string;
+			manufactureYear: number;
+			color: string;
+			passengerCapacity: number;
+
+			// Categorization & Energy
+			fuelType: BoltFuelType;
+			categoryTiers: BoltCategoryTier[];
+
+			// Compliance & Fleet Association
+			documents: BoltVehicleDocument[];
+			assignedDriverId?: string;
+			fleetId?: string;
+			notes?: string;
+		}
 	}
 
 	namespace Driver {
@@ -682,6 +720,7 @@ declare global {
 			assignedDriverId?: string;
 			assignedDriverName?: string;
 			images: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>;
+			notes: string;
 		};
 
 		type InspectionDocument =

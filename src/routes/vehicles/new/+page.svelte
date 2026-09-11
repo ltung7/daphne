@@ -5,6 +5,7 @@
 	import { cleanVehicle } from '$lib/assets/cleanItems';
 	import { fuelNames } from '$lib/assets/constants';
 	import CardForm from '$lib/form/CardForm.svelte';
+	import CustomFormColorPicker from '$lib/form/CustomFormColorPicker.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import CustomFormNumeric from '$lib/form/CustomFormNumeric.svelte';
 	import CustomFormSelect from '$lib/form/CustomFormSelect.svelte';
@@ -113,6 +114,8 @@
 			<CustomFormDate name="firstRegistrationDate" id="firstRegistrationDate" caption="Data pierwszej rejestracji" bind:value={vehicle.firstRegistrationDate} setMaxDate />
 			<CustomFormDate name="insuranceExpiration" id="insuranceExpiration" caption="Termin ważności ubezpieczenia" bind:value={vehicle.insuranceExpiration} />
 			<CustomFormDate name="technicalExpiration" id="technicalExpiration" caption="Termin ważności badania" bind:value={vehicle.technicalExpiration} />
+			<!-- <CustomFormSelect name="vehicleColor" caption="Kolor" bind:value={vehicle.color} list={vehicleColorNames} size={6} /> -->
+			<CustomFormColorPicker name="color" caption="Kolor" bind:value={vehicle.color} />
 		</div>
 	</div>
 	<CustomFormTextarea bind:value={vehicle.notes} caption="Notatka" />

@@ -248,7 +248,7 @@ export const vehicleRequirements: Array<RideServices.VehicleRequirementItem> = [
         service: [ "Uber", "Bolt", "FreeNow", "iTaxi" ],
         calculation_method: "number",
         value: 4,
-        variable: "maxPassengers"
+        variable: "seats"
     }
 ];
 

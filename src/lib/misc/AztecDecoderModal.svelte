@@ -9,7 +9,7 @@
 	}
 
 	let { isOpen = $bindable(false), onselect }: Props = $props();
-	let b64Input: string = $state('CgQAANtYAAJDAP8xAHwAQgBBAP9QADIANAA3AL85CjgANXsqMRLPNjB7Cjget0JSAEX9AFoAWQBE/w5OAFQAIAD7TQAuAFMS3i4WV/eKUhq9Wg5X7kp8TtcWSVa9TFpJ79ZBSk97DkgK3VQau0JVAEx370dy090ASlavOktPa/o3Q9j6FS4t9gsxx43XP1cCvSBWNe9CWLJ8ezpLvt9EO059I0HvAkO6Wt8AQydGB241bQuualSyDMcNj05+kjYAMfuHfNKHL15JlnzwNk3+T0EANvirODhmND0vOOEOMfePMh5oDjk/XzYALX+vfAAtewMOQUy63SACr5JVgkfaAHwT3Td8eQI42mY3+wcxG8FDgwsNM/gaMwB8YAs2I4XXF0MG9hgBWgG6vEkqSTe3fAfH4HwAMoInC78xEjIANSB9MgA1jSeh7jnwr03452V89yqwakMvPGsqHTsadyr2OjOz7zlHvHwuOFAzboO9OXYsvj82ADbHF1AUr3I27zQLvTiLpoNTDoZNi7fo0wBE989TBp1CMhfCU8KX0yM4wQAsR2iQT0tvBlE55+B87g9rtjYTCdMGE4M3B98wdzBjV7EwD7QCToWzMzlrCw4vCSSSSSr/F');
+	let b64Input: string = $state('');
 	let vehicleAndType: VehicleAndType | undefined = $state();
 
 	const decode = async (e: Event) => {

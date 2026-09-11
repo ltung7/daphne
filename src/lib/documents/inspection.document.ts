@@ -97,6 +97,7 @@ const generateInspectionDocument = async (record: InspectionRecord, _send: boole
             helpers.labeledLine(label + ':', { value: statusText });
         }
         helpers.padY(6);
+        helpers.notesBox(4, record.notes);
 
         // Section 3: Images
         if (images.length) {

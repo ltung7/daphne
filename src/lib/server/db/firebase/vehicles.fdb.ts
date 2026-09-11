@@ -28,6 +28,7 @@ export const addNewVehicle = async (newVehicleData: Vehicle.NewVehicleData) => {
 
     const vehicle: Vehicle.Vehicle = {
         ...newVehicleData,
+        color: newVehicleData.color || 'white',
         status: VEHICLE_STATUS.Precheck,
         uberBoltTrips: {
             totalTrips: 0,

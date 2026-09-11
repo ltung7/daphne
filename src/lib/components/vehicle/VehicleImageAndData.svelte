@@ -1,23 +1,14 @@
 <script lang="ts">
 	import { fuelNames } from '$lib/assets/constants';
+	import CustomFormColorPicker from '$lib/form/CustomFormColorPicker.svelte';
 	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
+	import ExpirationDate from '$lib/misc/ExpirationDate.svelte';
 
 	interface Props {
 		vehicle: Vehicle.Vehicle;
 	}
 
 	const { vehicle }: Props = $props();
-
-	const toDate = (iso: string): Date => {
-		const [ y, m, d ] = iso.split('-').map(Number);
-		return new Date(y, m - 1, d);
-	};
-
-	const calculateDaysBefore = (iso: string) => {
-		const date = toDate(iso);
-		const ms = date.valueOf() - Date.now();
-		return Math.ceil(ms / 86400000);
-	};
 </script>
 
 <div class="d-flex">
@@ -49,12 +40,18 @@
 					<td>{vehicle.firstRegistrationDate}</td>
 				</tr>
 				<tr>
+					<td>Kolor</td>
+					<td class="py-1">
+						<CustomFormColorPicker value={vehicle.color} disabled class="mb-0" />
+					</td>
+				</tr>
+				<tr>
 					<td>Termin ważności ubezpieczenia</td>
-					<td>{vehicle.insuranceExpiration} <span class="text-muted">(za {calculateDaysBefore(vehicle.insuranceExpiration)} dni)</span></td>
+					<td><ExpirationDate date={vehicle.insuranceExpiration} /></td>
 				</tr>
 				<tr>
 					<td>Termin ważności badania</td>
-					<td>{vehicle.technicalExpiration} <span class="text-muted">(za {calculateDaysBefore(vehicle.technicalExpiration)} dni)</span></td>
+					<td><ExpirationDate date={vehicle.technicalExpiration} /></td>
 				</tr>
 			</tbody>
 		</table>
