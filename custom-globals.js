@@ -6,6 +6,7 @@ export default {
     Driver: "readonly",
     RideServices: "readonly",
     DocumentGenerator: "readonly",
+    HealthCheck: 'readonly',
     SvelteCustom: "readonly",
     '$$Generic':  "readonly",
 };

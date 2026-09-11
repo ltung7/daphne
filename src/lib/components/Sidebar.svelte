@@ -22,7 +22,7 @@
 
 	// Menu Data (fi-rr- prefixes removed)
 	let menuItems: MenuItem[] = $state([
-		{ id: 1, title: 'Dashboard', icon: 'apps', link: '/' },
+		{ id: 1, title: 'Dashboard', icon: 'apps', link: '/panel' },
 		// {
 		// 	id: 2,
 		// 	title: 'Data Management',

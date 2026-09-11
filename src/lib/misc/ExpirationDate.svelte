@@ -1,16 +1,6 @@
 <script lang="ts">
+	import { calculateDaysBefore } from "$lib/utils/dates";
 	import UIcon from "./UIcon.svelte";
-
-	const toDate = (iso: string): Date => {
-		const [ y, m, d ] = iso.split('-').map(Number);
-		return new Date(y, m - 1, d);
-	};
-
-	const calculateDaysBefore = (iso: string) => {
-		const date = toDate(iso);
-		const ms = date.valueOf() - Date.now();
-		return Math.ceil(ms / 86400000);
-	};
 
 	interface Props { date: string; warning?: number }
 

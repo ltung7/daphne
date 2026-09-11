@@ -234,3 +234,5 @@ export const countryNames: Record<string, string> = {
     ge: 'Gruzja',
     md: 'Mołdawia',
 };
+
+export const EXPIRATION_THRESHOLD = 7;

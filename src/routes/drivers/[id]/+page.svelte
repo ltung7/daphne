@@ -25,7 +25,7 @@
 	};
 </script>
 
-<PageTitle title=">Dane kierowcy {driver.name}" subtitle="Szczególy zarejestrowanego kierowcy" />
+<PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczególy zarejestrowanego kierowcy" />
 
 <PageTopActions>
 	{#if driver && driver.status === 'pending_verification'}

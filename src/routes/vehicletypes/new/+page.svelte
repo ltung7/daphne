@@ -124,20 +124,23 @@
 				</div>
 			{/if}
 			<div class="d-flex flex-column w-100">
-				<CustomFormText caption="Nazwa typu" bind:value={newVehicleType.name} />
+				<CustomFormText caption="Nazwa wewnętrzna" bind:value={newVehicleType.name} />
+				<CustomFormSelect list={fuelTypes} caption="Rodzaj napędu" bind:value={newVehicleType.fuelType} size={6} onchange={handleSelectFuel} class="mb-2" />
+				<CustomFormSelect list={licenses} caption="Wymagany rodzaj prawa jazdy" bind:value={newVehicleType.requiredDrivingLicense} size={6} class="mb-2" />
+				<CustomFormSelect list={transmissionTypes} caption="Skrzynia biegów" bind:value={newVehicleType.transmission} size={6} class="mb-2" />
 			</div>
 		</div>
 		<div class="col-12 col-md-6">
 			<div class="d-flex flex-column w-100">
-				<div class="mb-3">
-					<CustomFormSelect list={fuelTypes} caption="Rodzaj napędu" bind:value={newVehicleType.fuelType} size={6} onchange={handleSelectFuel} class="mb-2" />
-					<CustomFormSelect list={licenses} caption="Wymagany rodzaj prawa jazdy" bind:value={newVehicleType.requiredDrivingLicense} size={6} class="mb-2" />
-				<CustomFormSelect list={transmissionTypes} caption="Skrzynia biegów" bind:value={newVehicleType.transmission} size={6} class="mb-2" />
+				<div class="mb-2">
+					<CustomFormNumeric id="seats" bind:value={newVehicleType.seats} size={6} caption="Liczba miejsc (włączając kierowcę)" />
 				</div>
-				<CustomFormNumeric id="seats" bind:value={newVehicleType.seats} size={6} caption="Liczba miejsc (włączając kierowcę)" />
-				<CustomFormCheckSwitch bind:checked={newVehicleType.premium} caption="Premium" />
-				<CustomFormCheckSwitch bind:checked={newVehicleType.xl} caption="XL / Van" />
-				<CustomFormCheckSwitch bind:checked={newVehicleType.eco} caption="Eco / Green" />
+				<section class="mb-2">
+					<label for="x">Opcje optymalizacji</label>
+					<CustomFormCheckSwitch bind:checked={newVehicleType.premium} caption="Premium" class="mb-2" />
+					<CustomFormCheckSwitch bind:checked={newVehicleType.xl} caption="XL / Van" class="mb-2" />
+					<CustomFormCheckSwitch bind:checked={newVehicleType.eco} caption="Eco / Green" class="mb-2" />
+				</section>
 			</div>
 		</div>
 	</div>

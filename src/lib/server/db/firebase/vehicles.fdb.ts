@@ -1,5 +1,5 @@
 import { VEHICLE_STATUS } from "$lib/assets/enums";
-import { setItem, getItemById, getItems, updateItem } from "./firebase";
+import { setItem, getItemById, getItems, updateItem, queryItems } from "./firebase";
 
 const collectionName: string = 'vehicles';
 
@@ -11,12 +11,28 @@ export const updateVehicle = async (id: string, data: Partial<Vehicle.Vehicle>) 
     return updateItem(id, data, collectionName);
 }
 
-export const getVehicle = async <T=Vehicle.Vehicle> (id: string): Promise<T|null> => {
+export const getVehicle = async <T = Vehicle.Vehicle>(id: string): Promise<T | null> => {
     return getItemById(id, collectionName);
 }
 
-export const findVehicles = async <T=Vehicle.Vehicle> (query: App.FirebaseItemsQuery = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
+export const findVehicles = async <T = Vehicle.Vehicle>(query: App.FirebaseItemsQuery = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
     return getItems(collectionName, query, select);
+}
+
+export const findVehiclesWithInsuranceExpiringBefore = async <T = Vehicle.Vehicle>(
+    date: string,
+    select: App.FirebaseItemsFields = false
+): Promise<T[]> => {
+    const query: App.FirebaseQueryList = [ [ 'insuranceExpiration', '<', date ] ];
+    return queryItems(collectionName, query, select);
+}
+
+export const findVehiclesWithTechnicalExpiringBefore = async <T = Vehicle.Vehicle>(
+    date: string,
+    select: App.FirebaseItemsFields = false
+): Promise<T[]> => {
+    const query: App.FirebaseQueryList = [ [ 'technicalExpiration', '<', date ] ];
+    return queryItems(collectionName, query, select);
 }
 
 export const addNewVehicle = async (newVehicleData: Vehicle.NewVehicleData) => {

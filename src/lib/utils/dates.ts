@@ -9,8 +9,8 @@ type DatesRangeType = {
     compareTo?: string
 }
 
-export const getDatesFromUrl = (url : URL) => {
-    const dates : DatesRangeType = { from: '', to: '' }
+export const getDatesFromUrl = (url: URL) => {
+    const dates: DatesRangeType = { from: '', to: '' }
     const fromParam = url.searchParams.get('from');
     const toParam = url.searchParams.get('to');
     if (fromParam) dates.from = fromParam;
@@ -18,8 +18,8 @@ export const getDatesFromUrl = (url : URL) => {
     return defaultDates(dates);
 }
 
-export const defaultDates = (dates : DatesRangeType|number, days = 7) => {
-    const datesRange : DatesRangeType = { from: '', to: '' }
+export const defaultDates = (dates: DatesRangeType | number, days = 7) => {
+    const datesRange: DatesRangeType = { from: '', to: '' }
     if (typeof dates === 'number') {
         days = dates;
         dates = datesRange;
@@ -31,7 +31,7 @@ export const defaultDates = (dates : DatesRangeType|number, days = 7) => {
     return datesRange;
 }
 
-export const getComparable = (dates : DatesRangeType) => {
+export const getComparable = (dates: DatesRangeType) => {
     const from = dayjs(dates.from)
     const to = dayjs(dates.to);
     dates.diff = to.diff(from, 'days') + 1;
@@ -41,7 +41,7 @@ export const getComparable = (dates : DatesRangeType) => {
     return dates;
 }
 
-export const dateDiff = (from : dayjs.ConfigType, to : dayjs.ConfigType) => dayjs(to).diff(dayjs(from), 'days');
+export const dateDiff = (from: dayjs.ConfigType, to: dayjs.ConfigType) => dayjs(to).diff(dayjs(from), 'days');
 
 export const loopThroughDates = async (from: dayjs.ConfigType, to: dayjs.ConfigType, callback: (_date: string) => Promise<any>, status?: StatusBar) => {
     let cursorDate = dayjs(from);
@@ -65,14 +65,14 @@ export const loopThroughDates = async (from: dayjs.ConfigType, to: dayjs.ConfigT
 
 export const getLastMonth = () => {
     const startOfMonth = dayjs().subtract(1, 'month').startOf('month');
-    const dates : DatesRangeType = { 
-        from: startOfMonth.format('YYYY-MM-DD'), 
+    const dates: DatesRangeType = {
+        from: startOfMonth.format('YYYY-MM-DD'),
         to: startOfMonth.endOf('month').format('YYYY-MM-DD')
     }
     return dates;
 }
 
-export const getDatesRange = (from : dayjs.ConfigType, to : dayjs.ConfigType) => {
+export const getDatesRange = (from: dayjs.ConfigType, to: dayjs.ConfigType) => {
     let cursorDate = dayjs(from);
     const endDate = dayjs(to);
     if (endDate < cursorDate) throw new Error('End date cant be before start date');
@@ -84,10 +84,16 @@ export const getDatesRange = (from : dayjs.ConfigType, to : dayjs.ConfigType) =>
     return dates;
 }
 
-export const maxDateRange = (dates : DatesRangeType, maxRange : number = 32) => {
+export const maxDateRange = (dates: DatesRangeType, maxRange: number = 32) => {
     const from = dayjs(dates.from);
     const to = dayjs(dates.to);
     const diff = to.diff(from, 'days');
     if (diff > maxRange) dates.from = to.subtract(maxRange, 'days').format('YYYY-MM-DD');
     return dates;
 }
+
+export const calculateDaysBefore = (iso: string) => {
+    const date = new Date(iso);
+    const ms = date.valueOf() - Date.now();
+    return Math.ceil(ms / 86400000);
+};

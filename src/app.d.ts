@@ -81,7 +81,7 @@ declare global {
 			| 'orange'
 			| 'beige'
 			| 'gold';
-			
+
 		interface Type {
 			id: string;
 			// Common Configuration (shared across all instances)
@@ -103,7 +103,7 @@ declare global {
 			notes: string;
 		}
 
-interface NewVehicleData {
+		interface NewVehicleData {
 			// Identification
 			id: string;
 			name: string;
@@ -127,7 +127,7 @@ interface NewVehicleData {
 		interface Vehicle extends NewVehicleData {
 			imageUrl?: string; // Photo reference
 
-			
+
 			// Current State
 			status: Status; // available | assigned | broken | unmovable | etc.
 			assignedDriverName?: string; // Driver name if currently assigned
@@ -734,6 +734,66 @@ interface NewVehicleData {
 		}
 	}
 
+	namespace HealthCheck {
+		type Severity = 'info' | 'warning' | 'critical';
+		type EntityType = 'vehicle' | 'driver';
+
+		interface BaseHealthIssue {
+			id: string;
+			type: string;
+			severity: Severity;
+			entityType: EntityType;
+			entityId: string;
+			metadata?: Record<string, unknown>;
+		}
+
+		interface ExpirationHealthIssue extends BaseHealthIssue {
+			expirationDate: string;
+		}
+
+		interface InsuranceExpiringIssue extends ExpirationHealthIssue {
+			type: 'insurance_expiring';
+		}
+
+		interface TechnicalExpiringIssue extends ExpirationHealthIssue {
+			type: 'technical_expiring';
+		}
+
+		interface DriverExpirationHealthIssue extends ExpirationHealthIssue {
+			driver: string;
+		}
+
+		interface LicenseExpiringIssue extends DriverExpirationHealthIssue {
+			type: 'license_expiring';
+		}
+
+		interface TaxiAuthorizationExpiringIssue extends DriverExpirationHealthIssue {
+			type: 'taxi_authorization_expiring';
+		}
+
+		type HealthIssue =
+			| InsuranceExpiringIssue
+			| TechnicalExpiringIssue
+			| LicenseExpiringIssue
+			| TaxiAuthorizationExpiringIssue
+
+		interface HealthCheckResult {
+			issues: HealthIssue[];
+			summary: {
+				critical: number;
+				warning: number;
+				info: number;
+			};
+		}
+
+		type HealthCheckParams = {
+			vehicles?: Vehicle.Vehicle[];
+			drivers?: Driver.Driver[];
+		};
+
+		type HealthCheckFn = (params?: HealthCheckParams) => Promise<HealthIssue[]>;
+	}
+
 	namespace SvelteCustom {
 		type DatatableHeaders<T = string> = [T, string][];
 
@@ -815,7 +875,6 @@ interface NewVehicleData {
 
 		type SavedProgress<T extends string> = Partial<Record<T, App.StoredTempFile>>;
 	}
-
 }
 
 export { };

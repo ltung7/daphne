@@ -12,6 +12,7 @@ This is a single SvelteKit project — UI and backend logic live together in one
 - TypeScript throughout (adjust if not accurate)
 - Single npm project, plain `npm` scripts — no workspaces, no Turborepo/Nx
 - i18n: Polish primary locale via `$i18n` message calls (`m.*`), JSON source under `/messages/pl/`
+- Whenever types are not explicitly imported, they are in /src/app.d.ts file
 
 ## What this app does
 1. **Admin UI** — vehicle/driver management, assignment, finance review, Uber/Bolt sync status
