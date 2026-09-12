@@ -59,6 +59,52 @@ declare global {
 			fileName: string;
 			src: string;
 		}
+
+		// Locale for i18n
+		type Locale = 'en' | 'pl' | 'uk' | 'be' | 'ru' | 'ro' | 'bg' | 'uz' | 'ka';
+
+		// User type discriminator
+		type UserType = 'driver' | 'admin';
+
+		// Admin user roles
+		type AdminRole = 'moderator' | 'manager' | 'admin';
+
+		// Session cookie payload (decoded from Firebase session cookie)
+		interface SessionClaims {
+			uid: string;
+			email: string;
+			role: AdminRole | 'driver' | 'revoked';
+			driverId?: string;
+			emailVerified: boolean;
+			iat: number;
+			exp: number;
+		}
+
+		// Locals populated by hooks.server.ts
+		interface Locals {
+			userType: UserType | null;
+			user: User | null;
+			driver: UserBase | null;
+			sessionClaims: SessionClaims | null;
+		}
+
+		// Base user (from user collection or driver collection)
+		interface UserBase {
+			id: string;
+			email: string;
+			name: string;
+			role: AdminRole | 'driver' | 'revoked';
+			preferredLanguage: Locale;
+			timestamp: number;
+			updatedAt: number;
+			lastLoggedIn: number;
+		}
+
+		// Authenticated user (admin only - drivers use UserBase via driver)
+		interface User extends UserBase {
+			role: AdminRole | 'revoked';
+			canSignHandovers: boolean;
+		}
 	}
 
 	namespace Vehicle {
@@ -148,7 +194,7 @@ declare global {
 			// Platform Usage (per-instance tracking)
 			uberBoltTrips: {
 				totalTrips: number;
-				totalEarnings: number; // In grosze
+				totalEarnings: number; // In PLN
 				avgDriverRating: number; // 0-5 scale
 				avgPassengerRating: number; // 0-5 scale
 			};
@@ -492,17 +538,18 @@ declare global {
 
 			notes: string; // optional intake notes
 			imageUrl?: string;
+			preferredLanguage: App.Locale; // Default: 'en'
 		}
 
 		// --- Full driver record, once account is active ---
 
-		interface Driver extends NewDriverData {
+		interface Driver extends NewDriverData, App.UserBase {
 			password: string;
 			profileImageUrl: string;
 
 			// KPI Metrics (Critical for provider scoring)
 			tripsCompleted: number;     // Total trips driven
-			earnings: number;           // In grosze (PLN * 100)
+			earnings: number;           // In PLN
 			safetyScore: number;        // 0-100 based on incident reports
 			uptimePercentage: number;   // % of scheduled shifts completed
 
@@ -514,7 +561,7 @@ declare global {
 			balance: number;
 			cashBalance: number;
 
-			pendingWithdrawals: number; // Pending withdrawals in grosze
+			pendingWithdrawals: number; // Pending withdrawals in PLN
 
 			// Current Vehicle Assignment
 			assignedVehicle: false | {

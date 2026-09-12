@@ -175,6 +175,7 @@
 			sex,
 			notes: `Test ${faker.number.int({ min: 10000, max: 99999 })}`,
 			id: '',
+			preferredLanguage: 'en', // TODO: Automate
 			taxiAuthorization: {
 				expirationDate: taxiExpiry,
 				market: 'WAW',
@@ -256,7 +257,7 @@
 					<div>
 						<CustomFormSelect caption="Wybierz kategorię pozwolenia z listy aby dodać" list={licenses} onchange={addDrivingLicense} size={6} class="mb-3" />
 						{#if driver.taxiAuthorization}
-							<div class="border border-dark rounded mb-3 p-2 position-relative" transition:fly>
+							<div class="border border-dark rounded mb-3 p-3 position-relative" transition:fly>
 								<AbsoluteRemoveButton color="dark" onclick={() => removeDrivingLicense('taxi')} />
 								<div class="small">Uprawnienie do prowadzenia <b class="text-dark">Taxi</b></div>
 								<CustomFormText bind:value={driver.taxiAuthorization.registryEntryNumber} caption="Numer pozwolenia" error={errors.taxiAuthorization} onblur={() => touch('taxiAuthorization')} />
@@ -266,7 +267,7 @@
 						{/if}
 						<div class="mt-3">
 							{#each driver.drivingLicenses as license (license.category)}
-								<div class="border border-dark rounded mb-3 p-2 position-relative" transition:fly animate:flip>
+								<div class="border border-dark rounded mb-3 p-3 position-relative" transition:fly animate:flip>
 									<AbsoluteRemoveButton color="dark" onclick={() => removeDrivingLicense(license.category)} />
 									<div class="small">Uprawnienie kategorii: <b class="text-dark">{licenses[license.category]}</b></div>
 									<div class="row">

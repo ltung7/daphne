@@ -46,7 +46,8 @@ export const cleanDriver: Driver.NewDriverData = {
     identificationDocumentType: 'passport',
     identificationDocumentNumber: '',
     notes: '',
-    additionalLanguages: {}
+    additionalLanguages: {},
+    preferredLanguage: 'en'
 }
 
 export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
@@ -84,4 +85,16 @@ export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
     visual: 'Brak uwag - pojazd czysty i sprawny',
     translatedVisual: '',
     images: []
+}
+
+export const cleanUser: App.User = {
+    id: '',
+    name: '',
+    email: '',
+    role: 'moderator',
+    preferredLanguage: 'pl',
+    timestamp: Date.now(),
+    updatedAt: Date.now(),
+    lastLoggedIn: 0,
+    canSignHandovers: false
 }
