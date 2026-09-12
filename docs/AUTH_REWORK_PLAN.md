@@ -183,9 +183,98 @@ async function setPrefsCookie(cookies: Cookies, prefs: { locale: App.Locale; mod
 
 ---
 
-## 3. Hooks (src/hooks.server.ts) - NEW FILE
- 
- Central authentication handler for all requests:
+## 3. Auth Middleware (src/lib/server/secure/auth.middleware.ts) - IMPLEMENTED
+
+Central authentication handler for all requests (moved from hooks.server.ts):
+
+```typescript
+export const authMiddleware: Handle = async ({ event, resolve }) => {
+  const routeId = event.route.id ?? '';
+  
+  // Detect route group
+  const isAuthRoute = routeId.startsWith('/(auth)');
+  const isDriverRoute = routeId.startsWith('/(driver)');
+  const isAdminRoute = routeId.startsWith('/(admin)');
+  const isGeneralRoute = routeId.startsWith('/(general)');
+  const isApiRoute = routeId.startsWith('/(api)');
+  const isWebhookRoute = routeId.startsWith('/(webhooks)');
+
+  // Webhooks & API: NO automatic cookie verification in hooks
+  // Individual handlers decide auth requirements
+  if (isWebhookRoute || isApiRoute) {
+    return resolve(event);
+  }
+
+  let claims: App.SessionClaims | null = null;
+  let userType: 'driver' | 'admin' | null = null;
+
+  if (isDriverRoute) {
+    const cookie = event.cookies.get(DRIVER_COOKIE);
+    if (cookie) claims = await verifySessionCookie(cookie, 'driver');
+    userType = 'driver';
+  } else if (isAdminRoute) {
+    const cookie = event.cookies.get(ADMIN_COOKIE);
+    if (cookie) claims = await verifySessionCookie(cookie, 'admin');
+    userType = 'admin';
+  } else if (isGeneralRoute || !isAuthRoute) {
+    // Try both cookies
+    const driverCookie = event.cookies.get(DRIVER_COOKIE);
+    if (driverCookie) {
+      claims = await verifySessionCookie(driverCookie, 'driver');
+      userType = 'driver';
+    } else {
+      const adminCookie = event.cookies.get(ADMIN_COOKIE);
+      if (adminCookie) {
+        claims = await verifySessionCookie(adminCookie, 'admin');
+        userType = 'admin';
+      }
+    }
+  }
+
+  // Fast-path revoked rejection
+  if (claims?.role === 'revoked') {
+    await clearAllSessionCookies(event.cookies);
+    throw redirect(302, '/login?revoked=true');
+  }
+
+  event.locals.sessionClaims = claims;
+  event.locals.userType = claims ? userType : null;
+
+  if (claims) {
+    const user = await getUserById(claims.uid);
+    if (user) {
+      if (userType === 'driver') {
+        event.locals.driver = user;
+      } else {
+        event.locals.user = {
+          ...user,
+          canSignHandovers: true // default for admins
+        } as unknown as App.User;
+      }
+    }
+  }
+
+  // Sliding refresh
+  if (claims && (claims.exp - Date.now() / 1000) < 1800) {
+    await refreshSessionCookie(event);
+  }
+
+  return resolve(event);
+};
+```
+
+**`src/hooks.server.ts`** - Sequences the middleware:
+```typescript
+export const handle = sequence(
+	handleBlanks,
+	handleApiHeader,
+	authMiddleware
+);
+```
+
+---
+
+## 4. Route Structure
  
  ```typescript
  export const handle: Handle = async ({ event, resolve }) => {
@@ -539,7 +628,7 @@ export const load = async ({ locals }) => {
  - [ ] Add +layout.ts to (admin) and (driver) with restrict functions
  - [ ] Add +layout.ts to (general) with requireAuth
  - [ ] Add +layout.ts to (api) and (webhooks) with NO auth middleware
- - [ ] Move existing API routes to (api)/driver, (api)/admin, (api)/shared, (api)/public
+ - [ ] Move existing API routes to (api)/api
  - [ ] Move existing webhook routes to (webhooks)/
  
  ### Phase 3: Login & Session
@@ -661,3 +750,119 @@ export const load = async ({ locals }) => {
 ---
 
 *Plan created based on codebase analysis and requirements discussion. Ready for implementation.*
+
+---
+
+## 16. Phase 1 Implementation Notes (Completed)
+
+### Key Changes from Original Plan:
+
+**1. Unified User Type** - Simplified from separate `AdminUser` and `Driver` interfaces in `Locals` to a single `User` interface:
+- `App.Locals.user` and `App.Locals.driver` both typed as `User | null`
+- `User` interface: `id`, `email`, `name`, `role`, `preferredLanguage`, `createdAt`, `updatedAt`
+- Removed `firebaseUid` field from `User` - **driver ID = Firebase UID** (document ID in Firestore is the Firebase Auth UID)
+
+**2. Driver Interface** - `Driver.Driver` now extends `App.User`:
+```typescript
+interface Driver extends NewDriverData, App.User {
+  // ... all driver-specific fields (password, balance, earnings, etc.)
+}
+```
+
+**3. Authentication via Firebase Auth Only**:
+- No custom password storage/login logic in app
+- `addNewDriver` creates Firebase Auth user first, gets UID, uses it as Firestore document ID
+- Password only used at creation time for Firebase Auth, then discarded (only hashed version stored in Firestore for reference)
+- All auth (email/password, Google, password reset) delegated to Firebase
+
+**4. Removed Fields**:
+- `firebaseUid` removed from `App.User`, `Driver.NewDriverData`, `cleanDriver`, Zod schema
+- Driver collection uses Firebase UID as document ID (`id` field = Firebase UID)
+- Admin user collection also uses Firebase UID as document ID
+
+**5. userLookup.ts**:
+- Queries drivers by `{ id: uid }` (not `firebaseUid`)
+- Queries admin users by `{ id: uid }`
+- Returns unified `User` type for both
+
+**6. Typecheck Status**: ✅ Passing (0 errors)
+
+### Files Created/Modified in Phase 1:
+- `src/app.d.ts` - Updated App namespace types, removed firebaseUid, unified User
+- `src/lib/server/auth/types.ts` - Unified User interface
+- `src/lib/server/auth/firebaseAdmin.ts` - Firebase Admin SDK init
+- `src/lib/server/auth/session.ts` - Session cookie management
+- `src/lib/server/auth/userLookup.ts` - User resolution by UID
+- `src/lib/server/auth/adminAuth.ts` - Admin authorization helpers
+- `src/lib/server/auth/driverAuth.ts` - Driver authorization helpers
+- `src/lib/server/auth/index.ts` - Module exports
+- `src/lib/server/db/firebase/drivers.fdb.ts` - Creates Firebase Auth user, uses UID as doc ID
+- `src/lib/server/db/firebase/users.fdb.ts` - Admin user collection
+- `src/lib/assets/cleanItems.ts` - Removed firebaseUid
+- `src/lib/assets/zodschemas/newdriver.zod.ts` - Removed firebaseUid from schema
+- `src/routes/drivers/new/+page.svelte` - Removed firebaseUid from test data
+
+---
+
+## 17. Phase 1 Final Implementation Notes (Complete - Typecheck ✅)
+
+### Final User Type Hierarchy (Updated from original plan):
+
+**`App.UserBase`** - Base interface for both drivers and admins:
+```typescript
+interface UserBase {
+	id: string;
+	email: string;
+	name: string;
+	role: AdminRole | 'driver' | 'revoked';
+	preferredLanguage: Locale;
+	timestamp: number;      // renamed from createdAt
+	updatedAt: number;
+	lastLoggedIn: number;
+}
+```
+
+**`App.User`** - Admin-only extended interface (drivers use UserBase via driver):
+```typescript
+interface User extends UserBase {
+	role: AdminRole | 'revoked';  // restricted: no 'driver' role
+	canSignHandovers: boolean;    // NEW: document signing permission
+}
+```
+
+**`App.Locals`**:
+```typescript
+interface Locals {
+	userType: UserType | null;
+	user: User | null;           // Admin user (with canSignHandovers)
+	driver: UserBase | null;     // Driver user (base fields only)
+	sessionClaims: SessionClaims | null;
+}
+```
+
+### Key Decisions:
+1. **Driver ID = Firebase UID** - Document ID in Firestore is the Firebase Auth UID
+2. **No firebaseUid field** - Removed from all types, driver/admin use `id` as Firebase UID
+3. **Renamed `createdAt` → `timestamp`** - Consistent naming across UserBase
+4. **Role restriction** - `User.role` only allows AdminRole | 'revoked' (no 'driver')
+5. **New field `canSignHandovers`** - Boolean for admin document signing permission
+6. **Driver extends UserBase** - `Driver.Driver extends NewDriverData, App.UserBase`
+7. **Authentication 100% Firebase** - All auth (email/password, Google, password reset) delegated to Firebase
+8. **Auth middleware** - Moved from hooks.server.ts to `src/lib/server/auth/auth.middleware.ts`
+
+### Files Updated in This Refinement:
+- `src/app.d.ts` - UserBase/User hierarchy, timestamp, canSignHandovers
+- `src/lib/server/auth/types.ts` - Exported UserBase/User with canSignHandovers
+- `src/lib/server/auth/session.ts` - Uses canSignHandovers, proper type casting
+- `src/lib/server/auth/userLookup.ts` - Returns UserBase with all fields
+- `src/lib/server/auth/adminAuth.ts` - Returns App.User
+- `src/lib/server/auth/driverAuth.ts` - Returns UserBase
+- `src/lib/server/auth/auth.middleware.ts` - Uses canSignHandovers
+- `src/lib/server/db/firebase/drivers.fdb.ts` - Adds lastLoggedIn
+- `src/routes/users/new/+page.svelte` - Uses canSignHandovers checkbox
+- `src/routes/users/new/api/+server.ts` - Creates User with all fields
+- `src/routes/users/[id]/+page.svelte` - Uses timestamp field
+- `src/lib/assets/cleanItems.ts` - cleanUser with canSignHandovers
+- `src/lib/assets/zodschemas/newuser.zod.ts` - Schema with canSignHandovers
+
+### Typecheck Status: ✅ **0 errors, 0 warnings**

@@ -48,7 +48,7 @@
 		await tick();
 		
 		if (!isValid) {
-			console.log(errors)
+			console.error(errors)
 			return false;
 		}
 		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item })));

@@ -160,7 +160,6 @@
 	}
 
 	onDestroy(() => {
-		console.log("DESTROY")
 		stopCamera();
 		if (orientationQuery) {
 			orientationQuery.removeEventListener('change', updateRatio);

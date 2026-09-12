@@ -500,7 +500,6 @@ drawImage(photoNumber: number, imageBuffer: Buffer, photoLabel: string, imagesPe
         // Fit image into calculated height, capped at content width, centered horizontally
         const { width: imgW, height: imgH } = (this.pdf as any).openImage(imageBuffer);
         const scale = Math.min(this.contentWidth / imgW, imageHeight / imgH);
-        console.log("🚀 ~ PdfHelpers ~ drawImage ~ scale:", scale);
         const drawWidth = imgW * scale;
         const drawHeight = imgH * scale;
         const x = this.pageLeft + (this.contentWidth - drawWidth) / 2;
