@@ -20,25 +20,15 @@
 - [ ] Add `assignedDriverHistory`: array of `{driverId, startDate, endDate, handoverId}`
 
 #### Drivers Collection (`drivers`)
-- [ ] Add `provisionConfig`:
-  - `type`: `percentage` | `fixed_per_trip` | `fixed_weekly` | `tiered`
-  - `value`: number (percentage: 0-100, fixed: grosze)
-  - `tiers`: `[{minTrips, maxTrips, rate}]` for tiered
-  - `minimumGuarantee`: grosze (optional floor)
+- [ ] Add `firebaseUid`: string — links to Firebase Auth (required)
+- [ ] Add `status`: `active` | `suspended` | `revoked` — for auth revocation
 - [ ] Add `bankDetails`: `accountNumber` (IBAN), `accountHolder`, `bankName`, `swift`
 - [ ] Add `taxInfo`: `taxId` (NIP), `taxOffice`, `isVatPayer`, `vatRate`
-- [ ] Add `settlementPeriod`: `monthly` (default) | `biweekly` | `weekly` | `custom`
-- [ ] Add `costDeductions`: array of `{type: fuel|maintenance|fines|insurance|other, description, amount, date, vehicleId, status: pending|approved|rejected}`
-- [ ] Add `cashCollections`: array of `{date, amount, rideIds[], status: pending|deposited|disputed}`
+- [ ] Add `cashCollections`: array of `{date, amount, rideIds[], status: pending|deposited|disputed}` — operational tracking
 - [ ] Add `documentsExpiring`: computed view for license, medical, psych, taxi auth, criminal record
 - [ ] Add `preferredLanguage`: locale code (pl/en/uk/be/ru/ro/bg/uz/ka) for i18n
 
 #### New Collections
-- [ ] `settlements` - Monthly settlement records per driver
-  - `driverId`, `periodStart`, `periodEnd`, `status: draft|review|approved|paid`
-  - `grossEarnings` (Bolt + Uber + other), `platformCommission`, `fleetProvision`, `costDeductions`, `netPayout`
-  - Line items: each ride reference, each cost reference
-  - `generatedAt`, `approvedBy`, `paidAt`, `paymentRef`
 - [ ] `boltSyncLog` - Audit trail for Bolt API operations
   - `operation`: `register_driver` | `switch_driver` | `assign_vehicle` | `upload_document` | `fetch_earnings`
   - `requestPayload`, `responsePayload`, `status`, `error`, `retryCount`, `driverId`, `vehicleId`
@@ -69,28 +59,18 @@
 - [ ] Enforce: `account` field matching on all queries (multi-tenant isolation)
 
 ### 1.3 Indexes & Performance
-- [ ] Composite indexes for: `settlements` (driverId + periodStart), `dailyReports` (driverId + date), `telemetryEvents` (vehicleId + timestamp), `fuelTransactions` (cardId + date), `alerts` (entityType + entityId + severity)
-- [ ] BigQuery export schema for analytics: trips, settlements, fuel, telemetry aggregates
+- [ ] Composite indexes for: `driverBalanceEvents` (driverId + timestamp DESC), `driverBalanceEvents` (driverId + status + timestamp DESC), `dailyReports` (driverId + date), `telemetryEvents` (vehicleId + timestamp), `fuelTransactions` (cardId + date), `alerts` (entityType + entityId + severity)
+- [ ] BigQuery export schema for analytics ONLY (trips, settlements, fuel, telemetry aggregates) — **not for real-time page loads** (per LEDGER_SETTLEMENT_PLAN.md)
 
-### 1.4 Auth Middleware Rework (Critical for Driver App)
-- [ ] **New role**: Add `'driver'` to `UserRoles` type in `src/app.d.ts`
-- [ ] **Separate cookie**: `driver.ls.auth` (distinct from `portal.ls.auth`)
-  - Different secret or same secret with different claims
-  - Include `driverId`, `accountId`, `role: 'driver'` in payload
-- [ ] **New route group**: `(driver)` for `/driver/*` routes in `rolePaths` map
-  - `rolePaths.set('(driver)', ['driver'])` — only driver role allowed
-- [ ] **Driver-scoped middleware** (`src/lib/server/secure/driverAuth.middleware.ts`):
-  - `restrictDriver(locals)` — verifies `role === 'driver'` + attaches `driverId`
-  - `checkDriverAccess(driverId, locals)` — ensures driver only accesses own data
-  - Used in `/driver/*` routes AND `/api/driver/*` endpoints
-- [ ] **Update `handleRoleCheck`** in `hooks.server.ts`:
-  - Add `(driver)` route group detection
-  - Skip admin role check for driver routes
-  - Set `event.locals.driverId` for driver routes
-- [ ] **Firebase custom claims**: On driver login, set `role: 'driver'`, `driverId`, `accountId`
-- [ ] **Token refresh**: Separate refresh logic for driver cookies (shorter expiry? 8h vs 24h?)
-- [ ] **Logout**: Separate `/driver/logout` clearing `driver.ls.auth` cookie
-- [ ] **Admin impersonation** (optional): Superadmin can "login as driver" for debugging — sets both cookies
+### 1.4 Auth System (References AUTH_REWORK_PLAN.md)
+> **Complete rewrite** — see `AUTH_REWORK_PLAN.md` for full design. Summary:
+- Firebase Authentication as identity provider
+- Separate session cookies: `app.admin.session` (admin/manager/moderator) and `app.driver.session` (driver)
+- Single login page `/login` (email/password + Google Sign-In) for both user types
+- Route groups: `(auth)`, `(driver)`, `(admin)`, `(general)`, `(api)`, `(webhooks)`
+- Admin roles: `moderator` | `manager` | `admin` (hierarchy: admin > manager > moderator)
+- Revoked handling: Firestore `status: 'revoked'` + Firebase custom claim `role: 'revoked'`
+- Sliding session refresh (2hr), per-handler auth for API routes
 
 ---
 
@@ -100,28 +80,56 @@
 ```
 src/
   routes/
-    (admin)/          # Existing admin portal
-    (driver)/         # New driver PWA routes
-      +layout.svelte  # Driver-specific layout (no sidebar, mobile-first)
+    (auth)/                    # Public routes (no auth required)
+      +layout.ts              # No auth check
+      login/
+        +page.svelte          # Single login form (email/password + Google)
+        +page.server.ts       # Login action, password reset action
+      password-reset/
+      logout/
+    (driver)/                  # New driver PWA routes
+      +layout.svelte          # Driver-specific layout (no sidebar, mobile-first)
       dashboard/+page.svelte
       reports/+page.svelte
       settlements/+page.svelte
       documents/+page.svelte
       vehicle/+page.svelte
       profile/+page.svelte
-    api/driver/       # Driver-scoped API endpoints
+    (admin)/                   # Admin portal (moderator/manager/admin)
+      +layout.ts              # restrictAdmin(locals)
+      +page.svelte
+      drivers/
+      vehicles/
+      finance/
+      integrations/
+    (general)/                 # Any authenticated user (driver OR admin)
+      +layout.ts              # requireAuth(locals)
+      profile/
+      notifications/
+    (api)/                     # API endpoints - PER-ROUTE AUTH
+      +layout.ts              # No auth middleware - handlers decide
+      driver/                 # requireDriverApi in handler
+      admin/                  # requireAdminApi in handler
+      shared/                 # requireAnyApi in handler
+      public/                 # requirePublicApi in handler
+    (webhooks)/                # Webhook endpoints - NO SESSION AUTH
+      +layout.ts              # No auth - verify signature per handler
+      uber/
+      bolt/
+      telemetry/
   lib/
     components/       # Shared components (DriverStatus, VehicleStatus, etc.)
     server/
-      auth/           # Add driver role verification
+      auth/           # Firebase auth module (see AUTH_REWORK_PLAN.md)
 ```
 
-### 2.2 Driver Auth (Separate from Admin)
-- [ ] Firebase Auth: Custom claims `role: 'driver'`, `driverId`, `accountId`
-- [ ] Separate login page: `/driver/login` (phone + OTP or email/password)
-- [ ] Session cookie: `driver.ls.auth` with `driverId` claim
-- [ ] Middleware: `restrictDriver` in `hooks.server.ts` for `/driver/*` routes
-- [ ] Passwordless login option: SMS OTP (Twilio/Firebase Auth) for driver convenience
+### 2.2 Driver Auth (Per AUTH_REWORK_PLAN.md)
+- Firebase Auth: Custom claims `role: 'driver'`, `driverId`, `accountId`
+- Session cookie: `app.driver.session` (2hr sliding, httpOnly, secure)
+- Login: Single `/login` page (shared with admin), redirects to `/driver` after auth
+- Middleware: `restrictDriver` in `(driver)/+layout.ts`
+- Passwordless option: SMS OTP (Twilio/Firebase Auth) for driver convenience
+- Revoked handling: Check `driver.status === 'revoked'` + Firebase custom claim
 
 ### 2.3 Driver PWA Features
 - [ ] **Dashboard**: Current vehicle, today's earnings estimate, pending settlement, alerts
@@ -140,24 +148,24 @@ src/
 - [ ] Install prompt, update notification
 
 ### 2.5 Driver App Internationalization (Paraglide JS)
-- [ ] **Add `@inlang/paraglide-js` + `@inlang/paraglide-sveltekit`** to driver app
-- [ ] **Message catalog structure**: `/messages/{locale}/driver.json` (separate from admin `/messages/pl/`)
-- [ ] **Supported locales**: `pl` (Polish), `en` (English), `uk` (Ukrainian), `be` (Belarusian), `ru` (Russian), `ro` (Romanian), `bg` (Bulgarian), `uz` (Uzbek), `ka` (Georgian) — based on common driver nationalities in PL
-- [ ] **Default locale**: `pl` (Polish) — fallback for legal/official terms
-- [ ] **Locale detection priority**: 1) Driver profile `preferredLanguage` → 2) Browser `Accept-Language` → 3) `pl`
-- [ ] **Persist locale**: Store in driver profile + localStorage for instant reload
-- [ ] **Runtime locale switching**: No page reload, instant UI update via `$i18n` runes
-- [ ] **Message extraction**: Use `paraglide-js` CLI to extract from `.svelte` files (`m.*` calls)
-- [ ] **Translation workflow**: 
+> See `AUTH_REWORK_PLAN.md` Section 11 for complete setup.
+- **Message catalog structure**: `/messages/driver/{locale}.json` (separate from admin `/messages/pl/`)
+- **Supported locales**: `pl` (Polish), `en` (English), `uk` (Ukrainian), `be` (Belarusian), `ru` (Russian), `ro` (Romanian), `bg` (Bulgarian), `uz` (Uzbek), `ka` (Georgian) — based on common driver nationalities in PL
+- **Default locale**: `pl` (Polish) — fallback for legal/official terms
+- **Locale detection priority**: 1) Driver profile `preferredLanguage` → 2) Browser `Accept-Language` → 3) `pl`
+- **Persist locale**: Store in driver profile + localStorage for instant reload
+- **Runtime locale switching**: No page reload, instant UI update via `$i18n` runes
+- **Message extraction**: Use `paraglide-js` CLI to extract from `.svelte` files (`m.*` calls)
+- **Translation workflow**: 
   - Source messages in English (developer-facing keys)
   - Professional translation for PL, UK, BE, RU, RO, BG, UZ, KA
   - Machine translation (Gemini/OpenRouter) for initial drafts, human review for legal/safety text
-- [ ] **Critical translated surfaces**: Daily report form, settlement breakdown, document upload, safety alerts, vehicle inspection checklist, handover documents, push notifications, error messages
-- [ ] **Legal document language**: Handover/inspection PDFs generated in driver's preferred language (already have multi-lang templates in `src/lib/documents/`)
-- [ ] **Date/number formatting**: Use `@inlang/paraglide-js` formatters or `Intl` with driver locale for currency (PLN), dates, numbers
-- [ ] **Right-to-left**: Not needed for target locales (all LTR)
-- [ ] **Pluralization**: Use Paraglide's plural syntax for trip counts, days, etc.
-- [ ] **Accessibility**: `lang` attribute on `<html>` updates with locale, screen reader announcements in correct language
+- **Critical translated surfaces**: Daily report form, settlement breakdown, document upload, safety alerts, vehicle inspection checklist, handover documents, push notifications, error messages
+- **Legal document language**: Handover/inspection PDFs generated in driver's preferred language (already have multi-lang templates in `src/lib/documents/`)
+- **Date/number formatting**: Use `@inlang/paraglide-js` formatters or `Intl` with driver locale for currency (PLN), dates, numbers
+- **Right-to-left**: Not needed for target locales (all LTR)
+- **Pluralization**: Use Paraglide's plural syntax for trip counts, days, etc.
+- **Accessibility**: `lang` attribute on `<html>` updates with locale, screen reader announcements in correct language
 
 ---
 
@@ -221,51 +229,25 @@ src/
 
 ## 5. PROVISIONS & FINANCE - Priority 4
 
-### 5.1 Provision Calculation Engine (`src/lib/server/calculations/`)
-- [ ] `calculateProvision(driverId, periodStart, periodEnd)` - Pure function, unit tested
-  - Input: driver provisionConfig, Bolt/Uber earnings (from settlements), assigned vehicle costs
-  - Output: Line items with audit trail
-- [ ] Support methods:
-  - **Percentage**: `grossEarnings * rate%`
-  - **Fixed per trip**: `trips * rate`
-  - **Fixed weekly/monthly**: `rate`
-  - **Tiered**: Progressive rates by trip count
-  - **Hybrid**: Base % + bonus/penalty tiers
-- [ ] Cost deductions: Fuel (actual vs limit), Maintenance (allocated), Fines (direct), Insurance (pro-rated), Lease (pro-rated)
+> **Implementation:** See `LEDGER_SETTLEMENT_PLAN.md` for complete design — append-only driver balance ledger (`driverBalanceEvents` collection) with idempotent event writes, running balance per event, verification, and cash events. This section covers fleet-level reporting views over ledger data + operational cash tracking.
 
-### 5.2 Settlement Workflow
-- [ ] **Draft Generation** (1st of month for prior month):
-  - Pull earnings from Bolt/Uber (API + sheet reconciliation)
-  - Pull fuel transactions (matched to vehicle/driver)
-  - Pull cost deductions (approved items)
-  - Calculate provision per driver config
-  - Create `settlement` record with `status: draft`
-- [ ] **Review UI** (Admin):
-  - List settlements with status badges
-  - Drill-down: line items, flag anomalies (negative net, high fuel, missing trips)
-  - Approve/Reject with notes
-- [ ] **Approval**: `status: approved` → `approvedBy`, `approvedAt`
-- [ ] **Payment**: Generate transfer list (IBAN, amount, reference), mark `paidAt`, `paymentRef`
-- [ ] **Driver Notification**: Push + email with PDF settlement statement
-
-### 5.3 Profit & Loss (Fleet Level)
-- [ ] Monthly P&L per vehicle: Revenue (Bolt/Uber) - Lease - Insurance - Fuel - Maintenance - Fines - Provision = Net
-- [ ] Fleet aggregate: Total revenue, total costs, fleet margin
-- [ ] Driver P&L: Net payout vs provision collected
+### 5.1 Fleet-Level Reporting (Read-Only Views)
+- [ ] **Monthly P&L per vehicle**: Revenue (from ledger income events) - Lease - Insurance - Fuel - Maintenance - Fines - Provision (from ledger settlement events) = Net
+- [ ] **Fleet aggregate**: Total revenue, total costs, fleet margin
+- [ ] **Driver P&L**: Net payout (ledger) vs provision collected (ledger)
 - [ ] Export: Excel with pivot tables, PDF summary
 
-### 5.4 Cash Tracking
-- [ ] Daily report cash field → `cashCollections` entry
-- [ ] Reconciliation: Bolt cash trips vs reported cash
-- [ ] Dispute workflow: Admin flags → driver responds → resolve/adjust
-- [ ] Deposit tracking: Cash handed to office → bank deposit record
+### 5.2 Cost Collection (Operational, Feeds Ledger)
+- [ ] **Fuel card management**: Import transactions → match to vehicle/driver → validate → create `fuel_repayments` ledger events
+- [ ] **Cash tracking (dual approach)**:
+  - **Operational**: Daily report cash → `cashCollections` array on driver doc (for day-to-day tracking, reconciliation vs Bolt cash trips)
+  - **Financial**: Ledger events — `cash_collection` (negative, driver owes), `cash_deposit` (positive, reduces debt), `cash_adjustment` (signed, disputes) — net cash deducted at monthly settlement
+- [ ] **Maintenance/Insurance/Fines**: Admin-approved cost items → create ledger events (type TBD per `LEDGER_SETTLEMENT_PLAN.md`)
 
-### 5.5 Fuel Card Management
-- [ ] Import transactions (CSV/API from Orlen/BP/Shell/Circle K)
-- [ ] Match to vehicle (by cardId) and driver (by assignment at date)
-- [ ] Validate: Liters vs tank capacity, price vs market, location vs route
-- [ ] Alert: Over limit, off-route, weekend/night anomaly, duplicate transaction
-- [ ] Cost allocation: Fuel cost → vehicle → driver settlement (if driver bears fuel cost)
+### 5.3 Reconciliation Reports
+- [ ] **Income Event Reconciliation**: Uber/Bolt weekly API/sheet vs `income_uber_weekly` / `income_bolt_weekly` ledger events (TODO: include `cashCollected` in metadata)
+- [ ] **Cash Reconciliation**: Bolt/Uber reported cash vs driver reported (`cashCollections`) vs deposits (ledger `cash_deposit`)
+- [ ] **Cost Analysis**: Maintenance by type, insurance claims, fines
 
 ---
 
@@ -314,13 +296,13 @@ src/
 - [ ] Admin UI: Alert center with filters, bulk acknowledge, history
 
 ### 7.2 Key Reports (Admin)
-- [ ] **Monthly Settlement Register**: All drivers, status, totals
+- [ ] **Driver Balance Ledger / Current Balances**: All drivers, current balance, status, totals
 - [ ] **Fleet Profitability**: Per vehicle, per driver, aggregate
 - [ ] **Driver Performance**: Trips, earnings, rating, safety score, provision rate
 - [ ] **Vehicle Utilization**: Active days, km, revenue/km, cost/km, downtime
 - [ ] **Fuel Efficiency**: L/100km per vehicle, per driver, vs benchmark
 - [ ] **Compliance Audit**: Document expiry matrix (driver × document type)
-- [ ] **Bolt Reconciliation**: API vs Sheet vs Internal, discrepancy list
+- [ ] **Income Event Reconciliation**: Uber/Bolt weekly API/sheet vs `income_uber_weekly` / `income_bolt_weekly` ledger events
 - [ ] **Cash Reconciliation**: Reported vs Bolt cash trips, disputes
 - [ ] **Cost Analysis**: Maintenance by type, insurance claims, fines
 
@@ -345,11 +327,11 @@ src/
 - ✅ Translation service (Gemini + OpenRouter)
 
 ### 8.2 Needs Extension
-- 🔄 **Auth middleware rework**: New `driver` role, separate cookie, `(driver)` route group, driver-scoped middleware, Firebase custom claims, updated `handleRoleCheck`
-- 🔄 DB: New collections (settlements, dailyReports, fuelTransactions, alerts, telemetryEvents, boltSyncLog)
-- 🔄 API: Driver-scoped endpoints under `/api/driver/*`
-- 🔄 UI: Driver PWA layout + routes under `/driver/*`
-- 🔄 Calculations: Provision engine, settlement generator
+- 🔄 **Auth system rewrite**: Firebase Auth + session cookies, 6 route groups, revoked handling, per-handler API auth (see `AUTH_REWORK_PLAN.md`)
+- 🔄 DB: New collections (driverBalanceEvents, dailyReports, fuelTransactions, alerts, telemetryEvents, boltSyncLog)
+- 🔄 API: `(api)/driver`, `(api)/admin`, `(api)/shared`, `(api)/public` with per-handler auth
+- 🔄 UI: Driver PWA layout + routes under `(driver)/`
+- 🔄 Calculations: Driver balance ledger per `LEDGER_SETTLEMENT_PLAN.md`
 - 🔄 Sync: Bolt client, telemetry providers, sheet importers
 - 🔄 i18n: Add Paraglide for driver app (separate from admin i18n)
 
@@ -365,25 +347,25 @@ src/
 ## 9. IMPLEMENTATION SEQUENCE
 
 ### Phase 1: Backend Foundation (2-3 weeks)
-0. **Auth middleware rework** (1 week):
-   - Add `driver` role to types
-   - Create `driverAuth.middleware.ts` with `restrictDriver`, `checkDriverAccess`
-   - Update `auth.middleware.ts`: add `(driver)` to `rolePaths`, update `ALL_ROLES`
-   - Update `hooks.server.ts`: handle `(driver)` group in `handleRoleCheck`
-   - Add driver login/register endpoints (`/api/driver/auth/*`)
-   - Test: driver cannot access admin routes, admin cannot access driver routes, driver A cannot access driver B's data
-1. Extend Firestore schemas & security rules
-2. Create new collections with indexes
+0. **Auth system rewrite** (1 week) — per `AUTH_REWORK_PLAN.md`:
+   - Types: `AdminRole = moderator|manager|admin`, `SessionClaims.role` includes `revoked`
+   - Create `src/lib/server/auth/` module (firebaseAdmin, session, userLookup, adminAuth, driverAuth, generalAuth, apiAuth)
+   - Create `src/hooks.server.ts` with 6 route groups, revoked check, sliding refresh
+   - Route restructure: (auth), (driver), (admin), (general), (api), (webhooks)
+   - Single `/login` page, Google Sign-In, password reset, logout
+   - Test: revoked flow, role hierarchy, per-handler API auth
+1. Extend Firestore schemas & security rules (including `driverBalanceEvents` rules)
+2. Create new collections with indexes (including `driverBalanceEvents` composite indexes)
 3. Build calculation engine (pure TS, heavily tested)
-4. Settlement generator (draft → review → approve → pay)
+4. Implement driver balance ledger per `LEDGER_SETTLEMENT_PLAN.md` (events, running balance, verification, cash events)
 5. Alert engine + notification channels
 
 ### Phase 2: Driver PWA (2-3 weeks)
-1. Driver auth (Firebase custom claims + middleware)
-2. Driver layout + routes (mobile-first, PWA)
+1. Driver auth (Firebase custom claims + middleware per AUTH_REWORK_PLAN.md)
+2. Driver layout + routes under `(driver)/` (mobile-first, PWA)
 3. **Paraglide i18n setup**: Install packages, configure `project.inlang.json`, create message catalogs for 9 locales
 4. Daily report form (offline-capable, fully translated)
-5. Settlement view + PDF download (localized)
+5. Settlement view + PDF download (localized, reads from ledger)
 6. Document center (view/upload/sign, multi-lang)
 7. Push notifications (FCM, localized)
 8. Language selector in profile, persist to driver record
@@ -395,7 +377,7 @@ src/
 4. Telemetry provider abstraction + 1-2 implementations
 5. Daily metrics computation + alerts
 
-### Phase 4: Finance & Reporting (2-3 weeks)
+### Phase 4: Fleet Reporting (1-2 weeks)
 1. Fuel card import + matching + anomalies
 2. Cash tracking + reconciliation
 3. Fleet P&L reports
@@ -429,11 +411,11 @@ src/
 
 | Phase | Duration | Key Deliverable |
 |-------|----------|-----------------|
-| 1. Backend Foundation | 2-3 weeks | Calculations, settlements, alerts working |
+| 1. Backend Foundation | 2-3 weeks | Ledger, calculations, alerts working |
 | 2. Driver PWA | 2-3 weeks | Driver can submit reports, view settlements |
 | 3. Bolt + Telemetry | 3-4 weeks | Automated sync, real-time vehicle data |
-| 4. Finance & Reports | 2-3 weeks | Monthly close automation, P&L |
-| **Total** | **9-13 weeks** | **Production-ready fleet platform** |
+| 4. Fleet Reporting | 1-2 weeks | P&L, reconciliation reports |
+| **Total** | **8-12 weeks** | **Production-ready fleet platform** |
 
 ---
 

@@ -17,7 +17,10 @@ namespace DriverBalance {
     | 'penalty' 
     | 'monthly_settlement' 
     | 'fuel_repayments' 
-    | 'early_settlement_discount';
+    | 'early_settlement_discount'
+    | 'cash_collection'      // Driver collected cash from trips (negative = owes fleet)
+    | 'cash_deposit'         // Driver deposited cash to office (positive = reduces debt)
+    | 'cash_adjustment';     // Dispute resolution, write-off (signed)
 
   type EventStatus = 'pending' | 'confirmed' | 'cancelled' | 'reversed';
 
@@ -35,7 +38,7 @@ namespace DriverBalance {
     
     // Traceability
     referenceId?: string;          // External ref (Uber report ID, penalty ID, etc.)
-    referenceType?: string;        // 'uber_report' | 'bolt_report' | 'penalty' | 'settlement'
+    referenceType?: string;        // 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash'
     metadata: Record<string, any>; // { period: '2026-W01', trips: 45, grossEarnings: 3000.00, ... }
     
     // Audit
@@ -54,19 +57,22 @@ namespace DriverBalance {
 ---
 
 ## Idempotency Key Formats (Used as Document ID)
-
-| Event Type | Key Format | Example |
-|------------|-----------|---------|
-| `income_uber_weekly` | `u:{driverId}:{YYYY}{W}` | `u:drv123:2026W01` |
-| `income_bolt_weekly` | `b:{driverId}:{YYYY}{W}` | `b:drv123:2026W01` |
-| `penalty` | `p:{penaltyId}` | `p:pen456` |
-| `monthly_settlement` | `m:{driverId}:{YYYY}{MM}` | `m:drv123:202601` |
-| `fuel_repayments` | `f:{txnId}` | `f:txn789` |
-| `early_settlement_discount` | `e:{requestId}` | `e:req999` |
-
-**Length:** ~15-25 chars (well under Firestore 1500 byte limit)
-
-**DB-level idempotency:** Firestore rejects duplicate document IDs automatically. Write with `merge: false` to fail on duplicate.
+ 
+ | Event Type | Key Format | Example |
+ |------------|-----------|---------|
+ | `income_uber_weekly` | `u:{driverId}:{YYYY}{W}` | `u:drv123:2026W01` |
+ | `income_bolt_weekly` | `b:{driverId}:{YYYY}{W}` | `b:drv123:2026W01` |
+ | `penalty` | `p:{penaltyId}` | `p:pen456` |
+ | `monthly_settlement` | `m:{driverId}:{YYYY}{MM}` | `m:drv123:202601` |
+ | `fuel_repayments` | `f:{txnId}` | `f:txn789` |
+ | `early_settlement_discount` | `e:{requestId}` | `e:req999` |
+ | `cash_collection` | `c:{driverId}:{YYYY}{MM}{DD}` | `c:drv123:20260115` |
+ | `cash_deposit` | `d:{depositId}` | `d:dep456` |
+ | `cash_adjustment` | `a:{adjustmentId}` | `a:adj789` |
+ 
+ **Length:** ~15-25 chars (well under Firestore 1500 byte limit)
+ 
+ **DB-level idempotency:** Firestore rejects duplicate document IDs automatically. Write with `merge: false` to fail on duplicate.
 
 ---
 
@@ -221,26 +227,39 @@ async function verifyBalance(driverId: string) {
 ---
 
 ## Integration Points
-
-| Trigger | Creates Event |
-|---------|---------------|
-| Uber weekly sync | `income_uber_weekly` with `idempotencyKey: "u:{driverId}:{YYYY}W{W}"` |
-| Bolt weekly sync | `income_bolt_weekly` with `idempotencyKey: "b:{driverId}:{YYYY}W{W}"` |
-| Admin adds penalty | `penalty` with `idempotencyKey: "p:{penaltyId}"` |
-| Monthly settlement run | `monthly_settlement` per driver with `idempotencyKey: "m:{driverId}:{YYYY}{MM}"` |
-| Fuel card repay | `fuel_repayments` with `idempotencyKey: "f:{txnId}"` |
-| Driver requests early payout | `early_settlement_discount` (5% fee) + `monthly_settlement` (payout) |
-
-**Early Settlement Logic:**
-```
-requestedAmount = X PLN
-fee = roundPLN(X * 0.05)
-actualPayout = roundPLN(X - fee)
-
-Create TWO events:
-  1. early_settlement_discount: amount = -fee, metadata: { requested: X, fee, payout: actualPayout }
-  2. monthly_settlement: amount = -actualPayout
-```
+ 
+ | Trigger | Creates Event |
+ |---------|---------------|
+ | Uber weekly sync | `income_uber_weekly` with `idempotencyKey: "u:{driverId}:{YYYY}W{W}"` |
+ | Bolt weekly sync | `income_bolt_weekly` with `idempotencyKey: "b:{driverId}:{YYYY}W{W}"` |
+ | Admin adds penalty | `penalty` with `idempotencyKey: "p:{penaltyId}"` |
+ | Monthly settlement run | `monthly_settlement` per driver with `idempotencyKey: "m:{driverId}:{YYYY}{MM}"` |
+ | Fuel card repay | `fuel_repayments` with `idempotencyKey: "f:{txnId}"` |
+ | Driver requests early payout | `early_settlement_discount` (5% fee) + `monthly_settlement` (payout) |
+ | Daily report cash submitted | `cash_collection` (amount = -cashCollected) with `idempotencyKey: "c:{driverId}:{YYYY}{MM}{DD}"` |
+ | Cash handed to office | `cash_deposit` (amount = +deposited) with `idempotencyKey: "d:{depositId}"` |
+ | Cash dispute resolved | `cash_adjustment` (signed) with `idempotencyKey: "a:{adjustmentId}"` |
+ 
+ **Early Settlement Logic:**
+ ```
+ requestedAmount = X PLN
+ fee = roundPLN(X * 0.05)
+ actualPayout = roundPLN(X - fee)
+ 
+ Create TWO events:
+   1. early_settlement_discount: amount = -fee, metadata: { requested: X, fee, payout: actualPayout }
+   2. monthly_settlement: amount = -actualPayout
+ ```
+ 
+ **Cash Position Logic:**
+ - Net cash = sum(`cash_collection` + `cash_deposit` + `cash_adjustment`)
+ - If negative at `monthly_settlement` → deducted from payout (create `monthly_settlement` with reduced amount)
+ - Reconciliation report: Bolt/Uber reported cash vs driver reported vs deposits
+ 
+ **TODO:** In `income_uber_weekly` / `income_bolt_weekly` metadata, include `cashCollected` from Uber/Bolt report for reconciliation:
+ ```
+ metadata: { period: '2026-W01', trips: 45, grossEarnings: 3000.00, cashCollected: 500.00, ... }
+ ```
 
 ---
 
@@ -288,16 +307,17 @@ recordEvent({
 ---
 
 ## Summary of Decisions
-
-| Decision | Choice |
-|----------|--------|
-| Storage | Firestore (real-time, per-driver queries) |
-| Document ID | Idempotency key (short format, DB-level dedup) |
-| Currency | PLN, 2 decimals, rounded at write |
-| Timestamp field | `timestamp` (epoch ms) |
-| Event type storage | Full type string (not prefix) |
-| Running balance | Stored on each event for O(1) lookup |
-| Idempotency | DB-level via document ID + app-layer transaction |
+ 
+ | Decision | Choice |
+ |----------|--------|
+ | Storage | Firestore (real-time, per-driver queries) |
+ | Document ID | Idempotency key (short format, DB-level dedup) |
+ | Currency | PLN, 2 decimals, rounded at write |
+ | Timestamp field | `timestamp` (epoch ms) |
+ | Event type storage | Full type string (not prefix) |
+ | Running balance | Stored on each event for O(1) lookup |
+ | Idempotency | DB-level via document ID + app-layer transaction |
+ | Cash events | `cash_collection` (negative), `cash_deposit` (positive), `cash_adjustment` (signed) |
 
 ---
 

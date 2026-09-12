@@ -25,13 +25,13 @@ namespace App {
   type UserType = 'driver' | 'admin';
 
   // Admin user roles
-  type AdminRole = 'moderator' | 'manager' | 'admin' | 'superadmin';
+  type AdminRole = 'moderator' | 'manager' | 'admin';
 
   // Session cookie payload (decoded from Firebase session cookie)
   interface SessionClaims {
     uid: string;
     email: string;
-    role: AdminRole | 'driver';
+    role: AdminRole | 'driver' | 'revoked';
     driverId?: string;        // Only for drivers
     emailVerified: boolean;
     iat: number;
@@ -131,128 +131,199 @@ async function setPrefsCookie(cookies: Cookies, prefs: { locale: App.Locale; mod
 - maxAge: 60 * 60 * 2 (2 hours, sliding) for sessions; 365 days for prefs
 
 ### 2.3 userLookup.ts
-```typescript
-// Single entry point after Firebase Auth verification
-async function resolveUser(firebaseUid: string): Promise<{
-  userType: 'driver' | 'admin';
-  userData: App.AdminUser | Driver.Driver;
-  claims: App.SessionClaims;
-}> {
-  // 1. Check drivers collection by firebaseUid
-  // 2. Check user collection by firebaseUid
-  // 3. Throw if neither found
-}
-```
+ ```typescript
+ // Single entry point after Firebase Auth verification
+ async function resolveUser(firebaseUid: string): Promise<{
+   userType: 'driver' | 'admin';
+   userData: App.AdminUser | Driver.Driver;
+   claims: App.SessionClaims;
+ }> {
+   // 1. Check drivers collection by firebaseUid
+   // 2. Check admin users collection by firebaseUid
+   // 3. Throw if neither found
+   // 4. If driver.status === 'revoked' or admin.status === 'revoked', set claims.role = 'revoked'
+ }
+ ```
 
 ### 2.4 adminAuth.ts
-```typescript
-// Used in (admin)/+layout.ts load function
-function restrictAdmin(locals: App.Locals, allowedRoles?: App.AdminRole[]): App.AdminUser
-
-// Used in +page.server.ts for specific permissions
-function requireRole(locals: App.Locals, roles: App.AdminRole[]): void
-function requireSuperadmin(locals: App.Locals): void
-```
-
-### 2.5 driverAuth.ts
-```typescript
-// Used in (driver)/+layout.ts load function
-function restrictDriver(locals: App.Locals): Driver.Driver
-
-// Ensures driver can only access own data
-function checkDriverAccess(locals: App.Locals, targetDriverId: string): void
-```
+ ```typescript
+ // Used in (admin)/+layout.ts load function
+ function restrictAdmin(locals: App.Locals): App.AdminUser
+ 
+ // Used in +page.server.ts for specific permissions
+ function requireRole(locals: App.Locals, roles: App.AdminRole[]): void
+ function requireAdmin(locals: App.Locals): void      // role === 'admin'
+ function requireManager(locals: App.Locals): void    // role === 'manager' | 'admin'
+ function requireModerator(locals: App.Locals): void  // any admin role (moderator | manager | admin)
+ ```
+ 
+ ### 2.5 driverAuth.ts
+ ```typescript
+ // Used in (driver)/+layout.ts load function
+ function restrictDriver(locals: App.Locals): Driver.Driver
+ 
+ // Ensures driver can only access own data
+ function checkDriverAccess(locals: App.Locals, targetDriverId: string): void
+ ```
+ 
+ ### 2.6 generalAuth.ts (NEW)
+ ```typescript
+ // Used in (general)/+layout.ts load function
+ function requireAuth(locals: App.Locals): App.AdminUser | Driver.Driver
+ ```
+ 
+ ### 2.7 apiAuth.ts (NEW)
+ ```typescript
+ // For use in (api) route handlers - per-route auth decisions
+ function requireDriverApi(locals: App.Locals): Driver.Driver
+ function requireAdminApi(locals: App.Locals, allowedRoles?: App.AdminRole[]): App.AdminUser
+ function requireAnyApi(locals: App.Locals): { user: App.AdminUser | Driver.Driver; userType: 'driver' | 'admin' }
+ function requirePublicApi(locals: App.Locals): void  // no auth required
+ ```
 
 ---
 
 ## 3. Hooks (src/hooks.server.ts) - NEW FILE
-
-Central authentication handler for all requests:
-
-```typescript
-export const handle: Handle = async ({ event, resolve }) => {
-  // 1. Detect route group from event.route.id
-  const isAuthRoute = event.route.id?.startsWith('/(auth)');
-  const isDriverRoute = event.route.id?.startsWith('/(driver)');
-  const isAdminRoute = event.route.id?.startsWith('/(admin)');
-
-  // 2. Read appropriate cookie
-  let claims: App.SessionClaims | null = null;
-  let userType: 'driver' | 'admin' | null = null;
-
-  if (isDriverRoute) {
-    const cookie = event.cookies.get(DRIVER_COOKIE);
-    if (cookie) claims = await verifySessionCookie(cookie, 'driver');
-    userType = 'driver';
-  } else if (isAdminRoute || !isAuthRoute) {
-    const cookie = event.cookies.get(ADMIN_COOKIE);
-    if (cookie) claims = await verifySessionCookie(cookie, 'admin');
-    userType = 'admin';
-  }
-
-  // 3. Attach to locals
-  event.locals.sessionClaims = claims;
-  event.locals.userType = claims ? userType : null;
-
-  // 4. Fetch user data if authenticated
-  if (claims) {
-    if (userType === 'driver') {
-      event.locals.driver = await getDriverByFirebaseUid(claims.uid);
-    } else {
-      event.locals.user = await getAdminByFirebaseUid(claims.uid);
-    }
-  }
-
-  // 5. Handle sliding refresh (if < 30 min remaining)
-  if (claims && (claims.exp - Date.now() / 1000) < 1800) {
-    await refreshSessionCookie(event);
-  }
-
-  return resolve(event);
-};
-```
+ 
+ Central authentication handler for all requests:
+ 
+ ```typescript
+ export const handle: Handle = async ({ event, resolve }) => {
+   const routeId = event.route.id ?? '';
+   
+   // Detect route group
+   const isAuthRoute = routeId.startsWith('/(auth)');
+   const isDriverRoute = routeId.startsWith('/(driver)');
+   const isAdminRoute = routeId.startsWith('/(admin)');
+   const isGeneralRoute = routeId.startsWith('/(general)');
+   const isApiRoute = routeId.startsWith('/(api)');
+   const isWebhookRoute = routeId.startsWith('/(webhooks)');
+ 
+   // Webhooks & API: NO automatic cookie verification in hooks
+   // Individual handlers decide auth requirements
+   if (isWebhookRoute || isApiRoute) {
+     return resolve(event);
+   }
+ 
+   let claims: App.SessionClaims | null = null;
+   let userType: 'driver' | 'admin' | null = null;
+ 
+   if (isDriverRoute) {
+     const cookie = event.cookies.get(DRIVER_COOKIE);
+     if (cookie) claims = await verifySessionCookie(cookie, 'driver');
+     userType = 'driver';
+   } else if (isAdminRoute) {
+     const cookie = event.cookies.get(ADMIN_COOKIE);
+     if (cookie) claims = await verifySessionCookie(cookie, 'admin');
+     userType = 'admin';
+   } else if (isGeneralRoute || !isAuthRoute) {
+     // Try both cookies
+     const driverCookie = event.cookies.get(DRIVER_COOKIE);
+     if (driverCookie) {
+       claims = await verifySessionCookie(driverCookie, 'driver');
+       userType = 'driver';
+     } else {
+       const adminCookie = event.cookies.get(ADMIN_COOKIE);
+       if (adminCookie) {
+         claims = await verifySessionCookie(adminCookie, 'admin');
+         userType = 'admin';
+       }
+     }
+   }
+ 
+   // Fast-path revoked rejection
+   if (claims?.role === 'revoked') {
+     // Clear cookies
+     event.cookies.delete(ADMIN_COOKIE, { path: '/' });
+     event.cookies.delete(DRIVER_COOKIE, { path: '/' });
+     throw redirect(302, '/login?revoked=true');
+   }
+ 
+   event.locals.sessionClaims = claims;
+   event.locals.userType = claims ? userType : null;
+ 
+   if (claims) {
+     if (userType === 'driver') {
+       event.locals.driver = await getDriverByFirebaseUid(claims.uid);
+     } else {
+       event.locals.user = await getAdminByFirebaseUid(claims.uid);
+     }
+   }
+ 
+   // Sliding refresh
+   if (claims && (claims.exp - Date.now() / 1000) < 1800) {
+     await refreshSessionCookie(event);
+   }
+ 
+   return resolve(event);
+ };
+ ```
 
 ---
 
 ## 4. Route Structure
-
-```
-src/routes/
-+�� (auth)/                    # Public routes (no auth required)
--   +�� +layout.ts            # No auth check
--   +�� login/
--   -   +�� +page.svelte      # Single login form (email/password + Google)
--   -   L�� +page.server.ts   # Login action, password reset action
--   +�� password-reset/
--   -   +�� +page.svelte      # Request reset email
--   -   L�� +page.server.ts   # Send reset email action
--   L�� logout/
--       L�� +page.server.ts   # Clear both cookies, redirect to /login
-
-+�� (admin)/                   # Admin routes (moderator/manager/admin/superadmin)
--   +�� +layout.ts            # restrictAdmin(locals) - redirects to /login
--   +�� +page.svelte          # Admin dashboard
--   +�� drivers/
--   +�� vehicles/
--   +�� finance/
--   +�� integrations/
--   L�� ...
-
-L�� (driver)/                  # Driver routes (driver role only)
-    +�� +layout.ts            # restrictDriver(locals) + setLocale(driver.preferredLanguage)
-    +�� +page.svelte          # Driver dashboard
-    +�� reports/
-    +�� settlements/
-    +�� documents/
-    +�� vehicle/
-    +�� profile/
-    L�� ...
-```
-
-### 4.1 Route Group Detection
-- (auth) -> no auth, public
-- (admin) -> requires admin role, cookie: app.admin.session
-- (driver) -> requires driver role, cookie: app.driver.session
+ 
+ ```
+ src/routes/
+ +�� (auth)/                    # Public routes (no auth required)
+ -   +�� +layout.ts            # No auth check
+ -   +�� login/
+ -   -   +�� +page.svelte      # Single login form (email/password + Google)
+ -   -   L�� +page.server.ts   # Login action, password reset action
+ -   +�� password-reset/
+ -   -   +�� +page.svelte      # Request reset email
+ -   -   L�� +page.server.ts   # Send reset email action
+ -   L�� logout/
+ -       L�� +page.server.ts   # Clear both cookies, redirect to /login
+ 
+ +�� (driver)/                  # Driver routes (driver role only)
+ -   +�� +layout.ts            # restrictDriver(locals) + setLocale(driver.preferredLanguage)
+ -   +�� +page.svelte          # Driver dashboard
+ -   +�� reports/
+ -   +�� settlements/
+ -   +�� documents/
+ -   +�� vehicle/
+ -   +�� profile/
+ -   L�� ...
+ 
+ +�� (admin)/                   # Admin routes (moderator/manager/admin)
+ -   +�� +layout.ts            # restrictAdmin(locals) - redirects to /login
+ -   +�� +page.svelte          # Admin dashboard
+ -   +�� drivers/
+ -   +�� vehicles/
+ -   +�� finance/
+ -   +�� integrations/
+ -   L�� ...
+ 
+ +�� (general)/                 # Any authenticated user (driver OR admin)
+     +�� +layout.ts            # requireAuth(locals) - accepts both
+     +�� profile/
+     +�� notifications/
+     L�� ...
+ 
+ +�� (api)/                     # API endpoints - PER-ROUTE AUTH (no auto auth in hooks)
+     +�� +layout.ts            # No auth middleware - handlers decide
+     +�� driver/               # Driver-scoped (requireDriverApi in handler)
+     +�� admin/                # Admin-scoped (requireAdminApi in handler)
+     +�� shared/               # Both driver + admin (requireAnyApi in handler)
+     +�� public/               # No auth required (requirePublicApi in handler)
+     L�� ...
+ 
+ L�� (webhooks)/                # Webhook endpoints - NO SESSION AUTH
+     +�� +layout.ts            # No auth - verify HMAC/signature per handler
+     +�� uber/
+     +�� bolt/
+     +�� telemetry/
+     L�� ...
+ ```
+ 
+ ### 4.1 Route Group Detection
+ - (auth) -> no auth, public
+ - (driver) -> requires driver role, cookie: app.driver.session
+ - (admin) -> requires admin role (moderator/manager/admin), cookie: app.admin.session
+ - (general) -> requires any authenticated user, accepts both cookies
+ - (api) -> NO automatic auth, per-handler decision
+ - (webhooks) -> NO session auth, signature verification per handler
 
 ---
 
@@ -267,30 +338,35 @@ L�� (driver)/                  # Driver routes (driver role only)
 ### 5.2 Server Actions (+page.server.ts)
 ```typescript
 // Email/password sign in
-action: 'signin' = async ({ request, cookies }) => {
-  const formData = await request.formData();
-  const email = formData.get('email');
-  const password = formData.get('password');
-  
-  // 1. Verify with Firebase Admin SDK (signInWithEmailAndPassword via REST)
-  // 2. Get Firebase UID
-  // 3. Call resolveUser(uid) -> { userType, userData, claims }
-  // 4. Create session cookie: createSessionCookie(idToken, userType)
-  // 5. Set appropriate cookie (ADMIN_COOKIE or DRIVER_COOKIE)
-  // 6. Redirect: userType === 'driver' ? '/driver' : '/'
-};
-
-// Google Sign-In (ID token from client)
-action: 'google' = async ({ request, cookies }) => {
-  const formData = await request.formData();
-  const idToken = formData.get('idToken'); // From Firebase Client SDK
-  
-  // 1. Verify ID token with Firebase Admin
-  // 2. Get Firebase UID
-  // 3. Call resolveUser(uid)
-  // 4. Create & set session cookie
-  // 5. Redirect based on userType
-};
+ action: 'signin' = async ({ request, cookies }) => {
+   const formData = await request.formData();
+   const email = formData.get('email');
+   const password = formData.get('password');
+   
+   // 1. Verify with Firebase Admin SDK (signInWithEmailAndPassword via REST)
+   // 2. Get Firebase UID
+   // 3. Call resolveUser(uid) -> { userType, userData, claims }
+   // 4. Check revoked status
+   // 5. Create session cookie: createSessionCookie(idToken, userType)
+   // 6. Set appropriate cookie (ADMIN_COOKIE or DRIVER_COOKIE)
+   // 7. Redirect based on role:
+   //    driver -> '/driver'
+   //    admin/manager/moderator -> '/'
+   //    revoked -> '/login?revoked=true'
+ };
+ 
+ // Google Sign-In (ID token from client)
+ action: 'google' = async ({ request, cookies }) => {
+   const formData = await request.formData();
+   const idToken = formData.get('idToken'); // From Firebase Client SDK
+   
+   // 1. Verify ID token with Firebase Admin
+   // 2. Get Firebase UID
+   // 3. Call resolveUser(uid)
+   // 4. Check revoked status
+   // 5. Create & set session cookie
+   // 6. Redirect based on role (same as above)
+ };
 
 // Password reset request
 action: 'forgotPassword' = async ({ request }) => {
@@ -400,22 +476,28 @@ action: 'google' = async ({ request, cookies }) => {
 ## 10. Driver Data Requirements
 
 ### Firestore (vehicleDriver collection)
-Add to each driver document:
-```typescript
-{
-  firebaseUid: abc123,           // Required - set on driver creation
-  preferredLanguage: en,         // Default: en (App.Locale)
-  nationality: PL,               // ISO 3166-1 alpha-2
-  // ... existing fields
-}
-```
-
-### On Driver Creation (addNewDriver in drivers.fdb.ts)
-1. Create Firebase Auth user (email/password)
-2. Get Firebase UID
-3. Save driver document with firebaseUid
-4. Set custom claims: { role: driver, driverId: docId }
-5. Return temp password to admin
+ Add to each driver document:
+ ```typescript
+ {
+   firebaseUid: abc123,           // Required - set on driver creation
+   preferredLanguage: en,         // Default: en (App.Locale)
+   nationality: PL,               // ISO 3166-1 alpha-2
+   status: 'active' | 'suspended' | 'revoked',  // NEW: revoked status
+   // ... existing fields
+ }
+ ```
+ 
+ ### On Driver Creation (addNewDriver in drivers.fdb.ts)
+ 1. Create Firebase Auth user (email/password)
+ 2. Get Firebase UID
+ 3. Save driver document with firebaseUid, status: 'active'
+ 4. Set custom claims: { role: 'driver', driverId: docId }
+ 5. Return temp password to admin
+ 
+ ### On Driver Revoke
+ 1. Update driver document: status = 'revoked'
+ 2. Set Firebase custom claims: { role: 'revoked' } (immediate effect)
+ 3. Active session cookies will be rejected on next request (hooks check)
 
 ---
 
@@ -452,37 +534,55 @@ export const load = async ({ locals }) => {
 - [ ] Implement adminAuth.ts, driverAuth.ts
 
 ### Phase 2: Hooks & Route Restructure
-- [ ] Create src/hooks.server.ts with central auth handler
-- [ ] Restructure routes into (auth), (admin), (driver) groups
-- [ ] Add +layout.ts to (admin) and (driver) with restrict functions
-
-### Phase 3: Login & Session
-- [ ] Create (auth)/login/+page.svelte (single form)
-- [ ] Create (auth)/login/+page.server.ts (signin, google, forgotPassword actions)
-- [ ] Create (auth)/password-reset/ pages
-- [ ] Create (auth)/logout/+page.server.ts (single logout)
-- [ ] Update cookie names to app.admin.session / app.driver.session
-
-### Phase 5: Driver Integration
-- [ ] Add firebaseUid, preferredLanguage, nationality to Driver interface
-- [ ] Update addNewDriver to create Firebase Auth user + set custom claims
-- [ ] Update drivers.fdb.ts with new fields
-
-### Phase 6: i18n
-- [ ] Set up Paraglide for driver app (messages/driver/{locale}.json)
-- [ ] Add locale resolution in (driver)/+layout.ts
-- [ ] Default locale: en
-
-### Phase 7: Testing & Cleanup
-- [ ] Test: driver cannot access admin routes
-- [ ] Test: admin cannot access driver routes
-- [ ] Test: driver A cannot access driver B data
-- [ ] Test: Google Sign-In for both types
-- [ ] Test: password reset flow
-- [ ] Test: session refresh (sliding expiry)
-- [ ] Test: logout clears both cookies
-- [ ] Remove old src/lib/server/secure/auth.middleware.ts
-- [ ] Remove old rolePaths map and handleRoleCheck
+ - [ ] Create src/hooks.server.ts with central auth handler (revoked check, route groups)
+ - [ ] Restructure routes into (auth), (admin), (driver), (general), (api), (webhooks) groups
+ - [ ] Add +layout.ts to (admin) and (driver) with restrict functions
+ - [ ] Add +layout.ts to (general) with requireAuth
+ - [ ] Add +layout.ts to (api) and (webhooks) with NO auth middleware
+ - [ ] Move existing API routes to (api)/driver, (api)/admin, (api)/shared, (api)/public
+ - [ ] Move existing webhook routes to (webhooks)/
+ 
+ ### Phase 3: Login & Session
+ - [ ] Create (auth)/login/+page.svelte (single form)
+ - [ ] Create (auth)/login/+page.server.ts (signin, google, forgotPassword actions with revoked check)
+ - [ ] Create (auth)/password-reset/ pages
+ - [ ] Create (auth)/logout/+page.server.ts (single logout)
+ - [ ] Update cookie names to app.admin.session / app.driver.session
+ 
+ ### Phase 4: Auth Helpers
+ - [ ] Create src/lib/server/auth/generalAuth.ts (requireAuth)
+ - [ ] Create src/lib/server/auth/apiAuth.ts (requireDriverApi, requireAdminApi, requireAnyApi, requirePublicApi)
+ - [ ] Update src/lib/server/auth/adminAuth.ts (add requireManager, requireModerator)
+ - [ ] Update src/lib/server/auth/userLookup.ts (revoked status check)
+ - [ ] Update src/lib/server/auth/session.ts (include role in claims)
+ 
+ ### Phase 5: Driver Integration
+ - [ ] Add firebaseUid, preferredLanguage, nationality to Driver interface
+ - [ ] Add status field (active/suspended/revoked) to Driver interface
+ - [ ] Update addNewDriver to create Firebase Auth user + set custom claims
+ - [ ] Update drivers.fdb.ts with new fields
+ - [ ] Add revoke driver flow (update status + custom claims)
+ 
+ ### Phase 6: i18n
+ - [ ] Set up Paraglide for driver app (messages/driver/{locale}.json)
+ - [ ] Add locale resolution in (driver)/+layout.ts
+ - [ ] Default locale: en
+ 
+ ### Phase 7: Testing & Cleanup
+ - [ ] Test: driver cannot access admin routes
+ - [ ] Test: admin cannot access driver routes
+ - [ ] Test: driver A cannot access driver B data
+ - [ ] Test: Google Sign-In for both types
+ - [ ] Test: password reset flow
+ - [ ] Test: session refresh (sliding expiry)
+ - [ ] Test: logout clears both cookies
+ - [ ] Test: revoked user redirected to login with ?revoked=true
+ - [ ] Test: (general) routes accessible by both driver and admin
+ - [ ] Test: (api) routes - per-handler auth works correctly
+ - [ ] Test: (webhooks) routes work without session cookies
+ - [ ] Test: admin role hierarchy (admin > manager > moderator)
+ - [ ] Remove old src/lib/server/secure/auth.middleware.ts
+ - [ ] Remove old rolePaths map and handleRoleCheck
 
 ---
 
@@ -503,51 +603,60 @@ export const load = async ({ locals }) => {
 ---
 
 ## 14. File List Summary
-
-### New Files
-- src/app.d.ts (updated)
-- src/hooks.server.ts
-- src/lib/server/auth/index.ts
-- src/lib/server/auth/firebaseAdmin.ts
-- src/lib/server/auth/session.ts
-- src/lib/server/auth/userLookup.ts
-- src/lib/server/auth/adminAuth.ts
-- src/lib/server/auth/driverAuth.ts
-- src/lib/server/auth/types.ts
-- src/routes/(auth)/login/+page.svelte
-- src/routes/(auth)/login/+page.server.ts
-- src/routes/(auth)/password-reset/+page.svelte
-- src/routes/(auth)/password-reset/+page.server.ts
-- src/routes/(auth)/logout/+page.server.ts
-- src/routes/(admin)/+layout.ts
-- src/routes/(driver)/+layout.ts
-- messages/driver/en.json (and 8 other locales)
-
-### Modified Files
-- src/app.d.ts (complete rewrite of App namespace)
-- src/lib/server/db/firebase/drivers.fdb.ts (add firebaseUid, preferredLanguage)
-- src/routes/+layout.svelte (remove old auth logic if any)
-- Delete: src/lib/server/secure/auth.middleware.ts
-- Delete: src/lib/server/secure/access.ts (if unused)
-
-### Route Restructure
-Move existing routes:
-- src/routes/* -> src/routes/(admin)/* (except login, api)
-- Create new src/routes/(driver)/* for driver PWA
+ 
+ ### New Files
+ - src/app.d.ts (updated)
+ - src/hooks.server.ts
+ - src/lib/server/auth/index.ts
+ - src/lib/server/auth/firebaseAdmin.ts
+ - src/lib/server/auth/session.ts
+ - src/lib/server/auth/userLookup.ts
+ - src/lib/server/auth/adminAuth.ts
+ - src/lib/server/auth/driverAuth.ts
+ - src/lib/server/auth/generalAuth.ts
+ - src/lib/server/auth/apiAuth.ts
+ - src/lib/server/auth/types.ts
+ - src/routes/(auth)/login/+page.svelte
+ - src/routes/(auth)/login/+page.server.ts
+ - src/routes/(auth)/password-reset/+page.svelte
+ - src/routes/(auth)/password-reset/+page.server.ts
+ - src/routes/(auth)/logout/+page.server.ts
+ - src/routes/(admin)/+layout.ts
+ - src/routes/(driver)/+layout.ts
+ - src/routes/(general)/+layout.ts
+ - src/routes/(api)/+layout.ts
+ - src/routes/(webhooks)/+layout.ts
+ - messages/driver/en.json (and 8 other locales)
+ 
+ ### Modified Files
+ - src/app.d.ts (complete rewrite of App namespace)
+ - src/lib/server/db/firebase/drivers.fdb.ts (add firebaseUid, preferredLanguage, status)
+ - src/routes/+layout.svelte (remove old auth logic if any)
+ - Delete: src/lib/server/secure/auth.middleware.ts
+ - Delete: src/lib/server/secure/access.ts (if unused)
+ 
+ ### Route Restructure
+ Move existing routes:
+ - src/routes/* -> src/routes/(admin)/* (except login, api)
+ - Create new src/routes/(driver)/* for driver PWA
+ - Create new src/routes/(general)/* for shared authenticated routes
+ - Create new src/routes/(api)/* with driver/admin/shared/public subfolders
+ - Create new src/routes/(webhooks)/* for webhook endpoints
 
 ---
 
 ## 15. Estimated Effort
-
-| Phase | Files | Est. Time |
-|-------|-------|-----------|
-| 1. Types & Core Auth | 8 | 4-6h |
-| 2. Hooks & Route Restructure | 5 | 3-4h |
-| 3. Login & Session | 6 | 4-6h |
-| 4. Driver Integration | 3 | 2-3h |
-| 5. i18n Setup | 10 | 2-3h |
-| 6. Testing & Cleanup | - | 3-4h |
-| **Total** | **~32** | **18-26h** |
+ 
+ | Phase | Files | Est. Time |
+ |-------|-------|-----------|
+ | 1. Types & Core Auth | 8 | 4-6h |
+ | 2. Hooks & Route Restructure | 8 | 4-5h |
+ | 3. Login & Session | 6 | 4-6h |
+ | 4. Auth Helpers | 4 | 2-3h |
+ | 5. Driver Integration | 3 | 2-3h |
+ | 6. i18n Setup | 10 | 2-3h |
+ | 7. Testing & Cleanup | - | 4-5h |
+ | **Total** | **~39** | **22-31h** |
 
 ---
 
