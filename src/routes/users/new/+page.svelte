@@ -12,13 +12,13 @@
 
 	let user: App.User = $state({ ...cleanUser });
 	let createdId: string | undefined = $state();
+	let createdPassword: string | undefined = $state();
 	let showCreated = $state(false);
 
 	const onResponse = async (response: any) => {
-		if (response.id) {
-			createdId = response.id;
-			showCreated = true;
-		}
+		if (response.id) createdId = response.id;
+		if (response.password) createdPassword = response.password;
+		showCreated = true;
 	};
 
 	const onReset = () => {
@@ -47,15 +47,18 @@
 				<CustomFormCheckSwitch bind:checked={user.canSignHandovers} caption="Może podpisywać protokoły zdawcze" onChange={() => touch('canSignHandovers')} />
 			</div>
 			<div class="col-12 col-md-6">
-				<CustomFormRoleSelect bind:value={user.role} />
+				<CustomFormRoleSelect bind:value={user.role} hideRevoked />
 			</div>
 		</div>
 	{/snippet}
 </CardForm>
 
-<ClosableModal bind:isOpen={showCreated} headerText="Użytkownik dodany" buttonCaption="Przejdź do użytkownika" onClick={() => createdId && goto('/users/' + createdId)}>
+<ClosableModal bind:isOpen={showCreated} headerText="Użytkownik dodany" buttonCaption={createdId?.length ? 'Przejdź' : false} onClick={() => createdId && goto('/users/' + createdId)}>
 	<div class="text-center">
 		<h5 class="text-success">Użytkownik został dodany</h5>
-		<div class="fw-bold">ID: {createdId}</div>
+		<div class="fw-bold">Wygenerowane hasło to:</div>
+		<div class="mt-3 border p-3 fs-6 text-dark">
+			{createdPassword || ''}
+		</div>
 	</div>
 </ClosableModal>

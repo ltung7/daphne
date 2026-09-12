@@ -17,7 +17,6 @@
 
 	const headers: SvelteCustom.DatatableHeaders<keyof Driver.Driver> = [
 		[ 'name', 'Imię i nazwisko' ],
-		[ 'login', 'Login' ],
 		[ 'status', 'Status' ],
 		[ 'assignedVehicle', 'Przypisany pojazd' ],
 		[ 'balance', 'Bilans' ],
@@ -40,7 +39,6 @@
 					<TooltipSquareIconLink icon="link" hoverText="Pokaż szczegóły" href="/drivers/{row.id}" size={5} />
 				</td>
 				<td>{row.name}</td>
-				<td>{row.login}</td>
 				<td class="py-1"><DriverStatus status={row.status} /></td>
 				<td>{row.assignedVehicle ? row.assignedVehicle.registrationNumber : "-"}</td>
 				<td>{formatCurrency(row.balance)}</td>

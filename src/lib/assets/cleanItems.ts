@@ -33,7 +33,6 @@ export const cleanVehicleType: Vehicle.Type = {
 
 export const cleanDriver: Driver.NewDriverData = {
     id: '',
-    login: '',
     name: '',
     sex: 'm',
     phone: '',

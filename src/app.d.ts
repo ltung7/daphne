@@ -515,7 +515,6 @@ declare global {
 
 		interface NewDriverData {
 			id: string;
-			login: string;
 			name: string;
 			sex: 'm' | 'f' | 'o';
 
@@ -544,7 +543,6 @@ declare global {
 		// --- Full driver record, once account is active ---
 
 		interface Driver extends NewDriverData, App.UserBase {
-			password: string;
 			profileImageUrl: string;
 
 			// KPI Metrics (Critical for provider scoring)

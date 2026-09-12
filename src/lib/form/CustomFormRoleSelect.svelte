@@ -84,21 +84,8 @@
 				<input class="form-check-input opacity-10" type="checkbox" id="perm_{perm.key}" checked={perm.allowed} disabled />
 				<label class="form-check-label ms-2 opacity-10 text-dark" for="perm_{perm.key}">
 					{perm.label}
-					{#if perm.allowed}
-						<span class="badge bg-success ms-2">Tak</span>
-					{:else}
-						<span class="badge bg-danger ms-2">Nie</span>
-					{/if}
 				</label>
 			</div>
 		{/each}
 	</div>
 </div>
-
-<style>
-	select.form-control {
-		appearance: auto;
-		padding-right: 2rem;
-		background-color: transparent;
-	}
-</style>

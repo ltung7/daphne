@@ -34,9 +34,10 @@
 		// 	]
 		// },
 		{ id: 2, title: 'Flota', icon: 'cars', link: '/vehicles' },
-		{ id: 3, title: 'Kierowcy', icon: 'users-alt', link: '/drivers' },
+		{ id: 3, title: 'Kierowcy', icon: 'steering-wheel', link: '/drivers' },
 		{ id: 4, title: 'Wydania', icon: 'user-key', link: '/handovers' },
-		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspection' },
+		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspections' },
+		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
 	]);
 
 	function toggleSidebar() {

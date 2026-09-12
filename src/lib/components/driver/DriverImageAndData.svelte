@@ -34,10 +34,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td>Login</td>
-					<td>{driver.login}</td>
-				</tr>
-				<tr>
 					<td>Imię i nazwisko</td>
 					<td>{driver.name}</td>
 				</tr>

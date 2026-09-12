@@ -120,6 +120,12 @@
 	onMount(onReset);
 
 	const beforeSubmit = (driver: Driver.NewDriverData): Partial<Driver.NewDriverData> => {
+		driver.preferredLanguage = 'pl';
+		if (driver.polishLanguage === 'basic') {
+			const other = Object.keys(driver.additionalLanguages);
+			if (other.length) driver.preferredLanguage = other[0] as App.Locale;
+		}
+
 		const tl: Array<keyof Driver.NewDriverData> = [ 'name' ];
 		return tl.reduce((obj, field) => {
 			// @ts-expect-error Type too wide
@@ -163,7 +169,6 @@
 				}
 			],
 			email,
-			login: emailLocalPart,
 			name: fullName,
 			pesel: randomNumber(10000000000, 99999999999).toString(),
 			phone,
@@ -197,7 +202,6 @@
 					<h5>Podstawowe informacje</h5>
 					<div>
 						<CustomFormText bind:value={driver.name} caption="Imię i nazwisko" error={errors.name} onblur={() => touch('name')} />
-						<CustomFormText bind:value={driver.login} caption="Login" error={errors.login} onblur={() => touch('login')} />
 						<CustomFormText bind:value={driver.pesel} caption="PESEL" error={errors.pesel} onblur={() => touch('pesel')} />
 						<CustomFormSelect caption="Rodzaj dokumentu tożsamości" bind:value={driver.identificationDocumentType} list={identificationDocumentNames} size={6} />
 						<CustomFormText bind:value={driver.identificationDocumentNumber} caption="Numer dokumentu tożsamości" error={errors.identificationDocumentNumber} onblur={() => touch('identificationDocumentNumber')} />
