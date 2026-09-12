@@ -19,6 +19,11 @@
 	import { fuelNames } from '$lib/assets/constants';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import { TabContent, TabPane } from '@sveltestrap/sveltestrap';
+	import IconButton from '$lib/misc/IconButton.svelte';
+	import { wrapLoader } from '$lib/nav/loader';
+	import { internal } from '$lib/nav/internal';
+	import ImageFallback from '$lib/misc/ImageFallback.svelte';
 
 	const licenses = licensesRaw.categories.reduce(
 		(obj, item) => {
@@ -54,6 +59,7 @@
 
 	let full = $state(false);
 	let selected: string = $state('toyota');
+	let query: string = $state('toyota corolla 2023 plugin in');
 	let newVehicleType: Vehicle.Type = $state({ ...cleanVehicleType });
 	let fuelTypes: Record<Vehicle.FuelType, string> = $state(fuelNames);
 	const newVehicleTypes: Array<CarModel> = $derived(allnewVehicleTypes[selected.toLowerCase()] ?? []);
@@ -91,36 +97,53 @@
 	const handleSelectFuel = (fuelType: string) => {
 		newVehicleType!.eco = ECO_FUEL_TYPES.includes(fuelType as Vehicle.FuelType);
 	};
+
+	const fillWithAi = async () => {
+		const response = await wrapLoader(internal.getApi({ query }))
+		if (response.data) Object.assign(newVehicleType, response.data)
+	}
 </script>
 
 <PageTitle title="Nowy rodzaj pojazdu" subtitle="Dodaj nowy typ pojazdu do systemu">
 	<IconLink icon="left" caption="Powrót do listy" href="/vehicletypes" />
 </PageTitle>
 
-<div class="card z-index-5">
-	<div class="card-body">
+<TabContent class="card">
+	<TabPane class="card-body" tabId="ai" tab="Generuj AI" active>
+		<div class="d-flex gap-3">
+			<CustomFormText bind:value={query} caption="Zapytanie" class="w-100" />
+			<div style="min-width: 160px; margin-top: 1.6rem;">
+			<IconButton icon="artificial-intelligence" caption="Uzupełnij z AI" onclick={fillWithAi} size={5} />
+			</div>
+		</div>
+	</TabPane>
+	<TabPane class="card-body" tabId="search" tab="Wyszukaj model">
 		<div class="row">
 			<div class="col-12 col-md-6">
 				{#if full}
 					<SearchBar data={makers} caption="Marka" bind:value={selected} />
 				{:else}
 					<SearchBar data={makersShort} caption="Marka" bind:value={selected} />
-					<button class="btn-clear p-0 text-normalize xsmall text-muted mb-3" onclick={() => (full = true)}>[ Pokaż wszystkich producentów ]</button>
+					<button class="btn-clear p-0 text-normalize xsmall text-muted mb-0" onclick={() => (full = true)}>[ Pokaż wszystkich producentów ]</button>
 				{/if}
 			</div>
 			<div class="col-12 col-md-6">
 				<SearchBar data={newVehicleTypes} search="name" caption="Model" onselect={handleSelect} />
 			</div>
 		</div>
-	</div>
-</div>
+	</TabPane>
+	<TabPane class="card-body" tabId="text" tab="Wpisz ręcznie">
+		<CustomFormText caption="Marka i model" bind:value={newVehicleType.makeModel} />
+		<div class="text-muted">Tutaj wpisz tylko ogólną markę i model pojazdu</div>
+	</TabPane>
+</TabContent>
 
 <CardForm item={newVehicleType} cleanItem={cleanVehicleType} {onResponse}>
 	<div class="row">
 		<div class="col-12 col-md-6">
 			{#if newVehicleType.image.length}
 				<div class="flex-center">
-					<img src={newVehicleType.image} alt={newVehicleType.makeModel} class="mw-100 mb-3" />
+					<ImageFallback src={newVehicleType.image} alt={newVehicleType.makeModel} class="mw-100 mb-3" />
 				</div>
 			{/if}
 			<div class="d-flex flex-column w-100">
