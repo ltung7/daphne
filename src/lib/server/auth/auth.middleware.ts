@@ -1,9 +1,14 @@
 import { redirect, type Cookies, type Handle } from '@sveltejs/kit';
 import { verifySessionCookie, clearAllSessionCookies } from '$lib/server/auth/session.js';
 import { getUserById } from '$lib/server/auth/userLookup.js';
-import { ADMIN_COOKIE, DRIVER_COOKIE } from '$lib/server/auth/types.js';
+import { ADMIN_COOKIE, DRIVER_COOKIE, CHECK_AUTH } from '$lib/server/auth/types.js';
 
 export const authMiddleware: Handle = async ({ event, resolve }) => {
+	// Skip all auth checks if CHECK_AUTH is false (testing mode)
+	if (!CHECK_AUTH) {
+		return resolve(event);
+	}
+
 	const routeId = event.route.id ?? '';
 	const isAuthRoute = routeId.startsWith('/(auth)');
 	const isDriverRoute = routeId.startsWith('/(driver)');

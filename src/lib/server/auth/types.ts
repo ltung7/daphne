@@ -56,3 +56,8 @@ export const PREFS_COOKIE_OPTIONS = {
 	path: '/',
 	maxAge: PREFS_MAX_AGE
 };
+
+import { isDev } from '$lib/utils/isDev';
+
+// TODO: Remove after testing - disable all auth checks
+export const CHECK_AUTH = isDev;

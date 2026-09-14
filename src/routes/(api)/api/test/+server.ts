@@ -9,6 +9,7 @@ import { readFile, writeFile } from "fs/promises"
 import { dumpAxiosError, logger, thrower } from '$lib/utils/logger';
 import loadJson from '$lib/utils/loadJson';
 import saveJson from '$lib/utils/saveJson';
+import { checkFleetProblems } from '$lib/server/services/health/healthCheck.service';
 
 const replace = {
   "Gasoline": "gas",
@@ -47,6 +48,7 @@ const runApiTest = async () => {
     //     types: [ ...types ]
     // }, 'carcas')
     // await saveJson(models, 'models', 0)
+    return checkFleetProblems()
 }
 
 

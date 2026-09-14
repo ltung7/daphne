@@ -19,7 +19,7 @@ export const checkFleetProblems = async (params: HealthCheckParams = {}): Promis
 	const allIssues: HealthCheck.HealthIssue[] = [];
 
 	await Promise.all(
-		Object.entries(CHECKERS).map(async ([key, checker]) => {
+		Object.entries(CHECKERS).map(async ([ key, checker ]) => {
 			try {
 				const issues = await checker(params);
 				allIssues.push(...issues);
