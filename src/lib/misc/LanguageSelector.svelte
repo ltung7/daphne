@@ -1,8 +1,16 @@
-<script>
+<script lang="ts">
 	import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from '@sveltestrap/sveltestrap';
-	import { getLocale, setLocale, locales } from '$lib/paraglide/runtime.js';
+	import { getLocale, setLocale } from '$lib/paraglide/runtime.js';
 	import Flag from '$lib/misc/Flag.svelte';
 	import UIcon from './UIcon.svelte';
+	import { languages } from '$lib/assets/constants';
+
+	interface Props {
+		localeState: App.Locale;
+	}
+
+	let { localeState = $bindable() }: Props = $props();
+	const flags = languages.reduce((obj, item) => { obj[item[0]] = item[1]; return obj }, {} as Record<string, string>)
 
 	// Svelte 5 runes: local UI state + reactive "current" locale
 	let isOpen = $state(false);
@@ -12,28 +20,26 @@
 		isOpen = !isOpen;
 	}
 
-	function selectLocale(locale) {
+	function selectLocale(locale: App.Locale) {
 		if (locale === currentLocale) {
-			isOpen = false;
 			return;
 		}
 		setLocale(locale);
-		isOpen = false;
 	}
 </script>
 
 <Dropdown {isOpen} {toggle}>
 	<DropdownToggle class="d-flex align-items-center gap-2 flex-between p-1" color="dark" outline size="sm">
-		<Flag country={currentLocale} size={3} />
+		<Flag country={flags[currentLocale]} size={3} />
 		<span class="text-uppercase">{currentLocale}</span>
 		<UIcon name="caret-circle-down" />
 	</DropdownToggle>
 
 	<DropdownMenu end>
-		{#each locales as locale (locale)}
-			<DropdownItem active={locale === currentLocale} class="d-flex align-items-center gap-2" on:click={() => selectLocale(locale)}>
-				<Flag country={locale} size={1.5} />
-				<span class="text-uppercase">{locale}</span>
+		{#each languages as [ locale, country, plText, text ] (locale)}
+			<DropdownItem active={locale === currentLocale} class="d-flex align-items-center gap-2 py-1" on:click={() => selectLocale(locale)}>
+				<Flag {country} size={2} />
+				<span class="small">{text} ({plText})</span>
 			</DropdownItem>
 		{/each}
 	</DropdownMenu>

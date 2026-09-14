@@ -195,20 +195,20 @@ export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>
     color: 'Kolor pojazdu'
 }
 
-export const languages: Array<[string, string, string, string]> = [
-    [ 'pl', 'pl', 'Polski', 'Polski' ],
+export const languages: Array<[App.Locale, string, string, string]> = [
     [ 'en', 'en', 'Angielski', 'English' ],
+    [ 'pl', 'pl', 'Polski', 'Polski' ],
     [ 'hi', 'in', 'Hindi', 'हिन्दी' ],
-    [ 'cs', 'cz', 'Czeski', 'Čeština' ],
+    // [ 'cs', 'cz', 'Czeski', 'Čeština' ],
     [ 'ne', 'ne', 'Nepalski', 'नेपाली' ],
-    [ 'hr', 'hr', 'Chorwacki', 'Hrvatski' ],
+    // [ 'hr', 'hr', 'Chorwacki', 'Hrvatski' ],
     [ 'uk', 'ua', 'Ukraiński', 'Українська' ],
     [ 'be', 'by', 'Białoruski', 'Беларуская' ],
-    [ 'tl', 'ph', 'Filipiński', 'Filipino' ],
-    [ 'es', 'co', 'Hiszpański', 'Español' ],
+    // [ 'es', 'co', 'Hiszpański', 'Español' ],
     [ 'uz', 'uz', 'Uzbecki', 'Oʻzbekcha' ],
-    [ 'bn', 'bd', 'Bengalski', 'বাংলা' ],
+    // [ 'bn', 'bd', 'Bengalski', 'বাংলা' ],
     [ 'ka', 'ge', 'Gruziński', 'ქართული' ],
+    [ 'tl', 'ph', 'Filipiński', 'Filipino' ],
     [ 'ro', 'md', 'Rumuński', 'Română' ],
 ]
 

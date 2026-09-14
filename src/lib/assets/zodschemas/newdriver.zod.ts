@@ -111,7 +111,7 @@ export const newDriverDataSchema = z
         additionalLanguages: z.record(z.string(), z.enum([ 'native', 'fluent' ])),
 
         notes: z.string(),
-        preferredLanguage: z.enum(['en', 'pl', 'uk', 'be', 'ru', 'ro', 'bg', 'uz', 'ka']),
+        preferredLanguage: z.enum([ "en", "pl", "uk", "be", "ro", "uz", "ka", "ne", "hi" ]),
     })
     .superRefine((data, ctx) => {
         const docType = data.identificationDocumentType;
