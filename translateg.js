@@ -1,9 +1,8 @@
-#!/usr/bin/env node
 /**
  * translate.js
  *
  * Reads the Paraglide/inlang `messages/` folder, diffs every locale file
- * against a base locale (default: "en"), and uses OpenRouter to translate any
+ * against a base locale (default: "en"), and uses Gemini to translate any
  * keys missing (or blank) in the target files, then writes them back.
  *
  * Usage:
@@ -11,20 +10,20 @@
  *   node translate.js pl               # positional base locale
  *   node translate.js --base=en
  *   node translate.js --dir=./messages
- *   node translate.js --model=openrouter/inclusionai/ling-3.0-flash-fin:free
+ *   node translate.js --model=gemini-2.5-flash
  *   node translate.js --dry-run        # translate but don't write files
  *
  * Requires in package.json:
- *   "axios": "^1.x"
+ *   "@google/generative-ai": "^0.24.1"
  *   "@inlang/paraglide-js": "^2.18.2"
  *
  * Requires a .env file (in cwd) with:
- *   OPENROUTER_API_KEY=xxxxx
+ *   GEMINI_API_KEY=xxxxx
  */
 
 import fs from "node:fs";
 import path from "node:path";
-import axios from "axios";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // ---------------------------------------------------------------------------
 // tiny .env loader (avoids pulling in an extra "dotenv" dependency)
@@ -66,22 +65,22 @@ function getFlag(name, fallback) {
 
 const BASE_LOCALE = getFlag("base", positional[0] ?? "en");
 const MESSAGES_DIR = path.resolve(getFlag("dir", "./messages"));
-const MODEL_NAME = getFlag("model", process.env.OPENROUTER_MODEL ?? "openrouter/free");
+const MODEL_NAME = getFlag("model", process.env.GEMINI_MODEL ?? "gemini-2.5-flash");
 const DRY_RUN = flags.includes("--dry-run");
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-if (!OPENROUTER_API_KEY) {
-    console.error("Missing OPENROUTER_API_KEY (checked process.env and .env).");
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+    console.error("Missing GEMINI_API_KEY (checked process.env and .env).");
     process.exit(1);
 }
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_HEADERS = {
-    Authorization: `Bearer ${OPENROUTER_API_KEY}`,
-    "HTTP-Referer": "https://github.com/daphne-project/daphne",
-    "X-Title": "Daphne Translation Script",
-    "Content-Type": "application/json",
-};
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+    model: MODEL_NAME,
+    generationConfig: {
+        responseMimeType: "application/json",
+    },
+});
 
 // ---------------------------------------------------------------------------
 // json helpers
@@ -167,54 +166,26 @@ ${JSON.stringify(entries, null, 2)}
 
 Respond with a JSON object of the same keys mapped to the translated strings.`;
 
-    const payload = {
-        model: MODEL_NAME,
-        messages: [
-            { role: "system", content: SYSTEM_CONTEXT },
-            { role: "user", content: prompt }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3,
-    };
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
 
+    let parsed;
     try {
-        const response = await axios.post(OPENROUTER_URL, payload, {
-            headers: OPENROUTER_HEADERS,
-            timeout: 60000,
-        });
-
-        const text = response.data.choices[0]?.message?.content;
-        if (!text) {
-            throw new Error(`Empty response from OpenRouter for locale "${targetLocale}"`);
-        }
-
-        let parsed;
-        try {
-            parsed = JSON.parse(text);
-        } catch {
-            throw new Error(
-                `Failed to parse OpenRouter response as JSON for locale "${targetLocale}":\n${text}`
-            );
-        }
-
-        const missing = keys.filter((k) => !(k in parsed));
-        if (missing.length > 0) {
-            console.warn(
-                `  [${targetLocale}] response was missing keys: ${missing.join(", ")}`
-            );
-        }
-
-        return parsed;
-    } catch (err) {
-        if (err.response) {
-            const status = err.response.status;
-            const data = err.response.data;
-            throw new Error(
-                `OpenRouter API error (${status}) for locale "${targetLocale}":\n${JSON.stringify(data, null, 2)}`
-            );
-        }
-        throw err;
+        parsed = JSON.parse(text);
+    } catch {
+        throw new Error(
+            `Failed to parse Gemini response as JSON for locale "${targetLocale}":\n${text}`
+        );
     }
+
+    const missing = keys.filter((k) => !(k in parsed));
+    if (missing.length > 0) {
+        console.warn(
+            `  [${targetLocale}] response was missing keys: ${missing.join(", ")}`
+        );
+    }
+
+    return parsed;
 }
 
 // ---------------------------------------------------------------------------

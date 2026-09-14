@@ -17757,7 +17757,7 @@ fieldset:disabled .btn {
     }
     .dropdown .dropdown-menu:before {
         font-family: uicons-regular-rounded !important;
-		content: '\f312';
+		content: '\e3d3';
         position: absolute;
         top: 0;
         left: 28px;
@@ -17795,7 +17795,7 @@ fieldset:disabled .btn {
     }
     .navbar-toggler + .navbar-collapse .dropdown:not(.nav-item) .dropdown-menu:before {
         font-family: uicons-regular-rounded !important;
-		content: '\f312';
+		content: '\e3d3';
         position: absolute;
         top: 0;
         left: 28px;
@@ -17838,7 +17838,7 @@ fieldset:disabled .btn {
     }
     .dropdown .dropdown-menu:before {
         font-family: uicons-regular-rounded !important;
-		content: '\f312';
+		content: '\e3d3';
         position: absolute;
         top: 0;
         left: 28px;

@@ -61,7 +61,7 @@ declare global {
 		}
 
 		// Locale for i18n
-		type Locale = 'en' | 'pl' | 'uk' | 'be' | 'ru' | 'ro' | 'bg' | 'uz' | 'ka';
+		type Locale = 'en' | 'pl' | 'hi' | 'ne'| 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro' ;
 
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
