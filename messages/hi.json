@@ -87,7 +87,6 @@
   "inspection_brakes_description": "ब्रेक पैड की मोटाई सुरक्षा सीमा (>3mm) से अधिक होने की जांच की गई",
   "inspection_documentation_label": "वाहन में दस्तावेज़ और प्रमाणपत्र",
   "inspection_documentation_description": "रजिस्ट्रेशन सर्टिफिकेट, OC/AC इंश्योरेंस और लाइसेंस की नकल ग्लोव बॉक्स में हो",
-  "inspection_title": "वाहन निरीक्षण",
   "inspection_needed_text": "सुरक्षा और अनुपालन सुनिश्चित करने के लिए नियमित वाहन निरीक्षण आवश्यक हैं।",
   "inspection_start": "निरीक्षण शुरू करें",
   "inspection_no_vehicle": "निरीक्षण के लिए कोई वाहन नियोजित नहीं है।",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "पासवर्ड रीसेट हो गया है",
   "auth_reset_link": "पासवर्ड रीसेट लिंक",
   "auth_reset_link_expire": "इस लिंक को उपयोगकर्ता को भेजें। लिंक 1 घंटे बाद समाप्त हो जाएगा।",
-  "copy_button_copied": "कॉपी"
+  "copy_button_copied": "कॉपी",
+  "inspection_title": "दैनिक निरीक्षण"
 }

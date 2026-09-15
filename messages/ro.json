@@ -87,7 +87,6 @@
   "inspection_brakes_description": "Grosimea plăcilor de frână verificată peste limita de siguranță (>3 mm)",
   "inspection_documentation_label": "Documente și certificate în vehicul",
   "inspection_documentation_description": "Certificat de înregistrare, asigurare OC/AC și extras de licență în compartimentul portbagajului",
-  "inspection_title": "Inspecție vehicul",
   "inspection_needed_text": "Inspecțiile regulate ale vehiculului sunt necesare pentru a asigura siguranța și conformitatea.",
   "inspection_start": "Începe inspecția",
   "inspection_no_vehicle": "Nu există niciun vehicul atribuit pentru a efectua inspecția.",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "Parolă a fost reînnuntată",
   "auth_reset_link": "Link de reînnuntare a paroli",
   "auth_reset_link_expire": "Envieți acest link utilizatorului. Linkul expire după 1 oră.",
-  "copy_button_copied": "Copiază"
+  "copy_button_copied": "Copiază",
+  "inspection_title": "Inspecție zilnică"
 }

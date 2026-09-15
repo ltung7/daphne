@@ -15,6 +15,7 @@
 	import DriverImageAndData from '$lib/components/driver/DriverImageAndData.svelte';
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
+	import ImageFallback from '$lib/misc/ImageFallback.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -24,15 +25,18 @@
 	const onFinished = (doc: Driver.DriverDocument) => {
 		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
 	};
+
+	const onverified = (status: Driver.Status) => {
+		driver.status = status;
+	};
 </script>
 
 <PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczególy zarejestrowanego kierowcy" />
 
 <PageTopActions>
-	{#if driver && driver.status === 'pending_verification'}
-		<DriverVerification {driver} {documents} />
-	{/if}
-	{#if driver.status !== 'pending_verification'}
+	{#if driver.status === 'pending_verification'}
+		<DriverVerification {driver} {documents} {onverified} />
+	{:else}
 		<IconButton caption="Zmień status" size={6} />
 	{/if}
 </PageTopActions>
@@ -42,15 +46,31 @@
 </SectionCard>
 
 {#if driver.status !== 'pending_verification'}
-	<SectionCard title="Kierowca">
+	<SectionCard title="Pojazd">
 		{#if driver.assignedVehicle}
-			<a class="flex-center flex-column" href="/vehicles/{driver.assignedVehicle.registrationNumber}">
-				{#if driver.assignedVehicle.imageUrl}
-					<img src={driver.assignedVehicle.imageUrl} alt={driver.assignedVehicle.model} style="max-height: 200px;" />
-				{/if}
-				<h6>{driver.assignedVehicle.registrationNumber}</h6>
-				<div class="text-muted small">Od {formatTimezone(driver.assignedVehicle.timestamp)}</div>
-			</a>
+			<div class="d-flex">
+				<div class="vehicle-image small rounded">
+					<ImageFallback src={driver.assignedVehicle.imageUrl} alt={driver.assignedVehicle.registrationNumber} />
+				</div>
+				<div class="w-100 ms-3">
+					<table class="table table-striped small mb-0">
+						<tbody>
+							<tr>
+								<td style="width: 150px">Numer rejestracyjny</td>
+								<td>{driver.assignedVehicle.registrationNumber}</td>
+							</tr>
+							<tr>
+								<td>Marka</td>
+								<td>{driver.assignedVehicle.model}</td>
+							</tr>
+							<tr>
+								<td>Data przypisania</td>
+								<td>{formatTimezone(driver.assignedVehicle.timestamp)}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		{:else}
 			<div class="flex-center flex-column">
 				<div class="mb-3">Nie przypisano żadnego pojazdu</div>

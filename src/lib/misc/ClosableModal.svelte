@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Modal, ModalBody, ModalFooter, ModalHeader } from '@sveltestrap/sveltestrap';
-
+    import type { Snippet } from "svelte"
     interface Props {
         headerText?: string;
         isOpen?: ExplicitAnyToExtend;
@@ -11,8 +11,9 @@
         id?: string;
         fullscreen?: boolean;
         onClick?: () => void;
-        header?: import('svelte').Snippet;
-        children?: import('svelte').Snippet;
+        header?: Snippet;
+        children?: Snippet;
+        footer?: Snippet;
     }
 
     let {
@@ -26,7 +27,8 @@
         fullscreen = false,
         header,
         children,
-        onClick
+        onClick,
+        footer
     }: Props = $props();
     if (buttonCaption === true) buttonCaption = 'Zapisz';
 </script>
@@ -41,6 +43,7 @@
 		{@render children?.()}
 	</ModalBody>
 	<ModalFooter>
+        {@render footer?.()}
         {#if buttonCaption} 
             <button class="btn btn-primary mb-0" onclick={onClick}>{buttonCaption}</button>
         {/if}

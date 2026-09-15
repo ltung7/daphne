@@ -40,7 +40,6 @@
 		},
 		{} as Record<string, string>
 	);
-	console.log(languageNames)
 
 	let driver: Driver.NewDriverData = $state({ ...cleanDriver });
 	let createdId: string | undefined = $state();
@@ -188,7 +187,6 @@
 				registryEntryNumber: faker.string.alphanumeric(10).toUpperCase()
 			}
 		};
-		console.log({ driver })
 	};
 </script>
 

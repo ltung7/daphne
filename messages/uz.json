@@ -87,7 +87,6 @@
   "inspection_brakes_description": "Tormoz padasi qalinligi xavfsizlik chegarasidan yuqori (3 mm dan ortiq) ekanligi tekshirildi",
   "inspection_documentation_label": "Avtomobil ichidagi hujjatlar va sertifikatlar",
   "inspection_documentation_description": "Ro'yxatdan o'tish guvohnomasi, OC/AC sug'urta polisiyasi va haydovchilik guvohnomasi ko'chirmasi jantuzakda",
-  "inspection_title": "Avtomobil ko'rigi",
   "inspection_needed_text": "Xavfsizlik va talablar bajarilishini ta'minlash uchun muntazam avtomobil ko'rigi zarur.",
   "inspection_start": "Ko'rikni boshlash",
   "inspection_no_vehicle": "Ko'rik o'tkazish uchun avtomobil topshirilmagan.",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "Parol tiklandi",
   "auth_reset_link": "Parol tiklash havolasi:",
   "auth_reset_link_expire": "Bu havolani foydalanuvchiga yuboring. Havola 1 soatdan keyin muddati tugaydi.",
-  "copy_button_copied": "Nusxalash"
+  "copy_button_copied": "Nusxalash",
+  "inspection_title": "Kundalik Tekshiruv"
 }

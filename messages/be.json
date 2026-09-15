@@ -87,7 +87,6 @@
   "inspection_brakes_description": "Таўшчыня тарозных канчаткаў праверана і перавышае бяспечны мінімум (>3mm)",
   "inspection_documentation_label": "Дакументы і сертыфікаты ў аўтамабілі",
   "inspection_documentation_description": "Сведчанне пра рэгістрацыю, палісы страхавання OC/AC і выпіска з дакумента, які пацьвярджае права кіравання, у бардачкаку",
-  "inspection_title": "Агляд аўтамабіля",
   "inspection_needed_text": "Рэгулярныя агляды аўтамабіля неабходны, каб забяспечыць бяспеку і адпаведнасць патрабаванням",
   "inspection_start": "Пачаць агляд",
   "inspection_no_vehicle": "Аўтамабіль для агляду не прызначаны",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "Пароль скінуты",
   "auth_reset_link": "Спасылка для скіду пароля",
   "auth_reset_link_expire": "Адпраўце гэтую спасылку карыстальніку. Спасылка страціць дзейнасць праз 1 гадзіну.",
-  "copy_button_copied": "Копіюй"
+  "copy_button_copied": "Копіюй",
+  "inspection_title": "Дзённая інспекцыя"
 }

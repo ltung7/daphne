@@ -87,7 +87,6 @@
   "inspection_brakes_description": "Ang thickness ng brake pad ay na-verify na higit sa safety limit (>3mm)",
   "inspection_documentation_label": "Mga Dokumento at Sertipiko sa Sasakyan",
   "inspection_documentation_description": "Sertipiko ng rehistro, OC/AC insurance, at excerpt ng lisensya sa glove compartment",
-  "inspection_title": "Pagsusuri ng Sasakyan",
   "inspection_needed_text": "Kailangan ang regular na pagsusuri ng sasakyan upang matiyak ang kaligtasan at pagsunod.",
   "inspection_start": "Magumpisa ng Pagsusuri",
   "inspection_no_vehicle": "Walang sasakyan na nakatalaga para sa pagsusuri.",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "Na-reset na ang password",
   "auth_reset_link": "Link sa pag-reset ng password",
   "auth_reset_link_expire": "Ipadala ang link na ito sa user. Mawawalan ng bisa ang link pagkatapos ng 1 oras.",
-  "copy_button_copied": "Kopyahin"
+  "copy_button_copied": "Kopyahin",
+  "inspection_title": "Pang-araw-araw na Inspeksyon"
 }

@@ -4,21 +4,31 @@
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { onMount } from 'svelte';
+	import { internal, confirmSuccess } from '$lib/nav/internal';
 
-	let { driver, documents } = $props<{
+	let { driver, documents, onverified } = $props<{
 		driver: Driver.Driver;
 		documents: Driver.DriverDocument[];
+		onverified?: (status: Driver.Status) => void;
 	}>();
 	let isOpen = $state(false);
 
 	/** @ts-expect-error initial state */
 	let verificationResult = $state<Record<RideServices.DriverVerificationState, boolean>>({});
 
-	const required = driverRequirements.filter(item => item.required).map(item => item.node);
-	const verified = $derived(
-		required.reduce((sum, node) => sum += verificationResult[node] ? 1 : 0, 0)
-		+ ((verificationResult.passportMainPage || (verificationResult.idCardBack && verificationResult.idCardFront) || (verificationResult.residencePermitBack && verificationResult.residencePermitFront)) ? 1 : 0)
-	)
+	const required = driverRequirements.filter((item) => item.required).map((item) => item.node);
+	const verified = $derived(required.reduce((sum, node) => (sum += verificationResult[node] ? 1 : 0), 0) + (verificationResult.passportMainPage || (verificationResult.idCardBack && verificationResult.idCardFront) || (verificationResult.residencePermitBack && verificationResult.residencePermitFront) ? 1 : 0));
+
+	const verifyDriver = async () => {
+		const response = await confirmSuccess(internal.patch(`/drivers/${driver.id}/status`, {
+			status: 'available',
+			verificationResult
+		}));
+		if (response.status) {
+			driver.status = response.status;
+			onverified?.(response.status)
+		}
+	}
 
 	onMount(() => {
 		const result = verifyDriverRequirements(driver, documents);
@@ -30,16 +40,15 @@
 	<IconButton caption="Weryfikuj dokumenty kierowcy" icon="assessment" onclick={() => (isOpen = true)} size={6} />
 	<div class="fs-6 ms-3 text-dark badge bg-info">{verified} / {1 + required.length}</div>
 </div>
+
 <ClosableModal bind:isOpen size="xl" headerText="Status weryfikacji">
 	<ul class="list-group">
 		{#each driverRequirements as requirement}
-			<InspectionCheckItem 
-				bind:checked={verificationResult[requirement.node]}
-				caption={requirement.name}
-				service={requirement.service}
-				required={requirement.required}
-				text={requirement.text}
-			/>
+			<InspectionCheckItem bind:checked={verificationResult[requirement.node]} caption={requirement.name} service={requirement.service} required={requirement.required} text={requirement.text} />
 		{/each}
 	</ul>
+	{#snippet footer()}
+		<div class="fs-6 ms-3 text-dark badge bg-info">{verified} / {1 + required.length}</div>
+		<button class="btn btn-primary mb-0" disabled={verified < required.length + 1} onclick={verifyDriver}> Zweryfikuj </button>
+	{/snippet}
 </ClosableModal>

@@ -87,7 +87,6 @@
   "inspection_brakes_description": "ब्रेक प्याडको मोटाइ सुरक्षा सीमाभन्दा माथि भएको जाँच गरियो (>3mm)",
   "inspection_documentation_label": "गाडीमा दस्तावेज र प्रमाणपत्रहरू",
   "inspection_documentation_description": "दर्ता प्रमाणपत्र, OC/AC बीमा, र ग्लोव कम्पार्टमेन्टमा लाइसेन्स अंश",
-  "inspection_title": "गाडी जाँच",
   "inspection_needed_text": "सुरक्षा र अनुपालन सुनिश्चित गर्न नियमित गाडी जाँच आवश्यक छ।",
   "inspection_start": "जाँच सुरु गर्नुहोस्",
   "inspection_no_vehicle": "जाँच गर्न तोकिएको कुनै गाडी छैन।",
@@ -148,5 +147,6 @@
   "auth_password_reset_success": "पासवर्ड रिसेट भयो",
   "auth_reset_link": "पासवर्ड रिसेट लिंक",
   "auth_reset_link_expire": "यस लिंक प्रयोगकर्तालाई पाथ्यौं। लिंक 1 घण्टामा समाप्त हुन्छ।",
-  "copy_button_copied": "प्रतिलिपि गर्नुहोस्"
+  "copy_button_copied": "प्रतिलिपि गर्नुहोस्",
+  "inspection_title": "दैनिक निरीक्षण"
 }

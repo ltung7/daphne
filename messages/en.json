@@ -88,7 +88,7 @@
   "inspection_brakes_description": "Brake pad thickness verified above safety limit (>3mm)",
   "inspection_documentation_label": "Documents and Certificates in Vehicle",
   "inspection_documentation_description": "Registration certificate, OC/AC insurance, and license excerpt in glove compartment",
-  "inspection_title": "Vehicle Inspection",
+  "inspection_title": "Daily Inspection",
   "inspection_needed_text": "Regular vehicle inspections are required to ensure safety and compliance.",
   "inspection_start": "Start Inspection",
   "inspection_no_vehicle": "No vehicle assigned to perform inspection.",

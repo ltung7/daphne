@@ -405,7 +405,7 @@ export const driverRequirements: Array<RideServices.DriverRequirementItem> = [
  */
 const validateDocumentRequirement = <T extends string>(
     requirement: RideServices.DocumentRequirement<any, T, any>,
-    documents: {type: T}[]
+    documents: { type: T }[]
 ): boolean => {
     return documents.some((doc) => doc.type === requirement.document);
 };
@@ -543,3 +543,9 @@ export const verifyDriverRequirements = (
         return acc;
     }, {} as Record<RideServices.DriverVerificationState, boolean>);
 };
+
+export const validateDriverRequirements = (validationResult: Record<RideServices.DriverVerificationState, boolean>) => {
+    return driverRequirements
+        .filter(item => item.required)
+        .every(item => validationResult[item.node] === true);
+}

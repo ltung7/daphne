@@ -1086,6 +1086,10 @@ aside nav .nav-btn.active {
 	overflow: hidden;
 }
 
+.vehicle-image.small {
+	max-width: 200px;
+}
+
 .vehicle-image img,
 .driver-image img {
 	width: 100%;
