@@ -1,3 +1,17 @@
+<script lang="ts" module>
+	import { m } from '$lib/paraglide/messages.js';
+
+	type MessagesInterface = Record<string, () => string>;
+
+	export const MESSAGES: MessagesInterface = {
+		photo_dashboard: m.inspection_photo_dashboard_label,
+		photo_front: m.inspection_photo_front_label,
+		photo_rear: m.inspection_photo_rear_label,
+		photo_left_side: m.inspection_photo_left_side_label,
+		photo_right_side: m.inspection_photo_right_side_label,
+	};
+</script>
+
 <script lang="ts" generics="T extends string">
 	import MobileCameraCapture from './MobileCameraCapture.svelte';
 	import IconButton from './IconButton.svelte';
@@ -69,7 +83,7 @@
 			<h5 class="mb-3">{step.caption}</h5>
 		</div>
 
-		<MobileCameraCapture overlay={step.src} overlayText={step.caption} onaccept={handleAccept} onclose={handleClose} bind:this={cameraCapture} asArrayBuffer />
+		<MobileCameraCapture overlay={step.src} overlayText={MESSAGES[step.type]() || step.caption} onaccept={handleAccept} onclose={handleClose} bind:this={cameraCapture} asArrayBuffer />
 
 		<!-- Progress thumbnails at bottom -->
 		<div class="p-3 bg-dark border-top d-none d-md-block">
@@ -78,7 +92,7 @@
 					<div class="col-12 col-md-6 col-lg-2 mb-2">
 						<div class="flex-column d-flex">
 							<img src={progress[s.type]?.src || s.src} alt={s.caption} class="w-100 mw-100 rounded" />
-							<div class="text-center small text-white-50">{s.caption}</div>
+							<div class="text-center small text-white-50">{MESSAGES[s.type]() || s.caption}</div>
 						</div>
 					</div>
 				{/each}
@@ -87,4 +101,4 @@
 	</div>
 {/if}
 
-<IconButton icon="camera" caption="Wykonaj zdjęcia" size={6} onclick={() => (isOpen = !isOpen)} />
+<IconButton icon="camera" caption={m.take_pictures()} size={6} onclick={() => (isOpen = !isOpen)} />

@@ -86,6 +86,7 @@ declare global {
 			user: User | null;
 			driver: UserBase | null;
 			sessionClaims: SessionClaims | null;
+			locale: App.Locale
 		}
 
 		// Base user (from user collection or driver collection)

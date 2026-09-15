@@ -1,9 +1,7 @@
-import { isDev } from "$lib/utils/isDev";
-
-// TODO: Remove after testing - disable all auth checks
-export const CHECK_AUTH = isDev;
+import { getLocale } from "$lib/paraglide/runtime";
 
 export const layoutState = $state({
     isSidebarExpanded: true,
-    activeMenuId: 1
+    activeMenuId: 1,
+    currentLocale: getLocale()
 });

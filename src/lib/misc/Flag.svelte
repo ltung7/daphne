@@ -9,7 +9,9 @@
     let { country = 'unknown', size = 2, addClass = 'border border-secondary rounded', alt = '' }: Props = $props();
     let width = $derived(size * 10);
     let height = $derived(size * 7.5)
-    let imgAlt = $derived(alt || country || 'unknown')
+    let lowercaseCountry = $derived((country || 'unknown').toLowerCase())
+    let imgAlt = $derived(alt || lowercaseCountry)
+    let src = $derived(`https://storage.googleapis.com/feed-cdn-files/flags/${lowercaseCountry}.svg`)
 </script>
 
-<img src="https://storage.googleapis.com/feed-cdn-files/flags/{(country ?? 'unknown').toLowerCase()}.svg" alt="{alt}" title="{imgAlt}" style="height: {height}px; width: {width}px;" class="{addClass} flag" {width} {height}>
+<img {src} {alt} title={imgAlt} style="height: {height}px; width: {width}px;" class="{addClass} flag" {width} {height}>

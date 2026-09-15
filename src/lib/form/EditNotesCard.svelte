@@ -2,6 +2,7 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import CustomFormTextarea from './CustomFormTextarea.svelte';
+	import { m } from '$lib/paraglide/messages.js';
 
 	interface Props {
 		notes: string;
@@ -15,10 +16,10 @@
 	};
 </script>
 
-<SectionCard title="Notatki">
+<SectionCard title={m.notes()}>
 	{#snippet cta()}
 		{#if !editMode}
-			<IconButton caption="Edytuj" icon="edit" onclick={toggle} size={6} />
+			<IconButton caption={m.notes_edit()} icon="edit" onclick={toggle} size={6} />
 		{/if}
 	{/snippet}
 
@@ -27,6 +28,6 @@
 	{:else if notes.length}
 		{notes}
 	{:else}
-		<div class="font-italic text-muted text-center">- Brak notatki -</div>
+		<div class="font-italic text-muted text-center">- {m.notes_empty()} -</div>
 	{/if}
 </SectionCard>

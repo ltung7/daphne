@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
+	import { m } from '$lib/paraglide/messages.js';
 	import IconButton from '$lib/misc/IconButton.svelte';
 
 	type CommonProps<T> = {
@@ -51,11 +52,11 @@
 			console.error('Camera error:', err);
 			const e = err as DOMException;
 			if (e.name === 'NotAllowedError') {
-				error = 'Camera permission denied. Please allow camera access.';
+				error = m.camera_permission_denied();
 			} else if (e.name === 'NotFoundError') {
-				error = 'No camera found on this device.';
+				error = m.camera_not_found();
 			} else {
-				error = `Could not access camera: ${e.message}`;
+				error = m.camera_access_error({ message: e.message });
 			}
 			disabled = false;
 			isStreaming = false;
@@ -174,16 +175,16 @@
 		<div class="d-flex justify-content-center gap-3 flex-wrap h-100 align-items-center">
 			{#if !capturedImage}
 				{#if !isStreaming}
-					<IconButton icon="camera" caption="Open camera" onclick={startCamera} {disabled} size={6} />
+					<IconButton icon="camera" caption={m.camera_open()} onclick={startCamera} {disabled} size={6} />
 				{:else}
-					<IconButton icon="camera" caption="Take photo" onclick={capturePhoto} {disabled} size={6} />
-					<IconButton icon="camera-rotate" caption="Switch camera" onclick={switchCamera} {disabled} color="dark" size={6} />
+					<IconButton icon="camera" caption={m.camera_take_photo()} onclick={capturePhoto} {disabled} size={6} />
+					<IconButton icon="camera-rotate" caption={m.camera_switch()} onclick={switchCamera} {disabled} color="dark" size={6} />
 				{/if}
 			{:else}
-				<IconButton icon="check-circle" onclick={handleAccept} caption="Accept" size={6} />
-				<IconButton icon="redo" onclick={retake} caption="Retake" color="dark" size={6} />
+				<IconButton icon="check-circle" onclick={handleAccept} caption={m.camera_accept()} size={6} />
+				<IconButton icon="redo" onclick={retake} caption={m.camera_retake()} color="dark" size={6} />
 			{/if}
-			<IconButton icon="cross-circle" color="secondary" caption="Close" size={6} onclick={handleClose} />
+			<IconButton icon="cross-circle" color="secondary" caption={m.camera_close()} size={6} onclick={handleClose} />
 		</div>
 	</div>
 
