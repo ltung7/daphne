@@ -36,6 +36,7 @@ export interface AuthResult {
 export const ADMIN_COOKIE = 'app.admin.session';
 export const DRIVER_COOKIE = 'app.driver.session';
 export const PREFS_COOKIE = 'app.prefs';
+export const PARAGLIDE_LOCALE_COOKIE = 'PARAGLIDE_LOCALE';
 
 export const SESSION_MAX_AGE = 60 * 60 * 2;
 export const PREFS_MAX_AGE = 60 * 60 * 24 * 365;
@@ -50,6 +51,14 @@ export const COOKIE_OPTIONS = {
 };
 
 export const PREFS_COOKIE_OPTIONS = {
+	httpOnly: false,
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: 'lax' as const,
+	path: '/',
+	maxAge: PREFS_MAX_AGE
+};
+
+export const PARAGLIDE_COOKIE_OPTIONS = {
 	httpOnly: false,
 	secure: process.env.NODE_ENV === 'production',
 	sameSite: 'lax' as const,

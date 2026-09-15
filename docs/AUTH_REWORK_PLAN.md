@@ -617,10 +617,10 @@ export const load = async ({ locals }) => {
 ## 12. Migration Checklist
 
 ### Phase 1: Types & Core Auth
-- [ ] Update src/app.d.ts with new types (remove relics, add Locale, SessionClaims, Locals, AdminUser, Driver)
-- [ ] Create src/lib/server/auth/ module structure
-- [ ] Implement firebaseAdmin.ts, session.ts, userLookup.ts
-- [ ] Implement adminAuth.ts, driverAuth.ts
+- [x] Update src/app.d.ts with new types (remove relics, add Locale, SessionClaims, Locals, AdminUser, Driver)
+- [x] Create src/lib/server/auth/ module structure
+- [x] Implement firebaseAdmin.ts, session.ts, userLookup.ts
+- [x] Implement adminAuth.ts, driverAuth.ts
 
 ### Phase 2: Hooks & Route Restructure
   - [x] Create src/hooks.server.ts with central auth handler (revoked check, route groups)
@@ -631,12 +631,33 @@ export const load = async ({ locals }) => {
   - [x] Move existing API routes to (api)/api
   - [x] Move existing webhook routes to (webhooks)/
  
- ### Phase 3: Login & Session
- - [ ] Create (auth)/login/+page.svelte (single form)
- - [ ] Create (auth)/login/+page.server.ts (signin, google, forgotPassword actions with revoked check)
- - [ ] Create (auth)/password-reset/ pages
- - [ ] Create (auth)/logout/+page.server.ts (single logout)
- - [ ] Update cookie names to app.admin.session / app.driver.session
+### Phase 3: Login & Session
+  - [x] Create (auth)/login/+page.svelte (single form)
+  - [x] Create (auth)/login/+page.server.ts (signin, google, forgotPassword actions with revoked check)
+  - [x] Create (auth)/password-reset/ pages
+  - [x] Create (auth)/logout/+page.server.ts (single logout)
+  - [x] Update cookie names to app.admin.session / app.driver.session
+
+---
+ 
+## 20. Phase 3 Implementation Notes (Completed)
+ 
+### Files Created:
+- `src/lib/firebase/client.ts` — Firebase Client SDK initialization (for Google Sign-In popup)
+- `src/routes/(auth)/login/+page.svelte` — Single login form with email/password and Google Sign-In
+- `src/routes/(auth)/login/+page.server.ts` — Server actions: `signin`, `google`, `forgotPassword`
+- `src/routes/(auth)/password-reset/+page.svelte` — Password reset request page
+- `src/routes/(auth)/password-reset/+page.server.ts` — Sends Firebase password reset email
+- `src/routes/(auth)/logout/+page.server.ts` — Single logout clearing both session cookies
+ 
+### Key Implementation Details:
+1. **Firebase Client SDK** used on client for Google popup (`signInWithPopup`), sends ID token to server actions
+2. **Server verifies ID token** via Firebase Admin SDK, calls `resolveUser(uid)` to determine user type (driver/admin) and check revoked status
+3. **Session cookies** created via `setSessionAndPrefs()` with appropriate cookie (`app.admin.session` or `app.driver.session`)
+4. **Redirects**: driver → `/driver`, admin → `/`, revoked → `/login?revoked=true`
+5. **Logout** clears both cookies via POST action, redirects to `/login?loggedOut=true`
+6. **Password reset** delegates to Firebase `generatePasswordResetLink()` — no custom reset UI
+7. **Typecheck Status**: ✅ **0 errors, 0 warnings**
  
 ### Phase 4: Auth Helpers
   - [x] Create src/lib/server/auth/generalAuth.ts (requireAuth)
@@ -940,4 +961,4 @@ src/routes/
 
 ---
 
-## 19. Phase 3: Login & Session (Next)
+## 19. Phase 3: Login & Session (Completed)

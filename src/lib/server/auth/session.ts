@@ -1,7 +1,7 @@
 import type { Cookies } from '@sveltejs/kit';
 import { verifySessionCookie as firebaseVerifySessionCookie } from './firebaseAdmin.js';
 import type { SessionClaims, UserBase } from './types.js';
-import { ADMIN_COOKIE, DRIVER_COOKIE, PREFS_COOKIE, COOKIE_OPTIONS, PREFS_COOKIE_OPTIONS, SESSION_MAX_AGE } from './types.js';
+import { ADMIN_COOKIE, DRIVER_COOKIE, PREFS_COOKIE, PARAGLIDE_LOCALE_COOKIE, COOKIE_OPTIONS, PREFS_COOKIE_OPTIONS, PARAGLIDE_COOKIE_OPTIONS, SESSION_MAX_AGE } from './types.js';
 
 export async function createSessionCookie(idToken: string, userType: 'admin' | 'driver'): Promise<string> {
 	const { createSessionCookie: firebaseCreateSessionCookie } = await import('./firebaseAdmin.js');
@@ -88,6 +88,9 @@ export async function setSessionAndPrefs(
 		mode: 'light' as const
 	};
 	await setPrefsCookie(event.cookies, prefs);
+
+	// Set PARAGLIDE_LOCALE cookie for paraglide middleware
+	event.cookies.set(PARAGLIDE_LOCALE_COOKIE, userData.preferredLanguage, PARAGLIDE_COOKIE_OPTIONS);
 	
 	if (userType === 'driver') {
 		event.locals.driver = userData;
