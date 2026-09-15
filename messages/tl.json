@@ -146,6 +146,7 @@
   "auth_reset_link_sent_toast": "Naipadala na ang link sa pag-reset ng password sa iyong email",
   "auth_failed_to_send_link": "Hindi maipadala ang link sa pag-reset",
   "auth_password_reset_success": "Na-reset na ang password",
-  "auth_reset_link": "Link sa pag-reset ng password:",
-  "auth_reset_link_expire": "Ipadala ang link na ito sa user. Mawawalan ng bisa ang link pagkatapos ng 1 oras."
+  "auth_reset_link": "Link sa pag-reset ng password",
+  "auth_reset_link_expire": "Ipadala ang link na ito sa user. Mawawalan ng bisa ang link pagkatapos ng 1 oras.",
+  "copy_button_copied": "Kopyahin"
 }

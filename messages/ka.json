@@ -146,6 +146,6 @@
   "auth_reset_link_sent_toast": "비밀번호 재설정 링크가 이메일로 발송되었습니다",
   "auth_failed_to_send_link": "리셋 링크 전송 실패",
   "auth_password_reset_success": "პაროლი აღდგენილია",
-  "auth_reset_link": "პაროლის აღდგენის ბმული:",
+  "auth_reset_link": "პაროლის აღდგენის ბმული",
   "auth_reset_link_expire": "გაუგზავნეთ ეს ბმული მომხმარებელს. ბმულის მოქმედების ვადა 1 საათის შემდეგ ამოიწურება."
 }

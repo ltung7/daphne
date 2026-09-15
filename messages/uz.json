@@ -147,5 +147,6 @@
   "auth_failed_to_send_link": "Parol tiklash havolasi yuborilmadi.",
   "auth_password_reset_success": "Parol tiklandi",
   "auth_reset_link": "Parol tiklash havolasi:",
-  "auth_reset_link_expire": "Bu havolani foydalanuvchiga yuboring. Havola 1 soatdan keyin muddati tugaydi."
+  "auth_reset_link_expire": "Bu havolani foydalanuvchiga yuboring. Havola 1 soatdan keyin muddati tugaydi.",
+  "copy_button_copied": "Nusxalash"
 }

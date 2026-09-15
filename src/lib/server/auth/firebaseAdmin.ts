@@ -77,7 +77,7 @@ export async function revokeRefreshTokens(uid: string) {
 	return auth.revokeRefreshTokens(uid);
 }
 
-export async function sendPasswordResetEmail(email: string) {
+export async function generatePasswordResetLink(email: string) {
 	const auth = getFirebaseAuth();
 	return auth.generatePasswordResetLink(email);
 }

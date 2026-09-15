@@ -12,10 +12,11 @@
 		class?: string;
 		caption?: string;
 		onchange?: null | ((value: AdminRole) => any);
+		onclick?: null | ((value: AdminRole) => any);
 		hideRevoked?: boolean;
 	}
 
-	let { value = $bindable<AdminRole>('moderator'), name = $bindable(''), autoselect = false, readonly = false, size = 6, onchange, class: className = '', caption = 'Rola', hideRevoked }: Props = $props();
+	let { value = $bindable<AdminRole>('moderator'), name = $bindable(''), autoselect = false, readonly = false, size = 6, onchange, onclick, class: className = '', caption = 'Rola', hideRevoked }: Props = $props();
 
 	const roles: Record<AdminRole, string> = {
 		moderator: 'Moderator',
@@ -35,6 +36,7 @@
 
 	const handleChange = () => {
 		if (onchange) onchange(value);
+		if (onclick) onclick(value);
 	};
 
 	type Permission = {
@@ -44,13 +46,13 @@
 	};
 
 	const permissions: Permission[] = [
-		{ key: 'view_dashboard', label: 'View dashboard', roles: [ 'moderator', 'manager', 'admin' ] },
-		{ key: 'manage_drivers', label: 'Manage drivers', roles: [ 'moderator', 'manager', 'admin' ] },
-		{ key: 'manage_vehicles', label: 'Manage vehicles', roles: [ 'moderator', 'manager', 'admin' ] },
-		{ key: 'view_finance', label: 'View finance reports', roles: [ 'manager', 'admin' ] },
-		{ key: 'manage_finance', label: 'Manage finance (payouts, provisions)', roles: [ 'manager', 'admin' ] },
-		{ key: 'manage_admins', label: 'Manage admin users', roles: [ 'admin' ] },
-		{ key: 'system_settings', label: 'System settings', roles: [ 'manager', 'admin' ] }
+		{ key: 'view_dashboard', label: 'Przegląd panelu i wyników', roles: [ 'moderator', 'manager', 'admin' ] },
+		{ key: 'manage_drivers', label: 'Zarządzanie pojazdami', roles: [ 'moderator', 'manager', 'admin' ] },
+		{ key: 'manage_vehicles', label: 'Zarządzanie pojazdami', roles: [ 'moderator', 'manager', 'admin' ] },
+		{ key: 'view_finance', label: 'Przegląd raportów finansowych', roles: [ 'manager', 'admin' ] },
+		{ key: 'manage_finance', label: 'Zarządzanie finansami (płatności, provizje)', roles: [ 'manager', 'admin' ] },
+		{ key: 'manage_admins', label: 'Zarządzanie użytkownikami', roles: [ 'admin' ] },
+		{ key: 'system_settings', label: 'Ustawienia systemu', roles: [ 'manager', 'admin' ] }
 	];
 
 	const currentRolePermissions = $derived(
