@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NewInspection from '$lib/components/inspection/NewInspection.svelte';
+	import NewInspectionLocalized from '$lib/components/inspection/localized/NewInspectionLocalized.svelte';
 	import SearchVehicle from '$lib/components/SearchVehicle.svelte';
 	import VehicleImageAndData from '$lib/components/vehicle/VehicleImageAndData.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
@@ -29,5 +29,5 @@
 		<VehicleImageAndData {vehicle} />
 	</SectionCard>
 
-	<NewInspection {monthly} {vehicle} />
+	<NewInspectionLocalized {monthly} {vehicle} />
 {/if}

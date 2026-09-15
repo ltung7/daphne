@@ -3,6 +3,8 @@ import { authMiddleware } from '$lib/server/auth/auth.middleware';
 import type { Handle } from '@sveltejs/kit';
 import { DRIVER_COOKIE } from '$lib/server/auth/types.js';
 import { isDev } from '$lib/utils/isDev';
+import { getTextDirection } from '$lib/paraglide/runtime';
+import { paraglideMiddleware } from '$lib/paraglide/server.js';
 
 const handleApiHeader: Handle = async ({ event, resolve }) => {
     if (event.url.pathname.startsWith('/api/') || event.url.pathname.startsWith('/webhook/')) {
@@ -67,9 +69,35 @@ const handleTestDriver: Handle = async ({ event, resolve }) => {
     return resolve(event);
 };
 
+
+const handleParaglide: Handle = ({ event, resolve }) =>
+    paraglideMiddleware(event.request, ({ request, locale }) => {
+        event.request = request;
+
+        event.locals.locale = locale;
+        return resolve(event, {
+            transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale).replace('%paraglide.dir%', getTextDirection(locale))
+        });
+    });
+
+// const handleParaglide: Handle = async ({ event, resolve }) => {
+//     return paraglideMiddleware(event.request, ({ locale, request }) => {
+//         // Store locale in locals for use in load functions
+//         event.locals.locale = locale;
+//         return resolve({ request });
+//     });
+// };
+
 export const handle = sequence(
 	handleBlanks,
 	handleApiHeader,
 	handleTestDriver,
 	authMiddleware,
+    handleParaglide,
+	// async ({ event, resolve }) => {
+	// 	return paraglideMiddleware(event.request, ({ request, locale }) => {
+	// 		event.locals.locale = locale;
+	// 		return resolve(request);
+	// 	});
+	// }
 );

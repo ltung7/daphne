@@ -5,13 +5,14 @@
 		required?: boolean;
 		text?: string;
 		service?: string[];
+		disabled?: boolean;
 	}
-	let { checked = $bindable(), required, caption, text, service }: Props = $props();
+	let { checked = $bindable(), required, caption, text, service, disabled }: Props = $props();
 	import CustomFormChecker from '$lib/form/CustomFormChecker.svelte';
 </script>
 
 <li class="list-group-item d-flex">
-	<CustomFormChecker class="mb-0 w-100" bind:checked {required}>
+	<CustomFormChecker class="mb-0 w-100" bind:checked {required} {disabled}>
 		<div class="w-100">
 			<div class="flex-between">
 				<div class="fw-bold text-dark fs-6">
