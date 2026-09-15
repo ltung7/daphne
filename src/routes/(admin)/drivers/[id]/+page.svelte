@@ -14,6 +14,7 @@
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import DriverImageAndData from '$lib/components/driver/DriverImageAndData.svelte';
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
+	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -88,3 +89,5 @@
 		<NewHandoverProtocol {driver} />
 	</div>
 {/if}
+
+<ResetPasswordSection />

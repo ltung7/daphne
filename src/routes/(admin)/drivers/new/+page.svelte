@@ -16,7 +16,7 @@
 	import { list } from '$lib/assets/data/markets.json';
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import { goto } from '$app/navigation';
-	import { Faker, uk, ne, en, cs_CZ as cs, fakerPL } from '@faker-js/faker';
+	import { Faker, uk, ne, en, pl, fakerPL } from '@faker-js/faker';
 	import { identificationDocumentNames, languages } from '$lib/assets/constants';
 	import CustomFormLanguage from '$lib/form/CustomFormLanguage.svelte';
 	import AbsoluteRemoveButton from '$lib/misc/AbsoluteRemoveButton.svelte';
@@ -40,6 +40,7 @@
 		},
 		{} as Record<string, string>
 	);
+	console.log(languageNames)
 
 	let driver: Driver.NewDriverData = $state({ ...cleanDriver });
 	let createdId: string | undefined = $state();
@@ -135,7 +136,7 @@
 	}
 
 	const testData = () => {
-		const availableLocales = [ uk, ne, en, cs ];
+		const availableLocales = [ uk, ne, en, pl ];
 		const selectedLocale = availableLocales[Math.floor(Math.random() * availableLocales.length)];
 		const localeCode = (selectedLocale.metadata?.code as string).slice(0, 2);
 		const faker = new Faker({ locale: selectedLocale });
@@ -187,6 +188,7 @@
 				registryEntryNumber: faker.string.alphanumeric(10).toUpperCase()
 			}
 		};
+		console.log({ driver })
 	};
 </script>
 
@@ -228,7 +230,7 @@
 								<li class="d-flex small position-relative">
 									<AbsoluteRemoveButton color="dark" onclick={() => removeLanguage(language)} />
 									<div class="w-50">
-										{languageNames[language]}
+										{languageNames[language] || language}
 									</div>
 									<CustomFormRadio bind:selected={driver.additionalLanguages[language]} name="languageSelect{language}" value="fluent" caption="Biegły" class="me-5" />
 									<CustomFormRadio bind:selected={driver.additionalLanguages[language]} name="languageSelect{language}" value="native" caption="Ojczysty" class="me-5" />

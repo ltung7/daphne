@@ -82,10 +82,6 @@ const peselSchema = z
 export const newDriverDataSchema = z
     .object({
         id: z.string(),
-        login: z
-            .string()
-            .min(6, { error: 'Login musi mieć co najmniej 6 znaków' })
-            .regex(/^[a-zA-Z0-9]+$/, { error: 'Login może zawierać tylko litery i cyfry' }),
         name: c.firstAndLastName(),
         sex: z.enum([ 'm', 'f', 'o' ]),
 
