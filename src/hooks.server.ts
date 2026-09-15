@@ -1,8 +1,6 @@
 import { sequence } from '@sveltejs/kit/hooks';
 import { authMiddleware } from '$lib/server/auth/auth.middleware';
 import type { Handle } from '@sveltejs/kit';
-import { DRIVER_COOKIE } from '$lib/server/auth/types.js';
-import { isDev } from '$lib/utils/isDev';
 import { getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server.js';
 
@@ -23,42 +21,6 @@ const handleBlanks: Handle = async ({ event, resolve }) => {
     return await resolve(event);
 };
 
-const handleTestDriver: Handle = async ({ event, resolve }) => {
-    const isDriverRoute = event.route.id?.startsWith('/(driver)');
-
-    if (isDev && isDriverRoute) {
-        const testDriverId = 'FVeAlaxqCJjmQO1gffx9';
-        const testDriverEmail = 'Sofiya Nogachevska';
-        const testDriverName = 'sofiyanogachevska109@mail.pl';
-
-        const now = Math.floor(Date.now() / 1000);
-        
-        event.locals._userType = 'driver';
-        event.locals._driver = {
-            id: testDriverId,
-            email: testDriverEmail,
-            name: testDriverName,
-            role: 'driver',
-            preferredLanguage: 'pl',
-            timestamp: now * 1000,
-            updatedAt: now * 1000,
-            lastLoggedIn: now * 1000
-        };
-
-        if (!event.cookies.get(DRIVER_COOKIE)) {
-            event.cookies.set(DRIVER_COOKIE, 'test-session-cookie', {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                path: '/',
-                maxAge: 60 * 60 * 2
-            });
-        }
-    }
-
-    return resolve(event);
-};
-
 
 const handleParaglide: Handle = ({ event, resolve }) =>
     paraglideMiddleware(event.request, ({ request, locale }) => {
@@ -73,24 +35,9 @@ const handleParaglide: Handle = ({ event, resolve }) =>
         });
     });
 
-// const handleParaglide: Handle = async ({ event, resolve }) => {
-//     return paraglideMiddleware(event.request, ({ locale, request }) => {
-//         // Store locale in locals for use in load functions
-//         event.locals.locale = locale;
-//         return resolve({ request });
-//     });
-// };
-
 export const handle = sequence(
 	handleBlanks,
 	handleApiHeader,
-	handleTestDriver,
 	authMiddleware,
     handleParaglide,
-	// async ({ event, resolve }) => {
-	// 	return paraglideMiddleware(event.request, ({ request, locale }) => {
-	// 		event.locals.locale = locale;
-	// 		return resolve(request);
-	// 	});
-	// }
 );

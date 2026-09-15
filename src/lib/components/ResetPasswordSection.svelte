@@ -13,7 +13,7 @@
 	let copied = $state(false);
 
 	async function handleResetPassword() {
-		const result = await confirmSuccess(wrapLoader(internal.postApi({ action: 'reset_password' }), m.auth_password_reset_success()));
+		const result = await confirmSuccess(wrapLoader(internal.postApi({ action: 'reset_password' })), m.auth_password_reset_success());
 		if (result?.success && result.password) {
 			generatedPassword = result.password;
 			showPassword = true;
@@ -21,7 +21,7 @@
 	}
 
 	async function handleSendResetEmail() {
-		const result = await confirmSuccess(wrapLoader(internal.postApi({ action: 'send_reset_email' }), m.auth_reset_link_sent_toast()));
+		const result = await confirmSuccess(wrapLoader(internal.postApi({ action: 'send_reset_email' })), m.auth_reset_link_sent_toast());
 		if (result?.success && result.resetLink) {
 			generatedResetLink = result.resetLink;
 			showResetLink = true;
