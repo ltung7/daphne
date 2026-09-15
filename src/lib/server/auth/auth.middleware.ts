@@ -22,7 +22,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 	}
 
 	let claims: App.SessionClaims | null = event.locals?.sessionClaims ?? null;
-	let userType: 'driver' | 'admin' | null = event.locals?.userType ?? null;
+	let userType: 'driver' | 'admin' | null = event.locals?._userType ?? null;
 
 	if (isDriverRoute) {
 		const cookie = event.cookies.get(DRIVER_COOKIE);
@@ -52,15 +52,15 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 	}
 
 	event.locals.sessionClaims = claims;
-	event.locals.userType = claims ? userType : null;
+	event.locals._userType = claims ? userType : null;
 
 	if (claims) {
 		const user = await getUserById(claims.uid);
 		if (user) {
 			if (userType === 'driver') {
-				event.locals.driver = user;
+				event.locals._driver = user;
 			} else {
-				event.locals.user = {
+				event.locals._user = {
 					...user,
 					canSignHandovers: true // default for admins
 				} as unknown as App.User;
@@ -80,7 +80,7 @@ async function refreshSessionCookie(event: { cookies: Cookies; locals: App.Local
 	
 	if (!locals.sessionClaims) return;
 	
-	const userType = locals.userType;
+	const userType = locals._userType;
 	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
 	const currentCookie = cookies.get(cookieName);
 	

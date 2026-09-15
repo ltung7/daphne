@@ -6,7 +6,7 @@ import { findVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.f
 import { findDriverDocuments } from '$lib/server/db/firebase/driverDocuments.fdb';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-	const user = locals.driver;
+	const user = locals._driver;
 	if (!user) throw error(404, 'Not found')
 	const driver = await getDriver(user.id);
 	if (!driver) throw error(404, 'Not found')

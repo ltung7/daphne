@@ -1,8 +1,8 @@
 export function restrictAdmin(locals: App.Locals): App.User {
-	if (!locals.user || locals.userType !== 'admin') {
+	if (!locals._user || locals._userType !== 'admin') {
 		throw new Error('Admin access required');
 	}
-	return locals.user;
+	return locals._user;
 }
 
 export function requireRole(locals: App.Locals, roles: App.AdminRole[]): void {
@@ -25,15 +25,15 @@ export function requireModerator(locals: App.Locals): void {
 }
 
 export function isAdmin(locals: App.Locals): boolean {
-	return locals.userType === 'admin' && !!locals.user;
+	return locals._userType === 'admin' && !!locals._user;
 }
 
 export function isManagerOrAbove(locals: App.Locals): boolean {
-	if (!locals.user || locals.userType !== 'admin') return false;
-	return locals.user.role === 'manager' || locals.user.role === 'admin';
+	if (!locals._user || locals._userType !== 'admin') return false;
+	return locals._user.role === 'manager' || locals._user.role === 'admin';
 }
 
 export function isModeratorOrAbove(locals: App.Locals): boolean {
-	if (!locals.user || locals.userType !== 'admin') return false;
-	return locals.user.role === 'moderator' || locals.user.role === 'manager' || locals.user.role === 'admin';
+	if (!locals._user || locals._userType !== 'admin') return false;
+	return locals._user.role === 'moderator' || locals._user.role === 'manager' || locals._user.role === 'admin';
 }

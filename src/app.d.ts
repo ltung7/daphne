@@ -82,9 +82,9 @@ declare global {
 
 		// Locals populated by hooks.server.ts
 		interface Locals {
-			userType: UserType | null;
-			user: User | null;
-			driver: UserBase | null;
+			_userType: UserType | null;
+			_user: User | null;
+			_driver: UserBase | null;
 			sessionClaims: SessionClaims | null;
 			locale: App.Locale
 		}

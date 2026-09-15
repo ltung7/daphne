@@ -177,44 +177,63 @@ Respond with a JSON object of the same keys mapped to the translated strings.`;
         temperature: 0.3,
     };
 
-    try {
-        const response = await axios.post(OPENROUTER_URL, payload, {
-            headers: OPENROUTER_HEADERS,
-            timeout: 60000,
-        });
+    const MAX_RETRIES = 3;
+    let lastError;
 
-        const text = response.data.choices[0]?.message?.content;
-        if (!text) {
-            throw new Error(`Empty response from OpenRouter for locale "${targetLocale}"`);
-        }
-
-        let parsed;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            parsed = JSON.parse(text);
-        } catch {
-            throw new Error(
-                `Failed to parse OpenRouter response as JSON for locale "${targetLocale}":\n${text}`
-            );
-        }
+            const response = await axios.post(OPENROUTER_URL, payload, {
+                headers: OPENROUTER_HEADERS,
+                timeout: 60000,
+            });
 
-        const missing = keys.filter((k) => !(k in parsed));
-        if (missing.length > 0) {
-            console.warn(
-                `  [${targetLocale}] response was missing keys: ${missing.join(", ")}`
-            );
-        }
+            const text = response.data.choices[0]?.message?.content;
+            if (!text) {
+                throw new Error(`Empty response from OpenRouter for locale "${targetLocale}"`);
+            }
 
-        return parsed;
-    } catch (err) {
-        if (err.response) {
-            const status = err.response.status;
-            const data = err.response.data;
-            throw new Error(
-                `OpenRouter API error (${status}) for locale "${targetLocale}":\n${JSON.stringify(data, null, 2)}`
-            );
+            let parsed;
+            try {
+                parsed = JSON.parse(text);
+            } catch {
+                console.log({ text })
+                throw new Error(
+                    `Failed to parse OpenRouter response as JSON for locale "${targetLocale}":\n${text}`
+                );
+            }
+
+            const missing = keys.filter((k) => !(k in parsed));
+            if (missing.length > 0) {
+                console.warn(
+                    `  [${targetLocale}] response was missing keys: ${missing.join(", ")}`
+                );
+            }
+
+            return parsed;
+        } catch (err) {
+            lastError = err;
+            const isEmptyResponse = err.message?.includes("Empty response from OpenRouter");
+            
+            if (isEmptyResponse && attempt < MAX_RETRIES) {
+                console.warn(
+                    `  [${targetLocale}] empty response (attempt ${attempt}/${MAX_RETRIES}), retrying...`
+                );
+                await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+                continue;
+            }
+            
+            if (err.response) {
+                const status = err.response.status;
+                const data = err.response.data;
+                throw new Error(
+                    `OpenRouter API error (${status}) for locale "${targetLocale}":\n${JSON.stringify(data, null, 2)}`
+                );
+            }
+            throw err;
         }
-        throw err;
     }
+
+    throw lastError;
 }
 
 // ---------------------------------------------------------------------------

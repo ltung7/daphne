@@ -30,7 +30,7 @@ export async function refreshSessionCookie(event: { cookies: Cookies; locals: Ap
 	
 	if (!locals.sessionClaims) return;
 	
-	const userType = locals.userType;
+	const userType = locals._userType;
 	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
 	const currentCookie = cookies.get(cookieName);
 	
@@ -93,17 +93,17 @@ export async function setSessionAndPrefs(
 	event.cookies.set(PARAGLIDE_LOCALE_COOKIE, userData.preferredLanguage, PARAGLIDE_COOKIE_OPTIONS);
 	
 	if (userType === 'driver') {
-		event.locals.driver = userData;
-		event.locals.user = null;
+		event.locals._driver = userData;
+		event.locals._user = null;
 	} else {
-		event.locals.user = {
+		event.locals._user = {
 			...userData,
 			canSignHandovers: true // default for admins
 		} as unknown as App.User;
-		event.locals.driver = null;
+		event.locals._driver = null;
 	}
 	
-	event.locals.userType = userType;
+	event.locals._userType = userType;
 	event.locals.sessionClaims = {
 		uid: userData.id,
 		email: userData.email,

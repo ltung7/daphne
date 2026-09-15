@@ -238,15 +238,15 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
   }
 
   event.locals.sessionClaims = claims;
-  event.locals.userType = claims ? userType : null;
+  event.locals._userType = claims ? userType : null;
 
   if (claims) {
     const user = await getUserById(claims.uid);
     if (user) {
       if (userType === 'driver') {
-        event.locals.driver = user;
+        event.locals._driver = user;
       } else {
-        event.locals.user = {
+        event.locals._user = {
           ...user,
           canSignHandovers: true // default for admins
         } as unknown as App.User;
@@ -329,13 +329,13 @@ export const handle = sequence(
    }
  
    event.locals.sessionClaims = claims;
-   event.locals.userType = claims ? userType : null;
+   event.locals._userType = claims ? userType : null;
  
    if (claims) {
      if (userType === 'driver') {
-       event.locals.driver = await getDriverByFirebaseUid(claims.uid);
+       event.locals._driver = await getDriverByFirebaseUid(claims.uid);
      } else {
-       event.locals.user = await getAdminByFirebaseUid(claims.uid);
+       event.locals._user = await getAdminByFirebaseUid(claims.uid);
      }
    }
  
@@ -605,10 +605,10 @@ export const load = async ({ locals }) => {
   restrictDriver(locals);
   
   // Priority: driver.preferredLanguage -> browser Accept-Language -> en
-  const locale = locals.driver.preferredLanguage || 'en';
+  const locale = locals._driver.preferredLanguage || 'en';
   setLocale(locale);
   
-  return { driver: locals.driver };
+  return { driver: locals._driver };
 };
 ```
 
@@ -779,7 +779,7 @@ export const load = async ({ locals }) => {
 ### Key Changes from Original Plan:
 
 **1. Unified User Type** - Simplified from separate `AdminUser` and `Driver` interfaces in `Locals` to a single `User` interface:
-- `App.Locals.user` and `App.Locals.driver` both typed as `User | null`
+- `App.locals._user` and `App.locals._driver` both typed as `User | null`
 - `User` interface: `id`, `email`, `name`, `role`, `preferredLanguage`, `createdAt`, `updatedAt`
 - Removed `firebaseUid` field from `User` - **driver ID = Firebase UID** (document ID in Firestore is the Firebase Auth UID)
 

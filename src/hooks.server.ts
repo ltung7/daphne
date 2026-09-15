@@ -32,19 +32,9 @@ const handleTestDriver: Handle = async ({ event, resolve }) => {
         const testDriverName = 'sofiyanogachevska109@mail.pl';
 
         const now = Math.floor(Date.now() / 1000);
-        const sessionClaims = {
-            uid: testDriverId,
-            email: testDriverEmail,
-            role: 'driver' as const,
-            driverId: testDriverId,
-            emailVerified: true,
-            iat: now,
-            exp: now + 60 * 60 * 2
-        };
-
-        event.locals.sessionClaims = sessionClaims;
-        event.locals.userType = 'driver';
-        event.locals.driver = {
+        
+        event.locals._userType = 'driver';
+        event.locals._driver = {
             id: testDriverId,
             email: testDriverEmail,
             name: testDriverName,
@@ -74,9 +64,12 @@ const handleParaglide: Handle = ({ event, resolve }) =>
     paraglideMiddleware(event.request, ({ request, locale }) => {
         event.request = request;
 
-        event.locals.locale = locale;
+        const isAdminRoute = event.route.id?.startsWith('/(admin)');
+        const forcedLocale = isAdminRoute ? 'pl' : locale;
+        
+        event.locals.locale = forcedLocale;
         return resolve(event, {
-            transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', locale).replace('%paraglide.dir%', getTextDirection(locale))
+            transformPageChunk: ({ html }) => html.replace('%paraglide.lang%', forcedLocale).replace('%paraglide.dir%', getTextDirection(forcedLocale))
         });
     });
 
