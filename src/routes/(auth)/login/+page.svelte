@@ -5,6 +5,8 @@
 	import type { Auth } from 'firebase/auth';
 	import { onMount } from 'svelte';
 	import { m } from '$lib/paraglide/messages.js';
+	import { getFirebaseAuthErrorMessage } from '$lib/auth/firebaseErrorMap.js';
+	import { slide } from 'svelte/transition';
 
 	let email = $state('');
 	let password = $state('');
@@ -12,21 +14,25 @@
 	let googleLoading = $state(false);
 	let auth: Auth | null = $state(null);
 	let googleProvider: any = $state(null);
+	let error = $state('');
 
-	const revoked = page.url.searchParams.get('revoked') === 'true';
-	const loggedOut = page.url.searchParams.get('loggedOut') === 'true';
+	const message = page.url.searchParams.get('message');
 
-	if (revoked) {
-		addToast(m.auth_account_revoked(), 'danger');
-	}
-
-	if (loggedOut) {
+	if (message === 'revoked') {
+		error = m.auth_account_revoked();
+	} else if (message === 'expired') {
+		error = m.auth_session_expired();
+	} else if (message === 'loggedOut') {
 		addToast(m.auth_logged_out_success(), 'success');
 	}
 
-	async function handleEmailSignIn() {
+	async function handleEmailSignIn(e: SubmitEvent) {
+		e.preventDefault();
+		error = '';
 		if (!email || !password) {
-			addToast(m.auth_fill_all_fields(), 'danger');
+			const msg = m.auth_fill_all_fields();
+			error = msg;
+			addToast(msg, 'danger');
 			return;
 		}
 
@@ -48,13 +54,16 @@
 				window.location.href = result.redirect;
 			}
 		} catch (err: any) {
-			addToast(err.message || m.auth_invalid_email_or_password(), 'danger');
+			const msg = getFirebaseAuthErrorMessage(err);
+			error = msg;
+			addToast(msg, 'danger');
 		} finally {
 			loading = false;
 		}
 	}
 
 	async function handleGoogleSignIn() {
+		error = '';
 		if (!auth || !googleProvider) {
 			console.error('Firebase not initialized');
 			return;
@@ -73,7 +82,9 @@
 			}
 		} catch (err: any) {
 			if (err.code !== 'auth/popup-closed-by-user') {
-				addToast(err.message || m.auth_google_login_error(), 'danger');
+				const msg = getFirebaseAuthErrorMessage(err);
+				error = msg;
+				addToast(msg, 'danger');
 			}
 		} finally {
 			googleLoading = false;
@@ -98,7 +109,13 @@
 
 <h2 class="text-center mb-4">{m.auth_login_heading()}</h2>
 
-<div>
+{#if error}
+	<div class="alert alert-danger" role="alert" transition:slide>
+		{error}
+	</div>
+{/if}
+
+<form onsubmit={handleEmailSignIn}>
 	<div class="mb-3">
 		<label for="email" class="form-label">{m.auth_email_label()}</label>
 		<input type="email" id="email" class="form-control" bind:value={email} placeholder="jan@kowalski.pl" required autocomplete="email" disabled={loading} />
@@ -109,10 +126,10 @@
 		<input type="password" id="password" class="form-control" bind:value={password} placeholder="••••••••" required autocomplete="current-password" disabled={loading} />
 	</div>
 
-	<button type="button" class="btn btn-primary w-100" disabled={loading} onclick={handleEmailSignIn}>
+	<button class="btn btn-primary w-100" disabled={loading}>
 		{loading ? m.auth_logging_in() : m.auth_login_button()}
 	</button>
-</div>
+</form>
 
 <div class="text-center mt-3">
 	<a href="/password-reset" class="text-decoration-none">{m.auth_forgot_password()}</a>

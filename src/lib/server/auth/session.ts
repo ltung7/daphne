@@ -3,7 +3,7 @@ import { verifySessionCookie as firebaseVerifySessionCookie } from './firebaseAd
 import type { SessionClaims, UserBase } from './types.js';
 import { ADMIN_COOKIE, DRIVER_COOKIE, PREFS_COOKIE, PARAGLIDE_LOCALE_COOKIE, COOKIE_OPTIONS, PREFS_COOKIE_OPTIONS, PARAGLIDE_COOKIE_OPTIONS, SESSION_MAX_AGE } from './types.js';
 
-export async function createSessionCookie(idToken: string, userType: 'admin' | 'driver'): Promise<string> {
+export async function createSessionCookie(idToken: string): Promise<string> {
 	const { createSessionCookie: firebaseCreateSessionCookie } = await import('./firebaseAdmin.js');
 	return firebaseCreateSessionCookie(idToken, SESSION_MAX_AGE * 1000);
 }
@@ -37,7 +37,7 @@ export async function refreshSessionCookie(event: { cookies: Cookies; locals: Ap
 	if (!currentCookie) return;
 	
 	try {
-		const newCookie = await createSessionCookie(currentCookie, userType!);
+		const newCookie = await createSessionCookie(currentCookie);
 		cookies.set(cookieName, newCookie, COOKIE_OPTIONS);
 	} catch {
 		// Refresh failed, will be handled on next request
@@ -78,7 +78,7 @@ export async function setSessionAndPrefs(
 	idToken: string,
 	userData: UserBase
 ): Promise<void> {
-	const sessionCookie = await createSessionCookie(idToken, userType);
+	const sessionCookie = await createSessionCookie(idToken);
 	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
 	
 	event.cookies.set(cookieName, sessionCookie, COOKIE_OPTIONS);
@@ -108,7 +108,6 @@ export async function setSessionAndPrefs(
 		uid: userData.id,
 		email: userData.email,
 		role: userData.role,
-		driverId: userType === 'driver' ? userData.id : undefined,
 		emailVerified: true,
 		iat: Math.floor(Date.now() / 1000),
 		exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE

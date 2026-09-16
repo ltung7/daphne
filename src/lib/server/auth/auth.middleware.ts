@@ -27,20 +27,36 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 	if (isDriverRoute) {
 		const cookie = event.cookies.get(DRIVER_COOKIE);
 		if (cookie) claims = await verifySessionCookie(cookie, 'driver') || claims;
+		if (!claims && cookie) {
+			await clearAllSessionCookies(event.cookies);
+			throw redirect(302, '/login?message=expired');
+		}
 		userType = 'driver';
 	} else if (isAdminRoute) {
 		const cookie = event.cookies.get(ADMIN_COOKIE);
 		if (cookie) claims = await verifySessionCookie(cookie, 'admin');
+		if (!claims && cookie) {
+			await clearAllSessionCookies(event.cookies);
+			throw redirect(302, '/login?message=expired');
+		}
 		userType = 'admin';
 	} else if (isGeneralRoute || !isAuthRoute) {
 		const driverCookie = event.cookies.get(DRIVER_COOKIE);
 		if (driverCookie) {
 			claims = await verifySessionCookie(driverCookie, 'driver');
+			if (!claims) {
+				await clearAllSessionCookies(event.cookies);
+				throw redirect(302, '/login?message=expired');
+			}
 			userType = 'driver';
 		} else {
 			const adminCookie = event.cookies.get(ADMIN_COOKIE);
 			if (adminCookie) {
 				claims = await verifySessionCookie(adminCookie, 'admin');
+				if (!claims) {
+					await clearAllSessionCookies(event.cookies);
+					throw redirect(302, '/login?message=expired');
+				}
 				userType = 'admin';
 			}
 		}
@@ -48,7 +64,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 
 	if (claims?.role === 'revoked') {
 		await clearAllSessionCookies(event.cookies);
-		throw redirect(302, '/login?revoked=true');
+		throw redirect(302, '/login?message=revoked');
 	}
 
 	event.locals.sessionClaims = claims;
@@ -88,7 +104,7 @@ async function refreshSessionCookie(event: { cookies: Cookies; locals: App.Local
 	
 	try {
 		const { createSessionCookie } = await import('$lib/server/auth/session.js');
-		const newCookie = await createSessionCookie(currentCookie, userType!);
+		const newCookie = await createSessionCookie(currentCookie);
 		cookies.set(cookieName, newCookie, { 
 			httpOnly: true, 
 			secure: process.env.NODE_ENV === 'production', 

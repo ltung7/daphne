@@ -1,11 +1,14 @@
 import { getDriver } from '$lib/server/db/firebase/drivers.fdb';
 import { getVehicle } from '$lib/server/db/firebase/vehicles.fdb';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { findVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.fdb';
 import { findDriverDocuments } from '$lib/server/db/firebase/driverDocuments.fdb';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
+	if (!locals._driver) {
+		throw redirect(302, '/login')
+	}
 	const user = locals._driver;
 	if (!user) throw error(404, 'Not found')
 	const driver = await getDriver(user.id);
