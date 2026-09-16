@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types.js';
 import { verifyIdToken } from '$lib/server/auth/firebaseAdmin.js';
 import { resolveUser } from '$lib/server/auth/userLookup.js';
 import { createSessionCookie, clearAllSessionCookies } from '$lib/server/auth/session.js';
-import { ADMIN_COOKIE, DRIVER_COOKIE } from '$lib/server/auth/types.js';
+import { ADMIN_COOKIE, DRIVER_COOKIE, SESSION_MAX_AGE } from '$lib/server/auth/types.js';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		}
 
 		const decoded = await verifyIdToken(idToken);
-		const { userType, claims } = await resolveUser(decoded.uid);
+		const { userType, userData, claims } = await resolveUser(decoded.uid);
 
 		if (claims.role === 'revoked') {
 			await clearAllSessionCookies(cookies);
@@ -30,10 +30,12 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			secure: process.env.NODE_ENV === 'production',
 			sameSite: 'lax',
 			path: '/',
-			maxAge: 60 * 60 * 2
+			maxAge: SESSION_MAX_AGE
 		});
+		
+		const exp = Math.floor(Date.now() / 1000) + SESSION_MAX_AGE;
 
-		return json({ success: true, userType });
+		return json({ success: true, userType, exp });
 	} catch (err) {
 		console.error('Session refresh failed:', err);
 		return json({ message: 'Refresh failed' }, { status: 401 });

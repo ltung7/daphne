@@ -4,6 +4,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { layoutState } from '$lib/nav/stores.svelte';
 	import { untrack } from 'svelte';
+	import SessionRefresher from '$lib/components/SessionRefresher.svelte';
 
 	let { data, children }: LayoutProps = $props();
 	if (untrack(() => data.locale)) layoutState.currentLocale = untrack(() => data.locale);
@@ -12,6 +13,8 @@
 <svelte:head>
 	<title>{m.driver_panel_title()}</title>
 </svelte:head>
+
+<SessionRefresher exp={data.exp} />
 
 <div class="driver-app">
 	<header class="driver-header">

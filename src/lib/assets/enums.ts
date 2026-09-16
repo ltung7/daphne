@@ -73,9 +73,9 @@ export enum DRIVER_STATUS {
     // Normal lifecycle
     Active = 'active',                             // approved, eligible to drive
     Inactive = 'inactive',                         // driver-initiated pause (e.g. vacation)
+    OnLeave = 'on_leave',                          // driver is on leave
 
     // Compliance/expiry driven
-    DocumentsExpiring = 'documents_expiring',       // license/authorization nearing expiry, still allowed to drive but flagged
     DocumentsExpired = 'documents_expired',         // blocked from driving until renewed
 
     // Admin action

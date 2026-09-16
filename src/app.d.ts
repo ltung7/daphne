@@ -74,7 +74,6 @@ declare global {
 			uid: string;
 			email: string;
 			role: AdminRole | 'driver' | 'revoked';
-			driverId?: string;
 			emailVerified: boolean;
 			iat: number;
 			exp: number;
@@ -474,7 +473,7 @@ declare global {
 			| 'available'
 			| 'active'
 			| 'inactive'
-			| 'documents_expiring'
+			| 'on_leave'
 			| 'documents_expired'
 			| 'suspended'
 			| 'banned'

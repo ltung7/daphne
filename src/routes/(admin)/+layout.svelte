@@ -4,13 +4,16 @@
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import Splash from '$lib/misc/Splash.svelte';
 	import Toasts from '$lib/toast/Toasts.svelte';
+	import SessionRefresher from '$lib/components/SessionRefresher.svelte';
 	import { fly } from 'svelte/transition';
 	import { page } from '$app/state';
-	let { children } = $props();
+	
+	let { data, children } = $props();
 </script>
 
 <Splash />
 <Toasts />
+<SessionRefresher exp={data.exp} />
 
 <div class="d-flex min-vh-100 bg-light">
 	<Sidebar />

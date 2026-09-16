@@ -47,10 +47,10 @@
 			text: 'Kierowca jest nieaktywny i nie może odbierać zleceń.',
 			color: '#6b7280'
 		},
-		documents_expiring: {
-			icon: 'portfolio',
-			caption: 'Dokumenty wygasają',
-			text: 'Dokumenty wygasają wkrótce. Prosimy o ich odnowienie.',
+		on_leave: {
+			icon: 'umbrella-beach',
+			caption: 'Na urlopie',
+			text: 'Kierowca przebywa na urlopie.',
 			color: '#f59e0b'
 		},
 		documents_expired: {

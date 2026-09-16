@@ -10,6 +10,8 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 		throw redirect(302, '/login')
 	}
 	const user = locals._driver;
+	const exp = locals.sessionClaims?.exp;
+	
 	if (!user) throw error(404, 'Not found')
 	const driver = await getDriver(user.id);
 	if (!driver) throw error(404, 'Not found')
@@ -23,5 +25,5 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const driverDocuments = await findDriverDocuments({ driverId: driver.id })
 	documents = [ ...vehicleDocuments, ...driverDocuments ];
 	
-	return { driver, vehicle, balance: 0, documents, locale: locals.locale };
+	return { driver, vehicle, balance: 0, documents, locale: locals.locale, exp };
 };
