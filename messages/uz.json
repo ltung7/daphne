@@ -148,5 +148,6 @@
   "auth_reset_link": "Parol tiklash havolasi:",
   "auth_reset_link_expire": "Bu havolani foydalanuvchiga yuboring. Havola 1 soatdan keyin muddati tugaydi.",
   "copy_button_copied": "Nusxalash",
-  "inspection_title": "Kundalik Tekshiruv"
+  "inspection_title": "Kundalik Tekshiruv",
+  "auth_session_expired": "Sizning sessioniz tugaylanib ketdi. Iltimos, qayta kirish qiling."
 }
