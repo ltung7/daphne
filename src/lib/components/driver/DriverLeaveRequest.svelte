@@ -45,11 +45,9 @@
 	};
 </script>
 
-<div class="flex-center">
-	<IconButton caption="Dodaj urlop" icon="umbrella-beach" onclick={() => (isOpen = true)} size={6} />
-</div>
+<IconButton caption="Dodaj urlop" icon="umbrella-beach" onclick={() => (isOpen = true)} size={6} />
 
-<ClosableModal bind:isOpen size="lg" headerText="Wniosek o urlop (on_leave)">
+<ClosableModal bind:isOpen size="lg" headerText="Wniosek o urlop">
 	<div class="row mb-3">
 		<div class="col-md-6">
 			<CustomFormDate 
@@ -75,7 +73,6 @@
 	</div>
 
 	{#snippet footer()}
-		<button class="btn btn-secondary mb-0" onclick={() => (isOpen = false)} disabled={loading}> Anuluj </button>
 		<button class="btn btn-warning mb-0" disabled={!canSubmit || loading} onclick={submitLeave}>
 			{#if loading}
 				<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

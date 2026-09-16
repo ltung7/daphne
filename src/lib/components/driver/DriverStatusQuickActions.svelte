@@ -17,10 +17,10 @@
 		rejected: { caption: 'Odrzuć', icon: 'triangle-warning', color: 'danger' },
 		available: { caption: 'Oznacz jako dostępny', icon: 'check-circle', color: 'success' },
 		active: { caption: 'Aktywuj', icon: 'user-check', color: 'primary' },
-		inactive: { caption: 'Przerwa do końca dnia', icon: 'user-forbidden-alt', color: 'secondary' },
+		inactive: { caption: 'Przerwa do końca dnia', icon: 'user-forbidden-alt', color: 'dark' },
 		on_leave: { caption: 'Urlop', icon: 'calendar', color: 'warning' },
 		documents_expired: { caption: 'Brak dokumentów', icon: 'portfolio', color: 'danger' },
-		suspended: { caption: 'Zawieś', icon: 'user-forbidden', color: 'danger' },
+		suspended: { caption: 'Zawieś tymczasowo', icon: 'user-forbidden', color: 'warning' },
 		banned: { caption: 'Zablokuj', icon: 'user-forbidden', color: 'danger' },
 		archived: { caption: 'Archiwizuj', icon: 'archive', color: 'secondary' }
 	};

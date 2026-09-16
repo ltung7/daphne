@@ -22,7 +22,8 @@
 	};
 
 	const today = new Date();
-	const nextWeek = new Date(today);
+	// eslint-disable-next-line svelte/prefer-svelte-reactivity
+	const nextWeek = new Date();
 	nextWeek.setDate(nextWeek.getDate() + 7);
 
 	let dateFrom = $state(formatDate(today));
@@ -56,11 +57,9 @@
 	};
 </script>
 
-<div class="flex-center">
-	<IconButton caption="Zawieś" icon="user-forbidden" color="danger" onclick={() => (isOpen = true)} size={6} />
-</div>
+<IconButton caption="Zawieś tymczasowo" icon="user-forbidden" color="warning" onclick={() => (isOpen = true)} size={6} />
 
-<ClosableModal bind:isOpen size="lg" headerText="Zawieszenie kierowcy (suspended)">
+<ClosableModal bind:isOpen size="lg" headerText="Zawieszenie kierowcy">
 	<div class="row mb-3">
 		<div class="col-md-6">
 			<CustomFormDate 
@@ -86,7 +85,6 @@
 	</div>
 
 	{#snippet footer()}
-		<button class="btn btn-secondary mb-0" onclick={() => (isOpen = false)} disabled={loading}> Anuluj </button>
 		<button class="btn btn-danger mb-0" disabled={!canSubmit || loading} onclick={submitSuspend}>
 			{#if loading}
 				<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
