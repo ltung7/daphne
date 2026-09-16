@@ -242,15 +242,15 @@ stateDiagram-v2
 ## Implementation Checklist
 
 ### Backend (Server)
-- [ ] Add status transition validation in `driver.service.ts` (or new `driverStatus.service.ts`)
-- [ ] Enforce transition rules (e.g., can't go `pending_verification` → `active` directly)
+- [x] Add status transition validation in `driver.service.ts`
+- [x] Enforce transition rules (e.g., can't go `pending_verification` → `active` directly)
 - [ ] Add audit log for each status change (who, when, reason)
 - [ ] Create scheduled job for document expiry monitoring
 - [ ] Add webhook/notification for status changes
 
 ### Frontend (UI)
-- [ ] Update `DriverVerification.svelte` to show clear progress (already done)
-- [ ] Add status transition UI in driver detail page (dropdown with valid next states only)
+- [x] Update `DriverVerification.svelte` to show clear progress (already done)
+- [x] Add status transition UI in driver detail page (dropdown with valid next states only)
 - [ ] Show handover document modal for `available`↔`active` transitions
 - [ ] Add document expiry warnings in driver list/detail
 - [ ] Admin actions modal for suspend/ban/archive with reason field

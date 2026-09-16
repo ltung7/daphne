@@ -6,13 +6,13 @@
 	import UploadDriverDatafiles from '$lib/form/UploadDriverDatafiles.svelte';
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { driverDocumentNames } from '$lib/assets/constants';
-	import DriverVerification from '$lib/components/DriverVerification.svelte';
 	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { fly } from 'svelte/transition';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import DriverImageAndData from '$lib/components/driver/DriverImageAndData.svelte';
+	import DriverStatusChanger from '$lib/components/driver/DriverStatusChanger.svelte';
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
 	import ImageFallback from '$lib/misc/ImageFallback.svelte';
@@ -26,7 +26,7 @@
 		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
 	};
 
-	const onverified = (status: Driver.Status) => {
+	const onstatuschanged = (status: Driver.Status) => {
 		driver.status = status;
 	};
 </script>
@@ -34,11 +34,7 @@
 <PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczególy zarejestrowanego kierowcy" />
 
 <PageTopActions>
-	{#if driver.status === 'pending_verification'}
-		<DriverVerification {driver} {documents} {onverified} />
-	{:else}
-		<IconButton caption="Zmień status" size={6} />
-	{/if}
+	<DriverStatusChanger {driver} {documents} {onstatuschanged} />
 </PageTopActions>
 
 <SectionCard title="Dane kierowcy">

@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 		}
 
 		const decoded = await verifyIdToken(idToken);
-		const { userType, userData, claims } = await resolveUser(decoded.uid);
+		const { userType, claims } = await resolveUser(decoded.uid);
 
 		if (claims.role === 'revoked') {
 			await clearAllSessionCookies(cookies);

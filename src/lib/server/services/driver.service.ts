@@ -1,7 +1,108 @@
 import { DRIVER_STATUS } from "$lib/assets/enums";
 import randomString from "$lib/utils/randomString";
-import { getDriver, setDriver } from "../db/firebase/drivers.fdb";
-import { getFirebaseAuth } from '$lib/server/auth/firebaseAdmin.js';
+import { getDriver, setDriver, updateDriver } from "../db/firebase/drivers.fdb";
+import { getFirebaseAuth, revokeRefreshTokens, setCustomClaims } from '$lib/server/auth/firebaseAdmin.js';
+import { validateDriverRequirements } from "$lib/assets/requirements";
+import { error } from "@sveltejs/kit";
+
+type TransitionHandler = (driver: Driver.Driver, extraData: any) => Promise<boolean | void> | boolean | void;
+
+const statusTransitions: Partial<Record<Driver.Status, Partial<Record<Driver.Status, TransitionHandler>>>> = {
+    pending_verification: {
+        available: (driver, extraData) => {
+            if (!extraData.verificationResult) throw error(400, 'Missing verification data');
+            const verified = validateDriverRequirements(extraData.verificationResult);
+            if (!verified) throw error(400, 'Invalid verification');
+            return true;
+        },
+        rejected: () => true
+    },
+    rejected: {
+        pending_verification: () => true
+    },
+    available: {
+        inactive: () => false,
+        on_leave: () => false,
+        documents_expired: () => false,
+        suspended: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    active: {
+        inactive: () => false,
+        on_leave: () => false,
+        documents_expired: () => false,
+        suspended: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    inactive: {
+        available: () => false,
+        suspended: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    on_leave: {
+        available: () => false,
+        suspended: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    documents_expired: {
+        available: () => false,
+        suspended: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    suspended: {
+        available: () => false,
+        banned: () => false,
+        archived: () => false
+    },
+    banned: {
+        pending_verification: () => false,
+        archived: () => false
+    }
+};
+
+export const changeDriverStatus = async (driverOrId: string | Driver.Driver, newStatus: Driver.Status, extraData: any) => {
+    const driver = typeof driverOrId === 'string' ? await getDriver(driverOrId) : driverOrId;
+    if (!driver) throw error(404, 'Driver not found');
+
+    const currentStatus = driver.status;
+    if (currentStatus === newStatus) return { success: true, status: newStatus };
+
+    const allowedTransitionsFromCurrent = statusTransitions[currentStatus];
+    if (!allowedTransitionsFromCurrent) {
+        throw error(400, `No transitions allowed from ${currentStatus}`);
+    }
+
+    const transitionHandler = allowedTransitionsFromCurrent[newStatus];
+    if (!transitionHandler) {
+        throw error(400, `Invalid status transition from ${currentStatus} to ${newStatus}`);
+    }
+
+    // Run custom checks
+    try {
+        const result = await transitionHandler(driver, extraData);
+        if (result === false) {
+            throw error(400, `Transition from ${currentStatus} to ${newStatus} is currently disabled or not fully implemented`);
+        }
+    } catch (err: any) {
+        if (err?.status && err?.body?.message) throw err; // Re-throw SvelteKit errors
+        throw error(400, `Failed to transition status: ${err.message || 'Unknown error'}`);
+    }
+
+    await updateDriver(driver.id, { status: newStatus });
+    
+    // If driver is banned, revoke Firebase tokens and set custom claims for immediate effect
+    if (newStatus === 'banned') {
+        await revokeRefreshTokens(driver.id);
+        await setCustomClaims(driver.id, { role: 'revoked' });
+    }
+    
+    return { success: true, status: newStatus };
+}
 
 export const addNewDriver = async (newDriverData: Driver.NewDriverData, password?: string) => {
     const pwd = password || randomString(12, false);

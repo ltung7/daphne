@@ -11,6 +11,7 @@
 			total: number;
 			active: number;
 			inactive: number;
+			onLeave: number;
 			pending: number;
 		};
 		vehicles: {
@@ -29,7 +30,7 @@
 	}
 
 	let stats: StatsData = $state({
-		drivers: { total: 0, active: 0, inactive: 0, pending: 0 },
+		drivers: { total: 0, active: 0, inactive: 0, onLeave: 0, pending: 0 },
 		vehicles: { total: 0, available: 0, assigned: 0, broken: 0, maintenance: 0, precheck: 0 },
 		financial: { totalEarnings: 0, totalBalance: 0, totalTrips: 0 }
 	});
@@ -98,7 +99,7 @@
 		</div>
 		<div class="col-12 col-md-6 col-xl-3">
 			<DashboardNumberCard
-				value={stats.drivers.inactive}
+				value={stats.drivers.inactive + stats.drivers.onLeave}
 				caption="Nieaktywni kierowcy"
 				icon="user-forbidden-alt"
 				color="secondary"
