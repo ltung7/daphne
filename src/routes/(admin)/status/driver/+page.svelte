@@ -7,7 +7,7 @@
         'available',
 		'active',
 		'inactive',
-		'documents_expiring',
+		'on_leave',
 		'documents_expired',
 		'suspended',
 		'banned',

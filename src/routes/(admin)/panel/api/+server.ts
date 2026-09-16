@@ -16,6 +16,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
     const totalDrivers = drivers.length;
     const activeDrivers = drivers.filter(d => d.status === 'active').length;
     const inactiveDrivers = drivers.filter(d => d.status === 'inactive').length;
+    const onLeaveDrivers = drivers.filter(d => d.status === 'on_leave').length;
     const pendingDrivers = drivers.filter(d => d.status === 'pending_verification').length;
     const totalVehicles = vehicles.length;
     const availableVehicles = vehicles.filter(v => v.status === VEHICLE_STATUS.Available).length;
@@ -42,6 +43,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
                 total: totalDrivers,
                 active: activeDrivers,
                 inactive: inactiveDrivers,
+                onLeave: onLeaveDrivers,
                 pending: pendingDrivers
             },
             vehicles: {

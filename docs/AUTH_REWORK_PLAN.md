@@ -661,42 +661,79 @@ export const load = async ({ locals }) => {
  
 ### Phase 4: Auth Helpers
   - [x] Create src/lib/server/auth/generalAuth.ts (requireAuth)
-  - [x] Create src/lib/server/auth/apiAuth.ts (requireDriverApi, requireAdminApi, requireAnyApi, requirePublicApi)
-  - [ ] Update src/lib/server/auth/adminAuth.ts (add requireManager, requireModerator)
-  - [ ] Update src/lib/server/auth/userLookup.ts (revoked status check)
-  - [ ] Update src/lib/server/auth/session.ts (include role in claims)
+  - [~] Create src/lib/server/auth/apiAuth.ts - File exists but functions are COMMENTED OUT (need implementation)
+  - [x] Update src/lib/server/auth/adminAuth.ts (requireManager, requireModerator already implemented)
+  - [x] Update src/lib/server/auth/userLookup.ts (revoked status check - uses driver.status === 'banned')
+  - [x] Update src/lib/server/auth/session.ts (include role in claims - already done)
  
- ### Phase 5: Driver Integration
- - [ ] Add firebaseUid, preferredLanguage, nationality to Driver interface
- - [ ] Add status field (active/suspended/revoked) to Driver interface
- - [ ] Update addNewDriver to create Firebase Auth user + set custom claims
- - [ ] Update drivers.fdb.ts with new fields
- - [ ] Add revoke driver flow (update status + custom claims)
+### Phase 5: Driver Integration
+  - [x] Remove firebaseUid - use driver.id (Firebase UID) instead
+  - [x] Add preferredLanguage to NewDriverData (default: 'en')
+  - [x] Add status field (active/suspended/banned) to Driver interface
+  - [x] Update addNewDriver to create Firebase Auth user + set custom claims (driver.service.ts)
+  - [x] Update drivers.fdb.ts with new fields (uses driver.id as Firebase UID)
+  - [~] Add revoke driver flow (status set to 'banned' works, but Firebase custom claims NOT set for immediate revocation)
  
- ### Phase 6: i18n
- - [ ] Set up Paraglide for driver app (messages/driver/{locale}.json)
- - [ ] Add locale resolution in (driver)/+layout.ts
- - [ ] Default locale: en
+### Phase 6: i18n
+  - [ ] Set up Paraglide for driver app (messages/driver/{locale}.json)
+  - [ ] Add locale resolution in (driver)/+layout.ts (use driver.preferredLanguage)
+  - [ ] Default locale: en
+  - [ ] Add 8 additional locales (pl, uk, be, ru, ro, bg, uz, ka)
  
- ### Phase 7: Testing & Cleanup
- - [ ] Test: driver cannot access admin routes
- - [ ] Test: admin cannot access driver routes
- - [ ] Test: driver A cannot access driver B data
- - [ ] Test: Google Sign-In for both types
- - [ ] Test: password reset flow
- - [ ] Test: session refresh (sliding expiry)
- - [ ] Test: logout clears both cookies
- - [ ] Test: revoked user redirected to login with ?revoked=true
- - [ ] Test: (general) routes accessible by both driver and admin
- - [ ] Test: (api) routes - per-handler auth works correctly
- - [ ] Test: (webhooks) routes work without session cookies
- - [ ] Test: admin role hierarchy (admin > manager > moderator)
- - [ ] Remove old src/lib/server/secure/auth.middleware.ts
- - [ ] Remove old rolePaths map and handleRoleCheck
+### Phase 7: Testing & Cleanup
+  - [ ] Test: driver cannot access admin routes
+  - [ ] Test: admin cannot access driver routes
+  - [ ] Test: driver A cannot access driver B data
+  - [ ] Test: Google Sign-In for both types
+  - [ ] Test: password reset flow
+  - [ ] Test: session refresh (sliding expiry)
+  - [ ] Test: logout clears both cookies
+  - [ ] Test: revoked user redirected to login with ?revoked=true
+  - [ ] Test: (general) routes accessible by both driver and admin
+  - [ ] Test: (api) routes - per-handler auth works correctly
+  - [ ] Test: (webhooks) routes work without session cookies
+  - [ ] Test: admin role hierarchy (admin > manager > moderator)
+  - [ ] Remove old src/lib/server/secure/auth.middleware.ts (if exists)
+  - [ ] Remove old rolePaths map and handleRoleCheck (if exists)
+  - [ ] Implement apiAuth.ts functions (uncomment and complete)
+  - [ ] Implement Firebase custom claims for immediate driver revocation
 
 ---
 
-## 13. Open Questions
+## 21. Current Implementation Status Summary (as of investigation)
+
+### ✅ **COMPLETED**
+| Phase | Items |
+|-------|-------|
+| **Phase 1: Types & Core Auth** | All 4 items done. `app.d.ts` rewritten, auth module created, firebaseUid removed, driver.id = Firebase UID |
+| **Phase 2: Hooks & Route Restructure** | All 7 items done. Routes restructured into (auth)/(admin)/(driver)/(general)/(api)/(webhooks), middleware in `auth.middleware.ts` |
+| **Phase 3: Login & Session** | All 5 items done. Single login page, Google Sign-In, password reset, logout, cookie names updated |
+
+### ⚠️ **PARTIALLY COMPLETED**
+| Phase | Items |
+|-------|-------|
+| **Phase 4: Auth Helpers** | 3/5 done: `generalAuth.ts` ✅, `adminAuth.ts` ✅ (has requireManager/requireModerator), `userLookup.ts` ✅ (checks `driver.status === 'banned'`), `session.ts` ✅. **MISSING**: `apiAuth.ts` functions are commented out - need to uncomment and implement |
+| **Phase 5: Driver Integration** | 5/6 done: firebaseUid removed ✅, preferredLanguage added ✅, status field exists ✅ (uses 'banned' for revoked), addNewDriver creates Firebase Auth user ✅, drivers.fdb.ts uses driver.id ✅. **MISSING**: Firebase custom claims NOT set on driver revoke (no immediate effect) |
+
+### ❌ **NOT STARTED**
+| Phase | Items |
+|-------|-------|
+| **Phase 6: i18n** | No Paraglide setup for driver app, no messages/driver/{locale}.json, no locale resolution in (driver)/+layout.ts |
+| **Phase 7: Testing & Cleanup** | No testing done, old auth.middleware.ts may still exist, apiAuth.ts needs implementation, DriverVerification component prop issue |
+
+### 📝 **Key Technical Decisions Confirmed**
+1. **Driver ID = Firebase UID** - Document ID in Firestore `vehicleDriver` collection IS the Firebase Auth UID
+2. **No firebaseUid field** - Removed from all types, schemas, and cleanItems
+3. **Authentication 100% Firebase** - All auth (email/password, Google, password reset) delegated to Firebase Auth
+4. **Revoked status** - Uses `driver.status === 'banned'` in userLookup.ts to set `role: 'revoked'` in claims
+5. **Route groups** - Auth enforced in middleware for (admin)/(driver)/(general), per-handler for (api)/(webhooks)
+
+### 🔧 **Files Needing Attention**
+- `src/lib/server/auth/apiAuth.ts` - Functions commented out, need implementation
+- `src/lib/server/auth/userLookup.ts` - Add Firebase custom claims update on driver revoke
+- `src/routes/(driver)/+layout.svelte` - Add locale resolution using `driver.preferredLanguage`
+- Create `/messages/driver/{locale}.json` for 9 locales
+
 
 1. Firebase Auth user creation: Should admin create driver accounts via Firebase Admin SDK (email/password), or should drivers self-register? Current addNewDriver creates password - keep this flow?
 
@@ -962,3 +999,31 @@ src/routes/
 ---
 
 ## 19. Phase 3: Login & Session (Completed)
+
+---
+
+## 22. Background Session Refresh (Implemented)
+
+**Goal:** Keep Firebase Session Cookies alive indefinitely while the user is actively using the app, without forcing them to re-login every 2 hours, and handle the "next day" resume seamlessly.
+
+### Architecture: Smart Client-Side Refresh
+
+Instead of a fixed interval timer in the root layout, the refresh logic is tied strictly to the authenticated layouts (`(admin)` and `(driver)`), and uses the actual cookie expiration time to schedule the refresh.
+
+1.  **Expose Expiration to Client:**
+    - `src/routes/(admin)/+layout.server.ts` and `src/routes/(driver)/+layout.server.ts` are updated to return `exp` (from `locals.sessionClaims.exp`) in their `load` functions.
+2.  **Smart Timer (`onMount` in Layouts):**
+    - The client reads the `exp` timestamp.
+    - It calculates `timeUntilExpiry = (exp * 1000) - Date.now()`.
+    - If `timeUntilExpiry <= 0` (e.g., opened laptop the next day, cookie is dead but Firebase Client SDK still has the user), it triggers an immediate refresh.
+    - Otherwise, it sets a `setTimeout` to run exactly 5 minutes before the cookie expires.
+3.  **The Refresh Action:**
+    - The client calls `await auth.currentUser.getIdToken(true)` to get a fresh ID token (this automatically checks Google's servers to ensure the account isn't disabled).
+    - It sends this token via `POST /api/auth/refresh`.
+4.  **The API Endpoint (`src/routes/(api)/auth/refresh/+server.ts`):**
+    - Verifies the ID token.
+    - Checks the database to ensure the user isn't banned/revoked.
+    - Calls `createSessionCookie` to issue a fresh 2-hour cookie.
+    - Returns the new `exp` timestamp to the client so it can schedule the next timer.
+
+*Note: The old `refreshSessionCookie` logic in `auth.middleware.ts` (which attempted to pass a session cookie to Firebase instead of an ID token) has been removed/replaced by this client-assisted flow.*
