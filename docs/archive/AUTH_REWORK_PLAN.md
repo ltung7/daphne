@@ -693,8 +693,8 @@ export const load = async ({ locals }) => {
   - [ ] Test: (api) routes - per-handler auth works correctly
   - [ ] Test: (webhooks) routes work without session cookies
   - [ ] Test: admin role hierarchy (admin > manager > moderator)
-  - [ ] Remove old src/lib/server/secure/auth.middleware.ts (if exists)
-  - [ ] Remove old rolePaths map and handleRoleCheck (if exists)
+  - [x] Remove old src/lib/server/secure/auth.middleware.ts (if exists)
+  - [x] Remove old rolePaths map and handleRoleCheck (if exists)
   - [x] Implement apiAuth.ts functions (uncomment and complete)
   - [x] Implement Firebase custom claims for immediate driver/admin revocation
 
@@ -715,7 +715,7 @@ export const load = async ({ locals }) => {
 ### ⚠️ **PARTIALLY COMPLETED**
 | Phase | Items |
 |-------|-------|
-| **Phase 7: Testing & Cleanup** | Most implementation done. Tests pending. Old auth.middleware.ts and rolePaths cleanup needed. |
+| **Phase 7: Testing & Cleanup** | Implementation & cleanup complete. Automated tests (46) passing. Manual tests (33 scenarios) pending. |
 
 ### ❌ **NOT STARTED**
 | Phase | Items |
@@ -730,9 +730,7 @@ export const load = async ({ locals }) => {
 5. **Route groups** - Auth enforced in middleware for (admin)/(driver)/(general), per-handler for (api)/(webhooks)
 
 ### 🔧 **Files Needing Attention**
-- `src/lib/server/secure/auth.middleware.ts` (old file - remove if exists)
-- `src/lib/server/secure/access.ts` (old file - remove if unused)
-- Old `rolePaths` map and `handleRoleCheck` (remove if exists)
+- All done — no remaining files
 
 
 1. Firebase Auth user creation: Should admin create driver accounts via Firebase Admin SDK (email/password), or should drivers self-register? Current addNewDriver creates password - keep this flow?
@@ -1027,3 +1025,40 @@ Instead of a fixed interval timer in the root layout, the refresh logic is tied 
     - Returns the new `exp` timestamp to the client so it can schedule the next timer.
 
 *Note: The old `refreshSessionCookie` logic in `auth.middleware.ts` (which attempted to pass a session cookie to Firebase instead of an ID token) has been removed/replaced by this client-assisted flow.*
+
+---
+
+## 23. Testing Infrastructure (Completed)
+
+### Automated Test Setup
+- **`vitest.config.ts`** — Vitest + SvelteKit configuration with v8 coverage
+- **`src/lib/test/setup.ts`** — Global mocks for Firebase Admin, Firestore, env vars
+- **`src/lib/test/helpers/locals.ts`** — Type-safe test helpers for `App.Locals` mocking
+
+### Unit Tests (46 passing)
+| Test File | Tests | Coverage |
+|-----------|-------|----------|
+| `src/lib/server/auth/adminAuth.test.ts` | 21 | restrictAdmin, requireAdmin/Manager/Moderator, isAdmin, isManagerOrAbove, isModeratorOrAbove |
+| `src/lib/server/auth/driverAuth.test.ts` | 12 | restrictDriver, checkDriverAccess, isDriver, getDriverId |
+| `src/lib/server/auth/apiAuth.test.ts` | 13 | requireDriverApi, requireAdminApi, requireAnyApi, requirePublicApi |
+
+### Verification Results
+```bash
+npm run check   # ✅ 0 errors, 0 warnings
+npm run test    # ✅ 46 tests passing
+npm run build   # ✅ Successful production build
+npm run lint    # ✅ Only pre-existing prettier warnings (arrayBracketSpacing)
+```
+
+### Testing Documentation
+- **`docs/TESTING_PLAN.md`** — Comprehensive testing strategy with 33 manual test scenarios (M-01 through M-33) covering:
+  - Route access control (driver/admin separation, role hierarchy)
+  - Login & session (email/password, Google, revoked blocking, sliding refresh)
+  - Logout & password reset
+  - API auth (per-handler driver/admin/shared/public)
+  - Webhooks (no session auth, HMAC verification)
+  - General routes (both user types)
+  - i18n/locale (driver preferredLanguage, admin Polish)
+  - Revocation immediate effect (banned driver, revoked admin)
+- Automated tests run in CI on every PR
+- Manual tests required before each release

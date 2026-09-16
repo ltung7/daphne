@@ -24,6 +24,8 @@
         "@inlang/paraglide-js": "^2.25.2",
         "@sveltejs/kit": "2.34",
         "@sveltejs/vite-plugin-svelte": "6.2.4",
+        "@testing-library/dom": "^10.4.2",
+        "@testing-library/jest-dom": "^7.0.1",
         "@types/node": "24",
         "@types/nodemailer": "^8.0.1",
         "@vitest/browser-playwright": "4.1.0",
