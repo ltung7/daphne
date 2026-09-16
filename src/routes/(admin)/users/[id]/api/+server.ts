@@ -3,6 +3,7 @@ import type { RequestHandler } from "./$types";
 import { getUser, setUser } from "$lib/server/db/firebase/users.fdb";
 import { error } from '@sveltejs/kit';
 import { handlePasswordResetEndpoint } from "$lib/server/services/users.service";
+import { revokeRefreshTokens, setCustomClaims } from '$lib/server/auth/firebaseAdmin.js';
 
 export const GET: RequestHandler = async ({ params }) => {
     const user = await getUser<App.User>(params.id);
@@ -27,6 +28,11 @@ export const DELETE: RequestHandler = async ({ params }) => {
     if (!user) throw error(404, 'Nie znaleziono tego użytkownika');
 
     await setUser(params.id, { ...user, role: 'revoked', updatedAt: Date.now() });
+    
+    // Revoke Firebase tokens and set custom claims for immediate effect
+    await revokeRefreshTokens(params.id);
+    await setCustomClaims(params.id, { role: 'revoked' });
+    
     return json({ success: true })
 };
 

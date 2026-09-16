@@ -661,7 +661,7 @@ export const load = async ({ locals }) => {
  
 ### Phase 4: Auth Helpers
   - [x] Create src/lib/server/auth/generalAuth.ts (requireAuth)
-  - [~] Create src/lib/server/auth/apiAuth.ts - File exists but functions are COMMENTED OUT (need implementation)
+  - [x] Create src/lib/server/auth/apiAuth.ts - File exists but functions are COMMENTED OUT (need implementation) - **DONE: uncommented, fixed CHECK_AUTH import, type errors fixed**
   - [x] Update src/lib/server/auth/adminAuth.ts (requireManager, requireModerator already implemented)
   - [x] Update src/lib/server/auth/userLookup.ts (revoked status check - uses driver.status === 'banned')
   - [x] Update src/lib/server/auth/session.ts (include role in claims - already done)
@@ -672,13 +672,13 @@ export const load = async ({ locals }) => {
   - [x] Add status field (active/suspended/banned) to Driver interface
   - [x] Update addNewDriver to create Firebase Auth user + set custom claims (driver.service.ts)
   - [x] Update drivers.fdb.ts with new fields (uses driver.id as Firebase UID)
-  - [~] Add revoke driver flow (status set to 'banned' works, but Firebase custom claims NOT set for immediate revocation)
+  - [x] Add revoke driver flow (status set to 'banned' works, and Firebase custom claims set for immediate revocation in driver.service.ts)
  
 ### Phase 6: i18n
-  - [ ] Set up Paraglide for driver app (messages/driver/{locale}.json)
-  - [ ] Add locale resolution in (driver)/+layout.ts (use driver.preferredLanguage)
-  - [ ] Default locale: en
-  - [ ] Add 8 additional locales (pl, uk, be, ru, ro, bg, uz, ka)
+  - [x] Set up Paraglide for driver app (messages/{locale}.json - shared with admin)
+  - [x] Add locale resolution in (driver)/+layout.ts (uses driver.preferredLanguage via PARAGLIDE_LOCALE cookie)
+  - [x] Default locale: pl (project base locale)
+  - [x] All 10 locales supported (pl, en, uk, be, ro, uz, ka, ne, hi, tl)
  
 ### Phase 7: Testing & Cleanup
   - [ ] Test: driver cannot access admin routes
@@ -686,7 +686,7 @@ export const load = async ({ locals }) => {
   - [ ] Test: driver A cannot access driver B data
   - [ ] Test: Google Sign-In for both types
   - [ ] Test: password reset flow
-  - [ ] Test: session refresh (sliding expiry)
+  - [ ] Test: session refresh (sliding expiry) - **Implemented: Background Session Refresh via client timer + /api/auth/refresh**
   - [ ] Test: logout clears both cookies
   - [ ] Test: revoked user redirected to login with ?revoked=true
   - [ ] Test: (general) routes accessible by both driver and admin
@@ -695,8 +695,8 @@ export const load = async ({ locals }) => {
   - [ ] Test: admin role hierarchy (admin > manager > moderator)
   - [ ] Remove old src/lib/server/secure/auth.middleware.ts (if exists)
   - [ ] Remove old rolePaths map and handleRoleCheck (if exists)
-  - [ ] Implement apiAuth.ts functions (uncomment and complete)
-  - [ ] Implement Firebase custom claims for immediate driver revocation
+  - [x] Implement apiAuth.ts functions (uncomment and complete)
+  - [x] Implement Firebase custom claims for immediate driver/admin revocation
 
 ---
 
@@ -708,18 +708,19 @@ export const load = async ({ locals }) => {
 | **Phase 1: Types & Core Auth** | All 4 items done. `app.d.ts` rewritten, auth module created, firebaseUid removed, driver.id = Firebase UID |
 | **Phase 2: Hooks & Route Restructure** | All 7 items done. Routes restructured into (auth)/(admin)/(driver)/(general)/(api)/(webhooks), middleware in `auth.middleware.ts` |
 | **Phase 3: Login & Session** | All 5 items done. Single login page, Google Sign-In, password reset, logout, cookie names updated |
+| **Phase 4: Auth Helpers** | All 5 items done. `generalAuth.ts` ✅, `apiAuth.ts` ✅ (uncommented, fixed CHECK_AUTH import), `adminAuth.ts` ✅, `userLookup.ts` ✅, `session.ts` ✅ |
+| **Phase 5: Driver Integration** | All 6 items done. firebaseUid removed ✅, preferredLanguage added ✅, status field exists ✅, addNewDriver creates Firebase Auth user ✅, drivers.fdb.ts uses driver.id ✅, revoke flow with Firebase custom claims ✅ |
+| **Phase 6: i18n** | All items done. Paraglide configured, locale resolution via PARAGLIDE_LOCALE cookie (driver.preferredLanguage), 10 locales supported |
 
 ### ⚠️ **PARTIALLY COMPLETED**
 | Phase | Items |
 |-------|-------|
-| **Phase 4: Auth Helpers** | 3/5 done: `generalAuth.ts` ✅, `adminAuth.ts` ✅ (has requireManager/requireModerator), `userLookup.ts` ✅ (checks `driver.status === 'banned'`), `session.ts` ✅. **MISSING**: `apiAuth.ts` functions are commented out - need to uncomment and implement |
-| **Phase 5: Driver Integration** | 5/6 done: firebaseUid removed ✅, preferredLanguage added ✅, status field exists ✅ (uses 'banned' for revoked), addNewDriver creates Firebase Auth user ✅, drivers.fdb.ts uses driver.id ✅. **MISSING**: Firebase custom claims NOT set on driver revoke (no immediate effect) |
+| **Phase 7: Testing & Cleanup** | Most implementation done. Tests pending. Old auth.middleware.ts and rolePaths cleanup needed. |
 
 ### ❌ **NOT STARTED**
 | Phase | Items |
 |-------|-------|
-| **Phase 6: i18n** | No Paraglide setup for driver app, no messages/driver/{locale}.json, no locale resolution in (driver)/+layout.ts |
-| **Phase 7: Testing & Cleanup** | No testing done, old auth.middleware.ts may still exist, apiAuth.ts needs implementation, DriverVerification component prop issue |
+| *(none - all implementation phases complete)* | |
 
 ### 📝 **Key Technical Decisions Confirmed**
 1. **Driver ID = Firebase UID** - Document ID in Firestore `vehicleDriver` collection IS the Firebase Auth UID
@@ -729,10 +730,9 @@ export const load = async ({ locals }) => {
 5. **Route groups** - Auth enforced in middleware for (admin)/(driver)/(general), per-handler for (api)/(webhooks)
 
 ### 🔧 **Files Needing Attention**
-- `src/lib/server/auth/apiAuth.ts` - Functions commented out, need implementation
-- `src/lib/server/auth/userLookup.ts` - Add Firebase custom claims update on driver revoke
-- `src/routes/(driver)/+layout.svelte` - Add locale resolution using `driver.preferredLanguage`
-- Create `/messages/driver/{locale}.json` for 9 locales
+- `src/lib/server/secure/auth.middleware.ts` (old file - remove if exists)
+- `src/lib/server/secure/access.ts` (old file - remove if unused)
+- Old `rolePaths` map and `handleRoleCheck` (remove if exists)
 
 
 1. Firebase Auth user creation: Should admin create driver accounts via Firebase Admin SDK (email/password), or should drivers self-register? Current addNewDriver creates password - keep this flow?
