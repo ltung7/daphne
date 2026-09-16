@@ -1,15 +1,16 @@
 import { db } from '$lib/server/db/firebase/firebase';
-import { getVehicle } from '../db/firebase/vehicles.fdb';
+import { getVehicle, updateVehicle } from '../db/firebase/vehicles.fdb';
 import admin from 'firebase-admin';
 import { insertRandomLog } from '../db/tables/randomLogs.db';
+import { error } from "@sveltejs/kit";
 
 export interface AssignVehicleData {
 	registrationNumber: string; // registration number
 	driverId: string;
 	driverName: string;
 	handoverId: string;
-    model?: string;
-    imageUrl?: string;
+	model?: string;
+	imageUrl?: string;
 	uploadedDocumentUrl?: string
 }
 
@@ -23,42 +24,42 @@ export interface AssignVehicleData {
  */
 export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
 	const { registrationNumber, driverId, driverName, handoverId, uploadedDocumentUrl } = data;
-    let model = data.model;
-    let imageUrl = data.imageUrl
-    if (!model || !imageUrl) {
-        const vehicle = await getVehicle(registrationNumber);
-        if (!vehicle) throw new Error("Vehicle does not exist");
-        model = vehicle.name;
-        imageUrl = vehicle.imageUrl;
-    }
+	let model = data.model;
+	let imageUrl = data.imageUrl
+	if (!model || !imageUrl) {
+		const vehicle = await getVehicle(registrationNumber);
+		if (!vehicle) throw new Error("Vehicle does not exist");
+		model = vehicle.name;
+		imageUrl = vehicle.imageUrl;
+	}
 	const firestore = db();
 	const timestamp = Date.now();
 
-    const updateVehicleData: Partial<Vehicle.Vehicle> = {
-        assignedDriverId: driverId,
-        assignedDriverName: driverName,
+	const updateVehicleData: Partial<Vehicle.Vehicle> = {
+		assignedDriverId: driverId,
+		assignedDriverName: driverName,
 		status: 'assigned'
-    }
-    const updateDriverData: Partial<Driver.Driver> = {
-        assignedVehicle: {
-            model,
-            registrationNumber,
-            timestamp
-        }
-    }
-    if (imageUrl && updateDriverData.assignedVehicle) updateDriverData.assignedVehicle.imageUrl = imageUrl;
+	}
+	const updateDriverData: Partial<Driver.Driver> = {
+		assignedVehicle: {
+			model,
+			registrationNumber,
+			timestamp
+		}
+	}
+	if (imageUrl && updateDriverData.assignedVehicle) updateDriverData.assignedVehicle.imageUrl = imageUrl;
 
-    const vehicleAssignmentData: Vehicle.VehicleAssignmentData = {
-        driverId,
-        handoverId,
-        registrationNumber,
-        timestamp,
-        type: 'assign'
-    }
+	const vehicleAssignmentData: Vehicle.VehicleAssignmentData = {
+		driverId,
+		handoverId,
+		registrationNumber,
+		timestamp,
+		type: 'assign'
+	}
 
-    const updateHandoverData: Partial<DocumentGenerator.HandoverDocumentRecord> = {
-        closed: timestamp
-    }
+	const updateHandoverData: Partial<DocumentGenerator.HandoverDocumentRecord> = {
+		closed: timestamp
+	}
 	if (uploadedDocumentUrl?.length) updateHandoverData.url = uploadedDocumentUrl;
 
 	insertRandomLog('AssignTransaction', { updateVehicleData, updateDriverData, vehicleAssignmentData, updateHandoverData })
@@ -196,3 +197,109 @@ export async function returnVehicle(registrationNumber: string, driverId: string
 		};
 	}
 }
+
+
+type TransitionHandler = (vehicle: Vehicle.Vehicle, extraData: any) => Promise<boolean | void> | boolean | void;
+
+const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.Status, TransitionHandler>>>> = {
+	precheck: {
+		available: async (vehicle, extraData) => {
+			// Logic to verify requirements from extraData.verificationResult
+			// This should ideally check against vehicleRequirements and type
+			// For now, assume true if extraData.verificationResult is provided and truthy
+			if (!extraData.verificationResult) throw error(400, 'Missing verification data');
+			// Placeholder for actual verification logic
+			// const verified = verifyVehicleRequirements(vehicle, type, documents); // Needs access to type/documents
+			const verified = extraData.verificationResult === true; // Simplified check
+			if (!verified) throw error(400, 'Verification failed');
+			return true;
+		},
+		broken: () => true,
+		under_maintenance: () => true,
+		unmovable: () => true
+	},
+	available: {
+		assigned: async (vehicle, extraData) => {
+			// Logic to check for driver assignment, handover, etc.
+			// Requires extraData like { driverId, handoverId }
+			if (!extraData.driverId || !extraData.handoverId) throw error(400, 'Missing driver or handover ID for assignment');
+			// Placeholder for actual assignment logic, which might involve other services
+			return true;
+		},
+		under_maintenance: () => true,
+		broken: () => true,
+		unmovable: () => true,
+		retired: () => true
+	},
+	assigned: {
+		available: () => true, // Driver returns vehicle
+		broken: () => true,
+		unmovable: () => true,
+		retired: () => true
+	},
+	under_maintenance: {
+		available: async (vehicle, extraData) => {
+			// Logic to confirm maintenance completion, potentially check extraData.expectedEndDate if it has passed
+			// For simplicity, allow transition if extraData.completed is true
+			if (!extraData.completed) throw error(400, 'Maintenance not marked as completed');
+			return true;
+		},
+		broken: () => true, // If repair failed
+		unmovable: () => true, // If irreparable
+		retired: () => true
+	},
+	broken: {
+		available: async (vehicle, extraData) => {
+			// Logic to confirm repair completion
+			if (!extraData.completed) throw error(400, 'Repair not marked as completed');
+			return true;
+		},
+		under_maintenance: () => true, // Sent for further maintenance
+		unmovable: () => true, // If declared total loss
+		retired: () => true
+	},
+	unmovable: {
+		available: () => true, // Exceptional: issue resolved
+		under_maintenance: () => true, // Exceptional: issue resolved, requires service
+		broken: () => true, // If issue makes it broken but movable
+		retired: () => true
+	},
+	retired: {
+		// Terminal state, no outgoing transitions normally
+		// Allow 'precheck' for re-activation if business logic permits (e.g., un-retiring for a specific purpose, though unlikely)
+		// For now, no transitions from retired.
+	}
+};
+
+export const changeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any) => {
+	const vehicle = typeof vehicleOrId === 'string' ? await getVehicle(vehicleOrId) : vehicleOrId;
+	if (!vehicle) throw error(404, 'Vehicle not found');
+
+	const currentStatus = vehicle.status;
+	if (currentStatus === newStatus) return { success: true, status: newStatus };
+
+	const allowedTransitionsFromCurrent = statusTransitions[currentStatus];
+	if (!allowedTransitionsFromCurrent) {
+		throw error(400, `No transitions defined from current status: ${currentStatus}`);
+	}
+
+	const transitionHandler = allowedTransitionsFromCurrent[newStatus];
+	if (!transitionHandler) {
+		throw error(400, `Invalid status transition from ${currentStatus} to ${newStatus}`);
+	}
+
+	// Run custom transition checks if a handler exists
+	try {
+		const result = await transitionHandler(vehicle, extraData);
+		if (result === false) {
+			throw error(400, `Transition from ${currentStatus} to ${newStatus} is currently disabled or not fully implemented`);
+		}
+	} catch (err: any) {
+		if (err?.status && err?.body?.message) throw err; // Re-throw SvelteKit errors
+		throw error(400, `Failed to transition status: ${err.message || 'Unknown error'}`);
+	}
+
+	await updateVehicle(vehicle.id, { status: newStatus });
+
+	return { success: true, status: newStatus };
+};

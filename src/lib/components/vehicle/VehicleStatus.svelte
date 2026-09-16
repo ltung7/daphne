@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Tooltip } from '@sveltestrap/sveltestrap';
-	import UIcon from "./UIcon.svelte";
+	import UIcon from "$lib/misc/UIcon.svelte";
 
 	interface Props {
 		status: Vehicle.Status;

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { fetchVehicles } from '$lib/nav/fetchData';
-	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
+	import VehicleStatus from '$lib/components/vehicle/VehicleStatus.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import CustomFormColorPicker from '$lib/form/CustomFormColorPicker.svelte';

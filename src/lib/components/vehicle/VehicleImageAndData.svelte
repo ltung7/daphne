@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fuelNames } from '$lib/assets/constants';
 	import CustomFormColorPicker from '$lib/form/CustomFormColorPicker.svelte';
-	import VehicleStatus from '$lib/misc/VehicleStatus.svelte';
+	import VehicleStatus from '$lib/components/vehicle/VehicleStatus.svelte';
 	import ExpirationDate from '$lib/misc/ExpirationDate.svelte';
 
 	interface Props {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import VehicleStatus from "$lib/misc/VehicleStatus.svelte";
+	import VehicleStatus from "$lib/components/vehicle/VehicleStatus.svelte";
 
     const allStatus: Array<Vehicle.Status> = [
         'available',

@@ -3,7 +3,6 @@
 	import type { PageProps } from './$types';
 	import { vehicleDocumentNames, updatableVehicleVariables } from '$lib/assets/constants';
 	import UploadVehicleDatafiles from '$lib/form/UploadVehicleDatafiles.svelte';
-	import PrecheckVerification from '$lib/components/VehicleVerification.svelte';
 	import plTimezone from '$lib/utils/tz';
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import type { VehicleDocumentResult } from '$lib/datafiles/vehicle';
@@ -14,6 +13,8 @@
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import VehicleImageAndData from '$lib/components/vehicle/VehicleImageAndData.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import PageTopActions from '$lib/misc/PageTopActions.svelte';
+	import VehicleStatusChanger from '$lib/components/vehicle/VehicleStatusChanger.svelte';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
@@ -51,11 +52,19 @@
 			});
 		}
 	};
+
+	const onstatuschanged = (status: Vehicle.Status) => {
+		vehicle.status = status;
+	};
 </script>
 
 <PageTitle title="Dane pojazdu {vehicle.registrationNumber}" subtitle="Szczególy pojazdu" />
 
-<div class="card card-body mb-3">
+<PageTopActions>
+	<VehicleStatusChanger {vehicle} type={data.type} {documents} {onstatuschanged} />
+</PageTopActions>
+
+<!-- <div class="card card-body mb-3">
 	<div class="d-flex">
 	{#if vehicle && data.type && vehicle.status === 'precheck'}
 		<PrecheckVerification {vehicle} type={data.type} {documents} />
@@ -64,7 +73,7 @@
 		<IconButton caption="Zmień status" size={6} />
 	{/if}
 	</div>
-</div>
+</div> -->
 
 <SectionCard title="Dane pojazdu">
 	<VehicleImageAndData {vehicle} />

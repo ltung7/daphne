@@ -4,11 +4,13 @@
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { onMount } from 'svelte';
+	import { internal, confirmSuccess } from '$lib/nav/internal';
 
-	let { vehicle, type, documents } = $props<{
+	let { vehicle, type, documents, onverified } = $props<{
 		vehicle: Vehicle.Vehicle;
 		type: Vehicle.Type;
 		documents: Vehicle.VehicleDocument[];
+		onverified?: (status: Vehicle.Status) => void;
 	}>();
 	let isOpen = $state(false);
 
@@ -17,6 +19,17 @@
 
 	const required = vehicleRequirements.filter(item => item.required).map(item => item.node);
 	const verified = $derived(required.reduce((sum, node) => sum += verificationResult[node] ? 1 : 0, 0))
+
+	const verifyVehicle = async () => {
+		const response = await confirmSuccess(internal.patch(`/vehicles/${vehicle.registrationNumber}/status`, {
+			status: 'available',
+			verificationResult
+		}));
+		if (response.status) {
+			vehicle.status = response.status;
+			onverified?.(response.status)
+		}
+	}
 
 	onMount(() => {
 		const fusedVerification: Vehicle.VehicleRequirementVerification = {
@@ -46,4 +59,9 @@
 			/>
 		{/each}
 	</ul>
+	{#snippet footer()}
+		<div class="d-flex justify-content-end w-100 p-3">
+			<button class="btn btn-success" onclick={verifyVehicle} disabled={verified !== required.length}>Zatwierdź i oznacz jako dostępny</button>
+		</div>
+	{/snippet}
 </ClosableModal>
