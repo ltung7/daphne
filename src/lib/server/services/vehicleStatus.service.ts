@@ -3,6 +3,7 @@ import { getVehicle, updateVehicle } from '../db/firebase/vehicles.fdb';
 import admin from 'firebase-admin';
 import { insertRandomLog } from '../db/tables/randomLogs.db';
 import { error } from "@sveltejs/kit";
+import { addVehicleStatusChange } from '../db/firebase/vehicleStatusChange.fdb';
 
 export interface AssignVehicleData {
 	registrationNumber: string; // registration number
@@ -204,13 +205,8 @@ type TransitionHandler = (vehicle: Vehicle.Vehicle, extraData: any) => Promise<b
 const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.Status, TransitionHandler>>>> = {
 	precheck: {
 		available: async (vehicle, extraData) => {
-			// Logic to verify requirements from extraData.verificationResult
-			// This should ideally check against vehicleRequirements and type
-			// For now, assume true if extraData.verificationResult is provided and truthy
 			if (!extraData.verificationResult) throw error(400, 'Missing verification data');
-			// Placeholder for actual verification logic
-			// const verified = verifyVehicleRequirements(vehicle, type, documents); // Needs access to type/documents
-			const verified = extraData.verificationResult === true; // Simplified check
+			const verified = extraData.verificationResult === true;
 			if (!verified) throw error(400, 'Verification failed');
 			return true;
 		},
@@ -220,10 +216,7 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 	},
 	available: {
 		assigned: async (vehicle, extraData) => {
-			// Logic to check for driver assignment, handover, etc.
-			// Requires extraData like { driverId, handoverId }
 			if (!extraData.driverId || !extraData.handoverId) throw error(400, 'Missing driver or handover ID for assignment');
-			// Placeholder for actual assignment logic, which might involve other services
 			return true;
 		},
 		under_maintenance: () => true,
@@ -232,46 +225,44 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 		retired: () => true
 	},
 	assigned: {
-		available: () => true, // Driver returns vehicle
+		available: async (vehicle, extraData) => {
+			if (!extraData.handoverId) throw error(400, 'Missing handover ID for vehicle return');
+			return true;
+		},
 		broken: () => true,
 		unmovable: () => true,
 		retired: () => true
 	},
 	under_maintenance: {
 		available: async (vehicle, extraData) => {
-			// Logic to confirm maintenance completion, potentially check extraData.expectedEndDate if it has passed
-			// For simplicity, allow transition if extraData.completed is true
 			if (!extraData.completed) throw error(400, 'Maintenance not marked as completed');
 			return true;
 		},
-		broken: () => true, // If repair failed
-		unmovable: () => true, // If irreparable
+		broken: () => true,
+		unmovable: () => true,
 		retired: () => true
 	},
 	broken: {
 		available: async (vehicle, extraData) => {
-			// Logic to confirm repair completion
 			if (!extraData.completed) throw error(400, 'Repair not marked as completed');
 			return true;
 		},
-		under_maintenance: () => true, // Sent for further maintenance
-		unmovable: () => true, // If declared total loss
+		under_maintenance: () => true,
+		unmovable: () => true,
 		retired: () => true
 	},
 	unmovable: {
-		available: () => true, // Exceptional: issue resolved
-		under_maintenance: () => true, // Exceptional: issue resolved, requires service
-		broken: () => true, // If issue makes it broken but movable
+		available: () => true,
+		under_maintenance: () => true,
+		broken: () => true,
 		retired: () => true
 	},
 	retired: {
-		// Terminal state, no outgoing transitions normally
-		// Allow 'precheck' for re-activation if business logic permits (e.g., un-retiring for a specific purpose, though unlikely)
-		// For now, no transitions from retired.
+		precheck: () => true
 	}
 };
 
-export const changeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any) => {
+export const changeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any, user: App.User) => {
 	const vehicle = typeof vehicleOrId === 'string' ? await getVehicle(vehicleOrId) : vehicleOrId;
 	if (!vehicle) throw error(404, 'Vehicle not found');
 
@@ -300,6 +291,6 @@ export const changeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle,
 	}
 
 	await updateVehicle(vehicle.id, { status: newStatus });
-
+	await addVehicleStatusChange({ extraData, vehicleId: vehicle.id, status: newStatus, timestamp: Date.now(), userId: user.id, userName: user.name })
 	return { success: true, status: newStatus };
 };

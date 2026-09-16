@@ -4,6 +4,7 @@ import { getDriver, setDriver, updateDriver } from "../db/firebase/drivers.fdb";
 import { getFirebaseAuth, revokeRefreshTokens, setCustomClaims } from '$lib/server/auth/firebaseAdmin.js';
 import { validateDriverRequirements } from "$lib/assets/requirements";
 import { error } from "@sveltejs/kit";
+import { addVehicleDriverStatusChange } from "../db/firebase/vehicleDriverStatusChange.fdb";
 
 type TransitionHandler = (driver: Driver.Driver, extraData: any) => Promise<boolean | void> | boolean | void;
 
@@ -21,12 +22,12 @@ const statusTransitions: Partial<Record<Driver.Status, Partial<Record<Driver.Sta
         pending_verification: () => true
     },
     available: {
-        inactive: () => false,
+        inactive: () => true,
         on_leave: () => false,
         documents_expired: () => false,
         suspended: () => false,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     active: {
         inactive: () => false,
@@ -37,35 +38,35 @@ const statusTransitions: Partial<Record<Driver.Status, Partial<Record<Driver.Sta
         archived: () => false
     },
     inactive: {
-        available: () => false,
+        available: () => true,
         suspended: () => false,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     on_leave: {
-        available: () => false,
+        available: () => true,
         suspended: () => false,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     documents_expired: {
         available: () => false,
         suspended: () => false,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     suspended: {
-        available: () => false,
+        available: () => true,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     banned: {
         pending_verification: () => false,
-        archived: () => false
+        archived: () => true
     }
 };
 
-export const changeDriverStatus = async (driverOrId: string | Driver.Driver, newStatus: Driver.Status, extraData: any) => {
+export const changeDriverStatus = async (driverOrId: string | Driver.Driver, newStatus: Driver.Status, extraData: any, user: App.User) => {
     const driver = typeof driverOrId === 'string' ? await getDriver(driverOrId) : driverOrId;
     if (!driver) throw error(404, 'Driver not found');
 
@@ -94,6 +95,7 @@ export const changeDriverStatus = async (driverOrId: string | Driver.Driver, new
     }
 
     await updateDriver(driver.id, { status: newStatus });
+    await addVehicleDriverStatusChange({ extraData, driverId: driver.id, status: newStatus, timestamp: Date.now(), userId: user.id, userName: user.name })
     
     // If driver is banned, revoke Firebase tokens and set custom claims for immediate effect
     if (newStatus === 'banned') {
