@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "აპლიკაცია ამ დომენისთვის ავტორიზებული არ არის",
   "auth_app_deleted": "აპლიკაცია წაშლილია",
   "auth_keychain_error": "Keychain წვდომის შეცდომა",
-  "auth_internal_error": "შიდა აუთენტიფიკაციის შეცდომა"
+  "auth_internal_error": "შიდა აუთენტიფიკაციის შეცდომა",
+  "auth_unauthorized_domain": "ეს დომენი OAuth ოპერაციებისთვის დამტკიცებული არ არის. დაუკავშირდით მხარდაჭერის მომსახურებას."
 }

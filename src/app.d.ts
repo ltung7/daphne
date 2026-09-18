@@ -61,7 +61,7 @@ declare global {
 		}
 
 		// Locale for i18n
-		type Locale = 'en' | 'pl' | 'hi' | 'ne'| 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro' ;
+		type Locale = 'en' | 'pl' | 'hi' | 'ne' | 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro';
 
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
@@ -299,6 +299,15 @@ declare global {
 			frequency: 'daily' | 'monthly';
 			requiresPhoto: boolean;
 			isMandatory: boolean;
+		}
+
+		interface VehicleStatusChange {
+			status: Vehicle.Status;
+			userId: string;
+			userName: string;
+			timestamp: number;
+			extraData: any;
+			vehicleId: string;
 		}
 	}
 
@@ -606,6 +615,63 @@ declare global {
 		type DriverRequirementVerification = Driver & {
 			drivingLicenses: DrivingLicense[];
 		};
+
+		
+		interface DriverStatusChange {
+			status: Driver.Status;
+			userId: string;
+			userName: string;
+			timestamp: number;
+			extraData: any;
+			driverId: string;
+		}
+	}
+
+	namespace DriverBalance {
+		type BalanceEventType =
+			| 'income_uber_weekly'
+			| 'income_bolt_weekly'
+			| 'penalty'
+			| 'monthly_settlement'
+			| 'fuel_repayments'
+			| 'early_settlement_discount'
+			| 'cash_collection'
+			| 'cash_deposit'
+			| 'cash_adjustment';
+
+		type BalanceEventStatus = 'pending' | 'confirmed' | 'cancelled' | 'reversed';
+
+		interface BalanceEvent {
+			id: string;
+			driverId: string;
+			type: BalanceEventType;
+			status: BalanceEventStatus;
+			amount: number;
+			runningBalance: number;
+			referenceId?: string;
+			referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash';
+			metadata: Record<string, any>;
+			timestamp: number;
+			createdBy: string;
+			confirmedAt?: number;
+			confirmedBy?: string;
+			reversedByEventId?: string;
+			reversalReason?: string;
+		}
+
+		interface BalanceIdempotencyKeyFormats {
+			income_uber_weekly: `u:${string}:${number}W${number}`;
+			income_bolt_weekly: `b:${string}:${number}W${number}`;
+			penalty: `p:${string}`;
+			monthly_settlement: `m:${string}:${number}${number}`;
+			fuel_repayments: `f:${string}`;
+			early_settlement_discount: `e:${string}`;
+			cash_collection: `c:${string}:${number}${number}${number}`;
+			cash_deposit: `d:${string}`;
+			cash_adjustment: `a:${string}`;
+		}
+
+		type BalanceEventTypeKey = keyof BalanceIdempotencyKeyFormats;
 	}
 
 	namespace DocumentGenerator {

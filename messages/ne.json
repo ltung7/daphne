@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "यो डोमेनका लागि एप अधिकृत छैन।",
   "auth_app_deleted": "Firebase एप मेटिएको छ।",
   "auth_keychain_error": "किचेन पहुँच त्रुटि",
-  "auth_internal_error": "आन्तरिक प्रमाणीकरण त्रुटि"
+  "auth_internal_error": "आन्तरिक प्रमाणीकरण त्रुटि",
+  "auth_unauthorized_domain": "यो डोमेन OAuth सञ्चालनका लागि अनुमोदित छैन। सहायतामा सम्पर्क गर्नुहोस्।"
 }

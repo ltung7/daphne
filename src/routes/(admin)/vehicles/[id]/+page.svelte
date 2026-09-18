@@ -15,6 +15,7 @@
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import VehicleStatusChanger from '$lib/components/vehicle/VehicleStatusChanger.svelte';
+	import VehicleStatusHistory from '$lib/components/vehicle/VehicleStatusHistory.svelte';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
@@ -90,6 +91,8 @@
 			</div>
 		{/if}
 	</SectionCard>
+	
+	<VehicleStatusHistory registrationNumber={vehicle.registrationNumber} />
 {/if}
 
 <SectionCard title="Dokumenty">

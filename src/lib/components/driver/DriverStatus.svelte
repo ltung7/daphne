@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { Tooltip } from '@sveltestrap/sveltestrap';
 	import UIcon from "$lib/misc/UIcon.svelte";
-	import { vehicleStatusMap } from './vehicleStatusMap';
+	import { driverStatusMap } from './driverStatusMap';
 
 	interface Props {
-		status: Vehicle.Status;
+		status: Driver.Status;
 		size?: number;
 	}
 
 	let { status, size = 8 }: Props = $props();
 
-	let current = $derived(vehicleStatusMap[status]);
+	let current = $derived(driverStatusMap[status]);
     let element = $state<HTMLElement>();
 </script>
 

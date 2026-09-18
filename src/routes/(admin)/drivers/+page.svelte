@@ -4,7 +4,7 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { fetchDrivers } from '$lib/nav/fetchData';
 	import { formatCurrency } from '$lib/utils/numberFormatter';
-	import DriverStatus from '$lib/misc/DriverStatus.svelte';
+	import DriverStatus from '$lib/components/driver/DriverStatus.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 

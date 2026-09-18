@@ -149,6 +149,7 @@
   "auth_app_deleted": "Firebase app has been deleted",
   "auth_keychain_error": "Keychain access error",
   "auth_internal_error": "Internal authentication error",
+  "auth_unauthorized_domain": "This domain is not authorized for OAuth operations. Contact support.",
   "auth_google_login_error": "Google login error",
   "auth_login_heading": "Log in",
   "auth_email_label": "Email",

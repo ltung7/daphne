@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "इस डोमेन के लिए ऐप अधिकृत नहीं है",
   "auth_app_deleted": "फायरबेस ऐप हटाया गया है",
   "auth_keychain_error": "कीचेन एक्सेस त्रुटि",
-  "auth_internal_error": "आंतरिक प्राधिकरण त्रुटि"
+  "auth_internal_error": "आंतरिक प्राधिकरण त्रुटि",
+  "auth_unauthorized_domain": "यह डोमेन OAuth संचालन के लिए अधिकृत नहीं है। सहायता से संपर्क करें।"
 }

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { languageLevels, languages } from "$lib/assets/constants";
-	import DriverStatus from "$lib/misc/DriverStatus.svelte";
+	import DriverStatus from "./DriverStatus.svelte";
 	import LanguageFlag from "$lib/misc/LanguageFlag.svelte";
 	import UIcon from "$lib/misc/UIcon.svelte";
 

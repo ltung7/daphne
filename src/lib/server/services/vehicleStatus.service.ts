@@ -234,10 +234,7 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 		retired: () => true
 	},
 	under_maintenance: {
-		available: async (vehicle, extraData) => {
-			if (!extraData.completed) throw error(400, 'Maintenance not marked as completed');
-			return true;
-		},
+		available: () => true,
 		broken: () => true,
 		unmovable: () => true,
 		retired: () => true

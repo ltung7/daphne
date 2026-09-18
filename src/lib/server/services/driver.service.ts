@@ -25,17 +25,16 @@ const statusTransitions: Partial<Record<Driver.Status, Partial<Record<Driver.Sta
         inactive: () => true,
         on_leave: () => false,
         documents_expired: () => false,
-        suspended: () => false,
-        banned: () => false,
+        suspended: () => true,
+        banned: () => true,
         archived: () => true
     },
     active: {
-        inactive: () => false,
-        on_leave: () => false,
-        documents_expired: () => false,
+        inactive: () => true,
+        on_leave: () => true,
         suspended: () => false,
         banned: () => false,
-        archived: () => false
+        archived: () => true
     },
     inactive: {
         available: () => true,
@@ -57,11 +56,11 @@ const statusTransitions: Partial<Record<Driver.Status, Partial<Record<Driver.Sta
     },
     suspended: {
         available: () => true,
-        banned: () => false,
+        banned: () => true,
         archived: () => true
     },
     banned: {
-        pending_verification: () => false,
+        pending_verification: () => true,
         archived: () => true
     }
 };

@@ -16,6 +16,7 @@
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
 	import ImageFallback from '$lib/misc/ImageFallback.svelte';
+	import DriverStatusHistory from '$lib/components/driver/DriverStatusHistory.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -74,6 +75,8 @@
 			</div>
 		{/if}
 	</SectionCard>
+
+	<DriverStatusHistory driverId={driver.id} />
 {/if}
 
 <SectionCard title="Dokumenty">

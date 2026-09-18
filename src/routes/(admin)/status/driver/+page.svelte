@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DriverStatus from "$lib/misc/DriverStatus.svelte";
+	import DriverStatus from "$lib/components/driver/DriverStatus.svelte";
 
     const allStatus: Array<Driver.Status> = [
         'pending_verification',

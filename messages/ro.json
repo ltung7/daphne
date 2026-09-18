@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "Aplicația nu este autorizată pentru acest domeniu",
   "auth_app_deleted": "Aplicația Firebase a fost ștearsă",
   "auth_keychain_error": "Eroare de acces la portchei",
-  "auth_internal_error": "Eroare internă de autentificare"
+  "auth_internal_error": "Eroare internă de autentificare",
+  "auth_unauthorized_domain": "Acest domeniu nu este autorizat pentru operațiunile OAuth. Contactați suport."
 }

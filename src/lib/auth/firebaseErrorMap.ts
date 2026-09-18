@@ -26,6 +26,7 @@ export const firebaseAuthErrorMap: Record<string, () => string> = {
 	'auth/app-deleted': () => m.auth_app_deleted(),
 	'auth/keychain-error': () => m.auth_keychain_error(),
 	'auth/internal-error': () => m.auth_internal_error(),
+	'auth/unauthorized-domain': () => m.auth_unauthorized_domain(),
 };
 
 export function getFirebaseAuthErrorMessage(error: unknown): string {

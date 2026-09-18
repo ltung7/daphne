@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "Апп не аўтыралізованы для гэтага домена",
   "auth_app_deleted": "Апп Firebase адключаны",
   "auth_keychain_error": "Парабільнае даступу Keychain",
-  "auth_internal_error": "Внутрышняя памылка"
+  "auth_internal_error": "Внутрышняя памылка",
+  "auth_unauthorized_domain": "Гэты домен не аўтарызаваны для аперацый OAuth. Звярніцеся да падтрымкі."
 }

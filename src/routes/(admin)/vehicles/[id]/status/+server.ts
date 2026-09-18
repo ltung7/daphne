@@ -1,5 +1,6 @@
 import { restrictAdmin } from "$lib/server/auth";
 import { changeVehicleStatus } from "$lib/server/services/vehicleStatus.service";
+import { getLatestVehicleStatusChanges } from "$lib/server/db/firebase/vehicleStatusChange.fdb";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
 
@@ -12,4 +13,16 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
     const result = await changeVehicleStatus(params.id, status, extraData, locals._user!);
     
     return json(result);
+};
+
+export const GET: RequestHandler = async ({ params, url, locals }) => {
+    restrictAdmin(locals);
+    
+    const registrationNumber = params.id;
+    const offset = Number(url.searchParams.get('offset')) || 0;
+    const limit = Number(url.searchParams.get('limit')) || 10;
+    
+    const changes = await getLatestVehicleStatusChanges(registrationNumber, offset, limit);
+    
+    return json(changes);
 };
