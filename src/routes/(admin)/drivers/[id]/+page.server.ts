@@ -2,10 +2,13 @@ import { getDriver } from '$lib/server/db/firebase/drivers.fdb';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { findDriverDocuments } from '$lib/server/db/firebase/driverDocuments.fdb';
+import { getCurrentBalance } from '$lib/server/db/firebase/driverBalance.service';
 
 export const load = (async ({ params }) => {
     const driver = await getDriver(params.id);
     if (!driver) throw error(404, 'Driver not found');
-    const documents = await findDriverDocuments({ driverId: driver.id })
-    return { driver, documents }
+    const documents = await findDriverDocuments({ driverId: driver.id });
+    const currentBalance = await getCurrentBalance(driver.id);
+    const cashBalance = driver.cashBalance ?? 0;
+    return { driver, documents, currentBalance, cashBalance }
 }) satisfies PageServerLoad;

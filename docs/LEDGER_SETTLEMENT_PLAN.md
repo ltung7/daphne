@@ -16,7 +16,7 @@ namespace DriverBalance {
     | 'income_bolt_weekly'
     | 'penalty' 
     | 'monthly_settlement' 
-    | 'fuel_repayments' 
+    | 'repayments' 
     | 'early_settlement_discount'
     | 'cash_collection'      // Driver collected cash from trips (negative = owes fleet)
     | 'cash_deposit'         // Driver deposited cash to office (positive = reduces debt)
@@ -64,7 +64,7 @@ namespace DriverBalance {
  | `income_bolt_weekly` | `b:{driverId}:{YYYY}{W}` | `b:drv123:2026W01` |
  | `penalty` | `p:{penaltyId}` | `p:pen456` |
  | `monthly_settlement` | `m:{driverId}:{YYYY}{MM}` | `m:drv123:202601` |
- | `fuel_repayments` | `f:{txnId}` | `f:txn789` |
+ | `repayments` | `r:{txnId}` | `r:txn789` |
  | `early_settlement_discount` | `e:{requestId}` | `e:req999` |
  | `cash_collection` | `c:{driverId}:{YYYY}{MM}{DD}` | `c:drv123:20260115` |
  | `cash_deposit` | `d:{depositId}` | `d:dep456` |
@@ -234,7 +234,7 @@ async function verifyBalance(driverId: string) {
  | Bolt weekly sync | `income_bolt_weekly` with `idempotencyKey: "b:{driverId}:{YYYY}W{W}"` |
  | Admin adds penalty | `penalty` with `idempotencyKey: "p:{penaltyId}"` |
  | Monthly settlement run | `monthly_settlement` per driver with `idempotencyKey: "m:{driverId}:{YYYY}{MM}"` |
- | Fuel card repay | `fuel_repayments` with `idempotencyKey: "f:{txnId}"` |
+ | Fuel card repay | `repayments` with `idempotencyKey: "r:{txnId}"` |
  | Driver requests early payout | `early_settlement_discount` (5% fee) + `monthly_settlement` (payout) |
  | Daily report cash submitted | `cash_collection` (amount = -cashCollected) with `idempotencyKey: "c:{driverId}:{YYYY}{MM}{DD}"` |
  | Cash handed to office | `cash_deposit` (amount = +deposited) with `idempotencyKey: "d:{depositId}"` |
@@ -330,3 +330,28 @@ recordEvent({
 5. Build admin UI pages
 6. Write unit tests for calculation logic
 7. Run migration script for existing drivers
+
+---
+
+## Implementation Progress
+
+### Completed (this session)
+- **Admin UI Component**: Created `src/lib/components/finance/DriverBalanceLedger.svelte` with:
+  - Current balance display (large, color-coded: green/red/black)
+  - Cash balance display (smaller, color-coded)
+  - CTA buttons for ledger actions: Kara (penalty), Potrącenie (deduction), Wypłata (payout), Wcześniejsze rozliczenie (early settlement), Korekta gotówki (cash adjustment)
+  - "Historia" button opening Offcanvas with timeline of latest 20 events
+  - Timeline shows: event type badge/icon/color, signed amount, timestamp, running balance, reference ID
+  - Pagination with "Załaduj więcej" button
+- **API Endpoint**: Created `src/routes/(admin)/drivers/[id]/balance/+server.ts` for fetching paginated balance events
+- **Integration**: Added component to driver detail page (`src/routes/(admin)/drivers/[id]/+page.svelte`) with data loaded in `+page.server.ts`
+- **Type Safety**: Updated `DriverBalanceLedger.svelte` with local `BalanceEvent` interface and event type labels/icons/colors
+
+### Code Changes
+- `src/app.d.ts`: Updated `BalanceEventType` union - changed `'fuel_repayments'` → `'repayments'`
+- `src/lib/components/finance/DriverBalanceLedger.svelte`: Updated event type labels/icons/colors - `'fuel_repayments'` → `'repayments'`
+- `docs/FLEET_PLAN.md`: Updated reference in fuel card management task
+- `docs/LEDGER_SETTLEMENT_PLAN.md`: Updated all references:
+  - EventType union
+  - Idempotency key format table
+  - Integration points table

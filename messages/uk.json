@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "Додаток не авторизовано для цього домену",
   "auth_app_deleted": "Додаток Firebase було видалено",
   "auth_keychain_error": "Помилка доступу до зв'язки ключів",
-  "auth_internal_error": "Внутрішня помилка автентифікації"
+  "auth_internal_error": "Внутрішня помилка автентифікації",
+  "auth_unauthorized_domain": "Цей домен не авторизований для операцій OAuth. Зверніться до служби підтримки."
 }

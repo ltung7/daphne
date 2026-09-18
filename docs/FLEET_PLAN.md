@@ -238,7 +238,7 @@ src/
 - [ ] Export: Excel with pivot tables, PDF summary
 
 ### 5.2 Cost Collection (Operational, Feeds Ledger)
-- [ ] **Fuel card management**: Import transactions → match to vehicle/driver → validate → create `fuel_repayments` ledger events
+- [ ] **Fuel card management**: Import transactions → match to vehicle/driver → validate → create `repayments` ledger events
 - [ ] **Cash tracking (dual approach)**:
   - **Operational**: Daily report cash → `cashCollections` array on driver doc (for day-to-day tracking, reconciliation vs Bolt cash trips)
   - **Financial**: Ledger events — `cash_collection` (negative, driver owes), `cash_deposit` (positive, reduces debt), `cash_adjustment` (signed, disputes) — net cash deducted at monthly settlement

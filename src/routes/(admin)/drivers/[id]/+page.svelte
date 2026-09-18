@@ -17,6 +17,7 @@
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
 	import ImageFallback from '$lib/misc/ImageFallback.svelte';
 	import DriverStatusHistory from '$lib/components/driver/DriverStatusHistory.svelte';
+	import DriverBalanceLedger from '$lib/components/finance/DriverBalanceLedger.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -32,7 +33,7 @@
 	};
 </script>
 
-<PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczególy zarejestrowanego kierowcy" />
+<PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczegóły zarejestrowanego kierowcy" />
 
 <PageTopActions>
 	<DriverStatusChanger {driver} {documents} {onstatuschanged} />
@@ -43,6 +44,8 @@
 </SectionCard>
 
 {#if driver.status !== 'pending_verification'}
+	<DriverBalanceLedger driverId={driver.id} currentBalance={data.currentBalance} cashBalance={data.cashBalance} />
+
 	<SectionCard title="Pojazd">
 		{#if driver.assignedVehicle}
 			<div class="d-flex">

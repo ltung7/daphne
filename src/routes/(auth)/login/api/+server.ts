@@ -3,10 +3,10 @@ import type { RequestHandler } from './$types.js';
 import { verifyIdToken } from '$lib/server/auth/firebaseAdmin.js';
 import { resolveUser } from '$lib/server/auth/userLookup.js';
 import { setSessionAndPrefs, clearAllSessionCookies } from '$lib/server/auth/session.js';
+import { logger } from '$lib/utils/logger.js';
 
 async function handleSignIn(body: any, cookies: any) {
 	const idToken = body.idToken;
-
 	if (!idToken || typeof idToken !== 'string') {
 		return json({ message: 'Brak tokenu ID' }, { status: 400 });
 	}
@@ -19,12 +19,12 @@ async function handleSignIn(body: any, cookies: any) {
 			await clearAllSessionCookies(cookies);
 			return json({ redirect: '/login?revoked=true' }, { status: 302 });
 		}
-
 		await setSessionAndPrefs({ cookies, locals: {} as any }, userType, idToken, userData);
 
 		const redirectUrl = userType === 'driver' ? '/driver' : '/panel';
 		return json({ redirect: redirectUrl }, { status: 302 });
 	} catch (err) {
+		logger.error(err)
 		if (err instanceof Response) throw err;
 		return json({ message: 'Nieprawidłowy token lub konto nie skonfigurowane' }, { status: 400 });
 	}

@@ -44,7 +44,7 @@ export const REFRESH_THRESHOLD = 1800;
 
 export const COOKIE_OPTIONS = {
 	httpOnly: true,
-	secure: process.env.NODE_ENV === 'production',
+	secure: !isDev,
 	sameSite: 'lax' as const,
 	path: '/',
 	maxAge: SESSION_MAX_AGE
@@ -52,7 +52,7 @@ export const COOKIE_OPTIONS = {
 
 export const PREFS_COOKIE_OPTIONS = {
 	httpOnly: false,
-	secure: process.env.NODE_ENV === 'production',
+	secure: !isDev,
 	sameSite: 'lax' as const,
 	path: '/',
 	maxAge: PREFS_MAX_AGE
@@ -60,7 +60,7 @@ export const PREFS_COOKIE_OPTIONS = {
 
 export const PARAGLIDE_COOKIE_OPTIONS = {
 	httpOnly: false,
-	secure: process.env.NODE_ENV === 'production',
+	secure: !isDev,
 	sameSite: 'lax' as const,
 	path: '/',
 	maxAge: PREFS_MAX_AGE

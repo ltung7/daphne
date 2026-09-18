@@ -4,6 +4,7 @@ import { verifyIdToken } from '$lib/server/auth/firebaseAdmin.js';
 import { resolveUser } from '$lib/server/auth/userLookup.js';
 import { createSessionCookie, clearAllSessionCookies } from '$lib/server/auth/session.js';
 import { ADMIN_COOKIE, DRIVER_COOKIE, SESSION_MAX_AGE } from '$lib/server/auth/types.js';
+import { isDev } from '$lib/utils/isDev.js';
 
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	try {
@@ -27,7 +28,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 
 		cookies.set(cookieName, sessionCookie, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === 'production',
+			secure: !isDev,
 			sameSite: 'lax',
 			path: '/',
 			maxAge: SESSION_MAX_AGE

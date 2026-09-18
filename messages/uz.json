@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "Ushbu domen uchun ilova avtorizatsiya qilinmagan",
   "auth_app_deleted": "Firebase ilovasi o'chirilgan",
   "auth_keychain_error": "Kalitlar zanjiriga kirish xatosi",
-  "auth_internal_error": "Ichki autentifikatsiya xatosi"
+  "auth_internal_error": "Ichki autentifikatsiya xatosi",
+  "auth_unauthorized_domain": "Bu domen OAuth amalioti uchun ruxsatsiz. Qo'shimcha yordam bilan bog'laning."
 }

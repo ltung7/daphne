@@ -172,5 +172,6 @@
   "auth_app_not_authorized": "Hindi awtorisado ang app para sa domain na ito",
   "auth_app_deleted": "Na-delete na ang Firebase app",
   "auth_keychain_error": "Error sa pag-access ng keychain",
-  "auth_internal_error": "Panloob na error sa pag-authenticate"
+  "auth_internal_error": "Panloob na error sa pag-authenticate",
+  "auth_unauthorized_domain": "Hindi awtorisado ang domain na ito para sa OAuth operations. Makipag-ugnayan sa support."
 }

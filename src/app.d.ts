@@ -633,7 +633,7 @@ declare global {
 			| 'income_bolt_weekly'
 			| 'penalty'
 			| 'monthly_settlement'
-			| 'fuel_repayments'
+			| 'repayments'
 			| 'early_settlement_discount'
 			| 'cash_collection'
 			| 'cash_deposit'
@@ -664,7 +664,7 @@ declare global {
 			income_bolt_weekly: `b:${string}:${number}W${number}`;
 			penalty: `p:${string}`;
 			monthly_settlement: `m:${string}:${number}${number}`;
-			fuel_repayments: `f:${string}`;
+			repayments: `r:${string}`;
 			early_settlement_discount: `e:${string}`;
 			cash_collection: `c:${string}:${number}${number}${number}`;
 			cash_deposit: `d:${string}`;

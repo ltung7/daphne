@@ -2,6 +2,7 @@ import { redirect, type Cookies, type Handle } from '@sveltejs/kit';
 import { verifySessionCookie, clearAllSessionCookies } from '$lib/server/auth/session.js';
 import { getUserById } from '$lib/server/auth/userLookup.js';
 import { ADMIN_COOKIE, DRIVER_COOKIE, CHECK_AUTH } from '$lib/server/auth/types.js';
+import { isDev } from '$lib/utils/isDev.js';
 
 export const authMiddleware: Handle = async ({ event, resolve }) => {
 	// Skip all auth checks if CHECK_AUTH is false (testing mode)
@@ -107,7 +108,7 @@ async function refreshSessionCookie(event: { cookies: Cookies; locals: App.Local
 		const newCookie = await createSessionCookie(currentCookie);
 		cookies.set(cookieName, newCookie, { 
 			httpOnly: true, 
-			secure: process.env.NODE_ENV === 'production', 
+			secure: !isDev, 
 			sameSite: 'lax', 
 			path: '/', 
 			maxAge: 60 * 60 * 2 

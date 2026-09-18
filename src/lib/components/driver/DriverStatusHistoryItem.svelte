@@ -47,7 +47,7 @@
 	</button>
 </div>
 
-<Offcanvas toggle={toggleOffcanvas} bind:isOpen={offcanvasOpen} placement="end" class="w-50 w-sm-75 w-md-50">
+<Offcanvas toggle={toggleOffcanvas} bind:isOpen={offcanvasOpen} placement="end">
 	<div class="offcanvas-header">
 		<h5 class="offcanvas-title">{config?.caption || item.status}</h5>
 		<button type="button" class="btn-close" onclick={() => (offcanvasOpen = false)} aria-label="Close"></button>
