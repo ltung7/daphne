@@ -12,6 +12,9 @@
 	box-shadow: none !important;
 	cursor: pointer;
 	margin-bottom: 0;
+	text-align: unset;
+	padding-inline: 0;
+	padding-block: 0;
 }
 
 .btn-clear:disabled {
@@ -1136,4 +1139,8 @@ aside nav .nav-btn.active {
 
 select.form-control {
 	appearance: auto;
+}
+
+.offcanvas-body .timeline.timeline-one-side .timeline-block .timeline-content button.btn-clear {
+    width: calc(100% - 100px);
 }

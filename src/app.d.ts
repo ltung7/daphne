@@ -655,6 +655,7 @@ declare global {
 			createdBy: string;
 			confirmedAt?: number;
 			confirmedBy?: string;
+			confirmedName?: string;
 			reversedByEventId?: string;
 			reversalReason?: string;
 		}

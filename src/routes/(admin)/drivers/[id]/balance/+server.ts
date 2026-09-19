@@ -37,7 +37,8 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
     }
 
     const body = await request.json();
-    const { amount, type, metadata = {}, referenceId = "" } = body;
+    const { amount, type, metadata = {} } = body;
+    const referenceId = body.referenceId || metadata.referenceId || '';
 
     if (!type || typeof amount !== 'number') {
         throw error(400, 'Missing required fields: type, amount');
@@ -86,7 +87,8 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
         timestamp: Date.now(),
         createdBy: user.id,
         confirmedAt: Date.now(),
-        confirmedBy: user.id
+        confirmedBy: user.id,
+        confirmedName: user.name
     };
 
     await setBalanceEvent(idempotencyKey, eventData);

@@ -5,6 +5,7 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { internal } from '$lib/nav/internal';
 	import type { Snippet } from 'svelte';
+	import ClosableModal from './ClosableModal.svelte';
 
 	interface Props {
 		header: string;
@@ -31,6 +32,8 @@
 	let hasMore = $state(true);
 	let offset = $state(0);
 	let isOpen = $state(false);
+	let modalIsOpen = $state(false);
+	let detail: T | undefined = $state()
 
 	const open = async () => {
 		isOpen = true;
@@ -74,6 +77,11 @@
 		isOpen = !isOpen;
 	}
 
+	const toggleModal = (event: T) => {
+		detail = event;
+		modalIsOpen = !modalIsOpen;
+	}
+
 	const loadMore = () => {
 		loadItems(offset, true);
 	};
@@ -98,9 +106,9 @@
 					</span>
 					<div class="timeline-content mw-100">
 						<div class="d-flex justify-content-between flex-column flex-sm-row">
-							<div class="d-flex flex-column">
+							<button class="d-flex flex-column btn-clear" disabled={!moreDetails} onclick={() => toggleModal(item)}>
 								{@render listItem(item)}
-							</div>
+							</button>
 							<div class="text-end">
 								<small class="text-muted d-flex align-items-center justify-content-end">
 									<UIcon size={8} name="clock" />
@@ -108,9 +116,6 @@
 								</small>
 							</div>
 						</div>
-						{#if moreDetails}
-							{@render moreDetails(item)}
-						{/if}
 					</div>
 				</div>
 			{/each}
@@ -130,3 +135,9 @@
 		<div class="text-muted py-3 text-center">Brak historii do wyświetlenia.</div>
 	{/if}
 </Offcanvas>
+
+{#if moreDetails && detail}
+	<ClosableModal bind:isOpen={modalIsOpen} headerText="Szczegóły zdarzenia" centered>
+		{@render moreDetails(detail)}
+	</ClosableModal>
+{/if}

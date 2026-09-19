@@ -1,3 +1,5 @@
+import { slugify } from "transliteration";
+
 function getWeekNumber(date: Date): number {
     const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
     const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
@@ -42,6 +44,9 @@ export function generateIdempotencyKey(
     const generator = idempotencyKeyGenerators[type];
     if (!generator) {
         throw new Error(`Unknown event type: ${type}`);
+    }
+    if (referenceId?.length) {
+        referenceId = slugify(referenceId, { allowedChars: 'a-zA-Z0-9', separator: '' })
     }
     return generator(driverId, referenceId, date);
 }

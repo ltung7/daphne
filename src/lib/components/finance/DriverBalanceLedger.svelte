@@ -6,7 +6,6 @@
 	import AddLedgerEventModal from './AddLedgerEventModal.svelte';
 	import DriverBalanceHistory from './DriverBalanceHistory.svelte';
 	import { internal } from '$lib/nav/internal';
-	import { balanceEventTypeConfig } from '$lib/assets/constants';
 
 	interface Props {
 		driverId: string;
@@ -71,21 +70,6 @@
 		if (balance < 0) return 'text-danger';
 		return 'text-dark';
 	};
-
-	const mainEventTypes: DriverBalance.BalanceEventType[] = [
-		'penalty',
-		'repayments',
-		'monthly_settlement',
-		'early_settlement_discount',
-		'cash_deposit',
-		'cash_adjustment'
-	] as const;
-
-	const testEventTypes: DriverBalance.BalanceEventType[] = [
-		'income_uber_weekly',
-		'income_bolt_weekly',
-		'cash_collection'
-	] as const;
 </script>
 
 <SectionCard title="Saldo kierowcy">
@@ -121,21 +105,18 @@
 	</div>
 
 	<div class="d-flex flex-wrap gap-2">
-		{#each mainEventTypes as type}
-			<IconButton
-				{...balanceEventTypeConfig[type]}
-				onclick={() => openModal(type)}
-			/>
-		{/each}
+		<IconButton icon="user-police" caption="Kara" color="danger" size={6} onclick={() => openModal('penalty')} />
+		<IconButton icon="money-bill-lock" caption="Potrącenie" color="warning" size={6} onclick={() => openModal('repayments')} />
+		<IconButton icon="money-bills" caption="Wypłata" color="success" size={6} onclick={() => openModal('monthly_settlement')} />
+		<IconButton icon="fee" caption="Wcześniejsze rozliczenie" color="info" size={6} onclick={() => openModal('early_settlement_discount')} />
+		<IconButton icon="money-bills" caption="Wpłata gotówki" color="secondary" size={6} onclick={() => openModal('cash_deposit')} />
+		<IconButton icon="edit" caption="Korekta gotówki" color="dark" size={6} onclick={() => openModal('cash_adjustment')} />
 	</div>
 
 	<div class="d-flex flex-wrap gap-2 mt-2">
-		{#each testEventTypes as type}
-			<IconButton
-				{...balanceEventTypeConfig[type]}
-				onclick={() => openModal(type)}
-			/>
-		{/each}
+		<IconButton icon="taxi" caption="Przychód Uber (test)" color="primary" outline size={6} onclick={() => openModal('income_uber_weekly')} />
+		<IconButton icon="bolt" caption="Przychód Bolt (test)" color="dark" outline size={6} onclick={() => openModal('income_bolt_weekly')} />
+		<IconButton icon="hand-holding-usd" caption="Zebranie gotówki (test)" color="info" outline size={6} onclick={() => openModal('cash_collection')} />
 	</div>
 </SectionCard>
 
