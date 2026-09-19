@@ -100,6 +100,9 @@ export const changeDriverStatus = async (driverOrId: string | Driver.Driver, new
     if (newStatus === 'banned') {
         await revokeRefreshTokens(driver.id);
         await setCustomClaims(driver.id, { role: 'revoked' });
+    } else if (currentStatus === 'banned') {
+        // If unbanned, restore driver role in custom claims
+        await setCustomClaims(driver.id, { role: 'driver' });
     }
     
     return { success: true, status: newStatus };

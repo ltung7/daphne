@@ -1,31 +1,25 @@
 import {
 	getItemById,
-	getItems,
 	queryItems,
 	getLatest,
-	countItems,
 	countQueryItems,
 	setItem,
 	batchOperations,
 	getRef,
 } from './firebase';
 
-type BalanceEvent = DriverBalance.BalanceEvent;
-type BalanceEventType = DriverBalance.BalanceEventType;
-type BalanceEventStatus = DriverBalance.BalanceEventStatus;
-
 const collectionName = 'driverBalanceEvents';
 
-export const setBalanceEvent = async (id: string, data: Partial<BalanceEvent>) => {
+export const setBalanceEvent = async (id: string, data: Partial<DriverBalance.BalanceEvent>) => {
 	return setItem(id, data, collectionName, false);
 };
 
-export const getBalanceEvent = async <T = BalanceEvent>(id: string): Promise<T | null> => {
+export const getBalanceEvent = async <T = DriverBalance.BalanceEvent>(id: string): Promise<T | null> => {
 	return getItemById(id, collectionName);
 };
 
-export const getBalanceEvents = async <T = BalanceEvent>(
-	query: App.FirebaseItemsQuery<keyof BalanceEvent> = false,
+export const getBalanceEvents = async <T = DriverBalance.BalanceEvent>(
+	query: App.FirebaseItemsQuery<keyof DriverBalance.BalanceEvent> = false,
 	select: App.FirebaseItemsFields = false,
 	order: App.FirebaseOrderQuery = false,
 	limit: number | false = false
@@ -33,39 +27,39 @@ export const getBalanceEvents = async <T = BalanceEvent>(
 	return queryItems(collectionName, query as any, select, order, limit);
 };
 
-export const getBalanceEventsByDriver = async <T = BalanceEvent>(
+export const getBalanceEventsByDriver = async <T = DriverBalance.BalanceEvent>(
 	driverId: string,
 	opts?: {
 		from?: number;
 		to?: number;
 		limit?: number;
 		offset?: number;
-		status?: BalanceEventStatus;
+		status?: DriverBalance.BalanceEventStatus;
 	}
 ): Promise<T[]> => {
 	const queries: App.FirebaseQueryList = [
-		['driverId', '==', driverId],
+		[ 'driverId', '==', driverId ],
 	];
 
 	if (opts?.status) {
-		queries.push(['status', '==', opts.status]);
+		queries.push([ 'status', '==', opts.status ]);
 	}
 
 	if (opts?.from) {
-		queries.push(['timestamp', '>=', opts.from]);
+		queries.push([ 'timestamp', '>=', opts.from ]);
 	}
 
 	if (opts?.to) {
-		queries.push(['timestamp', '<=', opts.to]);
+		queries.push([ 'timestamp', '<=', opts.to ]);
 	}
 
-	let order: App.FirebaseOrderQuery = ['timestamp', 'desc'];
+	const order: App.FirebaseOrderQuery = [ 'timestamp', 'desc' ];
 	const limit = opts?.limit ?? 50;
 
 	return queryItems(collectionName, queries, false, order, limit);
 };
 
-export const getLatestBalanceEvent = async <T = BalanceEvent>(
+export const getLatestBalanceEvent = async <T = DriverBalance.BalanceEvent>(
 	driverId: string
 ): Promise<T | null> => {
 	return getLatest(collectionName, false, { driverId }, 'timestamp');
@@ -78,15 +72,15 @@ export const getCurrentBalance = async (driverId: string): Promise<number> => {
 
 export const countBalanceEvents = async (
 	driverId: string,
-	status?: BalanceEventStatus
+	status?: DriverBalance.BalanceEventStatus
 ): Promise<number> => {
-	const queries: App.FirebaseQueryList = [['driverId', '==', driverId]];
-	if (status) queries.push(['status', '==', status]);
+	const queries: App.FirebaseQueryList = [ [ 'driverId', '==', driverId ] ];
+	if (status) queries.push([ 'status', '==', status ]);
 	return countQueryItems(collectionName, queries);
 };
 
 export const createBalanceEventsBatch = async (
-	events: Partial<BalanceEvent>[]
+	events: Partial<DriverBalance.BalanceEvent>[]
 ) => {
 	return batchOperations(collectionName, events, 'set');
 };

@@ -86,7 +86,7 @@
 
 <ExpandableSection caption={m.balance()} expanded={true}>
 	<div class="stat-card p-4 text-center">
-		<div class="stat-value fs-2 fw-bold text-success">{formatCurrency(data.balance)}</div>
+		<div class="stat-value fs-2 fw-bold text-success">{formatCurrency(data.balance ? data.balance.runningBalance : 0)}</div>
 	</div>
 </ExpandableSection>
 

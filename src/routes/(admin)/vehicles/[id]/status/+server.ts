@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
     const offset = Number(url.searchParams.get('offset')) || 0;
     const limit = Number(url.searchParams.get('limit')) || 10;
     
-    const changes = await getLatestVehicleStatusChanges(registrationNumber, offset, limit);
+    const events = await getLatestVehicleStatusChanges(registrationNumber, offset, limit);
     
-    return json(changes);
+    return json({ events });
 };

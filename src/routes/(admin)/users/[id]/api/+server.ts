@@ -18,6 +18,12 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 
     const updatedUser = { ...user, ...data, updatedAt: Date.now() };
     await setUser(params.id, updatedUser);
+
+    // Sync Firebase custom claims if role changed
+    if (data.role && data.role !== user.role) {
+        await setCustomClaims(params.id, { role: data.role });
+    }
+
     return json({ success: true, user: updatedUser })
 };
 

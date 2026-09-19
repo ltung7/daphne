@@ -5,7 +5,6 @@ import {
 	getBalanceEventsByDriver,
 	getLatestBalanceEvent,
 	getCurrentBalance as getCurrentBalanceDb,
-	countBalanceEvents,
 	eventExists,
 } from './driverBalanceEvents.fdb';
 

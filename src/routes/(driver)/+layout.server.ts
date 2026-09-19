@@ -4,6 +4,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { findVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.fdb';
 import { findDriverDocuments } from '$lib/server/db/firebase/driverDocuments.fdb';
+import { getLatestBalanceEvent } from '$lib/server/db/firebase/driverBalanceEvents.fdb';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals._driver) {
@@ -24,6 +25,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	}
 	const driverDocuments = await findDriverDocuments({ driverId: driver.id })
 	documents = [ ...vehicleDocuments, ...driverDocuments ];
+	const balance = await getLatestBalanceEvent(driver.id)
 	
-	return { driver, vehicle, balance: 0, documents, locale: locals.locale, exp };
+	return { driver, vehicle, documents, locale: locals.locale, exp, balance };
 };

@@ -40,11 +40,19 @@
 </PageTopActions>
 
 <SectionCard title="Dane kierowcy">
+	{#snippet cta()}
+		<DriverStatusHistory driverId={driver.id} />
+	{/snippet}
 	<DriverImageAndData {driver} />
 </SectionCard>
 
 {#if driver.status !== 'pending_verification'}
-	<DriverBalanceLedger driverId={driver.id} currentBalance={data.currentBalance} cashBalance={data.cashBalance} />
+	<DriverBalanceLedger 
+		driverId={driver.id} 
+		currentBalance={data.currentBalance} 
+		cashBalance={data.cashBalance}
+		onBalanceUpdate={(cb, cash) => { data.currentBalance = cb; data.cashBalance = cash; }}
+	/>
 
 	<SectionCard title="Pojazd">
 		{#if driver.assignedVehicle}
@@ -78,8 +86,6 @@
 			</div>
 		{/if}
 	</SectionCard>
-
-	<DriverStatusHistory driverId={driver.id} />
 {/if}
 
 <SectionCard title="Dokumenty">

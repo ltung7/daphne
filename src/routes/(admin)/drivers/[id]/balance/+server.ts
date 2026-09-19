@@ -1,16 +1,95 @@
 import { restrictAdmin } from "$lib/server/auth";
-import { getBalanceEventsByDriver } from "$lib/server/db/firebase/driverBalanceEvents.fdb";
+import {
+    getBalanceEventsByDriver,
+    setBalanceEvent,
+    getCurrentBalance,
+    eventExists
+} from "$lib/server/db/firebase/driverBalanceEvents.fdb";
+import { generateIdempotencyKey } from "$lib/server/services/ledger.service";
+import { isDev } from "$lib/utils/isDev";
 import type { RequestHandler } from "./$types";
-import { json } from "@sveltejs/kit";
+import { json, error } from "@sveltejs/kit";
 
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url, locals, setHeaders }) => {
     restrictAdmin(locals);
-    
+
     const driverId = params.id;
     const offset = Number(url.searchParams.get('offset')) || 0;
     const limit = Number(url.searchParams.get('limit')) || 20;
-    
+
     const events = await getBalanceEventsByDriver(driverId, { limit, offset });
-    
-    return json(events);
+
+    if (isDev) setHeaders({
+        "cache-control": "max-age=3600"
+    });
+
+    return json({ events });
+};
+
+export const POST: RequestHandler = async ({ params, request, locals }) => {
+    restrictAdmin(locals);
+
+    const driverId = params.id;
+    const user = locals._user;
+
+    if (!user?.id) {
+        throw error(401, 'Unauthorized');
+    }
+
+    const body = await request.json();
+    const { amount, type, metadata = {}, referenceId = "" } = body;
+
+    if (!type || typeof amount !== 'number') {
+        throw error(400, 'Missing required fields: type, amount');
+    }
+
+    // Validate event type
+    const validTypes = [
+        'income_uber_weekly',
+        'income_bolt_weekly',
+        'penalty',
+        'monthly_settlement',
+        'repayments',
+        'early_settlement_discount',
+        'cash_collection',
+        'cash_deposit',
+        'cash_adjustment'
+    ];
+
+    if (!validTypes.includes(type)) {
+        throw error(400, `Invalid event type: ${type}`);
+    }
+
+    // Generate idempotency key
+    const idempotencyKey = generateIdempotencyKey(driverId, type as DriverBalance.BalanceEventType, referenceId);
+
+    // Check for duplicate
+    const exists = await eventExists(idempotencyKey);
+    if (exists) {
+        throw error(409, 'Event with this idempotency key already exists');
+    }
+
+    // Get current balance to compute running balance
+    const currentBalance = await getCurrentBalance(driverId);
+    const runningBalance = Math.round((currentBalance + amount) * 100) / 100;
+
+    const eventData: DriverBalance.BalanceEvent = {
+        id: idempotencyKey,
+        driverId,
+        type,
+        status: 'confirmed' as const,
+        amount: Math.round(amount * 100) / 100,
+        runningBalance,
+        referenceId,
+        referenceType: type,
+        metadata,
+        timestamp: Date.now(),
+        createdBy: user.id,
+        confirmedAt: Date.now(),
+        confirmedBy: user.id
+    };
+
+    await setBalanceEvent(idempotencyKey, eventData);
+
+    return json({ eventData, success: true });
 };

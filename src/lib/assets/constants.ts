@@ -236,3 +236,117 @@ export const countryNames: Record<string, string> = {
 };
 
 export const EXPIRATION_THRESHOLD = 7;
+
+export interface BalanceEventTypeConfig {
+	caption: string;
+	color: string;
+	outline: boolean;
+	size: number;
+	icon: string;
+	isIncome: boolean;
+	isCashEvent: boolean;
+	allowNegative: boolean;
+	requiresReferenceId: boolean;
+}
+
+export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, BalanceEventTypeConfig> = {
+	income_uber_weekly: {
+		caption: 'Przychód Uber',
+		color: 'var(--bs-primary)',
+		outline: true,
+		size: 6,
+		icon: 'taxi',
+		isIncome: true,
+		isCashEvent: false,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	income_bolt_weekly: {
+		caption: 'Przychód Bolt',
+		color: 'var(--bs-dark)',
+		outline: true,
+		size: 6,
+		icon: 'bolt',
+		isIncome: true,
+		isCashEvent: false,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	penalty: {
+		caption: 'Kara',
+		color: 'var(--bs-danger)',
+		outline: false,
+		size: 6,
+		icon: 'user-police',
+		isIncome: false,
+		isCashEvent: false,
+		allowNegative: true,
+		requiresReferenceId: true
+	},
+	monthly_settlement: {
+		caption: 'Wypłata',
+		color: 'var(--bs-success)',
+		outline: false,
+		size: 6,
+		icon: 'money-bills',
+		isIncome: false,
+		isCashEvent: false,
+		allowNegative: true,
+		requiresReferenceId: true
+	},
+	repayments: {
+		caption: 'Potrącenie',
+		color: 'var(--bs-warning)',
+		outline: false,
+		size: 6,
+		icon: 'money-bill-lock',
+		isIncome: false,
+		isCashEvent: false,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	early_settlement_discount: {
+		caption: 'Wcześniejsze rozliczenie',
+		color: 'var(--bs-info)',
+		outline: false,
+		size: 6,
+		icon: 'fee',
+		isIncome: false,
+		isCashEvent: false,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	cash_collection: {
+		caption: 'Zebranie gotówki',
+		color: 'var(--bs-info)',
+		outline: true,
+		size: 6,
+		icon: 'hand-holding-usd',
+		isIncome: false,
+		isCashEvent: true,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	cash_deposit: {
+		caption: 'Wpłata gotówki',
+		color: 'var(--bs-secondary)',
+		outline: false,
+		size: 6,
+		icon: 'money-bills',
+		isIncome: false,
+		isCashEvent: true,
+		allowNegative: false,
+		requiresReferenceId: true
+	},
+	cash_adjustment: {
+		caption: 'Korekta gotówki',
+		color: 'var(--bs-dark)',
+		outline: false,
+		size: 6,
+		icon: 'edit',
+		isIncome: false,
+		isCashEvent: true,
+		allowNegative: true,
+		requiresReferenceId: true
+	}
+};

@@ -65,18 +65,11 @@
 	<VehicleStatusChanger {vehicle} type={data.type} {documents} {onstatuschanged} />
 </PageTopActions>
 
-<!-- <div class="card card-body mb-3">
-	<div class="d-flex">
-	{#if vehicle && data.type && vehicle.status === 'precheck'}
-		<PrecheckVerification {vehicle} type={data.type} {documents} />
-	{/if}
-	{#if vehicle.status !== 'precheck'}
-		<IconButton caption="Zmień status" size={6} />
-	{/if}
-	</div>
-</div> -->
-
 <SectionCard title="Dane pojazdu">
+	{#snippet cta()}
+		<VehicleStatusHistory vehicleId={vehicle.registrationNumber} />
+	{/snippet}
+	
 	<VehicleImageAndData {vehicle} />
 </SectionCard>
 
@@ -91,15 +84,13 @@
 			</div>
 		{/if}
 	</SectionCard>
-	
-	<VehicleStatusHistory registrationNumber={vehicle.registrationNumber} />
 {/if}
 
 <SectionCard title="Dokumenty">
 	{#snippet cta()}
 		<UploadVehicleDatafiles {onFinished} {onProcessed} registrationNumber={vehicle.registrationNumber} />
 	{/snippet}
-	
+
 	{#if documents?.length}
 		<ul class="list-group">
 			{#each documents as doc}
