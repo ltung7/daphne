@@ -8,7 +8,7 @@ import { getLatestBalanceEvent } from '$lib/server/db/firebase/driverBalanceEven
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals._driver) {
-		throw redirect(302, '/login')
+		throw redirect(302, '/login?message=evil')
 	}
 	const user = locals._driver;
 	const exp = locals.sessionClaims?.exp;

@@ -12,6 +12,9 @@
 	box-shadow: none !important;
 	cursor: pointer;
 	margin-bottom: 0;
+}
+
+.btn-clear:not(.btn) {
 	text-align: unset;
 	padding-inline: 0;
 	padding-block: 0;
@@ -21,7 +24,9 @@
 	cursor: unset;
 }
 
-.btn.btn-clear:hover { transform: unset }
+.btn.btn-clear:hover {
+	transform: unset;
+}
 
 .btn-close {
 	--bs-btn-close-color: #292a26;
@@ -1142,5 +1147,5 @@ select.form-control {
 }
 
 .offcanvas-body .timeline.timeline-one-side .timeline-block .timeline-content button.btn-clear {
-    width: calc(100% - 100px);
+	width: calc(100% - 100px);
 }

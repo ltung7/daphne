@@ -77,7 +77,7 @@ export const logger = {
     log: logColor,
     gray: (text: string) => logColor(text, LOGGER_COLORS.GRAY),
     warn: (text: string) => logColor(text, LOGGER_COLORS.YELLOW),
-    error: (err: string|unknown|Error, inspectItem: ExplicitAnyToExtend = null) => {
+    error: (err: string | unknown | Error, inspectItem: ExplicitAnyToExtend = null) => {
         if (!isDev) return;
         if (err instanceof Error) {
             const text = 'Error: ' + err.message;
@@ -109,7 +109,7 @@ export const logger = {
         }
         throw err;
     },
-    dumpJson: (data: Map<string,ExplicitAnyToExtend>|Record<string,ExplicitAnyToExtend>|Array<ExplicitAnyToExtend>, label: string | number) => saveJson(data, label + '_' + Date.now().toString(36)),
+    dumpJson: (data: Map<string, ExplicitAnyToExtend> | Record<string, ExplicitAnyToExtend> | Array<ExplicitAnyToExtend>, label: string | number) => saveJson(data, label + '_' + Date.now().toString(36)),
     saveBuffer: saveJson
 }
 
@@ -125,21 +125,31 @@ export const thrower = {
         const message = getErrorMessage(err)
         throw error(code, message);
     },
-    slack: (err: unknown, prefix: string, throwError: number|boolean = false) => {
+    slack: <T extends number | boolean = false>(
+        err: unknown,
+        prefix: string,
+        throwError?: T
+    ): T extends number ? Response : void => {
+        type Ret = T extends number ? Response : void;
+
         logger.error(err);
         const message = prefix + ': ' + getErrorMessage(err);
         slackMessage(message);
-        if (throwError) {
-            if (throwError === true) throw new Error(message)
-            else throw error(throwError, message)
+
+        if (typeof throwError === 'number') {
+            return new Response(message, { status: throwError }) as Ret;
         }
+        if (throwError === true) {
+            throw new Error(message);
+        }
+        return undefined as Ret;
     },
     endpointSoft: (err: unknown, log: boolean = false) => {
         if (log) logger.error(err);
         const message = getErrorMessage(err)
         return json({ success: false, message, v: env.PUBLIC_APP_VER })
     },
-    status: (err: unknown, status?: StatusBar, action?: ((message: string) =>any)): never => {
+    status: (err: unknown, status?: StatusBar, action?: ((message: string) => any)): never => {
         logger.error(err);
         if (status) status.clean();
         if (action) action(getErrorMessage(err));

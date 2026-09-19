@@ -5,11 +5,6 @@ import { ADMIN_COOKIE, DRIVER_COOKIE, CHECK_AUTH } from '$lib/server/auth/types.
 import { isDev } from '$lib/utils/isDev.js';
 
 export const authMiddleware: Handle = async ({ event, resolve }) => {
-	// Skip all auth checks if CHECK_AUTH is false (testing mode)
-	if (!CHECK_AUTH) {
-		return resolve(event);
-	}
-
 	const routeId = event.route.id ?? '';
 	const isAuthRoute = routeId.startsWith('/(auth)');
 	const isDriverRoute = routeId.startsWith('/(driver)');
@@ -30,7 +25,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 		if (cookie) claims = await verifySessionCookie(cookie, 'driver') || claims;
 		if (!claims && cookie) {
 			await clearAllSessionCookies(event.cookies);
-			throw redirect(302, '/login?message=expired');
+			if (CHECK_AUTH) throw redirect(302, '/login?message=expired');
 		}
 		userType = 'driver';
 	} else if (isAdminRoute) {
@@ -38,7 +33,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 		if (cookie) claims = await verifySessionCookie(cookie, 'admin');
 		if (!claims && cookie) {
 			await clearAllSessionCookies(event.cookies);
-			throw redirect(302, '/login?message=expired');
+			if (CHECK_AUTH) throw redirect(302, '/login?message=expired');
 		}
 		userType = 'admin';
 	} else if (isGeneralRoute || !isAuthRoute) {
@@ -47,7 +42,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 			claims = await verifySessionCookie(driverCookie, 'driver');
 			if (!claims) {
 				await clearAllSessionCookies(event.cookies);
-				throw redirect(302, '/login?message=expired');
+				if (CHECK_AUTH) throw redirect(302, '/login?message=expired');
 			}
 			userType = 'driver';
 		} else {
@@ -56,7 +51,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 				claims = await verifySessionCookie(adminCookie, 'admin');
 				if (!claims) {
 					await clearAllSessionCookies(event.cookies);
-					throw redirect(302, '/login?message=expired');
+					if (CHECK_AUTH) throw redirect(302, '/login?message=expired');
 				}
 				userType = 'admin';
 			}
@@ -74,7 +69,7 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 			claims.role = user.role;
 		} else {
 			await clearAllSessionCookies(event.cookies);
-			throw redirect(302, '/login?message=revoked');
+			if (CHECK_AUTH) throw redirect(302, '/login?message=revoked');
 		}
 	}
 
