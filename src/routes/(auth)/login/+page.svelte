@@ -7,6 +7,7 @@
 	import { m } from '$lib/paraglide/messages.js';
 	import { getFirebaseAuthErrorMessage } from '$lib/auth/firebaseErrorMap.js';
 	import { slide } from 'svelte/transition';
+	import { wrapLoader } from '$lib/nav/loader';
 
 	let email = $state('');
 	let password = $state('');
@@ -48,7 +49,7 @@
 			const userCredential = await signInWithEmailAndPassword(auth, email, password);
 			const idToken = await userCredential.user.getIdToken();
 
-			const result = await internal.postApi({ action: 'signin', idToken });
+			const result = await wrapLoader(internal.postApi({ action: 'signin', idToken }));
 
 			if (result?.redirect) {
 				window.location.href = result.redirect;
@@ -75,7 +76,7 @@
 			const result = await signInWithPopup(auth, googleProvider);
 			const idToken = await result.user.getIdToken();
 
-			const response = await internal.postApi({ action: 'google', idToken });
+			const response = await wrapLoader(internal.postApi({ action: 'google', idToken }));
 
 			if (response?.redirect) {
 				window.location.href = response.redirect;

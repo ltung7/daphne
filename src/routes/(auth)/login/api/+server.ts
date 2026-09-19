@@ -15,6 +15,12 @@ async function handleSignIn(body: any, cookies: any) {
 		const decoded = await verifyIdToken(idToken);
 		const { userType, userData, claims } = await resolveUser(decoded.uid);
 
+		// Fix: If Firebase Auth has a stale 'revoked' claim, we should update it
+		if (decoded.role === 'revoked' && claims.role !== 'revoked') {
+			const { setCustomClaims } = await import('$lib/server/auth/firebaseAdmin.js');
+			await setCustomClaims(decoded.uid, { role: claims.role });
+		}
+
 		if (claims.role === 'revoked') {
 			await clearAllSessionCookies(cookies);
 			return json({ redirect: '/login?revoked=true' }, { status: 302 });

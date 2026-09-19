@@ -18,6 +18,12 @@
 	cursor: unset;
 }
 
+.btn.btn-clear:hover { transform: unset }
+
+.btn-close {
+	--bs-btn-close-color: #292a26;
+}
+
 .hover-zoom-contents > * {
 	transition: transform 0.3s;
 }
@@ -1131,5 +1137,3 @@ aside nav .nav-btn.active {
 select.form-control {
 	appearance: auto;
 }
-
-.btn.btn-clear:hover { transform: unset }

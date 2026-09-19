@@ -8,5 +8,6 @@ export default {
     DocumentGenerator: "readonly",
     HealthCheck: 'readonly',
     SvelteCustom: "readonly",
+    DriverBalance: "readonly",
     '$$Generic':  "readonly",
 };

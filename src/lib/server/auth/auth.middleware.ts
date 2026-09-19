@@ -63,25 +63,32 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	if (claims?.role === 'revoked') {
-		await clearAllSessionCookies(event.cookies);
-		throw redirect(302, '/login?message=revoked');
+	let user: App.UserBase | null = null;
+	if (claims) {
+		user = await getUserById(claims.uid);
+	}
+
+	if (claims?.role === 'revoked' || user?.role === 'revoked') {
+		if (user && user.role !== 'revoked' && claims) {
+			// Token is stale (has role: revoked but DB says otherwise). Allow access.
+			claims.role = user.role;
+		} else {
+			await clearAllSessionCookies(event.cookies);
+			throw redirect(302, '/login?message=revoked');
+		}
 	}
 
 	event.locals.sessionClaims = claims;
 	event.locals._userType = claims ? userType : null;
 
-	if (claims) {
-		const user = await getUserById(claims.uid);
-		if (user) {
-			if (userType === 'driver') {
-				event.locals._driver = user;
-			} else {
-				event.locals._user = {
-					...user,
-					canSignHandovers: true // default for admins
-				} as unknown as App.User;
-			}
+	if (claims && user) {
+		if (userType === 'driver') {
+			event.locals._driver = user;
+		} else {
+			event.locals._user = {
+				...user,
+				canSignHandovers: true // default for admins
+			} as unknown as App.User;
 		}
 	}
 
