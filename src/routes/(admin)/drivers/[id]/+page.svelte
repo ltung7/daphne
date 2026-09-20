@@ -18,6 +18,7 @@
 	import ImageFallback from '$lib/misc/ImageFallback.svelte';
 	import DriverStatusHistory from '$lib/components/driver/DriverStatusHistory.svelte';
 	import DriverBalanceLedger from '$lib/components/finance/DriverBalanceLedger.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -78,6 +79,9 @@
 						</tbody>
 					</table>
 				</div>
+			</div>
+			<div class="d-flex gap-2 mt-2">
+				<IconLink href="/vehicles/{driver.assignedVehicle.registrationNumber}" icon="car" caption="Szczegóły pojazdu" size={6} class="mb-0" />
 			</div>
 		{:else}
 			<div class="flex-center flex-column">

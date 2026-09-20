@@ -12,17 +12,17 @@ Append-only event ledger for driver financial balance tracking. Each event repre
 ```typescript
 namespace DriverBalance {
   type EventType = 
-    | 'income_uber_weekly' 
-    | 'income_bolt_weekly'
+    | 'income_uber' 
+    | 'income_bolt'
     | 'penalty' 
-    | 'monthly_settlement' 
+    | 'settlement' 
     | 'repayments' 
     | 'early_settlement_discount'
     | 'cash_collection'      // Driver collected cash from trips (negative = owes fleet)
     | 'cash_deposit'         // Driver deposited cash to office (positive = reduces debt)
     | 'cash_adjustment';     // Dispute resolution, write-off (signed)
 
-  type EventStatus = 'pending' | 'confirmed' | 'cancelled' | 'reversed';
+  type EventStatus = 'confirmed' | 'cancelled' | 'reversed';
 
   interface BalanceEvent {
     // Document ID = idempotency key (see formats below)
@@ -37,15 +37,17 @@ namespace DriverBalance {
     runningBalance: number;        // Balance AFTER this event, e.g., 5432.10
     
     // Traceability
-    referenceId?: string;          // External ref (Uber report ID, penalty ID, etc.)
+    referenceId?: string;          // External ref (Uber report ID, penalty ID, early settlement ID, etc.)
     referenceType?: string;        // 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash'
+    // referenceType groups by EXTERNAL SOURCE DOCUMENT, not by BalanceEventType.
+    // Multiple event types can share a referenceType (e.g., all 3 cash events → 'cash').
+    // referenceId + referenceType together identify the source record.
     metadata: Record<string, any>; // { period: '2026-W01', trips: 45, grossEarnings: 3000.00, ... }
     
     // Audit
     timestamp: number;             // epoch ms (was createdAt)
     createdBy: string;             // user/system ID
-    confirmedAt?: number;
-    confirmedBy?: string;
+    createdByName: string;         // user/system display name (for UI)
     
     // Reversals/corrections
     reversedByEventId?: string;    // Links to reversal event
@@ -60,12 +62,13 @@ namespace DriverBalance {
  
  | Event Type | Key Format | Example |
  |------------|-----------|---------|
- | `income_uber_weekly` | `u:{driverId}:{YYYY}{W}` | `u:drv123:2026W01` |
- | `income_bolt_weekly` | `b:{driverId}:{YYYY}{W}` | `b:drv123:2026W01` |
+ | `income_uber` | `u:{driverId}:{YYYY}{W}` | `u:drv123:2026W01` |
+ | `income_bolt` | `b:{driverId}:{YYYY}{W}` | `b:drv123:2026W01` |
  | `penalty` | `p:{penaltyId}` | `p:pen456` |
- | `monthly_settlement` | `m:{driverId}:{YYYY}{MM}` | `m:drv123:202601` |
+ | `settlement` (regular) | `s:{driverId}:{YYYY}{MM}` | `s:drv123:202601` |
+ | `settlement` (early) | `s:early:{earlySettlementId}` | `s:early:es789` |
  | `repayments` | `r:{txnId}` | `r:txn789` |
- | `early_settlement_discount` | `e:{requestId}` | `e:req999` |
+ | `early_settlement_discount` | `e:{earlySettlementId}` | `e:es789` |
  | `cash_collection` | `c:{driverId}:{YYYY}{MM}{DD}` | `c:drv123:20260115` |
  | `cash_deposit` | `d:{depositId}` | `d:dep456` |
  | `cash_adjustment` | `a:{adjustmentId}` | `a:adj789` |
@@ -230,33 +233,48 @@ async function verifyBalance(driverId: string) {
  
  | Trigger | Creates Event |
  |---------|---------------|
- | Uber weekly sync | `income_uber_weekly` with `idempotencyKey: "u:{driverId}:{YYYY}W{W}"` |
- | Bolt weekly sync | `income_bolt_weekly` with `idempotencyKey: "b:{driverId}:{YYYY}W{W}"` |
- | Admin adds penalty | `penalty` with `idempotencyKey: "p:{penaltyId}"` |
- | Monthly settlement run | `monthly_settlement` per driver with `idempotencyKey: "m:{driverId}:{YYYY}{MM}"` |
+ | Uber sync | `income_uber` with `idempotencyKey: "u:{driverId}:{YYYY}W{W}"` |
+ | Bolt sync | `income_bolt` with `idempotencyKey: "b:{driverId}:{YYYY}W{W}"` |
+ | Admin adds penalty | `penalty` with `idempotencyKey: "p:{penaltyId}"` (undisputed, confirmed immediately) |
+ | Regular settlement run | `settlement` per driver with `idempotencyKey: "s:{driverId}:{YYYY}{MM}"` |
  | Fuel card repay | `repayments` with `idempotencyKey: "r:{txnId}"` |
- | Driver requests early payout | `early_settlement_discount` (5% fee) + `monthly_settlement` (payout) |
+ | Early settlement request approved | TWO events created atomically (see Early Settlement Logic below) |
  | Daily report cash submitted | `cash_collection` (amount = -cashCollected) with `idempotencyKey: "c:{driverId}:{YYYY}{MM}{DD}"` |
  | Cash handed to office | `cash_deposit` (amount = +deposited) with `idempotencyKey: "d:{depositId}"` |
- | Cash dispute resolved | `cash_adjustment` (signed) with `idempotencyKey: "a:{adjustmentId}"` |
+ | Cash dispute resolved | `cash_adjustment` (signed) with `idempotencyKey: "a:{adjustmentId}"` (undisputed, confirmed immediately) |
  
- **Early Settlement Logic:**
+ **Early Settlement Logic (separate flow/entity):**
  ```
  requestedAmount = X PLN
  fee = roundPLN(X * 0.05)
  actualPayout = roundPLN(X - fee)
  
- Create TWO events:
-   1. early_settlement_discount: amount = -fee, metadata: { requested: X, fee, payout: actualPayout }
-   2. monthly_settlement: amount = -actualPayout
+ Early Settlement entity created (separate collection/table) with ID = earlySettlementId
+ 
+ Create TWO ledger events atomically:
+   1. settlement (payout):
+        type: 'settlement'
+        amount: -actualPayout
+        idempotencyKey: "s:early:{earlySettlementId}"
+        referenceId: earlySettlementId
+        referenceType: 'settlement'
+        metadata: { earlySettlement: true, requested: X, fee, payout: actualPayout }
+   
+   2. early_settlement_discount (fee):
+        type: 'early_settlement_discount'
+        amount: -fee
+        idempotencyKey: "e:{earlySettlementId}"
+        referenceId: earlySettlementId  // links to the settlement event above
+        referenceType: 'settlement'
+        metadata: { earlySettlement: true, requested: X, fee, payout: actualPayout }
  ```
  
  **Cash Position Logic:**
  - Net cash = sum(`cash_collection` + `cash_deposit` + `cash_adjustment`)
- - If negative at `monthly_settlement` → deducted from payout (create `monthly_settlement` with reduced amount)
+ - If negative at `settlement` → deducted from payout (create `settlement` with reduced amount)
  - Reconciliation report: Bolt/Uber reported cash vs driver reported vs deposits
  
- **TODO:** In `income_uber_weekly` / `income_bolt_weekly` metadata, include `cashCollected` from Uber/Bolt report for reconciliation:
+ **TODO:** In `income_uber` / `income_bolt` metadata, include `cashCollected` from Uber/Bolt report for reconciliation:
  ```
  metadata: { period: '2026-W01', trips: 45, grossEarnings: 3000.00, cashCollected: 500.00, ... }
  ```
@@ -286,7 +304,7 @@ One-time script to seed initial event per driver:
 // For each driver with balance != 0:
 recordEvent({
   driverId: driver.id,
-  type: 'monthly_settlement',
+  type: 'settlement',
   amount: driver.balance,
   idempotencyKey: `initial_balance_${driver.id}`,
   metadata: { source: 'migration_from_driver_balance_field' },
@@ -318,6 +336,11 @@ recordEvent({
  | Running balance | Stored on each event for O(1) lookup |
  | Idempotency | DB-level via document ID + app-layer transaction |
  | Cash events | `cash_collection` (negative), `cash_deposit` (positive), `cash_adjustment` (signed) |
+ | Event statuses | `confirmed` | `cancelled` | `reversed` (no `pending` — all ledger events are final) |
+ | Confirmed fields | Removed — all events confirmed at write; early settlement uses separate entity |
+ | Created by name | Added `createdByName` field for UI display |
+ | Early settlement | Separate flow/entity; creates 2 ledger events (settlement + discount) |
+ | Settlement naming | Generic `settlement` (not monthly/weekly); early uses `s:early:{id}` idempotency key |
 
 ---
 
@@ -330,6 +353,16 @@ recordEvent({
 5. Build admin UI pages
 6. Write unit tests for calculation logic
 7. Run migration script for existing drivers
+
+---
+
+## Current State (Important Notes)
+
+**Uber/Bolt integration NOT implemented yet** — income events (`income_uber_weekly`, `income_bolt_weekly`) exist only as test/mock data. Real sync from Uber/Bolt APIs is deferred.
+
+**Payment/payout flow is symbolic only** — settlement events can be recorded but no actual bank transfer integration exists.
+
+**No migration needed** — if a driver has no ledger events, `getCurrentBalance()` returns `0` naturally. The migration script in this plan is only relevant if you later decide to import historical balances from a legacy `Driver.balance` field (which doesn't exist in current schema).
 
 ---
 
@@ -355,3 +388,58 @@ recordEvent({
   - EventType union
   - Idempotency key format table
   - Integration points table
+
+---
+
+## Todo List
+
+### Type System & Schema
+- [x] Update `src/app.d.ts` `DriverBalance` namespace:
+  - [x] Change `BalanceEventType` union: `income_uber_weekly` → `income_uber`, `income_bolt_weekly` → `income_bolt`, `monthly_settlement` → `settlement`
+  - [x] Change `BalanceEventStatus`: remove `'pending'`, keep `'confirmed' | 'cancelled' | 'reversed'`
+  - [x] Remove `confirmedAt`, `confirmedBy`, `confirmedName` from `BalanceEvent` interface
+  - [x] Update `BalanceIdempotencyKeyFormats` with new formats
+
+### Database Layer (`src/lib/server/db/firebase/`)
+- [x] Update `driverBalanceEvents.fdb.ts` types to match new schema (no changes needed - uses namespace types)
+- [x] Update `driverBalance.service.ts`:
+  - [x] Remove `confirmedAt/By/Name` from `recordEvent`
+  - [x] Default `status: 'confirmed'` always
+  - [x] Update `createReversalEvent` to use new types
+
+### Calculation Logic (`src/lib/server/calculations/`)
+- [ ] Update `driverBalance.ts` pure functions for new event types
+- [ ] Update `settlement.ts` - rename monthly → settlement, add early settlement logic
+
+### Early Settlement Flow (New)
+- [ ] Create early settlement entity (separate collection: `earlySettlements`)
+  - [ ] Fields: id, driverId, requestedAmount, fee, actualPayout, status (requested/approved/rejected), createdAt, approvedAt, approvedBy
+  - [ ] Admin UI: request list, approve/reject actions
+- [ ] On approve: atomically create 2 ledger events (settlement + discount) via service function
+
+### API Endpoints (`src/routes/api/driver/balance/`)
+- [x] Update GET endpoint for new types
+- [x] Update POST `/events` for new types
+- [ ] Add POST `/early-settlement` for request creation
+- [ ] Add POST `/early-settlement/{id}/approve` for approval flow
+
+### Admin UI (`src/routes/finance/`, `src/routes/(admin)/drivers/[id]/`)
+- [x] Update `DriverBalanceLedger.svelte` event type labels/icons/colors
+- [x] Update `AddLedgerEventModal.svelte` config
+- [x] Update `DriverBalanceHistory.svelte` (removed confirmedAt/confirmedName)
+- [x] Update `constants.ts` balanceEventTypeConfig
+- [ ] Add early settlement request/approval UI
+- [ ] Update settlement processing page (rename monthly → settlement)
+
+### Firestore Config
+- [ ] Update `firestore.indexes.json` if query patterns change
+- [ ] Update `firestore.rules` (no pending status)
+
+### Tests
+- [ ] Unit tests for calculation logic with new types
+- [ ] Integration tests for early settlement atomic write
+- [ ] Idempotency tests for all key formats
+
+### Documentation
+- [ ] Update any remaining references in `docs/FLEET_PLAN.md`
+- [ ] Update component documentation

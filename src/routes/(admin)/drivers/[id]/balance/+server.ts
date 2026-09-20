@@ -46,10 +46,10 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
 
     // Validate event type
     const validTypes = [
-        'income_uber_weekly',
-        'income_bolt_weekly',
+        'income_uber',
+        'income_bolt',
         'penalty',
-        'monthly_settlement',
+        'settlement',
         'repayments',
         'early_settlement_discount',
         'cash_collection',
@@ -74,6 +74,19 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
     const currentBalance = await getCurrentBalance(driverId);
     const runningBalance = Math.round((currentBalance + amount) * 100) / 100;
 
+    // Map event type to referenceType
+    const referenceTypeMap: Record<DriverBalance.BalanceEventType, DriverBalance.BalanceEvent['referenceType']> = {
+        income_uber: 'uber_report',
+        income_bolt: 'bolt_report',
+        penalty: 'penalty',
+        settlement: 'settlement',
+        repayments: 'settlement',
+        early_settlement_discount: 'settlement',
+        cash_collection: 'cash',
+        cash_deposit: 'cash',
+        cash_adjustment: 'cash'
+    };
+
     const eventData: DriverBalance.BalanceEvent = {
         id: idempotencyKey,
         driverId,
@@ -82,13 +95,11 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
         amount: Math.round(amount * 100) / 100,
         runningBalance,
         referenceId,
-        referenceType: type,
+        referenceType: referenceTypeMap[type as DriverBalance.BalanceEventType],
         metadata,
         timestamp: Date.now(),
         createdBy: user.id,
-        confirmedAt: Date.now(),
-        confirmedBy: user.id,
-        confirmedName: user.name
+        createdByName: user.name
     };
 
     await setBalanceEvent(idempotencyKey, eventData);

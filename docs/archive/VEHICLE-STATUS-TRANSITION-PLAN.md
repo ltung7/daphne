@@ -136,37 +136,35 @@ RETIRED (terminal)
 
 ## Implementation Notes
 
-### Current Implementation Gaps
-1. **No explicit transition validation** - Status can be set to any value via `updateVehicle()` in `vehicles.fdb.ts:10`
-2. **No audit trail for status changes** - Only assignment changes create records in `vehicleAssignment` collection
-3. **No automated transitions** - e.g., insurance expiry doesn't auto-move to `broken`/`under_maintenance`
+### Current Implementation Status
 
-### Recommended Enhancements
-1. **Add transition validation service** - Enforce valid transitions server-side
-2. **Add status change audit log** - Record: `fromStatus`, `toStatus`, `changedBy`, `timestamp`, `reason`
-3. **Add automated checks** - Scheduled job to flag vehicles with expiring documents for `under_maintenance`
-4. **Add transition permissions** - Role-based: admin can do all, managers limited transitions
+| Item | Status | Details |
+|------|--------|---------|
+| **Explicit transition validation** | ✅ **Implemented** | `statusTransitions` matrix (lines 205-252) + `changeVehicleStatus()` (lines 254-284) enforce valid transitions with custom handlers per transition |
+| **Audit trail for status changes** | ✅ **Implemented** | `addVehicleStatusChange()` writes to `vehicleStatusChange` collection (called in `changeVehicleStatus:283`). Captures: `vehicleId`, `status`, `timestamp`, `userId`, `userName`, `extraData` |
+| **Automated transitions** | 🟡 **Partial** | Health checks exist: `checkVehicleExpirationDates` (insurance/technical expiry) → creates `HealthIssue` with `severity: warning\|critical`. **But**: no auto-status change (e.g., expired insurance → `under_maintenance`). Requires scheduled job to call `changeVehicleStatus` based on health issues |
+| **Transition permissions** | ❌ **Not implemented** | Only `restrictAdmin` on status endpoint. No role-based granularity (admin vs manager vs moderator) |
+| **Direct status change API** | ✅ **Exists** | `PATCH /vehicles/[id]/status` (`src/routes/(admin)/vehicles/[id]/status/+server.ts`) — calls `changeVehicleStatus` with validation |
+| **Indexes for status queries** | ❌ **Not implemented** | No `firestore.indexes.json`. Need composites: `status + technicalExpiration`, `status + insuranceExpiration`, `status + assignedDriverId` |
 
-## API Endpoints for Status Changes
+---
 
-| Transition | Endpoint | Method |
-|------------|----------|--------|
-| Precheck → Available | `PATCH /api/vehicles/:id/status` | Manual admin action |
-| Available → Assigned | `POST /api/vehicles/assign` | Via handover flow |
-| Assigned → Available | `POST /api/vehicles/return` | Via return handover |
-| Any → Maintenance/Broken | `PATCH /api/vehicles/:id/status` | Admin action |
-| Any → Retired | `PATCH /api/vehicles/:id/status` | Admin action |
+### Actual API Endpoints (Implemented)
 
-## Database Indexes Needed
+| Transition | Endpoint | Method | Notes |
+|------------|----------|--------|-------|
+| Any → Any (validated) | `PATCH /vehicles/[id]/status` | Manual admin action | Validated via `statusTransitions` matrix |
+| Available → Assigned | Via `assignVehicleAndCloseHandover` | Handover flow | Atomic transaction: vehicle+driver+assignment+handover |
+| Assigned → Available | Via `returnVehicle` / `releaseVehicle` | Handover flow | `returnVehicle` needs handoverId; `releaseVehicle` doesn't |
+| Any → Maintenance/Broken/Retired | `PATCH /vehicles/[id]/status` | Manual admin action | Validated via matrix |
 
-```javascript
-// For efficient status-based queries
-vehicles: [
-  ['status', 'technicalExpiration'],
-  ['status', 'insuranceExpiration'],
-  ['status', 'assignedDriverId']
-]
-```
+---
+
+### Gaps vs. Plan
+
+1. **Auto-transition from health issues** — Health checks create `HealthIssue` records but don't call `changeVehicleStatus`. Need: scheduled job that reads critical issues (expired insurance/technical) → transitions to `under_maintenance` or `broken`
+2. **Role-based transition permissions** — Only `restrictAdmin` (any admin role). Plan wants: admin=all, manager=limited, moderator=read-only
+3. **Composite indexes** — Not defined in `firestore.indexes.json`
 
 ## Related Files
 

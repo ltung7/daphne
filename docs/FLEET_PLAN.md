@@ -3,6 +3,60 @@
 > **Current Status**: SvelteKit + Firebase admin portal with vehicle/driver CRUD, inspections, handovers, DocuSign, role-based auth (admin/streamer/superadmin)
 >
 > **Priority Order**: 1) Backend/DB foundation → 2) Driver web app (PWA) → 3) Bolt API + Telematics → 4) Provisions/Finance
+>
+> **Documentation Conventions**:
+> - Plans in `@docs/` are **pending / being implemented**
+> - Plans in `@docs/archive/` are **already implemented**
+> - **Collection preference**: Do not create standalone/baseless collections. Collections are implemented as part of their integration (e.g., `fuelTransactions` with fuel card integration, `boltSyncLog` with Bolt integration). Theoretical-only entities are avoided.
+> - **Current focus**: Frontend and backend core (auth, data model, calculations, driver PWA) **without external integrations**. Integrations (Bolt, Uber, Telematics, Fuel cards) require business setup with third-party entities and are deferred.
+>
+> ---
+>
+> ## Implemented from Archived Plans
+>
+> ### ✅ AUTH_REWORK_PLAN.md (Fully Implemented)
+> **All phases complete** — 46 automated tests passing, typecheck clean, production build successful.
+> 
+> **Key Deliverables:**
+> - **New auth types** (`src/app.d.ts`): Unified `User`/`UserBase` hierarchy, `AdminRole = moderator|manager|admin`, `SessionClaims` with `role: AdminRole | 'driver' | 'revoked'`, `Locals` with `userType`, `user` (admin), `driver` (driver), `sessionClaims`
+> - **Auth module** (`src/lib/server/auth/`): `firebaseAdmin.ts`, `session.ts` (session cookies `app.admin.session`/`app.driver.session` + prefs cookie), `userLookup.ts` (resolves driver/admin by Firebase UID), `adminAuth.ts`, `driverAuth.ts`, `generalAuth.ts`, `apiAuth.ts` (per-handler: `requireDriverApi`, `requireAdminApi`, `requireAnyApi`, `requirePublicApi`), `types.ts`, `auth.middleware.ts`
+> - **Route restructure**: 6 groups — `(auth)` public, `(driver)` driver-only, `(admin)` moderator/manager/admin, `(general)` any authenticated, `(api)` per-handler auth, `(webhooks)` signature verification only
+> - **Single login** (`(auth)/login/`): Email/password + Google Sign-In, redirects by role (driver→`/driver`, admin→`/`)
+> - **Password reset** (`(auth)/password-reset/`): Delegates to Firebase `sendPasswordResetEmail`
+> - **Single logout** (`(auth)/logout/`): POST clears both cookies, redirects to `/login`
+> - **Background session refresh**: Client timer in `(admin)`/`(driver)` layouts reads `exp` from sessionClaims, calls `/api/auth/refresh` 5min before expiry, gets fresh ID token from Firebase Client SDK, server verifies + checks revoked + issues new 2hr cookie
+> - **Driver integration**: `driver.id` = Firebase UID (no `firebaseUid` field), `preferredLanguage`, `status: active|suspended|banned`, `addNewDriver` creates Firebase Auth user + sets custom claims `{ role: 'driver', driverId }`, revoke sets `status: 'banned'` + Firebase custom claim `role: 'revoked'` for immediate effect
+> - **i18n**: Paraglide configured, 10 locales (`pl`, `en`, `uk`, `be`, `ro`, `uz`, `ka`, `ne`, `hi`, `tl`), locale resolution via `PARAGLIDE_LOCALE` cookie (driver `preferredLanguage`, admin always `pl`)
+> - **Testing**: `vitest.config.ts`, mocks, 46 unit tests (adminAuth 21, driverAuth 12, apiAuth 13), 33 manual test scenarios documented, all `npm run check|test|build|lint` pass
+>
+> ### ✅ DRIVER-STATUS-TRANSITION-PLAN.md (Mostly Implemented)
+> **Backend**: Status transition validation in `driver.service.ts`, rules enforced (e.g., `pending_verification` → `active` blocked)
+> **Frontend**: `DriverVerification.svelte` progress, status transition dropdown in driver detail (valid next states only)
+> **Remaining (not started):**
+> - Audit log for status changes (`statusHistory` array on driver)
+> - Scheduled job for document expiry monitoring → `documents_expired`
+> - Webhook/notification for status changes
+> - Handover document modal for `available`↔`active` transitions
+> - Document expiry warnings in driver list/detail
+> - Admin actions modal for suspend/ban/archive with reason field
+> - Indexes for querying drivers by status
+>
+> ### ✅ TESTING_PLAN.md (Implemented via Auth Rework)
+> **Automated**: `vitest.config.ts`, global mocks (Firebase Admin, Firestore), `src/lib/test/helpers/locals.ts`, 46 tests passing
+> **Manual**: 33 scenarios (M-01 to M-33) covering route access, login/session, logout/reset, API auth, webhooks, general routes, i18n, revocation
+> **CI**: Runs `check`, `lint`, `test`, `build` on every PR
+> **Coverage targets**: Auth module 95%, middleware 90%, API auth 90%, services 85%, route handlers 80%
+>
+> ### 🔄 VEHICLE-STATUS-TRANSITION-PLAN.md (Partially Implemented)
+> **Defined**: 7 statuses (`precheck` initial, `available`, `assigned`, `under_maintenance`, `broken`, `unmovable`, `retired`), transition matrix, triggers, business rules
+> **Gaps (not implemented):**
+> - No explicit transition validation server-side (status can be set to any value via `updateVehicle()`)
+> - No audit trail for status changes (only assignment changes create records in `vehicleAssignment`)
+> - No automated transitions (e.g., insurance expiry doesn't auto-move to `under_maintenance`)
+> - No transition permissions (role-based)
+> **Existing endpoints**: `PATCH /api/vehicles/:id/status` (manual), `POST /api/vehicles/assign` (via handover), `POST /api/vehicles/return` (via return handover)
+>
+> ---
 
 ---
 

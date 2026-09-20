@@ -215,20 +215,12 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 		unmovable: () => true
 	},
 	available: {
-		assigned: async (vehicle, extraData) => {
-			if (!extraData.driverId || !extraData.handoverId) throw error(400, 'Missing driver or handover ID for assignment');
-			return true;
-		},
 		under_maintenance: () => true,
 		broken: () => true,
 		unmovable: () => true,
 		retired: () => true
 	},
 	assigned: {
-		available: async (vehicle, extraData) => {
-			if (!extraData.handoverId) throw error(400, 'Missing handover ID for vehicle return');
-			return true;
-		},
 		broken: () => true,
 		unmovable: () => true,
 		retired: () => true
