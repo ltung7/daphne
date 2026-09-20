@@ -87,35 +87,5 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	if (claims && (claims.exp - Date.now() / 1000) < 1800) {
-		await refreshSessionCookie(event);
-	}
-
 	return resolve(event);
 };
-
-async function refreshSessionCookie(event: { cookies: Cookies; locals: App.Locals }) {
-	const { cookies, locals } = event;
-	
-	if (!locals.sessionClaims) return;
-	
-	const userType = locals._userType;
-	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
-	const currentCookie = cookies.get(cookieName);
-	
-	if (!currentCookie) return;
-	
-	try {
-		const { createSessionCookie } = await import('$lib/server/auth/session.js');
-		const newCookie = await createSessionCookie(currentCookie);
-		cookies.set(cookieName, newCookie, { 
-			httpOnly: true, 
-			secure: !isDev, 
-			sameSite: 'lax', 
-			path: '/', 
-			maxAge: 60 * 60 * 2 
-		});
-	} catch {
-		// Refresh failed, will be handled on next request
-	}
-}

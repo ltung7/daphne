@@ -5,7 +5,7 @@ import { ADMIN_COOKIE, DRIVER_COOKIE, PREFS_COOKIE, PARAGLIDE_LOCALE_COOKIE, COO
 
 export async function createSessionCookie(idToken: string): Promise<string> {
 	const { createSessionCookie: firebaseCreateSessionCookie } = await import('./firebaseAdmin.js');
-	return firebaseCreateSessionCookie(idToken, SESSION_MAX_AGE * 1000);
+	return firebaseCreateSessionCookie(idToken, SESSION_MAX_AGE * 1000); // strictly 2 hours
 }
 
 export async function verifySessionCookie(cookieValue: string, userType: 'admin' | 'driver'): Promise<SessionClaims | null> {
@@ -38,7 +38,8 @@ export async function refreshSessionCookie(event: { cookies: Cookies; locals: Ap
 	
 	try {
 		const newCookie = await createSessionCookie(currentCookie);
-		cookies.set(cookieName, newCookie, COOKIE_OPTIONS);
+		const options = { ...COOKIE_OPTIONS }; // Will reset to SESSION_MAX_AGE for sliding, or we can read the old maxAge, but relying on Client Refresh is better.
+		cookies.set(cookieName, newCookie, options);
 	} catch {
 		// Refresh failed, will be handled on next request
 	}
@@ -76,12 +77,16 @@ export async function setSessionAndPrefs(
 	event: { cookies: Cookies; locals: App.Locals },
 	userType: 'admin' | 'driver',
 	idToken: string,
-	userData: UserBase
+	userData: UserBase,
+	rememberMe: boolean = false
 ): Promise<void> {
 	const sessionCookie = await createSessionCookie(idToken);
 	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
 	
-	event.cookies.set(cookieName, sessionCookie, COOKIE_OPTIONS);
+	// Browser cookie duration: 7 days if rememberMe, otherwise 6 hours (fallback if not sliding)
+	const maxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 6;
+	const options = { ...COOKIE_OPTIONS, maxAge };
+	event.cookies.set(cookieName, sessionCookie, options);
 	
 	const prefs = {
 		locale: userData.preferredLanguage,

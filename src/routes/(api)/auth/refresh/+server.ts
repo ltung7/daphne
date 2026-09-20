@@ -22,16 +22,22 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 			await clearAllSessionCookies(cookies);
 			return json({ message: 'Account revoked' }, { status: 401 });
 		}
-
+		
 		const sessionCookie = await createSessionCookie(idToken);
 		const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
-
+		
+		// The client provided a fresh ID token. We issue a strict 2-hour Firebase session cookie.
+		// However, to keep the "Remember Me" alive in the browser, we tell the browser 
+		// to hold onto this new cookie for an extended duration if they had it.
+		// Since we don't know the original rememberMe state here, we rely on the Client SDK's 
+		// persistence. We can just set a generous maxAge here, and let the 2-hour JWT 
+		// limit force the Client SDK to refresh it again later.
 		cookies.set(cookieName, sessionCookie, {
 			httpOnly: true,
 			secure: !isDev,
 			sameSite: 'lax',
 			path: '/',
-			maxAge: SESSION_MAX_AGE
+			maxAge: 60 * 60 * 24 * 7 // Keep browser cookie alive, but JWT dies in 2 hours
 		});
 		
 		const exp = Math.floor(Date.now() / 1000) + SESSION_MAX_AGE;

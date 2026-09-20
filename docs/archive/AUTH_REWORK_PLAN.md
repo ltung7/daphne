@@ -1024,6 +1024,22 @@ Instead of a fixed interval timer in the root layout, the refresh logic is tied 
     - Calls `createSessionCookie` to issue a fresh 2-hour cookie.
     - Returns the new `exp` timestamp to the client so it can schedule the next timer.
 
+### "Remember Me" Implementation (Strict 2-Hour JWT)
+
+To provide a long-term login experience while strictly maintaining the security of a 2-hour Firebase session limit, a hybrid "Remember Me" + Silent Restore approach is implemented:
+
+1. **Strict Server Sessions**: Firebase session cookies are always strictly limited to `SESSION_MAX_AGE` (2 hours). The JWT itself will invalidate on Google's servers after 2 hours.
+2. **Browser Cookie Lifecycle**: If "Remember Me" is checked during login, the browser is instructed to retain the `app.*.session` cookie for **7 days**. If unchecked, it retains it for **6 hours**.
+3. **Client SDK Persistence**: When logging in (`/login/+page.svelte`), the Firebase Client SDK persistence is set to `browserLocalPersistence` (survives restarts) if "Remember me" is checked, or `browserSessionPersistence` (clears on tab close) if unchecked.
+4. **Silent Auto-Restore Flow**:
+   - If a user returns after 3 hours, the browser sends the cookie.
+   - SvelteKit's `auth.middleware.ts` attempts to verify it.
+   - Because the 2-hour Firebase JWT inside the cookie has expired, validation fails.
+   - The user is redirected to `/login?message=expired`.
+   - On the `/login` page, an `onAuthStateChanged` listener immediately detects the user is still valid in the Client SDK's IndexedDB.
+   - It silently fetches a fresh ID Token and posts it to the login action, instantly re-authenticating the user and redirecting them to their dashboard without displaying the form.
+5. **Logout Handling**: The `/logout` action clears server cookies and redirects to `/login?message=loggedOut`. The login page intercepts this message and explicitly calls `auth.signOut()` on the Client SDK to prevent the Auto-Restore from immediately logging them back in.
+
 *Note: The old `refreshSessionCookie` logic in `auth.middleware.ts` (which attempted to pass a session cookie to Firebase instead of an ID token) has been removed/replaced by this client-assisted flow.*
 
 ---

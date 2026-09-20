@@ -7,6 +7,7 @@ import { thrower } from '$lib/utils/logger.js';
 
 async function handleSignIn(body: any, cookies: any) {
 	const idToken = body.idToken;
+	const rememberMe = body.rememberMe;
 	if (!idToken || typeof idToken !== 'string') {
 		return json({ message: 'Brak tokenu ID' }, { status: 400 });
 	}
@@ -25,7 +26,8 @@ async function handleSignIn(body: any, cookies: any) {
 			await clearAllSessionCookies(cookies);
 			return json({ redirect: '/login?revoked=true' }, { status: 302 });
 		}
-		await setSessionAndPrefs({ cookies, locals: {} as any }, userType, idToken, userData);
+		
+		await setSessionAndPrefs({ cookies, locals: {} as any }, userType, idToken, userData, rememberMe);
 
 		const redirectUrl = userType === 'driver' ? '/driver' : '/panel';
 		return json({ redirect: redirectUrl }, { status: 302 });

@@ -8,6 +8,7 @@
 	import { getFirebaseAuthErrorMessage } from '$lib/auth/firebaseErrorMap.js';
 	import { slide } from 'svelte/transition';
 	import { wrapLoader } from '$lib/nav/loader';
+	import { browserLocalPersistence, browserSessionPersistence, setPersistence } from 'firebase/auth';
 
 	let email = $state('');
 	let password = $state('');
@@ -16,6 +17,7 @@
 	let auth: Auth | null = $state(null);
 	let googleProvider: any = $state(null);
 	let error = $state('');
+	let rememberMe = $state(false);
 
 	const message = page.url.searchParams.get('message');
 
@@ -25,6 +27,14 @@
 		error = m.auth_session_expired();
 	} else if (message === 'loggedOut') {
 		addToast(m.auth_logged_out_success(), 'success');
+		// Clear Client SDK state so silent restore doesn't log them back in immediately
+		if (typeof window !== 'undefined') {
+			import('firebase/auth').then(({ getAuth, signOut }) => {
+				import('$lib/firebase/client').then(({ app }) => {
+					if (app) signOut(getAuth(app)).catch(() => {});
+				});
+			});
+		}
 	}
 
 	async function handleEmailSignIn(e: SubmitEvent) {
@@ -46,10 +56,11 @@
 		}
 		try {
 			const { signInWithEmailAndPassword } = await import('firebase/auth');
+			await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
 			const userCredential = await signInWithEmailAndPassword(auth, email, password);
 			const idToken = await userCredential.user.getIdToken();
 
-			const result = await wrapLoader(internal.postApi({ action: 'signin', idToken }));
+			const result = await wrapLoader(internal.postApi({ action: 'signin', idToken, rememberMe }));
 
 			if (result?.redirect) {
 				window.location.href = result.redirect;
@@ -73,10 +84,11 @@
 		googleLoading = true;
 		try {
 			const { signInWithPopup } = await import('firebase/auth');
+			await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
 			const result = await signInWithPopup(auth, googleProvider);
 			const idToken = await result.user.getIdToken();
 
-			const response = await wrapLoader(internal.postApi({ action: 'google', idToken }));
+			const response = await wrapLoader(internal.postApi({ action: 'google', idToken, rememberMe }));
 
 			if (response?.redirect) {
 				window.location.href = response.redirect;
@@ -94,10 +106,30 @@
 
 	onMount(async () => {
 		// Load Firebase client auth only in the browser
-		const { getAuth, GoogleAuthProvider } = await import('firebase/auth');
+		const { getAuth, GoogleAuthProvider, onAuthStateChanged } = await import('firebase/auth');
 		const { app } = await import('$lib/firebase/client');
 		if (app) {
 			auth = getAuth(app);
+
+			// Silent Auto-Restore Logic
+			onAuthStateChanged(auth, async (user) => {
+				if (user && !loading && !googleLoading) {
+					// The Client SDK remembers the user, but they were redirected here 
+					// because the server's Firebase session cookie expired (2 hour limit).
+					// We can silently log them back in!
+					loading = true;
+					try {
+						const idToken = await user.getIdToken(true);
+						const result = await internal.postApi({ action: 'signin', idToken, rememberMe: true });
+						if (result?.redirect) {
+							window.location.href = result.redirect;
+						}
+					} catch (_err) {
+						loading = false;
+					}
+				}
+			});
+
 			// Initialize Google provider
 			googleProvider = new GoogleAuthProvider();
 			// Restrict to specific domains (handled by server-side verify)
@@ -125,6 +157,11 @@
 	<div class="mb-3">
 		<label for="password" class="form-label">{m.auth_password_label()}</label>
 		<input type="password" id="password" class="form-control" bind:value={password} placeholder="••••••••" required autocomplete="current-password" disabled={loading} />
+	</div>
+
+	<div class="mb-3 form-check">
+		<input type="checkbox" class="form-check-input" id="rememberMe" bind:checked={rememberMe} disabled={loading} />
+		<label class="form-check-label" for="rememberMe">Zapamiętaj mnie na 7 dni</label>
 	</div>
 
 	<button class="btn btn-primary w-100" disabled={loading}>
