@@ -8,27 +8,24 @@ import {
 	eventExists,
 } from './driverBalanceEvents.fdb';
 
-type BalanceEvent = DriverBalance.BalanceEvent;
-type BalanceEventType = DriverBalance.BalanceEventType;
-type BalanceEventStatus = DriverBalance.BalanceEventStatus;
-
 export async function recordEvent(params: {
 	driverId: string;
-	type: BalanceEventType;
+	type: DriverBalance.BalanceEventType;
 	amount: number;
 	idempotencyKey: string;
 	referenceId?: string;
-	referenceType?: BalanceEvent['referenceType'];
+	referenceType?: DriverBalance.BalanceEvent['referenceType'];
 	metadata?: Record<string, any>;
 	createdBy: string;
-	status?: BalanceEventStatus;
-}): Promise<BalanceEvent> {
-	const { driverId, type, amount, idempotencyKey, referenceId, referenceType, metadata, createdBy, status = 'confirmed' } = params;
+	createdByName: string;
+	status?: DriverBalance.BalanceEventStatus;
+}): Promise<DriverBalance.BalanceEvent> {
+	const { driverId, type, amount, idempotencyKey, referenceId, referenceType, metadata, createdBy, createdByName, status = 'confirmed' } = params;
 
 	const exists = await eventExists(idempotencyKey);
 	if (exists) {
 		const existing = await getBalanceEvent(idempotencyKey);
-		if (existing) return existing as BalanceEvent;
+		if (existing) return existing as DriverBalance.BalanceEvent;
 		throw new Error(`Event with idempotency key ${idempotencyKey} already exists`);
 	}
 
@@ -36,7 +33,7 @@ export async function recordEvent(params: {
 	const lastBalance = lastEvent?.runningBalance ?? 0;
 	const newRunningBalance = round(lastBalance + amount);
 
-	const eventData: Partial<BalanceEvent> = {
+	const eventData: Partial<DriverBalance.BalanceEvent> = {
 		id: idempotencyKey,
 		driverId,
 		type,
@@ -48,11 +45,12 @@ export async function recordEvent(params: {
 		metadata: metadata ?? {},
 		timestamp: Date.now(),
 		createdBy,
+		createdByName,
 	};
 
 	await setBalanceEvent(idempotencyKey, eventData);
 
-	return eventData as BalanceEvent;
+	return eventData as DriverBalance.BalanceEvent;
 }
 
 export async function getCurrentBalance(driverId: string): Promise<number> {
@@ -66,9 +64,9 @@ export async function getBalanceHistory(
 		to?: number;
 		limit?: number;
 		offset?: number;
-		status?: BalanceEventStatus;
+		status?: DriverBalance.BalanceEventStatus;
 	}
-): Promise<BalanceEvent[]> {
+): Promise<DriverBalance.BalanceEvent[]> {
 	return getBalanceEventsByDriver(driverId, opts);
 }
 
@@ -102,7 +100,8 @@ export async function createReversalEvent(params: {
 	driverId: string;
 	reversalReason: string;
 	createdBy: string;
-}): Promise<BalanceEvent> {
+	createdByName: string;
+}): Promise<DriverBalance.BalanceEvent> {
 	const original = await getBalanceEvent(params.originalEventId);
 	if (!original) throw new Error(`Original event ${params.originalEventId} not found`);
 
@@ -124,5 +123,6 @@ export async function createReversalEvent(params: {
 			originalRunningBalance: original.runningBalance,
 		},
 		createdBy: params.createdBy,
+		createdByName: params.createdByName,
 	});
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { balanceEventTypeConfig } from '$lib/assets/constants.js';
 	import OffcanvasTimeline from '$lib/misc/OffcanvasTimeline.svelte';
-	import plTimezone, { optionalTimestamp } from '$lib/utils/tz';
+	import plTimezone from '$lib/utils/tz';
 
 	interface Props {
 		driverId: string;
@@ -64,12 +64,8 @@
 					<td>{plTimezone(event.timestamp)}</td>
 				</tr>
 				<tr>
-					<td class="text-dark">Data potwierdzenia</td>
-					<td>{optionalTimestamp(event.confirmedAt)}</td>
-				</tr>
-				<tr>
-					<td class="text-dark">Osoba potwierdzająca</td>
-					<td>{event.confirmedName || '-'}</td>
+					<td class="text-dark">Utworzone przez</td>
+					<td>{event.createdByName || '-'}</td>
 				</tr>
 				{#if event.metadata.referenceId}
 					<tr>

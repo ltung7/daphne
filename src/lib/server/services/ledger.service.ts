@@ -7,21 +7,30 @@ function getWeekNumber(date: Date): number {
 }
 
 const idempotencyKeyGenerators: Record<DriverBalance.BalanceEventType, (driverId: string, referenceId?: string, date?: Date) => string> = {
-    income_uber_weekly: (driverId: string, _referenceId?: string, date = new Date()) => {
+    income_uber: (driverId: string, referenceId?: string, date = new Date()) => {
+        if (referenceId) {
+            return `u:${driverId}:${referenceId}`;
+        }
         const year = date.getFullYear();
         const week = String(getWeekNumber(date)).padStart(2, '0');
         return `u:${driverId}:${year}W${week}`;
     },
-    income_bolt_weekly: (driverId: string, _referenceId?: string, date = new Date()) => {
+    income_bolt: (driverId: string, referenceId?: string, date = new Date()) => {
+        if (referenceId) {
+            return `b:${driverId}:${referenceId}`;
+        }
         const year = date.getFullYear();
         const week = String(getWeekNumber(date)).padStart(2, '0');
         return `b:${driverId}:${year}W${week}`;
     },
     penalty: (_driverId: string, referenceId?: string) => `p:${referenceId || `pen${Date.now()}`}`,
-    monthly_settlement: (driverId: string, _referenceId?: string, date = new Date()) => {
+    settlement: (driverId: string, referenceId?: string, date = new Date()) => {
+        if (referenceId) {
+            return `s:${driverId}:${referenceId}`;
+        }
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
-        return `m:${driverId}:${year}${month}`;
+        return `s:${driverId}:${year}${month}`;
     },
     repayments: (_driverId: string, referenceId?: string) => `r:${referenceId || `rep${Date.now()}`}`,
     early_settlement_discount: (_driverId: string, referenceId?: string) => `e:${referenceId || `esd${Date.now()}`}`,

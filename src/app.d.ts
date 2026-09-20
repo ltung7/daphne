@@ -629,17 +629,17 @@ declare global {
 
 	namespace DriverBalance {
 		type BalanceEventType =
-			| 'income_uber_weekly'
-			| 'income_bolt_weekly'
+			| 'income_uber'
+			| 'income_bolt'
 			| 'penalty'
-			| 'monthly_settlement'
+			| 'settlement'
 			| 'repayments'
 			| 'early_settlement_discount'
 			| 'cash_collection'
 			| 'cash_deposit'
 			| 'cash_adjustment';
 
-		type BalanceEventStatus = 'pending' | 'confirmed' | 'cancelled' | 'reversed';
+		type BalanceEventStatus = 'confirmed' | 'cancelled' | 'reversed';
 
 		interface BalanceEvent {
 			id: string;
@@ -649,22 +649,23 @@ declare global {
 			amount: number;
 			runningBalance: number;
 			referenceId?: string;
+			// referenceType identifies the EXTERNAL SOURCE DOCUMENT, not the BalanceEventType.
+			// Multiple event types can share a referenceType (e.g., cash_collection, cash_deposit, cash_adjustment all → 'cash').
+			// referenceId + referenceType together identify the source record for reconciliation.
 			referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash';
 			metadata: Record<string, any>;
 			timestamp: number;
 			createdBy: string;
-			confirmedAt?: number;
-			confirmedBy?: string;
-			confirmedName?: string;
+			createdByName: string;
 			reversedByEventId?: string;
 			reversalReason?: string;
 		}
 
 		interface BalanceIdempotencyKeyFormats {
-			income_uber_weekly: `u:${string}:${number}W${number}`;
-			income_bolt_weekly: `b:${string}:${number}W${number}`;
+			income_uber: `u:${string}:${number}W${number}`;
+			income_bolt: `b:${string}:${number}W${number}`;
 			penalty: `p:${string}`;
-			monthly_settlement: `m:${string}:${number}${number}`;
+			settlement: `s:${string}:${number}${number}`;
 			repayments: `r:${string}`;
 			early_settlement_discount: `e:${string}`;
 			cash_collection: `c:${string}:${number}${number}${number}`;

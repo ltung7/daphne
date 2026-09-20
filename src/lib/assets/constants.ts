@@ -250,7 +250,7 @@ export interface BalanceEventTypeConfig {
 }
 
 export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, BalanceEventTypeConfig> = {
-	income_uber_weekly: {
+	income_uber: {
 		caption: 'Przychód Uber',
 		color: 'var(--bs-primary)',
 		outline: true,
@@ -261,7 +261,7 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		allowNegative: false,
 		requiresReferenceId: true
 	},
-	income_bolt_weekly: {
+	income_bolt: {
 		caption: 'Przychód Bolt',
 		color: 'var(--bs-dark)',
 		outline: true,
@@ -283,7 +283,7 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		allowNegative: true,
 		requiresReferenceId: true
 	},
-	monthly_settlement: {
+	settlement: {
 		caption: 'Wypłata',
 		color: 'var(--bs-success)',
 		outline: false,
