@@ -1,11 +1,11 @@
-import type { EmailMessages } from './localized/localizedMailerMessages';
+import type { NotificationMessages } from './localized/localizedMailerMessages';
 
 export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface NotificationContext {
     locale: App.Locale;
-    m: EmailMessages;
-    user: App.UserContact;
+    m: NotificationMessages;
+    user: App.BaseContact;
 }
 
 export interface EmailPayload {

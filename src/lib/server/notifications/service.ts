@@ -1,4 +1,4 @@
-import { getEmailMessages } from './localized/localizedMailerMessages';
+import { getNotificationMessages } from './localized/localizedMailerMessages';
 import type { NotificationDefinition, NotificationContext, NotificationPriority } from './types';
 import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
@@ -20,7 +20,7 @@ const PRIORITY_ORDER: Record<NotificationPriority, number> = {
 };
 
 export async function sendNotification<TData>(
-    user: App.UserContact, 
+    user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
     data: TData
 ): Promise<void> {
@@ -35,7 +35,7 @@ export async function sendNotification<TData>(
     const locale = user.preferredLanguage || 'pl';
     const ctx: NotificationContext = {
         locale,
-        m: getEmailMessages(locale),
+        m: getNotificationMessages(locale),
         user
     };
 
@@ -136,7 +136,7 @@ async function sendInApp<TData>(
     }
 }
 
-async function getUserPreferences(_userId?: string): Promise<UserPreferences> {
+async function getUserPreferences(_userId: string): Promise<UserPreferences> {
     // TODO: Fetch from Firestore
     return { 
         channels: { email: true, sms: true, push: true }, 

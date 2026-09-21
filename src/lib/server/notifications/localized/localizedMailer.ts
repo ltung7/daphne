@@ -2,16 +2,15 @@ import { sendRenderedEmail } from '$lib/mails/mailer';
 import type { Component } from 'svelte';
 import nodemailer from 'nodemailer';
 import { 
-    getEmailMessages, 
+    getNotificationMessages, 
     interpolate, 
-    getNotificationMessages,
-    type EmailMessages, 
-    type EmailNotificationType 
+    type NotificationMessages, 
+    type NotificationType 
 } from './localizedMailerMessages';
 
 /** Props injected into every localized email component */
 export interface LocalizedEmailProps {
-    _messages: EmailMessages;
+    _messages: NotificationMessages;
     locale: App.Locale;
 }
 
@@ -20,7 +19,7 @@ export interface LocalizedEmailProps {
  * Uses original sendRenderedEmail under the hood.
  * 
  * @param to - Recipient email(s)
- * @param component - Svelte component accepting { _messages: EmailMessages, locale: App.Locale, ...props }
+ * @param component - Svelte component accepting { _messages: NotificationMessages, locale: App.Locale, ...props }
  * @param args - Component props + locale
  * @param options - Nodemailer options (attachments, etc.)
  */
@@ -31,7 +30,7 @@ export const sendLocalizedRenderedEmail = async <T extends Record<string, any>>(
     options: nodemailer.SendMailOptions = {}
 ) => {
     const { locale } = args;
-    const _messages = getEmailMessages(locale);
+    const _messages = getNotificationMessages(locale);
 
     const componentArgs = {
         ...args,
@@ -42,5 +41,5 @@ export const sendLocalizedRenderedEmail = async <T extends Record<string, any>>(
 };
 
 // Re-export for convenience
-export { getEmailMessages, interpolate, getNotificationMessages };
-export type { EmailMessages, EmailNotificationType };
+export { getNotificationMessages, interpolate };
+export type { NotificationMessages, NotificationType };

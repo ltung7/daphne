@@ -120,16 +120,16 @@ export interface NotificationMessages {
 
 /** Runtime locale map - English is default fallback */
 const localeMap: Partial<Record<App.Locale, NotificationMessages>> = {
-    pl: pl as EmailMessages,
-    en: en as EmailMessages,
-    hi: hi as EmailMessages,
-    ne: ne as EmailMessages,
-    uk: uk as EmailMessages,
-    be: be as EmailMessages,
-    uz: uz as EmailMessages,
-    ka: ka as EmailMessages,
-    tl: tl as EmailMessages,
-    ro: ro as EmailMessages,
+    pl: pl as NotificationMessages,
+    en: en as NotificationMessages,
+    hi: hi as NotificationMessages,
+    ne: ne as NotificationMessages,
+    uk: uk as NotificationMessages,
+    be: be as NotificationMessages,
+    uz: uz as NotificationMessages,
+    ka: ka as NotificationMessages,
+    tl: tl as NotificationMessages,
+    ro: ro as NotificationMessages,
 };
 
 /**
@@ -159,9 +159,14 @@ export function interpolate(template: string, vars: Record<string, string | numb
 }
 
 /** Get messages for a specific notification type */
-export function getNotificationMessages<K extends NotificationType>(
+export function getSpecificNotificationMessages<K extends NotificationType>(
     locale: App.Locale,
     type: K
 ): NotificationMessages[K] {
     return getNotificationMessages(locale)[type];
 }
+
+// Backward compatibility for any remaining imports
+export type EmailMessages = NotificationMessages;
+export type EmailNotificationType = NotificationType;
+export const getEmailMessages = getNotificationMessages;

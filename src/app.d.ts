@@ -89,7 +89,7 @@ declare global {
 		}
 
 		// Base contact interface
-		interface UserContact {
+		interface BaseContact {
 			id: string;
 			email: string;
 			name: string;
@@ -98,7 +98,7 @@ declare global {
 		}
 
 		// Base user (from user collection or driver collection)
-		interface UserBase extends UserContact {
+		interface UserBase extends BaseContact {
 			role: AdminRole | 'driver' | 'revoked';
 			timestamp: number;
 			updatedAt: number;

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { PUBLIC_URL } from '$env/static/public';
-	import type { EmailMessages } from './localizedMailer';
+	import type { NotificationMessages } from './localizedMailer';
 
 	interface Props {
 		footer?: boolean;
 		logo?: string;
 		title: string;
 		locale: App.Locale;
-		_messages: EmailMessages;
+		_messages: NotificationMessages;
 		children: import('svelte').Snippet;
 	}
 

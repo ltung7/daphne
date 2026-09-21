@@ -71,6 +71,6 @@ export const documentExpiredNotification: NotificationDefinition<DocumentExpired
 /**
  * Dispatch the Document Expired notification through all preferred channels.
  */
-export async function sendDocumentExpiredNotification(user: App.UserContact, data: DocumentExpiredData): Promise<void> {
+export async function sendDocumentExpiredNotification(user: App.BaseContact, data: DocumentExpiredData): Promise<void> {
     return sendNotification(user, documentExpiredNotification, data);
 }
