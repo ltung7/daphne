@@ -3,6 +3,7 @@
 	import { addToast } from '$lib/toast';
 	import { internal } from '$lib/nav/internal.js';
 	import { m } from '$lib/paraglide/messages.js';
+	import { getLocale } from '$lib/paraglide/runtime';
 
 	let email = $state('');
 	let loading = $state(false);
@@ -21,7 +22,7 @@
 
 		loading = true;
 		try {
-			const result = await internal.postApi({ email });
+			const result = await internal.postApi({ email, locale: getLocale() });
 
 			if (!result?.success) {
 				throw new Error(result?.message || m.auth_send_error());

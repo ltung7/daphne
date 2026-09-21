@@ -11,7 +11,7 @@ export async function sendUserPasswordResetEmail(userId: string, user?: App.User
         if (!user) throw error(404, 'Nie znaleziono tego użytkownika');
     }
 
-    const resetLink = await sendPasswordResetEmail(user.email);
+    const resetLink = await sendPasswordResetEmail(user.email, user.preferredLanguage ?? 'pl');
     return resetLink;
 }
 
@@ -39,7 +39,7 @@ export async function sendDriverPasswordResetEmail(driverId: string, driver?: Dr
         if (!driver) throw error(404, 'Nie znaleziono tego użytkownika');
     }
 
-    const resetLink = await sendPasswordResetEmail(driver.email);
+    const resetLink = await sendPasswordResetEmail(driver.email, driver.preferredLanguage ?? 'en');
     return resetLink;
 }
 

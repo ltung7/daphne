@@ -1,9 +1,10 @@
 import { generatePasswordResetLink } from "$lib/server/auth/firebaseAdmin"
-import { sendRenderedEmail } from '$lib/mails/mailer'
 import ResetMail from "./ResetMail.svelte";
+import { sendLocalizedRenderedEmail } from '$lib/server/notifications/localized/localizedMailer';
 
-export const sendPasswordResetEmail = async (email: string) => {
+export const sendPasswordResetEmail = async (email: string, locale: App.Locale) => {
+    console.log({ locale })
     const link = await generatePasswordResetLink(email);
-    await sendRenderedEmail('tomasz.le@finnergroup.com', ResetMail, { link });
+    await sendLocalizedRenderedEmail('tomasz.le@finnergroup.com', ResetMail, { locale, link });
     return link;
 }

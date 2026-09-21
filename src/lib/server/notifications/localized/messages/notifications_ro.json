@@ -1,0 +1,91 @@
+{
+  "reset_password": {
+    "title": "Resetați-vă parola",
+    "contents": "Faceți clic pe butonul de mai jos pentru a crea o parolă nouă pentru contul dumneavoastră:",
+    "footer": "Linkul expiră după 1 oră. Dacă nu ați cerut resetarea parolei, vă rugăm să ignorați acest e-mail.",
+    "button_text": "Resetați parola"
+  },
+  "settlement": {
+    "title": "Încasare pentru perioada {period}",
+    "greeting": "Stimate {driverName},",
+    "summary": "Mai jos sunt detaliile încasării dumneavoastră:",
+    "gross_earnings": "Venituri brute (Uber/Bolt)",
+    "platform_commission": "Comisionul platformei",
+    "fleet_provision": "Provisionul flotei",
+    "cost_deductions": "Costuri operaționale",
+    "net_payout": "Plată netă",
+    "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
+  },
+  "vehicle_assignment": {
+    "title": "Vehicul nou atribuit",
+    "greeting": "Stimate {driverName},",
+    "body": "Ați fost atribuit vehiculului {vehicleRegistration} ({vehicleMakeModel}).",
+    "handover_date": "Data preluării: {date}",
+    "footer": "Vă rugăm să confirmați primirea vehiculului."
+  },
+  "vehicle_return": {
+    "title": "Returnul vehiculului confirmat",
+    "greeting": "Stimate {driverName},",
+    "body": "Returnul vehiculului {vehicleRegistration} a fost înregistrat.",
+    "return_date": "Data returnării: {date}",
+    "footer": "Vă mulțumim pentru colaborare."
+  },
+  "document_expiring": {
+    "title": "Documentul expiră curând",
+    "greeting": "Stimate {driverName},",
+    "body": "Documentul dumneavoastră {documentName} expiră în {days} zile ({expiryDate}).",
+    "action_required": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
+    "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
+  },
+  "document_expired": {
+    "title": "Document expirat - acțiune necesară",
+    "greeting": "Stimate {driverName},",
+    "body": "Documentul dumneavoastră {documentName} a expirat pe {expiryDate}.",
+    "consequence": "Contul dumneavoastră poate fi restricționat până la reînnoire.",
+    "footer": "Contactați administratorul pentru reînnoire."
+  },
+  "balance_negative": {
+    "title": "Sold negativ al contului",
+    "greeting": "Stimate {driverName},",
+    "body": "Soldul dumneavoastră este {balance} PLN. Vă rugăm să achitați restantele.",
+    "footer": "Vă rugăm să contactați urgent administratorul."
+  },
+  "penalty_added": {
+    "title": "Penalizare adăugată",
+    "greeting": "Stimate {driverName},",
+    "body": "A fost aplicată o penalizare de {amount} PLN pentru: {reason}.",
+    "footer": "Detaliile în panoul șoferului."
+  },
+  "inspection_due": {
+    "title": "Reminder: inspecție vehicul",
+    "greeting": "Stimate {driverName},",
+    "body": "Inspecția vehiculului {vehicleRegistration} este programată pentru {date}.",
+    "footer": "Vă rugăm să efectuați inspecția la timp."
+  },
+  "inspection_overdue": {
+    "title": "Inspecție vehicul întârziată",
+    "greeting": "Stimate {driverName},",
+    "body": "Inspecția vehiculului {vehicleRegistration} a fost programată pentru {date} și nu a fost efectuată.",
+    "consequence": "Vehiculul poate fi scos din circulație.",
+    "footer": "Efectuați inspecția imediat."
+  },
+  "onboarding_approved": {
+    "title": "Verificare finalizată cu succes",
+    "greeting": "Stimate {driverName},",
+    "body": "Contul dumneavoastră a fost verificat. Puteți începe lucrul.",
+    "footer": "Bine ați venit în echipă."
+  },
+  "onboarding_rejected": {
+    "title": "Verificare respinsă",
+    "greeting": "Stimate {driverName},",
+    "body": "Verificarea dumneavoastră a fost respinsă. Motivul: {reason}.",
+    "footer": "Contactați administratorul pentru detalii."
+  },
+  "common": {
+    "app_name": "EISG",
+    "footer_app_link": "Notificare din aplicația",
+    "footer_confidential": "Acest mesaj conține informații confidențiale, constituind secretă comercială a societății Everest International Service Group sp. z o.o. cu sediul în Varșovia și este protejată legal. Accesul la conținutul mesajului primit din greșeală, transmiterea sa ulterioară, copierea, distribuirea sau orice altă utilizare, precum și intraprinderea oricăror acțiuni pe baza informațiilor conținute în el, chiar și de persoanele fiind destinatariile sale legitime, fără acordul scris prealabil al societății Everest International Service Group sp. z o.o. este interzis legal. Neaplicarea interzicției de mai sus va atrage răspunderea civilă și penală.",
+    "unsubscribe": "Dacă nu doriți să primiți astfel de notificări,",
+    "unsubscribe_link": "faceți clic aici pentru a vă dezabona."
+  }
+}

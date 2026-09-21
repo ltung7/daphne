@@ -1,0 +1,91 @@
+{
+  "reset_password": {
+    "title": "Parolingizni tiklang",
+    "contents": "Hisobingiz uchun yangi parol yaratish uchun quyidagi tugmani bosing:",
+    "footer": "Havola 1 soatdan keyin amal qilmasdan qoladi. Agar siz parolni tiklashni so'ramagan bo'lsangiz, bu xatni e'tiborsiz qoldiring.",
+    "button_text": "Parolni tiklash"
+  },
+  "settlement": {
+    "title": "{period} davri uchun hisob-kitob",
+    "greeting": "Aziz {driverName},",
+    "summary": "Quyida sizning hisob-kitobingiz tafsilotlari keltirilgan:",
+    "gross_earnings": "Umumiy daromad (Uber/Bolt)",
+    "platform_commission": "Platforma komissiyasi",
+    "fleet_provision": "Avtopark hisoblanishi",
+    "cost_deductions": "Operatsion xarajatlar",
+    "net_payout": "Toza to'lov",
+    "footer": "Agar savollaringiz bo'lsa, avtopark administratoriga murojaat qiling."
+  },
+  "vehicle_assignment": {
+    "title": "Yangi transport belgilandi",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizga {vehicleRegistration} ({vehicleMakeModel}) transporti belgilandi.",
+    "handover_date": "Uzatish sanasi: {date}",
+    "footer": "Iltimos, transportni qabul qilishni tasdiqlang."
+  },
+  "vehicle_return": {
+    "title": "Transport qaytarish tasdiqlandi",
+    "greeting": "Aziz {driverName},",
+    "body": "{vehicleRegistration} transportining qaytarishi qayd etildi.",
+    "return_date": "Qaytarish sanasi: {date}",
+    "footer": "Hamkorligingiz uchun rahmat."
+  },
+  "document_expiring": {
+    "title": "Hujjat tez orada amal qilishni to'xtatadi",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizning {documentName} hujjatingiz {days} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
+    "action_required": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
+    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
+  },
+  "document_expired": {
+    "title": "Hujjat amal qilmasdan qolgan - harakat kerak",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizning {documentName} hujjatingiz {expiryDate} da amal qilishni to'xtatgan.",
+    "consequence": "Hisobingiz yangilanmaguncha cheklanishi mumkin.",
+    "footer": "Yangilash uchun administrator bilan bog'laning."
+  },
+  "balance_negative": {
+    "title": "Manfiy hisob balansi",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizning balansingiz {balance} PLN. Iltimos, qarzlarni to'lang.",
+    "footer": "Iltimos, darhol administrator bilan bog'laning."
+  },
+  "penalty_added": {
+    "title": "Jarima qo'shildi",
+    "greeting": "Aziz {driverName},",
+    "body": "{reason} uchun {amount} PLN miqdorida jarima belgilandi.",
+    "footer": "Tafsilotlar haydovchi panelida mavjud."
+  },
+  "inspection_due": {
+    "title": "Eslatma: transport texnik ko'rigi",
+    "greeting": "Aziz {driverName},",
+    "body": "{vehicleRegistration} transportining texnik ko'rigi {date} ga rejalashtirilgan.",
+    "footer": "Iltimos, texnik ko'rigi o'z vaqtida o'tkazing."
+  },
+  "inspection_overdue": {
+    "title": "Transport texnik ko'rigi kechikdi",
+    "greeting": "Aziz {driverName},",
+    "body": "{vehicleRegistration} transportining texnik ko'rigi {date} ga rejalashtirilgan edi va o'tkazilmagan.",
+    "consequence": "Transport ishlatib yuborilishi mumkin.",
+    "footer": "Tezda texnik ko'rigi o'tkazing."
+  },
+  "onboarding_approved": {
+    "title": "Tasdiqlash muvaffaqiyatli yakunlandi",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizning hisobingiz tasdiqlandi. Ishni boshlashingiz mumkin.",
+    "footer": "Hamkorlikga xush kelibsiz."
+  },
+  "onboarding_rejected": {
+    "title": "Tasdiqlash rad etildi",
+    "greeting": "Aziz {driverName},",
+    "body": "Sizning tasdiqlashingiz rad etildi. Sabab: {reason}.",
+    "footer": "Tafsilotlar uchun administrator bilan bog'laning."
+  },
+  "common": {
+    "app_name": "EISG",
+    "footer_app_link": "Ilovadan xabar",
+    "footer_confidential": "Bu xabar \"Everest International Service Group\" MChJ ning kommersiya sirrini tarkib topgan maxfiy ma'lumotlarni o'z ichiga oladi, u Varshava shahrida ro'yxatdan o'tgan va huquqiy himoyalangan. Bu xabarni xato qabul qilib olgan holda undan foydalangan holda undan foydalanish, undan nusxa ko'chirish, tarqatish yoki undagi ma'lumotlar asosida har qanday harakat bajarish, hatto u unda ma'lumotlarning maqsadga muvofiq qabul qiluvchilari bo'lsa, \"Everest International Service Group\" MChJ ning oldindan yozma roziligsiz huquqiy qonunga qarshi. Yuqoridagi qo'llab-quvvatlash amalga oshirilmagan holda fuqorolik va jinoyat javobgarligiga olib keladi.",
+    "unsubscribe": "Agar siz bunday xabarnomalarni qabul qilmoxchi bo'lmasangiz,",
+    "unsubscribe_link": "bu yerda bosib, obunani bekor qiling."
+  }
+}

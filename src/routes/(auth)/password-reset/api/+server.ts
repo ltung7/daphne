@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	try {
-		await sendPasswordResetEmail(email);
+		await sendPasswordResetEmail(email, body.locale ?? 'en');
 		return json({ success: true, message: 'Link do resetowania hasła został wysłany na Twój email' });
 	} catch {
 		return json({ success: false, message: 'Nie udało się wysłać linku resetującego' }, { status: 400 });

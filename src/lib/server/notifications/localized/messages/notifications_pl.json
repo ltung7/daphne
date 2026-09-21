@@ -1,0 +1,91 @@
+{
+  "reset_password": {
+    "title": "Zresetuj swoje hasło",
+    "contents": "Kliknij poniższy przycisk, aby utworzyć nowe hasło dla swojego konta:",
+    "footer": "Link wygasa po 1 godzinie. Jeśli nie prosiłeś o reset hasła, zignoruj tę wiadomość.",
+    "button_text": "Zresetuj hasło"
+  },
+  "settlement": {
+    "title": "Rozliczenie za okres {period}",
+    "greeting": "Szanowny {driverName},",
+    "summary": "Poniżej przedstawiamy szczegóły Twojego rozliczenia:",
+    "gross_earnings": "Zarobki brutto (Uber/Bolt)",
+    "platform_commission": "Prowizja platformy",
+    "fleet_provision": "Prowizja floty",
+    "cost_deductions": "Koszty operacyjne",
+    "net_payout": "Wypłata netto",
+    "footer": "W przypadku pytań skontaktuj się z administratorem floty."
+  },
+  "vehicle_assignment": {
+    "title": "Przypisano nowy pojazd",
+    "greeting": "Szanowny {driverName},",
+    "body": "Zostałeś przypisany do pojazdu {vehicleRegistration} ({vehicleMakeModel}).",
+    "handover_date": "Data przekazania: {date}",
+    "footer": "Proszę o potwierdzenie odebrania pojazdu."
+  },
+  "vehicle_return": {
+    "title": "Zwrot pojazdu potwierdzony",
+    "greeting": "Szanowny {driverName},",
+    "body": "Zwrot pojazdu {vehicleRegistration} został zarejestrowany.",
+    "return_date": "Data zwrotu: {date}",
+    "footer": "Dziękujemy za współpracę."
+  },
+  "document_expiring": {
+    "title": "Dokument wkrótce wygasa",
+    "greeting": "Szanowny {driverName},",
+    "body": "Twój dokument {documentName} wygasa {days} dni ({expiryDate}).",
+    "action_required": "Proszę o przedłużenie dokumentu jak najszybciej.",
+    "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy."
+  },
+  "document_expired": {
+    "title": "Dokument wygasł - konieczna akcja",
+    "greeting": "Szanowny {driverName},",
+    "body": "Twój dokument {documentName} wygasł {expiryDate}.",
+    "consequence": "Twoje konto może zostać ograniczone do momentu odnowienia.",
+    "footer": "Skontaktuj się z administratorem w celu odnowienia."
+  },
+  "balance_negative": {
+    "title": "Ujemne saldo konta",
+    "greeting": "Szanowny {driverName},",
+    "body": "Twoje saldo wynosi {balance} PLN. Należy uregulować zaległości.",
+    "footer": "Proszę o pilny kontakt z administratorem."
+  },
+  "penalty_added": {
+    "title": "Dodano karę",
+    "greeting": "Szanowny {driverName},",
+    "body": "Została naliczona kara w wysokości {amount} PLN za: {reason}.",
+    "footer": "Szczegóły w panelu kierowcy."
+  },
+  "inspection_due": {
+    "title": "Przypomnienie: inspekcja pojazdu",
+    "greeting": "Szanowny {driverName},",
+    "body": "Inspekcja pojazdu {vehicleRegistration} jest planowana na {date}.",
+    "footer": "Proszę o wykonanie inspekcji w terminie."
+  },
+  "inspection_overdue": {
+    "title": "Inspekcja pojazdu przeterminowana",
+    "greeting": "Szanowny {driverName},",
+    "body": "Inspekcja pojazdu {vehicleRegistration} była planowana na {date} i nie została wykonana.",
+    "consequence": "Pojazd może zostać wyłączony z ruchu.",
+    "footer": "Pilnie wykonaj inspekcję."
+  },
+  "onboarding_approved": {
+    "title": "Weryfikacja zakończona pomyślnie",
+    "greeting": "Szanowny {driverName},",
+    "body": "Twoje konto zostało zweryfikowane. Możesz rozpocząć pracę.",
+    "footer": "Zapraszamy do współpracy."
+  },
+  "onboarding_rejected": {
+    "title": "Weryfikacja odrzucona",
+    "greeting": "Szanowny {driverName},",
+    "body": "Twoja weryfikacja została odrzucona. Powód: {reason}.",
+    "footer": "Skontaktuj się z administratorem po szczegóły."
+  },
+  "common": {
+    "app_name": "EISG",
+    "footer_app_link": "Powiadomienie z aplikacji",
+    "footer_confidential": "Niniejsza wiadomość zawiera informacje poufne, stanowiące tajemnicę przedsiębiorstwa spółki Everest International Service Group sp. z o.o. z siedzibą w Warszawie i jest prawnie chroniona. Wgląd w treść wiadomości otrzymanej omyłkowo, dalsze jej przekazywanie, kopiowanie, rozpowszechnianie lub innego rodzaju wykorzystywanie bądź podjęcie jakichkolwiek działań w oparciu o zawarte w niej informacje, również przez osoby będące jej właściwym adresatem, bez uprzedniej pisemnej zgody spółki Everest International Service Group sp. z o.o. jest prawnie zabronione. Niezastosowanie się do powyższego zakazu skutkować będzie pociągnięciem do odpowiedzialności cywilnej oraz karnej.",
+    "unsubscribe": "Jeśli nie chcesz otrzymywać takich powiadomień,",
+    "unsubscribe_link": "kliknij tutaj, aby wycofać zgodę."
+  }
+}

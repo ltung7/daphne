@@ -38,6 +38,7 @@
 		{ id: 4, title: 'Wydania', icon: 'user-key', link: '/handovers' },
 		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspections' },
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
+		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
 	]);
 
 	function toggleSidebar() {

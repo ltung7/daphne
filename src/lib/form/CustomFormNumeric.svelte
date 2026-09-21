@@ -40,8 +40,26 @@
 
     if (name.length === 0) name = untrack(() => caption);
 
-    const dispatchChange = () => {
-        if (onChange) onChange(value)
+    const dispatchChange = (newValue: number) => {
+        if (onChange) onChange(newValue)
+    };
+
+    const handleInputChange = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        const newValue = Number(target.value);
+        if (!isNaN(newValue)) {
+            dispatchChange(newValue);
+        }
+    };
+
+    const handleDecrement = () => {
+        const newValue = Number(Math.max(min, value - step).toFixed(precision));
+        dispatchChange(newValue);
+    };
+
+    const handleIncrement = () => {
+        const newValue = Number(Math.min(max, value + step).toFixed(precision));
+        dispatchChange(newValue);
     };
 </script>
 
@@ -49,9 +67,9 @@
     <label for={id} class="d-block mb-1 form-label form-label-numeric">{caption}</label>
 {/if}
 <div class="btn-group" class:w-100={fullwidth}>
-    <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={() => { value = Number(Math.max(min, value - step).toFixed(precision)); dispatchChange(); }} disabled={readonly}>-</button>
+    <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={handleDecrement} disabled={readonly}>-</button>
     <div class="input-group input-group-outline my-{7 - size} {addClass} {(value ?? '0').toString().length ? 'is-filled' : ''} {isFocused ? 'is-focused' : ''}">
-        <input type="number" {min} {max} {step} class="form-control fs-{size} text-center form-input-numeric p-{8 - size}" bind:value={value} {id} name={name} onfocus={onFocus} onblur={onBlur} {readonly} onchange={dispatchChange} oninput={dispatchChange}>
+        <input type="number" {min} {max} {step} class="form-control fs-{size} text-center form-input-numeric p-{8 - size}" bind:value={value} {id} name={name} onfocus={onFocus} onblur={onBlur} {readonly} onchange={handleInputChange} oninput={handleInputChange}>
     </div>
-    <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={() => { value = Number(Math.min(max, value + step).toFixed(precision)); dispatchChange(); }} disabled={readonly}>+</button>
+    <button class="btn btn-outline-secondary fs-{size} my-{7 - size} p-{8 - size}" type="button" onclick={handleIncrement} disabled={readonly}>+</button>
 </div>
