@@ -244,17 +244,63 @@ stateDiagram-v2
 ### Backend (Server)
 - [x] Add status transition validation in `driver.service.ts`
 - [x] Enforce transition rules (e.g., can't go `pending_verification` → `active` directly)
-- [ ] Add audit log for each status change (who, when, reason)
-- [ ] Create scheduled job for document expiry monitoring
-- [ ] Add webhook/notification for status changes
+- [x] **Add audit log for each status change** — Implemented via `addVehicleDriverStatusChange()` writing to separate `vehicleDriverStatusChange` collection (`src/lib/server/db/firebase/vehicleDriverStatusChange.fdb.ts`). Captures: `driverId`, `status`, `timestamp`, `userId`, `userName`, `extraData` (reason, handoverId, etc.)
+- [x] **Create scheduled job for document expiry monitoring** — Logic implemented in `healthCheck.service.ts` via `checkDriverExpirationDates` (called by `checkFleetProblems`). Returns `HealthIssue[]` with `severity: 'critical'` for expired docs. Scheduling (cron/Cloud Function) pending.
+- [ ] **Add webhook/notification for status changes** — Deferred to separate notifications plan
 
 ### Frontend (UI)
 - [x] Update `DriverVerification.svelte` to show clear progress (already done)
 - [x] Add status transition UI in driver detail page (dropdown with valid next states only)
-- [ ] Show handover document modal for `available`↔`active` transitions
-- [ ] Add document expiry warnings in driver list/detail
-- [ ] Admin actions modal for suspend/ban/archive with reason field
+- [ ] **Show handover document modal for `available`↔`active` transitions** — Correctly **absent from `statusTransitions` matrix** (by design). Transitions only occur via handover flow initiated by admin. **Vehicle handover functions complete** in `vehicleStatus.service.ts`: `assignVehicleAndCloseHandover` (tested), `releaseVehicle`, `returnVehicle` — these already update **both vehicle and driver documents atomically** in the transaction (lines 74-75, 117-121, 166-170). **No driver-side functions needed** — drivers can't self-assign/return; admin generates handover document, driver signs, admin closes handover via existing vehicle functions. **Gap**: UI modal to trigger these flows (select handover type, capture signatures, call `assignVehicleAndCloseHandover` / `returnVehicle`).
+- [ ] **Add document expiry warnings in driver list/detail** — Partial: `DriverStatusQuickActions.svelte` shows status badge; no proactive warnings (30d/7d/expired banners) in list or detail views.
+- [ ] **Admin actions modal for suspend/ban/archive with reason field** — Not implemented. Admin changes status via dropdown directly; no confirmation modal with required reason field.
 
 ### Database
-- [ ] Ensure `Driver` model has `statusHistory` array for audit trail
-- [ ] Add indexes for querying by status (for listing drivers by status)
+- [x] **Ensure `Driver` model has `statusHistory` array for audit trail** — Superseded by separate `vehicleDriverStatusChange` collection (see audit log above). No `statusHistory` array on driver document.
+- [ ] **Add indexes for querying by status** — No `firestore.indexes.json` defined. Composite indexes needed for: `status + assignedVehicle`, `status + nationality`, `status + createdAt`.
+
+---
+
+### Driver Status Transition Matrix (from `driver.service.ts:11-66`)
+
+| From \ To | available | active | inactive | on_leave | documents_expired | suspended | banned | archived | rejected | pending_verification |
+|-----------|-----------|--------|----------|----------|-------------------|-----------|--------|----------|----------|---------------------|
+| **pending_verification** | ✅* | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | — |
+| **rejected** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ✅ |
+| **available** | — | ❌** | ✅ | ❌*** | ❌*** | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **active** | ❌** | — | ✅ | ✅ | ❌ | ❌*** | ❌*** | ✅ | ❌ | ❌ |
+| **inactive** | ✅ | ❌ | — | ❌ | ❌ | ❌*** | ❌*** | ✅ | ❌ | ❌ |
+| **on_leave** | ✅ | ❌ | ❌ | — | ❌ | ❌*** | ❌*** | ✅ | ❌ | ❌ |
+| **documents_expired** | ❌*** | ❌ | ❌ | ❌ | — | ❌*** | ❌*** | ✅ | ❌ | ❌ |
+| **suspended** | ✅ | ❌ | ❌ | ❌ | ❌ | — | ✅ | ✅ | ❌ | ❌ |
+| **banned** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ✅ | ❌ | ✅ |
+| **archived** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | — | ❌ | ❌ |
+
+**Legend:**
+- ✅ = Direct transition allowed (returns `true`)
+- ✅* = Allowed with validation (`extraData.verificationResult` + `validateDriverRequirements()`)
+- ❌ = Not in transition matrix (blocked with 400)
+- ❌** = **Not in matrix** — requires handover flow (not implemented)
+- ❌*** = In matrix but returns `false` (disabled: "currently disabled or not fully implemented")
+- — = Same status / N/A
+
+**Key gaps vs. plan:**
+1. **`available` ↔ `active` correctly gated by handover** — Vehicle functions (`assignVehicleAndCloseHandover`, `returnVehicle`) handle atomically; UI modal needed to trigger them
+2. **Several transitions disabled (`false`)**: `available`→`on_leave`/`documents_expired`, `active`→`suspended`/`banned`, `inactive`→`suspended`/`banned`, `on_leave`→`suspended`/`banned`, `documents_expired`→`available`/`suspended`/`banned`
+3. **No handover integration in `driver.service.ts`** — Correct; handover flow lives in `vehicleStatus.service.ts` (vehicle-centric)
+
+---
+
+## Handover Return Flow — Deferred to Separate Plan
+
+The **return handover flow** (`active` → `available` via handover document) is fully specified in this plan (see Transition Matrix row 36, Section 2) but **implementation is deferred** to **`docs/archive/HANDOVER-RETURN-PLAN.md`**.
+
+That plan covers:
+- Return handover API endpoint (`/handovers/return/api`)
+- UI trigger ("Zwróć pojazd" button) in driver detail page
+- `NewHandoverProtocol` modal with `type: 'return'` support
+- Camera capture for handover photos (exterior, interior, odometer, damage, equipment)
+- Atomic status synchronization: driver `active`→`available` + vehicle `assigned`→`available` + audit logs (`vehicleDriverStatusChange`, `vehicleStatusChange`)
+- Validation: direct status changes blocked — only allowed via completed return handover
+
+Once `HANDOVER-RETURN-PLAN.md` is implemented, the `❌**` entries for `available`↔`active` in the transition matrix will become functional via the handover flow (not direct status changes).
