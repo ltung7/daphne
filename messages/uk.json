@@ -173,5 +173,12 @@
   "auth_app_deleted": "Додаток Firebase було видалено",
   "auth_keychain_error": "Помилка доступу до зв'язки ключів",
   "auth_internal_error": "Внутрішня помилка автентифікації",
-  "auth_unauthorized_domain": "Цей домен не авторизований для операцій OAuth. Зверніться до служби підтримки."
+  "auth_unauthorized_domain": "Цей домен не авторизований для операцій OAuth. Зверніться до служби підтримки.",
+  "early_settlement_request": "Досрочне закриття",
+  "early_settlement_amount_label": "Сума виплати (PLN)",
+  "early_settlement_payout_info": "З суми буде утримано комісію 5%",
+  "early_settlement_requested_amount": "Запрошена сума",
+  "early_settlement_fee": "Комісія",
+  "early_settlement_actual_payout": "Фактична виплата",
+  "submit": "Надіслати запит"
 }

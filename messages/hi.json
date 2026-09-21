@@ -173,5 +173,12 @@
   "auth_app_deleted": "फायरबेस ऐप हटाया गया है",
   "auth_keychain_error": "कीचेन एक्सेस त्रुटि",
   "auth_internal_error": "आंतरिक प्राधिकरण त्रुटि",
-  "auth_unauthorized_domain": "यह डोमेन OAuth संचालन के लिए अधिकृत नहीं है। सहायता से संपर्क करें।"
+  "auth_unauthorized_domain": "यह डोमेन OAuth संचालन के लिए अधिकृत नहीं है। सहायता से संपर्क करें।",
+  "early_settlement_request": "अगाउ भुगतान",
+  "early_settlement_amount_label": "भुगतान राशि (PLN)",
+  "early_settlement_payout_info": "राशि से 5% शुल्क काटा जाएगा",
+  "early_settlement_requested_amount": "अनुरोधित राशि",
+  "early_settlement_fee": "शुल्क",
+  "early_settlement_actual_payout": "वास्तविक भुगतान",
+  "submit": "अनुरोध सबमिट करें"
 }

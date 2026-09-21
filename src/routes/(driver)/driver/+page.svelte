@@ -10,6 +10,7 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { Offcanvas } from '@sveltestrap/sveltestrap';
 	import NewInspectionLocalized from '$lib/components/inspection/localized/NewInspectionLocalized.svelte';
+	import EarlySettlementRequest from '$lib/components/finance/EarlySettlementRequest.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -87,6 +88,9 @@
 <ExpandableSection caption={m.balance()} expanded={true}>
 	<div class="stat-card p-4 text-center">
 		<div class="stat-value fs-2 fw-bold text-success">{formatCurrency(data.balance ? data.balance.runningBalance : 0)}</div>
+	</div>
+	<div class="flex-center">
+		<EarlySettlementRequest balance={data.balance?.runningBalance ?? 0} driverId={data.driver.id} />
 	</div>
 </ExpandableSection>
 

@@ -173,5 +173,12 @@
   "auth_app_deleted": "Firebase ilovasi o'chirilgan",
   "auth_keychain_error": "Kalitlar zanjiriga kirish xatosi",
   "auth_internal_error": "Ichki autentifikatsiya xatosi",
-  "auth_unauthorized_domain": "Bu domen OAuth amalioti uchun ruxsatsiz. Qo'shimcha yordam bilan bog'laning."
+  "auth_unauthorized_domain": "Bu domen OAuth amalioti uchun ruxsatsiz. Qo'shimcha yordam bilan bog'laning.",
+  "early_settlement_request": "Раннє осідання",
+  "early_settlement_amount_label": "Витрачна сума (PLN)",
+  "early_settlement_payout_info": "Плата 5% буде віднята з суми",
+  "early_settlement_requested_amount": "Запитана сума",
+  "early_settlement_fee": "Плата",
+  "early_settlement_actual_payout": "Реальна виплата",
+  "submit": "Завершити запит"
 }

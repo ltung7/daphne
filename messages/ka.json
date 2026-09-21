@@ -173,5 +173,12 @@
   "auth_app_deleted": "აპლიკაცია წაშლილია",
   "auth_keychain_error": "Keychain წვდომის შეცდომა",
   "auth_internal_error": "შიდა აუთენტიფიკაციის შეცდომა",
-  "auth_unauthorized_domain": "ეს დომენი OAuth ოპერაციებისთვის დამტკიცებული არ არის. დაუკავშირდით მხარდაჭერის მომსახურებას."
+  "auth_unauthorized_domain": "ეს დომენი OAuth ოპერაციებისთვის დამტკიცებული არ არის. დაუკავშირდით მხარდაჭერის მომსახურებას.",
+  "early_settlement_request": "პირველი გადახდი",
+  "early_settlement_amount_label": " Ödeme miktarı (PLN)",
+  "early_settlement_payout_info": "5% ფასი გადახდიდან იქნება",
+  "early_settlement_requested_amount": "درخواستი თანხა",
+  "early_settlement_fee": "ფასი",
+  "early_settlement_actual_payout": "მიღებული Ödeme",
+  "submit": "درخواستი გაგზავნა"
 }

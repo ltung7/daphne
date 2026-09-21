@@ -173,5 +173,12 @@
   "auth_app_deleted": "Na-delete na ang Firebase app",
   "auth_keychain_error": "Error sa pag-access ng keychain",
   "auth_internal_error": "Panloob na error sa pag-authenticate",
-  "auth_unauthorized_domain": "Hindi awtorisado ang domain na ito para sa OAuth operations. Makipag-ugnayan sa support."
+  "auth_unauthorized_domain": "Hindi awtorisado ang domain na ito para sa OAuth operations. Makipag-ugnayan sa support.",
+  "early_settlement_request": "Maagang Pag-areglo",
+  "early_settlement_amount_label": "Halaga ng Bayad (PLN)",
+  "early_settlement_payout_info": "Isusuwil ang 5% na bayad mula sa halaga",
+  "early_settlement_requested_amount": "Hiniling na Halaga",
+  "early_settlement_fee": "Bayad",
+  "early_settlement_actual_payout": "Tunay na Bayad",
+  "submit": "Ipadala ang Kahilingan"
 }

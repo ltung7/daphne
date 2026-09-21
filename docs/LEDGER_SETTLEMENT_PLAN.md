@@ -380,6 +380,23 @@ recordEvent({
 - **Integration**: Added component to driver detail page (`src/routes/(admin)/drivers/[id]/+page.svelte`) with data loaded in `+page.server.ts`
 - **Type Safety**: Updated `DriverBalanceLedger.svelte` with local `BalanceEvent` interface and event type labels/icons/colors
 
+### Completed (this session - Early Settlement)
+- **Type System**: Added `EarlySettlementStatus` and `EarlySettlement` interface to `DriverBalance` namespace in `src/app.d.ts`
+- **Database Layer**: Created `src/lib/server/db/firebase/earlySettlements.fdb.ts` with CRUD operations (add, get, find, set, delete)
+- **Service Layer**: Created `src/lib/server/services/earlySettlements.service.ts` with:
+  - `createEarlySettlement` - creates request with 5% fee calculation, validates driver balance
+  - `cancelEarlySettlement` - cancels requested settlements
+  - `rejectEarlySettlement` - rejects with reason and admin info
+  - `approveEarlySettlement` - atomically creates 2 ledger events (settlement + discount) in Firestore transaction
+- **API Endpoint**: Created `src/routes/(api)/api/driver/balance/early-settlement/+server.ts` for POST request creation
+- **UI Component**: Created `src/lib/components/finance/EarlySettlementRequest.svelte` with:
+  - IconButton to open modal
+  - ClosableModal with amount input, real-time fee/payout display
+  - Uses `internal.post` for API calls
+  - Paraglide translations added (PL/EN)
+- **Constants**: Added `EARLY_SETTLEMENT_FEE_RATE = 0.05` to `src/lib/assets/constants.ts`
+- **Form Fix**: Updated `CustomFormNumeric.svelte` to dispatch change from buttons via `onChange` callback
+
 ### Code Changes
 - `src/app.d.ts`: Updated `BalanceEventType` union - changed `'fuel_repayments'` → `'repayments'`
 - `src/lib/components/finance/DriverBalanceLedger.svelte`: Updated event type labels/icons/colors - `'fuel_repayments'` → `'repayments'`
@@ -399,6 +416,7 @@ recordEvent({
   - [x] Change `BalanceEventStatus`: remove `'pending'`, keep `'confirmed' | 'cancelled' | 'reversed'`
   - [x] Remove `confirmedAt`, `confirmedBy`, `confirmedName` from `BalanceEvent` interface
   - [x] Update `BalanceIdempotencyKeyFormats` with new formats
+  - [x] Add `EarlySettlementStatus` and `EarlySettlement` interface
 
 ### Database Layer (`src/lib/server/db/firebase/`)
 - [x] Update `driverBalanceEvents.fdb.ts` types to match new schema (no changes needed - uses namespace types)
@@ -406,29 +424,37 @@ recordEvent({
   - [x] Remove `confirmedAt/By/Name` from `recordEvent`
   - [x] Default `status: 'confirmed'` always
   - [x] Update `createReversalEvent` to use new types
+- [x] Create `earlySettlements.fdb.ts` with CRUD operations (add, get, find, set, delete, exists)
 
 ### Calculation Logic (`src/lib/server/calculations/`)
 - [ ] Update `driverBalance.ts` pure functions for new event types
 - [ ] Update `settlement.ts` - rename monthly → settlement, add early settlement logic
 
 ### Early Settlement Flow (New)
-- [ ] Create early settlement entity (separate collection: `earlySettlements`)
-  - [ ] Fields: id, driverId, requestedAmount, fee, actualPayout, status (requested/approved/rejected), createdAt, approvedAt, approvedBy
-  - [ ] Admin UI: request list, approve/reject actions
-- [ ] On approve: atomically create 2 ledger events (settlement + discount) via service function
+- [x] Create early settlement entity (separate collection: `earlySettlements`)
+  - [x] Fields: id, driverId, requestedAmount, fee, actualPayout, status (requested/approved/rejected/cancelled), createdAt, approvedAt, approvedBy, rejectedAt, rejectedBy, rejectionReason, createdBy, createdByName
+- [x] Service functions:
+  - [x] `createEarlySettlement` - with balance validation and fee calculation
+  - [x] `cancelEarlySettlement` - cancels requested settlements
+  - [x] `rejectEarlySettlement` - rejects with reason
+  - [x] `approveEarlySettlement` - atomically creates 2 ledger events (settlement + discount) in Firestore transaction
+- [ ] Admin UI: request list, approve/reject actions
 
 ### API Endpoints (`src/routes/api/driver/balance/`)
 - [x] Update GET endpoint for new types
 - [x] Update POST `/events` for new types
-- [ ] Add POST `/early-settlement` for request creation
+- [x] Add POST `/early-settlement` for request creation
 - [ ] Add POST `/early-settlement/{id}/approve` for approval flow
+- [ ] Add POST `/early-settlement/{id}/reject` for rejection flow
+- [ ] Add POST `/early-settlement/{id}/cancel` for cancellation flow
 
 ### Admin UI (`src/routes/finance/`, `src/routes/(admin)/drivers/[id]/`)
 - [x] Update `DriverBalanceLedger.svelte` event type labels/icons/colors
 - [x] Update `AddLedgerEventModal.svelte` config
 - [x] Update `DriverBalanceHistory.svelte` (removed confirmedAt/confirmedName)
 - [x] Update `constants.ts` balanceEventTypeConfig
-- [ ] Add early settlement request/approval UI
+- [x] Add early settlement request component (`EarlySettlementRequest.svelte`)
+- [ ] Add early settlement request/approval UI (list page for admins)
 - [ ] Update settlement processing page (rename monthly → settlement)
 
 ### Firestore Config

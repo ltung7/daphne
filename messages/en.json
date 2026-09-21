@@ -174,5 +174,12 @@
   "auth_failed_to_send_link": "Failed to send reset link",
   "auth_password_reset_success": "Password has been reset",
   "auth_reset_link": "Password reset link",
-  "auth_reset_link_expire": "Send this link to the user. The link expires after 1 hour."
+  "auth_reset_link_expire": "Send this link to the user. The link expires after 1 hour.",
+  "early_settlement_request": "Early Settlement",
+  "early_settlement_amount_label": "Payout Amount (PLN)",
+  "early_settlement_payout_info": "A 5% fee will be deducted from the amount",
+  "early_settlement_requested_amount": "Requested Amount",
+  "early_settlement_fee": "Fee",
+  "early_settlement_actual_payout": "Actual Payout",
+  "submit": "Submit Request"
 }

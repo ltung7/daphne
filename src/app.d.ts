@@ -88,13 +88,18 @@ declare global {
 			locale: App.Locale
 		}
 
-		// Base user (from user collection or driver collection)
-		interface UserBase {
+		// Base contact interface
+		interface UserContact {
 			id: string;
 			email: string;
 			name: string;
-			role: AdminRole | 'driver' | 'revoked';
 			preferredLanguage: Locale;
+			phone?: string;
+		}
+
+		// Base user (from user collection or driver collection)
+		interface UserBase extends UserContact {
+			role: AdminRole | 'driver' | 'revoked';
 			timestamp: number;
 			updatedAt: number;
 			lastLoggedIn: number;
@@ -674,6 +679,28 @@ declare global {
 		}
 
 		type BalanceEventTypeKey = keyof BalanceIdempotencyKeyFormats;
+
+		type EarlySettlementStatus = 'requested' | 'approved' | 'rejected' | 'cancelled';
+
+		interface EarlySettlement {
+			id: string;
+			driverId: string;
+			requestedAmount: number;
+			fee: number;
+			actualPayout: number;
+			status: EarlySettlementStatus;
+			createdAt: number;
+			createdBy: string;
+			createdByName: string;
+			approvedAt?: number;
+			approvedBy?: string;
+			approvedByName?: string;
+			rejectedAt?: number;
+			rejectedBy?: string;
+			rejectedByName?: string;
+			rejectionReason?: string;
+			metadata?: Record<string, any>;
+		}
 	}
 
 	namespace DocumentGenerator {

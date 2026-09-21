@@ -177,5 +177,12 @@
   "auth_reset_link": "Link do resetu hasła",
   "auth_reset_link_expire": "Wyślij ten link użytkownikowi. Link wygasa po 1 godzinie.",
   "inspection_title": "Codzienna inspekcja",
-  "auth_unauthorized_domain": "Ta domena nie jest autoryzowana do operacji OAuth. Skontaktuj się z pomocą techniczną."
+  "auth_unauthorized_domain": "Ta domena nie jest autoryzowana do operacji OAuth. Skontaktuj się z pomocą techniczną.",
+  "early_settlement_request": "Wcześniejsze rozliczenie",
+  "early_settlement_amount_label": "Kwota do wypłaty (PLN)",
+  "early_settlement_payout_info": "Od kwoty zostanie odliczona opłata 5%",
+  "early_settlement_requested_amount": "Kwota żądana",
+  "early_settlement_fee": "Opłata",
+  "early_settlement_actual_payout": "Rzeczywista wypłata",
+  "submit": "Złóż wniosek"
 }

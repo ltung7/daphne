@@ -173,5 +173,12 @@
   "auth_app_deleted": "Апп Firebase адключаны",
   "auth_keychain_error": "Парабільнае даступу Keychain",
   "auth_internal_error": "Внутрышняя памылка",
-  "auth_unauthorized_domain": "Гэты домен не аўтарызаваны для аперацый OAuth. Звярніцеся да падтрымкі."
+  "auth_unauthorized_domain": "Гэты домен не аўтарызаваны для аперацый OAuth. Звярніцеся да падтрымкі.",
+  "early_settlement_request": "Дасведчае пагашэнне",
+  "early_settlement_amount_label": "Сума выплаты (PLN)",
+  "early_settlement_payout_info": "З сумы будзе утриманая камісія 5%",
+  "early_settlement_requested_amount": "Запытаная сума",
+  "early_settlement_fee": "Камісія",
+  "early_settlement_actual_payout": "Фактычная выплата",
+  "submit": "Адправіць запыт"
 }

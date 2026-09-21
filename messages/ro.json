@@ -173,5 +173,12 @@
   "auth_app_deleted": "Aplicația Firebase a fost ștearsă",
   "auth_keychain_error": "Eroare de acces la portchei",
   "auth_internal_error": "Eroare internă de autentificare",
-  "auth_unauthorized_domain": "Acest domeniu nu este autorizat pentru operațiunile OAuth. Contactați suport."
+  "auth_unauthorized_domain": "Acest domeniu nu este autorizat pentru operațiunile OAuth. Contactați suport.",
+  "early_settlement_request": "Plată anticipată",
+  "early_settlement_amount_label": "Sumă de încasat (PLN)",
+  "early_settlement_payout_info": "Se va deduce o comisionă de 5% din sumă",
+  "early_settlement_requested_amount": "Suma solicitată",
+  "early_settlement_fee": "Comisionă",
+  "early_settlement_actual_payout": "Plată efectivă",
+  "submit": "Trimite cererea"
 }

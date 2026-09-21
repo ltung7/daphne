@@ -237,6 +237,8 @@ export const countryNames: Record<string, string> = {
 
 export const EXPIRATION_THRESHOLD = 7;
 
+export const EARLY_SETTLEMENT_FEE_RATE = 0.05;
+
 export interface BalanceEventTypeConfig {
 	caption: string;
 	color: string;
