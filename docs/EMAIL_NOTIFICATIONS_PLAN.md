@@ -1,6 +1,6 @@
 # Email Notifications Plan
 
-> **Current constraint**: Only email is implemented (password reset only, sent to hardcoded test address). This plan designs for multi-channel from the start (email → SMS → push → webhook) to avoid refactoring later. Phase 1 delivers email-only; Phase 2 adds the abstraction layer; Phase 3 implements additional channels when driver mobile app exists.
+> **Current constraint**: Only email is implemented (password reset only, sent to hardcoded test address). This plan designs for multi-channel from the start (email → SMS → push → webhook) to avoid refactoring later. Phase 1 delivers email-only; Phase 2 adds the abstraction layer; Phase 3 implements additional channels when driver mobile app exists. Note: WebPush capability is currently implemented and being actively tested.
 
 ---
 
@@ -151,6 +151,7 @@ Derived from all project plans: `FLEET_PLAN.md`, `LEDGER_SETTLEMENT_PLAN.md`, `V
 |----------|---------|-----------|-------------|----------|
 | `auth.password_reset_requested` | User requests password reset | User | AUTH_REWORK §8 | High |
 | `auth.password_changed` | Password successfully changed | User | AUTH_REWORK | Medium |
+| `auth.push_enabled` | WebPush successfully enabled | User | WebPush Impl | Low |
 | `auth.google_signin` | New Google Sign-In | User | AUTH_REWORK | Low |
 | `auth.revoked` | Account revoked (banned) | User | AUTH_REWORK §10 | **Critical** |
 | `auth.suspicious_login` | Login from new device/location | User | AUTH_REWORK (future) | Medium |
@@ -176,7 +177,7 @@ Derived from all project plans: `FLEET_PLAN.md`, `LEDGER_SETTLEMENT_PLAN.md`, `V
 | **Medium** | 22 | `driver.documents_expiring_30d`, `settlement.ready_for_review`, `document.expiring_14d`, `daily_report.submitted` |
 | **Low** | 6 | `driver.archived`, `vehicle.retired`, `bolt.sync_completed`, `inspection.completed` |
 
-**Total: 52 distinct notification events**
+**Total: 53 distinct notification events**
 
 ---
 
@@ -260,7 +261,12 @@ interface Recipient {
 - Provider: Firebase Cloud Messaging (FCM) — already have Firebase
 - Use cases: Real-time updates (assignment changes, balance updates)
 - Requires driver mobile app (separate repo) to register tokens
-- Web push for admin portal (optional)
+- Web push for admin/driver portal (currently implemented and being tested)
+  - Endpoint: `src/routes/(driver)/driver/push/+server.ts` (POST to save, DELETE to revoke)
+  - Upon registering a new token, the backend dispatches a `push_enabled` notification to test the end-to-end flow.
+  - Client component: `src/lib/components/WebPush.svelte`
+  - Service: `src/lib/server/services/webpush.service.ts`
+  - Configuration via `$env/static/public` for Firebase settings and `PUBLIC_VAPID_KEY`
 
 ### 3.3 In-App Notifications
 - Firestore `notifications` collection per user
@@ -332,6 +338,7 @@ NOTIFICATION_WORKER_INTERVAL_MS=30000
 - **Unsubscribe**: One-click unsubscribe per notification type (RFC 8058).
 - **Rate limiting**: Max 10 emails/hour per user per type (configurable).
 - **Encryption**: Encrypt queued email content at rest (Firestore automatic).
+- **WebPush / FCM**: `fcmToken` is collected only after explicit browser permission and linked via `drivers.fdb.ts`. User can revoke consent anytime, sending an empty string to immediately delete the token.
 
 ---
 

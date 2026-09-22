@@ -77,9 +77,14 @@
   },
   "onboarding_rejected": {
     "title": "Weryfikacja odrzucona",
-    "greeting": "Szanowny {driverName},",
+    "greeting": "Drogi/a {driverName},",
     "body": "Twoja weryfikacja została odrzucona. Powód: {reason}.",
-    "footer": "Skontaktuj się z administratorem po szczegóły."
+    "footer": "Skontaktuj się z administratorem po więcej szczegółów."
+  },
+  "push_enabled": {
+    "title": "Powiadomienia włączone",
+    "greeting": "Witaj {driverName},",
+    "body": "Pomyślnie aktywowałeś powiadomienia push dla tego urządzenia."
   },
   "common": {
     "app_name": "EISG",

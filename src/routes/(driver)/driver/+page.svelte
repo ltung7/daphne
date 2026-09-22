@@ -11,6 +11,8 @@
 	import { Offcanvas } from '@sveltestrap/sveltestrap';
 	import NewInspectionLocalized from '$lib/components/inspection/localized/NewInspectionLocalized.svelte';
 	import EarlySettlementRequest from '$lib/components/finance/EarlySettlementRequest.svelte';
+	import WebPush from '$lib/components/WebPush.svelte';
+	import { confirmSuccess, internal } from '$lib/nav/internal';
 
 	let { data }: PageProps = $props();
 
@@ -24,6 +26,14 @@
 	const hasDateBeforeThreshold = (dates: string[]) => Math.min(...dates.map(calculateDaysBefore)) <= EXPIRATION_THRESHOLD;
 	const driverExpiringSoon = $derived(hasDateBeforeThreshold(driverDates));
 	const vehicleExpiringSoon = $derived(hasDateBeforeThreshold(vehicleDates));
+
+	const onToken = async (fcmToken: string) => {
+		await internal.post('/driver/push', { fcmToken });
+	}
+
+	const onRevoke = async () => {
+		await confirmSuccess(internal.del('/driver/push'))
+	}
 </script>
 
 <ExpandableSection caption={m.driver_data_title()} icon="user" expanded={driverExpiringSoon}>
@@ -97,3 +107,5 @@
 <Offcanvas toggle={toggleInspection} bind:isOpen={inspectionOpen} placement="bottom" header={m.inspection_title()} style="height: 95vh;">
 	<NewInspectionLocalized vehicle={data.vehicle!} />
 </Offcanvas>
+
+<WebPush fcmToken={data.driver.fcmToken} {onToken} {onRevoke} />

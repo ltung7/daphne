@@ -81,6 +81,11 @@
     "body": "Your verification was rejected. Reason: {reason}.",
     "footer": "Contact the administrator for details."
   },
+  "push_enabled": {
+    "title": "Push Notifications Enabled",
+    "greeting": "Dear {driverName},",
+    "body": "You have successfully enabled push notifications for this device."
+  },
   "common": {
     "app_name": "EISG",
     "footer_app_link": "Notification from",

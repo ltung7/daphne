@@ -23,6 +23,7 @@ export type NotificationType =
     | 'inspection_overdue'
     | 'onboarding_approved'
     | 'onboarding_rejected'
+    | 'push_enabled'
     | 'common';
 
 /** Type-safe interface for all notification messages - mirrors notifications_pl.json structure */
@@ -108,6 +109,11 @@ export interface NotificationMessages {
         greeting: string;
         body: string;
         footer: string;
+    };
+    push_enabled: {
+        title: string;
+        greeting: string;
+        body: string;
     };
     common: {
         app_name: string;

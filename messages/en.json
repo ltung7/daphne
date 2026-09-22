@@ -181,5 +181,10 @@
   "early_settlement_requested_amount": "Requested Amount",
   "early_settlement_fee": "Fee",
   "early_settlement_actual_payout": "Actual Payout",
-  "submit": "Submit Request"
+  "submit": "Submit Request",
+  "webpush_unsupported_browser": "This browser does not support desktop notifications",
+  "webpush_no_token": "No registration token available.",
+  "webpush_error_retrieving": "An error occurred while retrieving token:",
+  "webpush_enable_notifications": "Enable Push Notifications",
+  "webpush_revoke_notifications": "Revoke Push Notifications"
 }

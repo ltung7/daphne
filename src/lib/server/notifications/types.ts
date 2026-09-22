@@ -25,7 +25,7 @@ export interface WebPushPayload {
 export interface NotificationDefinition<TData> {
     id: string;
     priority: NotificationPriority;
-    email: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
+    email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
     push?: (data: TData, ctx: NotificationContext) => WebPushPayload | Promise<WebPushPayload>;
     sms?: (data: TData, ctx: NotificationContext) => string | Promise<string>;
     inapp?: (data: TData, ctx: NotificationContext) => string | Promise<string>;

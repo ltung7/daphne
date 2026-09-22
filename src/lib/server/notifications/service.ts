@@ -2,6 +2,7 @@ import { getNotificationMessages } from './localized/localizedMailerMessages';
 import type { NotificationDefinition, NotificationContext, NotificationPriority } from './types';
 import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
+import { sendWebPush } from '../services/webpush.service';
 
 type UserPreferences = {
     channels: {
@@ -53,8 +54,8 @@ export async function sendNotification<TData>(
     }
 
     // --- PUSH ---
-    if (notification.push && prefs.channels.push !== false) {
-        promises.push(sendPush(user.id, notification, data, ctx));
+    if (notification.push && user.fcmToken && prefs.channels.push !== false) {
+        promises.push(sendPush(user.fcmToken, notification, data, ctx));
     }
 
     // --- IN-APP ---
@@ -72,7 +73,7 @@ async function sendEmail<TData>(
     ctx: NotificationContext
 ): Promise<void> {
     try {
-        const emailData = await notification.email(data, ctx);
+        const emailData = await notification.email!(data, ctx);
         
         // Use generic component for standard emails
         const component = emailData.component || GenericNotificationMail;
@@ -107,15 +108,14 @@ async function sendSms<TData>(
 }
 
 async function sendPush<TData>(
-    userId: string,
+    fcmToken: string,
     notification: NotificationDefinition<TData>,
     data: TData,
     ctx: NotificationContext
 ): Promise<void> {
     try {
         const pushData = await notification.push!(data, ctx);
-        // TODO: Implement FCM/WebPush transport
-        console.log(`[PUSH to ${userId}]`, pushData);
+        if (pushData) sendWebPush(fcmToken, pushData.title, pushData.body)
     } catch (err) {
         console.error(`Push send failed for ${notification.id}:`, err);
     }

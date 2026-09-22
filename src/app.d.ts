@@ -95,6 +95,7 @@ declare global {
 			name: string;
 			preferredLanguage: Locale;
 			phone?: string;
+			fcmToken?: string;
 		}
 
 		// Base user (from user collection or driver collection)
