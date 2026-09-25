@@ -159,6 +159,7 @@
   "auth_forgot_password": "Forgot password?",
   "auth_or_divider": "or",
   "auth_login_with_google": "Log in with Google",
+  "auth_remember_me": "Remember me for 7 days",
   "auth_reset_password_title": "Reset password",
   "auth_reset_password_description": "Enter your email address and we'll send you a link to reset your password.",
   "auth_email_placeholder": "john@example.com",

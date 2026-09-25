@@ -8,6 +8,7 @@ import uz from './messages/notifications_uz.json';
 import ka from './messages/notifications_ka.json';
 import tl from './messages/notifications_tl.json';
 import ro from './messages/notifications_ro.json';
+import sr from './messages/notifications_sr.json';
 
 /** Supported notification types (keys in JSON files) */
 export type NotificationType =
@@ -136,6 +137,7 @@ const localeMap: Partial<Record<App.Locale, NotificationMessages>> = {
     ka: ka as NotificationMessages,
     tl: tl as NotificationMessages,
     ro: ro as NotificationMessages,
+    sr: sr as NotificationMessages,
 };
 
 /**

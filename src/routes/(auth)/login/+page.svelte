@@ -161,7 +161,7 @@
 
 	<div class="mb-3 form-check">
 		<input type="checkbox" class="form-check-input" id="rememberMe" bind:checked={rememberMe} disabled={loading} />
-		<label class="form-check-label" for="rememberMe">Zapamiętaj mnie na 7 dni</label>
+		<label class="form-check-label" for="rememberMe">{m.auth_remember_me()}</label>
 	</div>
 
 	<button class="btn btn-primary w-100" disabled={loading}>

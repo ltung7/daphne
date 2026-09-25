@@ -131,6 +131,7 @@
   "auth_forgot_password": "पासवर्ड भूल गए?",
   "auth_or_divider": "या",
   "auth_login_with_google": "गूगल के साथ लॉग इन करें",
+  "auth_remember_me": "मुझे 7 दिनों के लिए याद रखें",
   "auth_reset_password_title": "पासवर्ड रीसेट करें",
   "auth_reset_password_description": "अपना ईमेल पता दर्ज करें और हम आपको पासवर्ड रीसेट करने के लिए एक लिंक भेजेंगे।",
   "auth_email_placeholder": "john@example.com",

@@ -131,6 +131,7 @@
   "auth_forgot_password": "Забули пароль?",
   "auth_or_divider": "або",
   "auth_login_with_google": "Увійти через Google",
+  "auth_remember_me": "Запам'ятати мене на 7 днів",
   "auth_reset_password_title": "Скинути пароль",
   "auth_reset_password_description": "Введіть свою електронну пошту, і ми надішлемо вам посилання для скидання пароля.",
   "auth_email_placeholder": "john@example.com",

@@ -131,6 +131,7 @@
   "auth_forgot_password": "Parolni unutdingiz?",
   "auth_or_divider": "ya",
   "auth_login_with_google": "Google bilan kirish",
+  "auth_remember_me": "Meni 7 kunga eslab qolish",
   "auth_reset_password_title": "Parolni tiklash",
   "auth_reset_password_description": "Email manzilni kiriting, parol tiklash havolangiz yuboriladi.",
   "auth_email_placeholder": "john@example.com",

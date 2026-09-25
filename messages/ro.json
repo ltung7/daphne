@@ -131,6 +131,7 @@
   "auth_forgot_password": "Ai uitat parola?",
   "auth_or_divider": "sau",
   "auth_login_with_google": "Autentificare cu Google",
+  "auth_remember_me": "Ține-mă minte pentru 7 zile",
   "auth_reset_password_title": "Resetează parola",
   "auth_reset_password_description": "Introdu adresa ta de e-mail, iar noi îți vom trimite un link pentru resetarea parolei.",
   "auth_email_placeholder": "john@example.com",

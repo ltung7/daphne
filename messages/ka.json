@@ -136,6 +136,7 @@
   "auth_forgot_password": "დაგავიწყდათ პაროლი?",
   "auth_or_divider": "ან",
   "auth_login_with_google": "შესვლა Google-ით",
+  "auth_remember_me": "დამიმახსოვრე 7 დღით",
   "auth_reset_password_title": "პაროლის აღდგენა",
   "auth_reset_password_description": "შეიყვანეთ თქვენი ელფოსტის მისამართი და ჩვენ გამოგიგზავნით ბმულს პაროლის აღსადგენად.",
   "auth_email_placeholder": "john@example.com",

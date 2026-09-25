@@ -159,6 +159,7 @@
   "auth_forgot_password": "Zapomniałem hasła?",
   "auth_or_divider": "lub",
   "auth_login_with_google": "Zaloguj się przez Google",
+  "auth_remember_me": "Zapamiętaj mnie na 7 dni",
   "auth_reset_password_title": "Resetuj hasło",
   "auth_reset_password_description": "Podaj swój adres email, a wyślemy Ci link do resetowania hasła.",
   "auth_email_placeholder": "jan@kowalski.pl",

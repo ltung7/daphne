@@ -195,6 +195,13 @@ export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>
     color: 'Kolor pojazdu'
 }
 
+
+/**
+ * [0] ISO language code
+ * [1] ISO country code (primary)
+ * [2] Polish name
+ * [3] Native name
+ */
 export const languages: Array<[App.Locale, string, string, string]> = [
     [ 'en', 'en', 'Angielski', 'English' ],
     [ 'pl', 'pl', 'Polski', 'Polski' ],
@@ -210,6 +217,7 @@ export const languages: Array<[App.Locale, string, string, string]> = [
     [ 'ka', 'ge', 'Gruziński', 'ქართული' ],
     [ 'tl', 'ph', 'Filipiński', 'Filipino' ],
     [ 'ro', 'md', 'Rumuński', 'Română' ],
+    [ 'sr', 'rs', 'Serbski', 'Srpski' ],
 ]
 
 export const languageLevels: Record<string, string> = {
@@ -233,6 +241,7 @@ export const countryNames: Record<string, string> = {
     bd: 'Bangladesz',
     ge: 'Gruzja',
     md: 'Mołdawia',
+    rs: 'Serbia',
 };
 
 export const EXPIRATION_THRESHOLD = 7;

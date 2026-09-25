@@ -61,7 +61,7 @@ declare global {
 		}
 
 		// Locale for i18n
-		type Locale = 'en' | 'pl' | 'hi' | 'ne' | 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro';
+		type Locale = 'en' | 'pl' | 'hi' | 'ne' | 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro' | 'sr';
 
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
@@ -705,7 +705,7 @@ declare global {
 	}
 
 	namespace DocumentGenerator {
-		type Locale = 'pl' | 'en' | 'uk' | 'be' | 'ne' | 'cs';
+		type Locale = 'pl' | 'en' | 'uk' | 'be' | 'ne' | 'cs' | 'sr';
 
 		interface HandoverDocument {
 			place: string
