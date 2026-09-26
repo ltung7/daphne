@@ -36,7 +36,7 @@ export async function sendAdminNotification(
     user: App.BaseContact,
     data: AdminNotificationData
 ): Promise<void> {
-    const channels = data.channels || ['email', 'sms', 'push'];
+    const channels = data.channels || [ 'email', 'sms', 'push' ];
     const notification = {
         ...adminNotification,
         email: channels.includes('email') ? adminNotification.email : undefined,

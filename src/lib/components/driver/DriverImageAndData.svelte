@@ -4,7 +4,7 @@
 	import LanguageFlag from '$lib/misc/LanguageFlag.svelte';
 	import UIcon from '$lib/misc/UIcon.svelte';
 	import ExpirationDate from '$lib/misc/ExpirationDate.svelte';
-	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
+	import DriverContactActions from './DriverContactActions.svelte';
 
 	interface Props {
 		driver: Driver.Driver;
@@ -21,14 +21,10 @@
 	);
 </script>
 
-<div class="d-flex">
-	<div class="driver-image rounded position-relative">
+<div class="d-flex flex-column flex-lg-row">
+	<div class="driver-image rounded position-relative mx-auto">
 		<img src={driver.imageUrl ?? '/img/user.jpg'} alt={driver.name} />
-		<div class="d-flex position-absolute bottom-0 start-0 justify-content-end w-100" style="background-color: rgba(216, 216, 216, 0.75)" >
-			<TooltipSquareIconButton icon="bell-notification-social-media" hoverText="Wyślij powiadomienie Push" />
-			<TooltipSquareIconButton icon="envelope-dot" hoverText="Wyślij wiadomość e-mail" />
-			<TooltipSquareIconButton icon="message-sms" hoverText="Wyślij wiadomość SMS" />
-		</div>
+		<DriverContactActions driverId={driver.id} push={Boolean(driver.fcmToken?.length)} />
 	</div>
 
 	<div class="w-100 ms-3">

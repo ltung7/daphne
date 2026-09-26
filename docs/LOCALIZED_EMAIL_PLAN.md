@@ -24,6 +24,9 @@ src/lib/server/notifications/
 ├── admin/
 │   ├── vehicleAlertNotification.ts
 │   └── ...
+├── health/
+│   ├── healthCheckRegistry.ts   # Registry of health problem -> recipients
+│   └── healthCheckNotifications.ts # Notification definitions for health issues
 └── localized/                     
     ├── localizedMailerMessages.ts # Localized message index & interface (no Paraglide)
     ├── localizedMailer.ts         # render & inject _messages
@@ -49,7 +52,7 @@ export interface EmailPayload {
     subject: string;
     htmlBody: string; // Rendered into GenericNotificationMail.svelte
     component?: any;  // Optional custom component
-    props?: any;      // Optional custom props
+    props?: any;      # Optional custom props
 }
 
 export interface WebPushPayload {
@@ -184,9 +187,46 @@ interface UserBase extends BaseContact {
 }
 ```
 
+## 6. Health Check Notification Registry
+
+A registry mapping health check problem types to the users who should receive notifications about them. This registry is used by the health check notification service to determine recipients for each type of health issue.
+
+### Registry Structure
+
+```typescript
+// src/lib/server/notifications/health/healthCheckRegistry.ts
+import type { HealthCheckProblem } from '$lib/server/services/health/checkers/types';
+import type { BaseContact } from '$app.d.ts';
+
+export interface HealthCheckRecipientMap {
+    [problem: HealthCheckProblem]: BaseContact[];
+}
+
+// Health check problem types (matching HealthCheck.HealthIssue.type)
+export type HealthCheckProblem = 
+    | 'insurance_expiring'
+    | 'technical_expiring'
+    | 'license_expiring'
+    | 'taxi_authorization_expiring';
+
+// Example registry - populated at runtime from admin configuration
+export const healthCheckRecipientRegistry: HealthCheckRecipientMap = {
+    insurance_expiring: [],
+    technical_expiring: [],
+    license_expiring: [],
+    taxi_authorization_expiring: [],
+};
+```
+
+### Usage
+- Registry is populated from admin-configured notification preferences
+- Each health check type can have multiple recipients (admins, managers, fleet operators)
+- Recipients are `App.BaseContact` objects (id, email, name, preferredLanguage, phone, fcmToken)
+
 ## Advantages of this Architecture
 1. **DRY (Don't Repeat Yourself)**: You don't need 50 Svelte components. You just need 1 generic component, and 50 plain-text generators.
 2. **Channel Parity**: When defining a notification, you immediately see and define how it looks on Email, SMS, and Push. No hunting across different services.
 3. **Strict Typings without Boilerplate**: `sendDocumentExpiredNotification(user, { documentName, expiryDate })` guarantees data shape for callers while the underlying service handles generic abstraction.
 4. **Target agnostic**: Because generators consume `App.BaseContact`, notifications can trigger for drivers, admins, managers, or third-party contacts.
 5. **Localization Integration**: Bypasses Paraglide entirely. It uses exact dictionary objects (`m`) based on the contact's `preferredLanguage`, ensuring safety outside request contexts.
+6. **Health Check Registry**: Centralized mapping of health problems to notification recipients enables flexible routing without hardcoding recipients in checkers.
