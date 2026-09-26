@@ -61,7 +61,7 @@
 	async function handleApprove() {
 		error = null;
 
-		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/api/approve`);
+		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/approve`);
 
 		if (response.success) {
 			showApproveModal = false;
@@ -77,7 +77,7 @@
 		}
 		error = null;
 
-		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/api/reject`, { reason: rejectionReason });
+		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/reject`, { reason: rejectionReason });
 
 		if (response.success) {
 			showRejectModal = false;

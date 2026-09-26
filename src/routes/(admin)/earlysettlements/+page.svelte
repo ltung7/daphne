@@ -4,6 +4,7 @@
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { internal } from '$lib/nav/internal';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
 
 	let earlySettlements: DriverBalance.EarlySettlement[] = $state([]);
 	let loaded = $state(false);
@@ -52,6 +53,7 @@
 </script>
 
 <PageTitle title="Wcześniejsze rozliczenia" subtitle="Lista wniosków o wcześniejsze rozliczenie">
+	<IconLink size={5} icon="add" href="/earlysettlements/new" caption="Nowy wniosek" />
 </PageTitle>
 
 <div class="card">

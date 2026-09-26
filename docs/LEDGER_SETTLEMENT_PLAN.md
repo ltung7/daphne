@@ -422,8 +422,8 @@ recordEvent({
 - [x] Create `earlySettlements.fdb.ts` with CRUD operations (add, get, find, set, delete, exists)
 
 ### Calculation Logic (`src/lib/server/calculations/`)
-- [ ] Update `driverBalance.ts` pure functions for new event types
-- [ ] Update `settlement.ts` - rename monthly → settlement, add early settlement logic
+- [ ] Update `driverBalance.ts` pure functions for new event types — **DEFERRED**
+- [ ] Update `settlement.ts` - rename monthly → settlement, add early settlement logic — **DEFERRED**
 
 ### Early Settlement Flow (New)
 - [x] Create early settlement entity (separate collection: `earlySettlements`)
@@ -449,7 +449,7 @@ recordEvent({
 - [x] Update `constants.ts` balanceEventTypeConfig
 - [x] Add early settlement request component (`EarlySettlementRequest.svelte`)
 - [x] Add early settlement request/approval UI (list page for admins)
-- [ ] Update settlement processing page (rename monthly → settlement)
+- [ ] Update settlement processing page (rename monthly → settlement) — **DEFERRED**
 
 ### Firestore Config
 - [ ] Update `firestore.rules` (no pending status) — **SKIPPED**
