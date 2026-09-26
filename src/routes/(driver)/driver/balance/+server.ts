@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     }
 
     const body = await request.json();
-    const { driverId, requestedAmount } = body;
+    const { driverId, driverName, requestedAmount } = body;
 
 
     if (!driverId || typeof requestedAmount !== 'number' || driverId !== user.id) {
@@ -24,6 +24,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     try {
         const result = await createEarlySettlement({
             driverId,
+            driverName,
             requestedAmount,
             createdBy: user.id,
             createdByName: user.name

@@ -100,7 +100,7 @@
 		<div class="stat-value fs-2 fw-bold text-success">{formatCurrency(data.balance ? data.balance.runningBalance : 0)}</div>
 	</div>
 	<div class="flex-center">
-		<EarlySettlementRequest balance={data.balance?.runningBalance ?? 0} driverId={data.driver.id} />
+		<EarlySettlementRequest balance={data.balance?.runningBalance ?? 0} driverId={data.driver.id} driverName={data.driver.name} />
 	</div>
 </ExpandableSection>
 

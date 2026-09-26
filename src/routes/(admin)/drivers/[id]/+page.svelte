@@ -72,6 +72,7 @@
 {#if driver.status !== 'pending_verification'}
 	<DriverBalanceLedger
 		driverId={driver.id}
+		driverName={driver.name}
 		currentBalance={data.currentBalance}
 		cashBalance={data.cashBalance}
 		onBalanceUpdate={(cb, cash) => {

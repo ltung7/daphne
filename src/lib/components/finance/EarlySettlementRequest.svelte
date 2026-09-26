@@ -5,13 +5,15 @@
 	import CustomFormNumeric from '$lib/form/CustomFormNumeric.svelte';
 	import { internal } from '$lib/nav/internal';
 	import { wrapLoader } from '$lib/nav/loader';
+	import { page } from '$app/state';
 
 	interface Props {
 		driverId: string;
+		driverName: string;
 		balance: number;
 	}
 
-	let { driverId, balance }: Props = $props();
+	let { driverId, driverName, balance }: Props = $props();
 
 	let isOpen = $state(false);
 	let amount = $state(0);
@@ -43,9 +45,12 @@
 
 		error = null;
 
+		// Use current URL + 'balance' to work for both admin and driver contexts
+		const baseUrl = page.url.pathname.replace(/\/$/, '');
 		const response = await wrapLoader(
-			internal.post('/driver/balance', {
+			internal.post(`${baseUrl}/balance`, {
 				driverId,
+				driverName,
 				requestedAmount: amount
 			})
 		);

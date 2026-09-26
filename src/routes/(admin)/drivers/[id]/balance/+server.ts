@@ -6,6 +6,7 @@ import {
     eventExists
 } from "$lib/server/db/firebase/driverBalanceEvents.fdb";
 import { generateIdempotencyKey } from "$lib/server/services/ledger.service";
+import { createEarlySettlement } from "$lib/server/services/earlySettlements.service";
 import { isDev } from "$lib/utils/isDev";
 import type { RequestHandler } from "./$types";
 import { json, error } from "@sveltejs/kit";
@@ -37,6 +38,30 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
     }
 
     const body = await request.json();
+
+    // Check for early settlement request (has requestedAmount and driverId)
+    if (typeof body.requestedAmount === 'number' && body.driverId) {
+        if (body.driverId !== driverId) {
+            throw error(400, 'Driver ID mismatch');
+        }
+
+        try {
+            const result = await createEarlySettlement({
+                driverId,
+                driverName: body.driverName || 'Unknown Driver',
+                requestedAmount: body.requestedAmount,
+                createdBy: user.id,
+                createdByName: user.name,
+                metadata: body.metadata
+            });
+
+            return json({ earlySettlement: result.earlySettlement, success: true });
+        } catch (e) {
+            const message = e instanceof Error ? e.message : 'Failed to create early settlement';
+            throw error(400, message);
+        }
+    }
+
     const { amount, type, metadata = {} } = body;
     const referenceId = body.referenceId || metadata.referenceId || '';
 
@@ -51,7 +76,6 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
         'penalty',
         'settlement',
         'repayments',
-        'early_settlement_discount',
         'cash_collection',
         'cash_deposit',
         'cash_adjustment'
@@ -75,13 +99,12 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
     const runningBalance = Math.round((currentBalance + amount) * 100) / 100;
 
     // Map event type to referenceType
-    const referenceTypeMap: Record<DriverBalance.BalanceEventType, DriverBalance.BalanceEvent['referenceType']> = {
+    const referenceTypeMap: Partial<Record<DriverBalance.BalanceEventType, DriverBalance.BalanceEvent['referenceType']>> = {
         income_uber: 'uber_report',
         income_bolt: 'bolt_report',
         penalty: 'penalty',
         settlement: 'settlement',
         repayments: 'settlement',
-        early_settlement_discount: 'settlement',
         cash_collection: 'cash',
         cash_deposit: 'cash',
         cash_adjustment: 'cash'

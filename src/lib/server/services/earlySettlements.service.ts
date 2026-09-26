@@ -6,6 +6,7 @@ import { db } from '$lib/server/db/firebase/firebase';
 
 interface CreateEarlySettlementParams {
 	driverId: string;
+	driverName: string;
 	requestedAmount: number;
 	createdBy: string;
 	createdByName: string;
@@ -23,7 +24,7 @@ function calculateFeeAndPayout(requestedAmount: number): { fee: number; actualPa
 }
 
 export async function createEarlySettlement(params: CreateEarlySettlementParams): Promise<CreateEarlySettlementResult> {
-	const { driverId, requestedAmount, createdBy, createdByName, metadata = {} } = params;
+	const { driverId, driverName, requestedAmount, createdBy, createdByName, metadata = {} } = params;
 
 	if (requestedAmount <= 0) {
 		throw new Error('Requested amount must be positive');
@@ -40,6 +41,7 @@ export async function createEarlySettlement(params: CreateEarlySettlementParams)
 
 	const earlySettlementData: Omit<DriverBalance.EarlySettlement, 'id'> = {
 		driverId,
+		driverName,
 		requestedAmount: round(requestedAmount),
 		fee,
 		actualPayout,

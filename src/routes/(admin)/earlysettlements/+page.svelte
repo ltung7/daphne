@@ -9,7 +9,7 @@
 	let loaded = $state(false);
 
 	const loadData = () => {
-		internal.getApi().then((response) => {
+		internal.get('/earlysettlements/api').then((response) => {
 			earlySettlements = response.earlySettlements;
 			loaded = true;
 		});
@@ -17,7 +17,7 @@
 
 	const headers: SvelteCustom.DatatableHeaders<keyof DriverBalance.EarlySettlement> = [
 		[ 'createdAt', 'Data zgłoszenia' ],
-		[ 'driverId', 'Kierowca (ID)' ],
+		[ 'driverName', 'Kierowca' ],
 		[ 'requestedAmount', 'Kwota wnioskowana' ],
 		[ 'fee', 'Prowizja' ],
 		[ 'actualPayout', 'Do wypłaty' ],
@@ -65,7 +65,7 @@
 				</td>
 				<td>{formatDate(row.createdAt)}</td>
 				<td>
-					<a href="/drivers/{row.driverId}">{row.createdByName || row.driverId}</a>
+					<a href="/drivers/{row.driverId}">{row.driverName}</a>
 				</td>
 				<td>{row.requestedAmount.toFixed(2)} PLN</td>
 				<td class="text-danger">-{row.fee.toFixed(2)} PLN</td>

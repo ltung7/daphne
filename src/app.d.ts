@@ -686,6 +686,7 @@ declare global {
 		interface EarlySettlement {
 			id: string;
 			driverId: string;
+			driverName: string;
 			requestedAmount: number;
 			fee: number;
 			actualPayout: number;

@@ -61,7 +61,7 @@
 	async function handleApprove() {
 		error = null;
 
-		const response = await internal.postApi({}, 'post', { url: `/earlysettlements/${earlySettlement.id}/api/approve` });
+		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/api/approve`);
 
 		if (response.success) {
 			showApproveModal = false;
@@ -77,7 +77,7 @@
 		}
 		error = null;
 
-		const response = await internal.postApi({ reason: rejectionReason }, 'post', { url: `/earlysettlements/${earlySettlement.id}/api/reject` });
+		const response = await internal.post(`/earlysettlements/${earlySettlement.id}/api/reject`, { reason: rejectionReason });
 
 		if (response.success) {
 			showRejectModal = false;
@@ -112,10 +112,10 @@
 					<li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
 						<div class="d-flex flex-column">
 							<h6 class="mb-1 text-dark font-weight-bold text-sm">Kierowca</h6>
-							<span class="text-xs">{data.driver?.id}</span>
+							<span class="text-xs">{earlySettlement.driverId}</span>
 						</div>
 						<div class="d-flex align-items-center text-sm">
-							<a href="/drivers/{data.driver?.id}" class="fw-bold">{earlySettlement.createdByName || data.driver?.name}</a>
+							<a href="/drivers/{earlySettlement.driverId}" class="fw-bold">{earlySettlement.driverName}</a>
 						</div>
 					</li>
 					<li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">

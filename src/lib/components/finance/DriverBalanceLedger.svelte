@@ -5,16 +5,18 @@
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import AddLedgerEventModal from './AddLedgerEventModal.svelte';
 	import DriverBalanceHistory from './DriverBalanceHistory.svelte';
+	import EarlySettlementRequest from './EarlySettlementRequest.svelte';
 	import { internal } from '$lib/nav/internal';
 
 	interface Props {
 		driverId: string;
+		driverName: string;
 		currentBalance: number;
 		cashBalance: number;
 		onBalanceUpdate?: (currentBalance: number, cashBalance: number) => void;
 	}
 
-	let { driverId, currentBalance, cashBalance, onBalanceUpdate }: Props = $props();
+	let { driverId, driverName, currentBalance, cashBalance, onBalanceUpdate }: Props = $props();
 
 	let animatedCurrentBalance = tweened(0, { duration: 500, easing: cubicOut });
 	let animatedCashBalance = tweened(0, { duration: 500, easing: cubicOut });
@@ -108,7 +110,7 @@
 		<IconButton icon="user-police" caption="Kara" color="danger" size={6} onclick={() => openModal('penalty')} />
 		<IconButton icon="money-bill-lock" caption="Potrącenie" color="warning" size={6} onclick={() => openModal('repayments')} />
 		<IconButton icon="money-bills" caption="Wypłata" color="success" size={6} onclick={() => openModal('settlement')} />
-		<IconButton icon="fee" caption="Wcześniejsze rozliczenie" color="info" size={6} onclick={() => openModal('early_settlement_discount')} />
+		<EarlySettlementRequest {driverId} {driverName} balance={currentBalance} />
 		<IconButton icon="money-bills" caption="Wpłata gotówki" color="secondary" size={6} onclick={() => openModal('cash_deposit')} />
 		<IconButton icon="edit" caption="Korekta gotówki" color="dark" size={6} onclick={() => openModal('cash_adjustment')} />
 	</div>
