@@ -386,7 +386,7 @@ recordEvent({
   - **Type System**: Added `EarlySettlementStatus` and `EarlySettlement` interface (including `driverName`) to `DriverBalance` namespace in `src/app.d.ts`
   - **Database Layer**: Created `src/lib/server/db/firebase/earlySettlements.fdb.ts` with CRUD operations
   - **Service Layer**: Created `src/lib/server/services/earlySettlements.service.ts` with `createEarlySettlement`, `cancelEarlySettlement`, `rejectEarlySettlement`, and `approveEarlySettlement` (atomic 2-event transaction)
-  - **Admin UI**: Created list page (`/earlysettlements`) and detail page (`/earlysettlements/[id]`) with approve/reject actions
+  - **Admin UI**: Created list page (`/earlysettlements`) and detail page (`/earlysettlements/[id]`) with approve/reject actions at `/earlysettlements/[id]/approve` and `/earlysettlements/[id]/reject`
   - **Security**: Locked down direct creation of `early_settlement_discount` ledger events; must go through approval flow
   - **Routing**: Updated `EarlySettlementRequest.svelte` and admin/driver endpoints to use standard `internal.post` and dynamic paths
 - **Constants**: Added `EARLY_SETTLEMENT_FEE_RATE = 0.05` to `src/lib/assets/constants.ts`
@@ -439,9 +439,8 @@ recordEvent({
 - [x] Update GET endpoint for new types
 - [x] Update POST `/events` for new types
 - [x] Add POST `/early-settlement` for request creation (Handled by admin `/drivers/[id]/balance` and driver `/driver/balance`)
-- [x] Add POST `/early-settlement/{id}/approve` for approval flow
-- [x] Add POST `/early-settlement/{id}/reject` for rejection flow
-- [x] Add POST `/early-settlement/{id}/cancel` for cancellation flow
+- [x] Add POST `/earlysettlements/{id}/approve` for approval flow
+- [x] Add POST `/earlysettlements/{id}/reject` for rejection flow
 
 ### Admin UI (`src/routes/finance/`, `src/routes/(admin)/drivers/[id]/`)
 - [x] Update `DriverBalanceLedger.svelte` event type labels/icons/colors
@@ -453,14 +452,14 @@ recordEvent({
 - [ ] Update settlement processing page (rename monthly → settlement)
 
 ### Firestore Config
-- [ ] Update `firestore.rules` (no pending status)
-- [ ] Note: Firestore indexes are managed implicitly by the project environment.
+- [ ] Update `firestore.rules` (no pending status) — **SKIPPED**
+- [ ] Note: Firestore indexes are managed implicitly by the project environment. — **SKIPPED**
 
 ### Tests
-- [ ] Unit tests for calculation logic with new types
-- [ ] Integration tests for early settlement atomic write
-- [ ] Idempotency tests for all key formats
+- [ ] Unit tests for calculation logic with new types — **SKIPPED**
+- [ ] Integration tests for early settlement atomic write — **SKIPPED**
+- [ ] Idempotency tests for all key formats — **SKIPPED**
 
 ### Documentation
 - [x] Update any remaining references in `docs/FLEET_PLAN.md`
-- [ ] Update component documentation
+- [ ] Update component documentation — **SKIPPED**
