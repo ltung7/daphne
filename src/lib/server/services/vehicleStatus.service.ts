@@ -217,19 +217,16 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 	available: {
 		under_maintenance: () => true,
 		broken: () => true,
-		unmovable: () => true,
-		retired: () => true
+		unmovable: () => true
 	},
 	assigned: {
 		broken: () => true,
-		unmovable: () => true,
-		retired: () => true
+		unmovable: () => true
 	},
 	under_maintenance: {
 		available: () => true,
 		broken: () => true,
-		unmovable: () => true,
-		retired: () => true
+		unmovable: () => true
 	},
 	broken: {
 		available: async (vehicle, extraData) => {
@@ -237,14 +234,12 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 			return true;
 		},
 		under_maintenance: () => true,
-		unmovable: () => true,
-		retired: () => true
+		unmovable: () => true
 	},
 	unmovable: {
 		available: () => true,
 		under_maintenance: () => true,
-		broken: () => true,
-		retired: () => true
+		broken: () => true
 	},
 	retired: {
 		precheck: () => true
@@ -254,6 +249,11 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 export const handleChangeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any, user: App.User) => {
 	const vehicle = typeof vehicleOrId === 'string' ? await getVehicle(vehicleOrId) : vehicleOrId;
 	if (!vehicle) throw error(404, 'Vehicle not found');
+
+	// Only restriction: moderator cannot retire
+	if (user.role === 'moderator' && newStatus === 'retired') {
+		throw error(403, 'Moderator cannot retire vehicle');
+	}
 
 	const currentStatus = vehicle.status;
 	if (currentStatus === newStatus) return { success: true, status: newStatus };

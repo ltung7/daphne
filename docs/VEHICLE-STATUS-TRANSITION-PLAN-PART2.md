@@ -14,13 +14,12 @@
 **Required**: Scheduled job (Firebase Cloud Function or cron) that:
 - Runs daily
 - Queries `healthIssues` for `entityType: 'vehicle'` + `severity: 'critical'` + types `insurance_expiring` / `technical_expiring` where `expirationDate < now()`
-- For each vehicle: calls `changeVehicleStatus(vehicleId, 'unmovable', { reason: 'Auto-transition: expired insurance/technical', source: 'health_check' }, systemUser)`
-- Logs transition in `vehicleStatusChange` with `extraData.source: 'auto_health_check'`
+- For each vehicle: calls `changeVehicleStatus(vehicleId, 'unmovable', { reason: 'Auto-transition: expired insurance/technical', source: 'health_check' }, { id: 'system', name: 'Auto Health Check', role: 'system' })`
+- Logs transition in `vehicleStatusChange` with `extraData.source: 'auto_health_check'` and `changedBy: 'system'`
 - **Note**: A vehicle in `unmovable` status cannot be assigned and requires manual intervention (Manager/Admin) to return to `available`.
 
 **Files to create/modify**:
 - `src/lib/server/jobs/vehicleHealthAutoTransition.ts` — new job
-- `src/lib/server/auth/firebaseAdmin.ts` — add system user for automated transitions
 - Firebase scheduled function config or `package.json` cron script
 
 ---
@@ -31,22 +30,21 @@
 - **Manager**: Responsible for company assets and signing off important documents. Handles "unmovable" flags, asset retirement, and status recovery.
 - **Admin**: Technical superuser. Has technical abilities over other users and will technically have all permissions to "fix" data inconsistencies or bypass blocks.
 
-**Transition Matrix**:
+**Transition Matrix** (Simplified):
 
 | Transition | Admin | Manager | Moderator |
 |------------|-------|---------|-----------|
 | `any` → `available` | ✅ | ✅ | ✅ |
 | `available` → `under_maintenance` / `broken` | ✅ | ✅ | ✅ |
-| `available` → `unmovable` | ✅ | ✅ | ❌ |
-| `unmovable` → `available` | ✅ | ✅ | ❌ (Requires sign-off) |
+| `available` → `unmovable` | ✅ | ✅ | ✅ |
+| `unmovable` → `available` | ✅ | ✅ | ✅ |
 | `any` → `retired` | ✅ | ✅ | ❌ (Asset disposal) |
 | Auto-transition (system) | ✅ | N/A | N/A |
 
-**Implementation**:
-- Extend `adminAuth.ts` with `requireTransitionPermission(locals, fromStatus, toStatus)`
-- Add `TransitionPermission` map in `vehicleStatus.service.ts` or `adminAuth.ts`
-- Apply in `changeVehicleStatus()` before validation
-- Apply in `PATCH /vehicles/[id]/status/+server.ts`
+**Implementation** (simplified — single check in `handleChangeVehicleStatus`):
+- Remove `retired` from `statusTransitions` matrix (except `retired` → `precheck` for recovery)
+- Add moderator check: `if (user.role === 'moderator' && newStatus === 'retired') throw 403`
+- No separate permission map, no handler signature changes
 
 ## New Tasks (Not in v1)
 
@@ -98,10 +96,10 @@
 | **Resolvers** | `src/lib/server/services/health/resolvers/*.resolver.ts` | Consume issues → change status + notify |
 | **Orchestrator** | `src/lib/server/services/health/healthCheck.service.ts` | Runs checkers → saves issues → runs resolvers |
 
-**Files created/modified**:
+**Files created/modify**:
 - `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` (moved from `.health.ts`)
 - `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` (moved from `.health.ts`)
-- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` (new — skeleton)
+- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` (new — **implemented**)
 - `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` (new — **implemented**)
 - `src/lib/server/services/health/healthCheck.service.ts` (updated: runs resolvers after checkers, separate try/catch per resolver)
 
@@ -109,6 +107,13 @@
 - **Warning (expiring)**: Sends `documentExpiringNotification` via email/SMS/push/in-app
 - **Critical (expired)**: Sends `documentExpiredNotification` + updates driver status to `'documents_expired'`
 - Uses `params.drivers` from `HealthCheckParams` for contact info (falls back to DB query)
+
+**Vehicle resolver implementation** (`vehicleExpirationDates.resolver.ts`):
+- **Critical (expired)**: Auto-transitions vehicle to `'unmovable'` via `updateVehicle()` + logs audit trail via `addVehicleStatusChange()` with `userId: 'system'`, `source: 'auto_health_check'`
+- Idempotent: skips if already `unmovable`
+- Uses `params.vehicles` from `HealthCheckParams` for vehicle data (falls back to DB query)
+- **Warning (expiring)**: TODO — notification only (not yet implemented)
+- **Notifications**: TODO — notify managers/admins + assigned driver (not yet implemented)
 
 **Idempotency strategy**: Notifications tied to actual status change — resolver only fires when status actually changes (checked via current status before update).
 
@@ -128,8 +133,9 @@
 
 | Priority | Task | Effort | Dependencies | Status |
 |----------|------|--------|--------------|--------|
-| **P0** | Auto-transition to `unmovable` | Medium | Health checks exist | 🔄 Checker/Resolver ready |
-| **P0** | Role-based transition permissions | Medium | Auth system complete | ⏳ Not started |
+| **P0** | Auto-transition to `unmovable` (resolver) | Medium | Health checks exist | ✅ Resolver implemented |
+| **P0** | Auto-transition to `unmovable` (scheduled job) | Medium | Resolver done | ⏳ Not started |
+| **P0** | Role-based transition permissions | Medium | Auth system complete | ✅ Implemented (simplified) |
 | **P1** | Damage incident workflow | Medium | New collection | ⏳ Not started |
 | **P2** | Status change notifications | Medium | Notifications plan | 🔄 Driver notifications done |
 
@@ -148,6 +154,8 @@
 **New (this plan)**:
 - Checker/Resolver separation in `src/lib/server/services/health/`
 - Driver expiration resolver with notifications + status update
+- Vehicle expiration resolver with auto-transition to `unmovable` + audit log
+- Role-based transition permissions (moderator cannot retire vehicles)
 
 **Files**:
 - `src/lib/server/services/vehicleStatus.service.ts` — core logic
@@ -155,6 +163,6 @@
 - `src/routes/(admin)/vehicles/[id]/status/+server.ts` — API
 - `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` — vehicle checker
 - `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` — driver checker
-- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` — vehicle resolver (skeleton)
-- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` — driver resolver (implemented)
+- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` — vehicle resolver (**implemented**)
+- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` — driver resolver (**implemented**)
 - `src/lib/server/services/health/healthCheck.service.ts` — orchestrator

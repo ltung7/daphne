@@ -23,22 +23,13 @@
 	// Menu Data (fi-rr- prefixes removed)
 	let menuItems: MenuItem[] = $state([
 		{ id: 1, title: 'Dashboard', icon: 'apps', link: '/panel' },
-		// {
-		// 	id: 2,
-		// 	title: 'Data Management',
-		// 	icon: 'database',
-		// 	isOpen: false,
-		// 	subItems: [
-		// 		{ title: 'Users List', link: '/users' },
-		// 		{ title: 'Permissions', link: '/permissions' }
-		// 	]
-		// },
 		{ id: 2, title: 'Flota', icon: 'cars', link: '/vehicles' },
 		{ id: 3, title: 'Kierowcy', icon: 'steering-wheel', link: '/drivers' },
 		{ id: 4, title: 'Wydania', icon: 'user-key', link: '/handovers' },
 		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspections' },
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
 		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
+		{ id: 8, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' },
 	]);
 
 	function toggleSidebar() {
