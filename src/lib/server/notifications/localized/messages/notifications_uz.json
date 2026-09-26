@@ -87,5 +87,9 @@
     "footer_confidential": "Bu xabar \"Everest International Service Group\" MChJ ning kommersiya sirrini tarkib topgan maxfiy ma'lumotlarni o'z ichiga oladi, u Varshava shahrida ro'yxatdan o'tgan va huquqiy himoyalangan. Bu xabarni xato qabul qilib olgan holda undan foydalangan holda undan foydalanish, undan nusxa ko'chirish, tarqatish yoki undagi ma'lumotlar asosida har qanday harakat bajarish, hatto u unda ma'lumotlarning maqsadga muvofiq qabul qiluvchilari bo'lsa, \"Everest International Service Group\" MChJ ning oldindan yozma roziligsiz huquqiy qonunga qarshi. Yuqoridagi qo'llab-quvvatlash amalga oshirilmagan holda fuqorolik va jinoyat javobgarligiga olib keladi.",
     "unsubscribe": "Agar siz bunday xabarnomalarni qabul qilmoxchi bo'lmasangiz,",
     "unsubscribe_link": "bu yerda bosib, obunani bekor qiling."
+  },
+  "admin_notification": {
+    "email_subject": "Avtopark administratoridan xabar",
+    "push_title": "Administratordan yangi xabar"
   }
 }

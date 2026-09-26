@@ -87,5 +87,9 @@
     "footer_confidential": "Acest mesaj conține informații confidențiale, constituind secretă comercială a societății Everest International Service Group sp. z o.o. cu sediul în Varșovia și este protejată legal. Accesul la conținutul mesajului primit din greșeală, transmiterea sa ulterioară, copierea, distribuirea sau orice altă utilizare, precum și intraprinderea oricăror acțiuni pe baza informațiilor conținute în el, chiar și de persoanele fiind destinatariile sale legitime, fără acordul scris prealabil al societății Everest International Service Group sp. z o.o. este interzis legal. Neaplicarea interzicției de mai sus va atrage răspunderea civilă și penală.",
     "unsubscribe": "Dacă nu doriți să primiți astfel de notificări,",
     "unsubscribe_link": "faceți clic aici pentru a vă dezabona."
+  },
+  "admin_notification": {
+    "email_subject": "Mesaj de la administratorul flotei",
+    "push_title": "Mesaj nou de la administrator"
   }
 }

@@ -86,6 +86,10 @@
     "greeting": "Witaj {driverName},",
     "body": "Pomyślnie aktywowałeś powiadomienia push dla tego urządzenia."
   },
+  "admin_notification": {
+    "email_subject": "Wiadomość od administratora floty",
+    "push_title": "Nowa wiadomość od administratora"
+  },
   "common": {
     "app_name": "EISG",
     "footer_app_link": "Powiadomienie z aplikacji",

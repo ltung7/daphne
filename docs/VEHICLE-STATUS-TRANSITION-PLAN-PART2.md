@@ -8,14 +8,15 @@
 
 ## Open Tasks from v1 (Carried Forward)
 
-### 1. Auto-Transition from Health Issues
+### 1. Auto-Transition to Unmovable (Expired Documents)
 **Problem**: Health checks (`checkVehicleExpirationDates`) create `HealthIssue` records with `severity: 'critical'` for expired insurance/technical inspection, but **no automatic status change** occurs.
 
 **Required**: Scheduled job (Firebase Cloud Function or cron) that:
 - Runs daily
 - Queries `healthIssues` for `entityType: 'vehicle'` + `severity: 'critical'` + types `insurance_expiring` / `technical_expiring` where `expirationDate < now()`
-- For each vehicle: calls `changeVehicleStatus(vehicleId, 'under_maintenance', { reason: 'Auto-transition: expired insurance/technical', source: 'health_check' }, systemUser)`
+- For each vehicle: calls `changeVehicleStatus(vehicleId, 'unmovable', { reason: 'Auto-transition: expired insurance/technical', source: 'health_check' }, systemUser)`
 - Logs transition in `vehicleStatusChange` with `extraData.source: 'auto_health_check'`
+- **Note**: A vehicle in `unmovable` status cannot be assigned and requires manual intervention (Manager/Admin) to return to `available`.
 
 **Files to create/modify**:
 - `src/lib/server/jobs/vehicleHealthAutoTransition.ts` — new job
@@ -25,21 +26,21 @@
 ---
 
 ### 2. Role-Based Transition Permissions
-**Current**: `restrictAdmin` only (any admin role: admin/manager/moderator)
+**Structure**:
+- **Moderator**: Day-to-day operators for small decisions. Handle standard maintenance cycles, availability, and reporting broken vehicles.
+- **Manager**: Responsible for company assets and signing off important documents. Handles "unmovable" flags, asset retirement, and status recovery.
+- **Admin**: Technical superuser. Has technical abilities over other users and will technically have all permissions to "fix" data inconsistencies or bypass blocks.
 
-**Required**: Granular permissions per transition:
+**Transition Matrix**:
 
 | Transition | Admin | Manager | Moderator |
 |------------|-------|---------|-----------|
-| `precheck` → `available` | ✅ | ✅ | ❌ (read-only) |
-| `available` → `under_maintenance` / `broken` | ✅ | ✅ | ❌ |
-| `available` → `retired` | ✅ | ❌ | ❌ |
-| `assigned` → `available` (via handover) | ✅ | ✅ | ❌ |
-| `under_maintenance` → `available` | ✅ | ✅ | ❌ |
-| `broken` → `available` / `under_maintenance` | ✅ | ✅ | ❌ |
-| `unmovable` → `available` / `under_maintenance` | ✅ | ❌ | ❌ |
-| Any → `retired` | ✅ | ❌ | ❌ |
-| Auto-transition (system) | N/A | N/A | N/A |
+| `any` → `available` | ✅ | ✅ | ✅ |
+| `available` → `under_maintenance` / `broken` | ✅ | ✅ | ✅ |
+| `available` → `unmovable` | ✅ | ✅ | ❌ |
+| `unmovable` → `available` | ✅ | ✅ | ❌ (Requires sign-off) |
+| `any` → `retired` | ✅ | ✅ | ❌ (Asset disposal) |
+| Auto-transition (system) | ✅ | N/A | N/A |
 
 **Implementation**:
 - Extend `adminAuth.ts` with `requireTransitionPermission(locals, fromStatus, toStatus)`
@@ -47,86 +48,10 @@
 - Apply in `changeVehicleStatus()` before validation
 - Apply in `PATCH /vehicles/[id]/status/+server.ts`
 
----
-
-### 3. Composite Firestore Indexes
-**Required** for efficient status-based queries:
-
-```json
-// firestore.indexes.json
-{
-  "indexes": [
-    {
-      "collectionGroup": "vehicles",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "technicalExpiration", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "vehicles",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "insuranceExpiration", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "vehicles",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "assignedDriverId", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "vehicleStatusChange",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "vehicleId", "order": "ASCENDING" },
-        { "fieldPath": "timestamp", "order": "DESCENDING" }
-      ]
-    }
-  ]
-}
-```
-
-**Deploy**: `firebase deploy --only firestore:indexes`
-
----
-
 ## New Tasks (Not in v1)
 
-### 4. Maintenance Record Integration
-**Gap**: Status changes to/from `under_maintenance` have no associated maintenance record.
-
-**Required**: 
-- New collection `maintenanceRecords` with:
-  ```typescript
-  interface MaintenanceRecord {
-    id: string;
-    vehicleId: string;           // registration number
-    type: 'scheduled' | 'repair' | 'inspection' | 'damage';
-    status: 'open' | 'in_progress' | 'completed' | 'cancelled';
-    description: string;
-    estimatedCost?: number;      // grosze
-    actualCost?: number;         // grosze
-    startedAt: number;
-    completedAt?: number;
-    performedBy: string;         // garage/vendor
-    odometer?: number;
-    documents: string[];         // Firebase Storage URLs (invoices, reports)
-    createdBy: string;           // admin userId
-    createdAt: number;
-    updatedAt: number;
-  }
-  ```
-- Link `maintenanceRecordId` in `extraData` when transitioning to/from `under_maintenance`
-- UI: Maintenance tab in vehicle detail, create/edit maintenance records
-
-### 5. Damage Incident Workflow
-**Gap**: Transition to `broken` mentions `DAMAGE_INCIDENT_REPORT` but no structured workflow.
+### 3. Damage Incident Workflow
+**Gap**: Transition to `broken` or `unmovable` due to accidents requires a structured audit trail.
 
 **Required**:
 - New collection `damageIncidents`:
@@ -140,9 +65,6 @@
     description: string;
     location?: { lat: number; lng: number; address: string };
     severity: 'minor' | 'major' | 'total_loss';
-    estimatedRepairCost?: number;
-    actualRepairCost?: number;
-    insuranceClaimId?: string;
     status: 'reported' | 'assessing' | 'approved' | 'in_repair' | 'repaired' | 'written_off';
     photos: string[];            // Firebase Storage URLs
     documents: string[];         // Police report, insurance forms
@@ -151,46 +73,65 @@
   ```
 - Transition `available`/`assigned` → `broken` requires creating damage incident
 - Transition `broken` → `available`/`under_maintenance` requires linking repair completion
+- **Note**: Financial cost tracking for repairs is handled by the **Finance/Incomes & Costs** module; this workflow is for operational status and safety documentation only.
 
-### 6. Platform Status Sync (Uber/Bolt/FreeNow/iTaxi)
-**Gap**: Vehicle has `platformStatus` per provider (pending/approved/rejected/suspended/not_applicable) but no sync with vehicle status.
-
-**Required**:
-- When `platformStatus.uber` = `rejected`/`suspended` → auto-transition to `under_maintenance` or `broken` (configurable)
-- When all platforms `approved` + vehicle `available` → eligible for assignment
-- Webhook handlers in `src/routes/(webhooks)/uber/`, `bolt/`, etc. to update platform status
-
-### 7. Lease/Contract Expiry Handling
-**Gap**: No handling for lease end → auto-retire or alert.
-
-**Required**:
-- Add `leaseEndDate` to vehicle (from v1 plan `leaseInfo` subcollection)
-- Scheduled job: 90/60/30 days before lease end → create `alert` record
-- On lease end: transition to `retired` (or `precheck` if renewing)
-
-### 8. Status Change Notifications
+### 4. Status Change Notifications
 **Gap**: No notifications on status changes.
 
 **Required** (integrate with notifications plan):
 - In-app: Real-time badge update via Firestore listener
-- Email: Admin notifications for `broken`/`unmovable`/`retired`
-- Push (PWA): Driver notified if their assigned vehicle changes status
+- Email/Alert: Notify Managers if a vehicle becomes `unmovable` or `retired`.
+- Push (PWA): Notify assigned drivers if their vehicle is flagged as `under_maintenance` or `unmovable`.
 - Slack/Webhook: Ops channel for critical transitions
+
+---
+
+## Implementation Progress (New Section)
+
+### ✅ Completed: Checker/Resolver Architecture Refactor
+
+**Checker/Resolver separation** — Implemented to separate detection (pure) from resolution (effectful):
+
+| Layer | Files | Responsibility |
+|-------|-------|----------------|
+| **Checkers** | `src/lib/server/services/health/checkers/*.checker.ts` | Read-only detection → emit `HealthIssue` records |
+| **Resolvers** | `src/lib/server/services/health/resolvers/*.resolver.ts` | Consume issues → change status + notify |
+| **Orchestrator** | `src/lib/server/services/health/healthCheck.service.ts` | Runs checkers → saves issues → runs resolvers |
+
+**Files created/modified**:
+- `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` (moved from `.health.ts`)
+- `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` (moved from `.health.ts`)
+- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` (new — skeleton)
+- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` (new — **implemented**)
+- `src/lib/server/services/health/healthCheck.service.ts` (updated: runs resolvers after checkers, separate try/catch per resolver)
+
+**Driver resolver implementation** (`driverExpirationDates.resolver.ts`):
+- **Warning (expiring)**: Sends `documentExpiringNotification` via email/SMS/push/in-app
+- **Critical (expired)**: Sends `documentExpiredNotification` + updates driver status to `'documents_expired'`
+- Uses `params.drivers` from `HealthCheckParams` for contact info (falls back to DB query)
+
+**Idempotency strategy**: Notifications tied to actual status change — resolver only fires when status actually changes (checked via current status before update).
+
+---
+
+## Notes & Deferred Items
+
+### Deferred/Externalized
+- **Maintenance Records & Costs**: The structured tracking of maintenance costs has been moved to the centralized **Finance/Income-Cost Module**. This plan only tracks the *status* of the vehicle (`under_maintenance`).
+- **Platform Status Sync (Uber/Bolt)**: Not being implemented at this stage. Internal fleet status takes precedence.
+- **Lease/Contract Expiry**: Not being implemented at this stage unless explicitly requested.
+- **Firestore Indexes**: Already implemented as required by the environment; no further action needed in this plan.
 
 ---
 
 ## Implementation Priority
 
-| Priority | Task | Effort | Dependencies |
-|----------|------|--------|--------------|
-| **P0** | Auto-transition from health issues | Medium | Health checks exist |
-| **P0** | Role-based transition permissions | Medium | Auth system complete |
-| **P1** | Composite indexes | Low | Independent |
-| **P1** | Maintenance record integration | Medium | New collection |
-| **P2** | Damage incident workflow | Medium | New collection |
-| **P2** | Platform status sync | High | Bolt/Uber webhooks |
-| **P2** | Lease expiry handling | Low | Lease data model |
-| **P3** | Status change notifications | Medium | Notifications plan |
+| Priority | Task | Effort | Dependencies | Status |
+|----------|------|--------|--------------|--------|
+| **P0** | Auto-transition to `unmovable` | Medium | Health checks exist | 🔄 Checker/Resolver ready |
+| **P0** | Role-based transition permissions | Medium | Auth system complete | ⏳ Not started |
+| **P1** | Damage incident workflow | Medium | New collection | ⏳ Not started |
+| **P2** | Status change notifications | Medium | Notifications plan | 🔄 Driver notifications done |
 
 ---
 
@@ -204,9 +145,16 @@
 - `vehicleStatusChange` collection for audit trail
 - Health checks: `checkVehicleExpirationDates` → `HealthIssue` records
 
+**New (this plan)**:
+- Checker/Resolver separation in `src/lib/server/services/health/`
+- Driver expiration resolver with notifications + status update
+
 **Files**:
 - `src/lib/server/services/vehicleStatus.service.ts` — core logic
 - `src/lib/server/db/firebase/vehicleStatusChange.fdb.ts` — audit log
 - `src/routes/(admin)/vehicles/[id]/status/+server.ts` — API
-- `src/lib/server/services/health/vehicleExpirationDates.health.ts` — health checks
+- `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` — vehicle checker
+- `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` — driver checker
+- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` — vehicle resolver (skeleton)
+- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` — driver resolver (implemented)
 - `src/lib/server/services/health/healthCheck.service.ts` — orchestrator

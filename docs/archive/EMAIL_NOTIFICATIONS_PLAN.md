@@ -1,6 +1,18 @@
-# Email Notifications Plan
+# Email Notifications Plan (ARCHIVED)
 
-> **Current constraint**: Only email is implemented (password reset only, sent to hardcoded test address). This plan designs for multi-channel from the start (email → SMS → push → webhook) to avoid refactoring later. Phase 1 delivers email-only; Phase 2 adds the abstraction layer; Phase 3 implements additional channels when driver mobile app exists. Note: WebPush capability is currently implemented and being actively tested.
+> **⚠️ This plan was phased out in favor of [LOCALIZED_EMAIL_PLAN.md](../LOCALIZED_EMAIL_PLAN.md).**
+> 
+> The phased approach (email-only MVP → multi-channel later) was replaced by a unified multi-channel architecture from day one. The new approach uses:
+> - Data-driven notification definitions (one object per notification, all channels together)
+> - A single generic email template (`GenericNotificationMail.svelte`) + plain-text generators for SMS/push/in-app
+> - Locale dictionaries passed in context (bypassing Paraglide for server-side rendering)
+> - Channel parity: email, SMS, push, in-app, webhook defined together
+>
+> This archived plan remains for historical reference — its 53-event catalog and priority mappings informed the new architecture.
+
+---
+
+> **Original constraint**: Only email is implemented (password reset only, sent to hardcoded test address). This plan designs for multi-channel from the start (email → SMS → push → webhook) to avoid refactoring later. Phase 1 delivers email-only; Phase 2 adds the abstraction layer; Phase 3 implements additional channels when driver mobile app exists. Note: WebPush capability is currently implemented and being actively tested.
 
 ---
 

@@ -1,0 +1,100 @@
+{
+  "reset_password": {
+    "title": "Resetujte vašu lozinku",
+    "contents": "Kliknite na dugme ispod da kreirate novu lozinku za vaš nalog:",
+    "footer": "Link ističe posle 1 časa. Ako niste zatražili resetovanje lozinke, molimo ignorišite ovaj email.",
+    "button_text": "Resetuj lozinku"
+  },
+  "settlement": {
+    "title": "Rozračun za period {period}",
+    "greeting": "Poštovani {driverName},",
+    "summary": "Ispod su detalji vašeg rozračuna:",
+    "gross_earnings": "Bruto zarada (Uber/Bolt)",
+    "platform_commission": "Provizija platforme",
+    "fleet_provision": "Flotna provizija",
+    "cost_deductions": "Operativni troškovi",
+    "net_payout": "Net iznos isplate",
+    "footer": "Ako imate bilo kakvih pitanja, molimo kontaktirajte administratora flote."
+  },
+  "vehicle_assignment": {
+    "title": "Novo dodeljeno vozilo",
+    "greeting": "Poštovani {driverName},",
+    "body": "Dodeljeno vam je vozilo {vehicleRegistration} ({vehicleMakeModel}).",
+    "handover_date": "Datum preuzimanja: {date}",
+    "footer": "Molimo potvrdite preuzimanje vozila."
+  },
+  "vehicle_return": {
+    "title": "Vraćanje vozila potvrđeno",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vraćanje vozila {vehicleRegistration} je evidentirano.",
+    "return_date": "Datum vraćanja: {date}",
+    "footer": "Hvala na saradnji."
+  },
+  "document_expiring": {
+    "title": "Dokument uskoro istekne",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vaš dokument {documentName} ističe za {days} dana ({expiryDate}).",
+    "action_required": "Molimo obnovite dokument što pre.",
+    "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
+  },
+  "document_expired": {
+    "title": "Dokument isteklo - potrebna akcija",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vaš dokument {documentName} je istekao {expiryDate}.",
+    "consequence": "Vaš nalog može biti ograničen do obnove.",
+    "footer": "Kontaktirajte administratora za obnavljanje."
+  },
+  "balance_negative": {
+    "title": "Negativan saldo na nalogu",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vaš saldo iznosi {balance} PLN. Molimo isplatite zaduženja.",
+    "footer": "Molimo hitno kontaktirajte administratora."
+  },
+  "penalty_added": {
+    "title": "Dodata kazna",
+    "greeting": "Poštovani {driverName},",
+    "body": "Dodata vam je kazna od {amount} PLN za: {reason}.",
+    "footer": "Detalji dostupni u panelu vozača."
+  },
+  "inspection_due": {
+    "title": "Podsetnik: pregledi vozila zakazani",
+    "greeting": "Poštovani {driverName},",
+    "body": "Pregled za vozilo {vehicleRegistration} je zakazan za {date}.",
+    "footer": "Molimo obavite pregled u vreme."
+  },
+  "inspection_overdue": {
+    "title": "Pregled vozila zakasnio",
+    "greeting": "Poštovani {driverName},",
+    "body": "Pregled za vozilo {vehicleRegistration} je bio zakazan za {date} i nije obavljen.",
+    "consequence": "Vozilo može biti isključeno iz službe.",
+    "footer": "Obavite pregled odmah."
+  },
+  "onboarding_approved": {
+    "title": "Verifikacija uspešno završena",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vaš nalog je verifikovan. Možete početi sa radom.",
+    "footer": "Dobrodošli u ekipu."
+  },
+  "onboarding_rejected": {
+    "title": "Verifikacija odbijena",
+    "greeting": "Poštovani {driverName},",
+    "body": "Vaša verifikacija je odbijena. Razlog: {reason}.",
+    "footer": "Kontaktirajte administratora za detalje."
+  },
+  "push_enabled": {
+    "title": "Push obaveštenja omoguđena",
+    "greeting": "Poštovani {driverName},",
+    "body": "Uspešno ste omogućili push obaveštenja za ovaj uređaj."
+  },
+  "admin_notification": {
+    "email_subject": "Poruka od administratora flote",
+    "push_title": "Nova poruka od administratora"
+  },
+  "common": {
+    "app_name": "EISG",
+    "footer_app_link": "Obaveštenje od",
+    "footer_confidential": "Ova poruka sadrži poverljive informacije koje čine poslovnu tajnu Everest International Service Group sp. z o.o. sa sedištem u Varšavi i su zakonski zaštićene. Pristup sadržaju ove poruke primljenoj slučajno, njeno dalje prosleđivanje, kopiranje, distribucija ili bilo koja druga upotreba, ili preduzimanje bilo kakve akcije na osnovu informacija sadržanih u njoj, čak i od strane lica kojima je namijenjena, bez prethodnog pismenog saglasnosti Everest International Service Group sp. z o.o. je zakonski zabranjeno. Nepridržavanje gore navedene zabrane nosi sa sobom civilnu i kaznenu odgovornost.",
+    "unsubscribe": "Ako ne želite da primate takva obaveštenja,",
+    "unsubscribe_link": "kliknite ovde za odjavljivanje."
+  }
+}

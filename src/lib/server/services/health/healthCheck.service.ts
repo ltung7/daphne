@@ -1,6 +1,8 @@
 import { findHealthIssues, saveHealthIssues } from '$lib/server/db/firebase/healthIssues.fdb';
-import { checkVehicleExpirationDates } from './vehicleExpirationDates.health';
-import { checkDriverExpirationDates } from './driverExpirationDates.health';
+import { checkVehicleExpirationDates } from './checkers/vehicleExpirationDates.checker';
+import { checkDriverExpirationDates } from './checkers/driverExpirationDates.checker';
+import { resolveVehicleExpirationIssues } from './resolvers/vehicleExpirationDates.resolver';
+import { resolveDriverExpirationIssues } from './resolvers/driverExpirationDates.resolver';
 
 type HealthCheckParams = {
 	vehicles?: Vehicle.Vehicle[];
@@ -9,10 +11,16 @@ type HealthCheckParams = {
 };
 
 type CheckerFn = (params: HealthCheckParams) => Promise<HealthCheck.HealthIssue[]>;
+type ResolverFn = (issues: HealthCheck.HealthIssue[], params: HealthCheckParams) => Promise<void>;
 
 const CHECKERS: Record<string, CheckerFn> = {
 	vehicle: checkVehicleExpirationDates,
 	driver: checkDriverExpirationDates
+};
+
+const RESOLVERS: Record<string, ResolverFn> = {
+	vehicle: resolveVehicleExpirationIssues,
+	driver: resolveDriverExpirationIssues
 };
 
 export const checkFleetProblems = async (params: HealthCheckParams = {}): Promise<HealthCheck.HealthCheckResult> => {
@@ -38,6 +46,21 @@ export const checkFleetProblems = async (params: HealthCheckParams = {}): Promis
 	);
 
 	await saveHealthIssues(allIssues);
+
+	// Resolve issues after saving - separate try/catch per resolver
+	await Promise.all(
+		Object.entries(RESOLVERS).map(async ([ key, resolver ]) => {
+			try {
+				const relevantIssues = allIssues.filter(i => i.entityType === key);
+				if (relevantIssues.length > 0) {
+					await resolver(relevantIssues, params);
+				}
+			} catch (error) {
+				console.error(`Health resolver "${key}" failed:`, error);
+			}
+		})
+	);
+
 	return { issues: allIssues, summary };
 };
 

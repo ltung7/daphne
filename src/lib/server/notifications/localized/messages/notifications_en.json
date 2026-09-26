@@ -86,6 +86,10 @@
     "greeting": "Dear {driverName},",
     "body": "You have successfully enabled push notifications for this device."
   },
+  "admin_notification": {
+    "email_subject": "Message from fleet administrator",
+    "push_title": "New message from administrator"
+  },
   "common": {
     "app_name": "EISG",
     "footer_app_link": "Notification from",

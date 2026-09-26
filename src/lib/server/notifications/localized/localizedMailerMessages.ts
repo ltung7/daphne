@@ -25,6 +25,7 @@ export type NotificationType =
     | 'onboarding_approved'
     | 'onboarding_rejected'
     | 'push_enabled'
+    | 'admin_notification'
     | 'common';
 
 /** Type-safe interface for all notification messages - mirrors notifications_pl.json structure */
@@ -115,6 +116,10 @@ export interface NotificationMessages {
         title: string;
         greeting: string;
         body: string;
+    };
+    admin_notification: {
+        email_subject: string;
+        push_title: string;
     };
     common: {
         app_name: string;

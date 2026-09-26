@@ -87,5 +87,9 @@
     "footer_confidential": "Ang mensahe na ito ay naglalaman ng confidential na impormasyon na nagiging trade secret ng Everest International Service Group sp. z o.o. na nakabase sa Warsaw at legal na protektado. Ang pag-access sa nilalaman ng mensahe na natanggap nang aksidente, ang pag-forward, kopya, pagkalat, o anumang ibang paggamit, o paggawa ng anumang aksyon batay sa impormasyon na nasa loob, kahit ng mga taong tumanggap nito, nang walang nakasulat na pahintulot mula sa Everest International Service Group sp. z o.o. ay ipinagbabawal ng batas. Ang paglabag sa itaas na babala ay magdudulot ng sibil at kriminal na pananagutan.",
     "unsubscribe": "Kung ayaw mo nang tumanggap ng ganitong notifikasyon,",
     "unsubscribe_link": "i-click dito para i-unsubscribe."
+  },
+  "admin_notification": {
+    "email_subject": "Mensahe mula sa fleet administrator",
+    "push_title": "Bagong mensahe mula sa administrator"
   }
 }
