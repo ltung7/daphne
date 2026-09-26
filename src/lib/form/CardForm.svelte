@@ -4,12 +4,14 @@
 	import { wrapLoader } from '$lib/nav/loader';
 	import { tick, type Snippet } from 'svelte';
 	import type { ZodType } from 'zod';
+	import { isDeepEqual } from '$lib/utils/isDeepEqual';
+	import { addToast } from '$lib/toast';
 
 	interface Props {
 		item: T;
 		cleanItem: T;
 		name?: string;
-		onResponse?: (response: any) => any;
+		onResponse?: (response: any, item: T) => any;
 		onReset?: () => any;
 		testData?: () => any;
 		beforeSubmit?: (obj: T) => Partial<T>;
@@ -52,8 +54,26 @@
 			console.error(errors)
 			return false;
 		}
-		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item }, patch ? 'patch' : 'post')));
-		if (response.success) onResponse?.(response);
+
+		let payload: Record<string, any> = {};
+		if (patch) {
+			for (const key of Object.keys(item)) {
+				if (!isDeepEqual(item[key as keyof T], cleanItem[key as keyof T])) {
+					payload[key] = item[key as keyof T];
+				}
+			}
+			if (Object.keys(payload).length === 0) {
+				addToast('Nothing to update', 'info')
+				return true; // Nothing to update
+			}
+		} else {
+			payload = item;
+		}
+
+		console.log({ payload })
+		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: payload }, patch ? 'patch' : 'post')));
+		console.log({ response })
+		if (response.success) onResponse?.(response, item);
 	};
 
 	let errors = $derived.by((): Partial<Record<keyof T, string>> => {

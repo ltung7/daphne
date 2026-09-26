@@ -29,13 +29,13 @@ export const POST: RequestHandler = async ({ params, request }) => {
 };
 
 export const PATCH: RequestHandler = async ({ params, request }) => {
-    const body = await request.json();
+    const { data } = await request.json();
     
     const filteredData: Partial<Record<AllowedUpdateField, unknown>> = {};
     
     for (const key of ALLOWED_UPDATE_FIELDS) {
-        if (key in body) {
-            filteredData[key] = body[key];
+        if (key in data) {
+            filteredData[key] = data[key];
         }
     }
     

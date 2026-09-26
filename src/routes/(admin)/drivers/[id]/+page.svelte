@@ -19,6 +19,8 @@
 	import DriverStatusHistory from '$lib/components/driver/DriverStatusHistory.svelte';
 	import DriverBalanceLedger from '$lib/components/finance/DriverBalanceLedger.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
+	import { Offcanvas } from '@sveltestrap/sveltestrap';
+	import DriverForm from '$lib/components/driver/DriverForm.svelte';
 
 	let { data }: PageProps = $props();
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
@@ -34,13 +36,24 @@
 		driver.status = status;
 	};
 
-	const handleDriverUpdate = (response: any) => {
-		if (response?.driver) {
-			Object.assign(driver, response.driver);
+	const handleDriverUpdate = (response: any, item: Driver.Driver) => {
+		if (response?.success) {
+			Object.assign(driver, item);
+			data.driver = { ...item }; // Update initial data so next patch diffs correctly
 		}
 		editModal = false;
 	};
+
+	const toggle = () => {
+		editModal = !editModal;
+	}
 </script>
+
+{#snippet footerSnippet()}
+	<div class="d-flex justify-content-end gap-2">
+		<IconButton icon="cross-circle" caption="Zamknij" onclick={() => (editModal = false)} outline color="dark" size={6} class="mb-0 me-2" />
+	</div>
+{/snippet}
 
 <PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczegóły zarejestrowanego kierowcy" />
 
@@ -142,6 +155,6 @@
 	</div>
 {/if}
 
-{#if editModal}
-	<!-- TODO: Add -->
-{/if}
+<Offcanvas bind:isOpen={editModal} class="w-100" placement="end" header="Edytuj kierowcę" {toggle}>
+	<DriverForm bind:item={driver} cleanItem={untrack(() => data.driver)} onResponse={handleDriverUpdate} patch footer={footerSnippet} />
+</Offcanvas>

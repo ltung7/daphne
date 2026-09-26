@@ -3,11 +3,11 @@
 	import { browser } from '$app/environment';
 
 	let { exp = 0 }: { exp: number | undefined } = $props();
-
 	let refreshTimer: ReturnType<typeof setTimeout> | null = null;
 	let currentExp = $state(0);
 
 	$effect(() => {
+		console.log({ exp })
 		if (exp && !currentExp) {
 			currentExp = exp;
 			if (browser) scheduleRefresh();
