@@ -1,6 +1,6 @@
 import axios from "axios";
 import { env } from "$env/dynamic/private"
-import { logger } from "$lib/utils/logger";
+import { logger, LOGGER_COLORS } from "$lib/utils/logger";
 
 const translateOpenRouter: App.TranslateFunction = async (sentence, from = 'en', to = 'pl') => {
     const apiKey = env.OPENROUTER_API_KEY;
@@ -41,7 +41,7 @@ const translateOpenRouter: App.TranslateFunction = async (sentence, from = 'en',
         return null;
     });
     if (!response) return null;
-    logger.log('Translated using: ' + response.data.model);
+    logger.log('Translated using: ' + response.data.model, LOGGER_COLORS.GREEN);
     const rawTranslation = response.data.choices[0].message.content;
 
     // Trim extraneous whitespace or surrounding quotation marks
@@ -118,7 +118,7 @@ No extra text, no markdown, no explanations.`;
 
     if (!response) return { sourceLang: from, targetLang: to, nodes: [] };
 
-    logger.log('Translated JSON using: ' + response.data.model);
+    logger.log('Translated JSON using: ' + response.data.model, LOGGER_COLORS.GREEN);
     const rawContent = response.data.choices[0].message.content;
 
     try {

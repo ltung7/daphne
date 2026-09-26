@@ -25,6 +25,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import axios from "axios";
+import { logger } from "./sc/logger.js";
 
 // ---------------------------------------------------------------------------
 // tiny .env loader (avoids pulling in an extra "dotenv" dependency)
@@ -70,10 +71,10 @@ const MODEL_NAME = getFlag("model", process.env.OPENROUTER_MODEL ?? "openrouter/
 const DRY_RUN = flags.includes("--dry-run");
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-if (!OPENROUTER_API_KEY) {
-    console.error("Missing OPENROUTER_API_KEY (checked process.env and .env).");
-    process.exit(1);
-}
+    if (!OPENROUTER_API_KEY) {
+        logger.error("Missing OPENROUTER_API_KEY (checked process.env and .env).");
+        process.exit(1);
+    }
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 const OPENROUTER_HEADERS = {
@@ -196,7 +197,7 @@ Respond with a JSON object of the same keys mapped to the translated strings.`;
             try {
                 parsed = JSON.parse(text);
             } catch {
-                console.log({ text })
+                logger.inspect({ text })
                 throw new Error(
                     `Failed to parse OpenRouter response as JSON for locale "${targetLocale}":\n${text}`
                 );
@@ -204,7 +205,7 @@ Respond with a JSON object of the same keys mapped to the translated strings.`;
 
             const missing = keys.filter((k) => !(k in parsed));
             if (missing.length > 0) {
-                console.warn(
+                logger.warn(
                     `  [${targetLocale}] response was missing keys: ${missing.join(", ")}`
                 );
             }
@@ -215,7 +216,7 @@ Respond with a JSON object of the same keys mapped to the translated strings.`;
             const isEmptyResponse = err.message?.includes("Empty response from OpenRouter");
             
             if (isEmptyResponse && attempt < MAX_RETRIES) {
-                console.warn(
+                logger.warn(
                     `  [${targetLocale}] empty response (attempt ${attempt}/${MAX_RETRIES}), retrying...`
                 );
                 await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
@@ -241,13 +242,13 @@ Respond with a JSON object of the same keys mapped to the translated strings.`;
 // ---------------------------------------------------------------------------
 async function main() {
     if (!fs.existsSync(MESSAGES_DIR)) {
-        console.error(`Messages directory not found: ${MESSAGES_DIR}`);
+        logger.error(`Messages directory not found: ${MESSAGES_DIR}`);
         process.exit(1);
     }
 
     const baseFilePath = path.join(MESSAGES_DIR, `${BASE_LOCALE}.json`);
     if (!fs.existsSync(baseFilePath)) {
-        console.error(`Base file not found: ${baseFilePath}`);
+        logger.error(`Base file not found: ${baseFilePath}`);
         process.exit(1);
     }
 
@@ -255,15 +256,15 @@ async function main() {
     const baseFlat = flatten(baseTree);
     const baseKeys = Object.keys(baseFlat);
 
-    console.log(`Base locale: "${BASE_LOCALE}" (${baseKeys.length} strings) — ${baseFilePath}`);
-    console.log(`Model: ${MODEL_NAME}${DRY_RUN ? " (dry run)" : ""}`);
+    logger.log(`Base locale: "${BASE_LOCALE}" (${baseKeys.length} strings) — ${baseFilePath}`);
+    logger.log(`Model: ${MODEL_NAME}${DRY_RUN ? " (dry run)" : ""}`);
 
     const localeFiles = fs
         .readdirSync(MESSAGES_DIR)
         .filter((f) => f.endsWith(".json") && f !== `${BASE_LOCALE}.json`);
 
     if (localeFiles.length === 0) {
-        console.log("No other locale files found in messages/. Nothing to do.");
+        logger.log("No other locale files found in messages/. Nothing to do.");
         return;
     }
 
@@ -275,18 +276,18 @@ async function main() {
         try {
             targetTree = readJson(filePath);
         } catch (err) {
-            console.warn(`Skipping ${file}: could not parse JSON (${err.message})`);
+            logger.warn(`Skipping ${file}: could not parse JSON (${err.message})`);
             continue;
         }
 
         const missingKeys = baseKeys.filter((key) => !hasValue(targetTree, key));
 
         if (missingKeys.length === 0) {
-            console.log(`[${locale}] up to date.`);
+            logger.log(`[${locale}] up to date.`);
             continue;
         }
 
-        console.log(`[${locale}] ${missingKeys.length} missing string(s), translating...`);
+        logger.log(`[${locale}] ${missingKeys.length} missing string(s), translating...`);
 
         const toTranslate = {};
         for (const key of missingKeys) toTranslate[key] = baseFlat[key];
@@ -306,18 +307,18 @@ async function main() {
         }
 
         if (DRY_RUN) {
-            console.log(`[${locale}] dry run — would write ${written} string(s). Preview:`);
-            console.log(JSON.stringify(translated, null, 2));
+            logger.log(`[${locale}] dry run — would write ${written} string(s). Preview:`);
+            logger.inspect(JSON.stringify(translated, null, 2));
         } else {
             writeJson(filePath, targetTree);
-            console.log(`[${locale}] wrote ${written} string(s) -> ${filePath}`);
+            logger.log(`[${locale}] wrote ${written} string(s) -> ${filePath}`);
         }
     }
 
-    console.log("Done.");
+    logger.log("Done.");
 }
 
 main().catch((err) => {
-    console.error(err);
+    logger.error(err);
     process.exit(1);
 });

@@ -3,6 +3,7 @@ import type { NotificationDefinition, NotificationContext, NotificationPriority 
 import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
 import { sendWebPush } from '../services/webpush.service';
+import { logger } from '$lib/utils/logger';
 
 type UserPreferences = {
     channels: {
@@ -28,7 +29,7 @@ export async function sendNotification<TData>(
     // 1. Resolve Preferences
     const prefs = await getUserPreferences(user.id);
     if (!shouldSend(notification.priority, prefs)) {
-        console.log(`Notification ${notification.id} dropped for user ${user.id} due to preferences`);
+        logger.log(`Notification ${notification.id} dropped for user ${user.id} due to preferences`);
         return;
     }
 
@@ -44,7 +45,7 @@ export async function sendNotification<TData>(
     const promises: Promise<void>[] = [];
 
     // --- EMAIL ---
-    if (user.email && prefs.channels.email !== false) {
+    if (user.email && notification.email && prefs.channels.email !== false) {
         promises.push(sendEmail(user.email, notification, data, ctx));
     }
 
@@ -63,7 +64,7 @@ export async function sendNotification<TData>(
         promises.push(sendInApp(user.id, notification, data, ctx));
     }
 
-    await Promise.allSettled(promises);
+    if (promises.length) await Promise.allSettled(promises);
 }
 
 async function sendEmail<TData>(

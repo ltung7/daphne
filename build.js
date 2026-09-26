@@ -1,11 +1,6 @@
 import fs from 'fs';
-import util from 'util';
 import path from 'path';
-
-const inspect = (data, fmt = '\x1b[36m%s\x1b[0m') => {
-  if (typeof data === 'string') console.log(fmt, data);
-  else console.log(util.inspect(data, { showHidden: false, depth: null, colors: true }));
-}
+import { logger } from './sc/logger.js';
 
 function copyFolder(sourceDir, destinationDir) {
   // Create destination directory if it doesn't exist
@@ -32,16 +27,16 @@ function copyFolder(sourceDir, destinationDir) {
   });
 }
 
-inspect('Copying build files');
+logger.log('Copying build files');
 copyFolder('./data', './build/data');
 
-inspect('Rewriting abort error')
+logger.log('Rewriting abort error')
 let indexContent = await fs.promises.readFile('./build/index.js', 'utf-8');
 indexContent = indexContent.replace('!isAbortSignal(signal)', 'false');
 indexContent = indexContent.replace('!isAbortSignal4(signal)', 'false');
 await fs.promises.writeFile('./build/index.js', indexContent);
 
-inspect('Adding version number')
+logger.log('Adding version number')
 
 let content = await fs.readFileSync('./build/app.yaml', 'utf-8');
 content = content.replace('expiration: 30d 0h', 'expiration: 366d 0h')
@@ -55,7 +50,7 @@ const SKIP_ENV = [ 'NODE_ENV', 'IDOSELL_APP_KEY', 'IDOSELL_APP_ID', 'IDOSELL_APP
 const envFile = fs.readFileSync('.env', 'utf8');
 const envBlockMatch = content.match(/^env_variables:\s*\n([\s\S]*?)(?=^entrypoint:)/m);
 if (!envBlockMatch) {
-  console.error('Could not find env_variables block in app.yaml');
+  logger.error('Could not find env_variables block in app.yaml');
   process.exit(1);
 }
 const yamlKeys = new Set(
@@ -76,6 +71,6 @@ const dotenvKeys = new Set(
 const missingInYaml = [ ...dotenvKeys ].filter(k => !yamlKeys.has(k));
 
 if (missingInYaml.length) {
-  inspect('Missing in app.yaml (defined in .env):', '\x1b[33m%s\x1b[0m');
-  missingInYaml.forEach(k => inspect(`- ${k}`, '\x1b[35m%s\x1b[0m'));
+  logger.warn('Missing in app.yaml (defined in .env):');
+  missingInYaml.forEach(k => logger.warn(`- ${k}`));
 }

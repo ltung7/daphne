@@ -1,6 +1,7 @@
 import { getDriver, updateDriver } from '$lib/server/db/firebase/drivers.fdb';
 import { sendDocumentExpiringNotification } from '$lib/server/notifications/driver/documentExpiringNotification';
 import { sendDocumentExpiredNotification } from '$lib/server/notifications/driver/documentExpiredNotification';
+import { logger } from '$lib/utils/logger';
 
 /**
  * Resolves driver expiration health issues.
@@ -67,7 +68,7 @@ export async function resolveDriverExpirationIssues(
 			// Update driver status if not already 'documents_expired'
 			if (driver.status !== 'documents_expired') {
 				await updateDriver(driverId, { status: 'documents_expired' });
-				console.log(`[RESOLVER] Driver ${driverId}: status updated to 'documents_expired'`);
+				logger.log(`[RESOLVER] Driver ${driverId}: status updated to 'documents_expired'`);
 			}
 		} else if (hasWarning) {
 			// Warning: send expiring soon notification only

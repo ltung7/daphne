@@ -169,7 +169,7 @@ export const thrower = {
                     if (dataMessage.length > 1000) {
                         errorMessage = `${prefix} (${err.response.status})`;
                         if (isDev) fs.writeFileSync(`/tmp/${prefix}.html`, dataMessage);
-                        logger.log(`Dumped HTML response file: ${prefix}.html`)
+                        logger.warn(`Dumped HTML response file: ${prefix}.html`)
                     } else errorMessage = `${prefix} (${err.response.status}): ${dataMessage ?? "Unknown"}`;
                 } else {
                     `${prefix} (${err.response.status}): ${JSON.stringify(dataMessage)}`;

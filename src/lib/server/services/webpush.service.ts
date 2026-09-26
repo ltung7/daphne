@@ -1,3 +1,4 @@
+import { logger } from '$lib/utils/logger';
 import admin from 'firebase-admin';
 
 /**
@@ -27,10 +28,10 @@ export async function sendWebPush(fcmToken: string, title: string, body: string,
 
     try {
         const response = await admin.messaging().send(message);
-        console.log('Successfully sent message:', response);
+        logger.log('Successfully sent message: ' + response);
         return response;
     } catch (error) {
-        console.error('Error sending message:', error);
+        logger.error(error);
         throw error;
     }
 }

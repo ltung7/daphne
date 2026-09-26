@@ -1,6 +1,6 @@
 import axios from "axios";
 import { env } from "$env/dynamic/private";
-import { logger } from "$lib/utils/logger";
+import { logger, LOGGER_COLORS } from "$lib/utils/logger";
 
 const SYSTEM_PROMPT = `You are a vehicle data expert for a Polish fleet management system. Given a user query describing a vehicle (e.g., "plugin hybryd toyota corolla 2023"), return a JSON object matching the Vehicle.Type schema.
 
@@ -56,7 +56,7 @@ export const getVehicleTypeFromQuery = async (query: string): Promise<Vehicle.Ty
 		}
 
 		const parsed = JSON.parse(rawContent) as Vehicle.Type;
-		logger.log(`Generated vehicle type for query "${query}" using model: ${response.data.model}`);
+		logger.log(`Generated vehicle type for query "${query}" using model: ${response.data.model}`, LOGGER_COLORS.GREEN);
 		return parsed;
 	} catch (error) {
 		logger.error('Failed to get vehicle type from OpenRouter:', error);

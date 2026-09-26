@@ -70,9 +70,7 @@
 			payload = item;
 		}
 
-		console.log({ payload })
 		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: payload }, patch ? 'patch' : 'post')));
-		console.log({ response })
 		if (response.success) onResponse?.(response, item);
 	};
 

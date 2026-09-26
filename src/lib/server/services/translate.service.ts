@@ -15,7 +15,7 @@ export const serverTranslate = (translator: string, from: string, to: string, se
     const translate = serverTranslateFunction[translator];
     if (translate) return translate(sentence, from, to);
     else {
-        logger.log('Translation - falling back to chrome')
+        logger.error('Translation - falling back to chrome')
         return browserTranslate.chrome(sentence, from, to);
     }
 }

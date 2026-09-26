@@ -1,6 +1,6 @@
 // Service that maps task names to executable functions
 
-import { logger, thrower } from '$lib/utils/logger';
+import { logger, LOGGER_COLORS, thrower } from '$lib/utils/logger';
 import slackMessage from '../services/slack.service';
 
 /**
@@ -22,7 +22,7 @@ export async function runTaskFromIndex(task: string, payload: any = {}): Promise
         logger.error(`Unknown task requested: ${task}`);
         throw new Error(`Task "${task}" not found`);
     }
-    logger.log(`Executing task "${task}" with payload: ${JSON.stringify(payload)}`);
+    logger.log(`Executing task "${task}" with payload: ${JSON.stringify(payload)}`, LOGGER_COLORS.MAGENTA);
     const start = Date.now();
     slackMessage(`Executing task "${task}"`);
     try {
