@@ -30,12 +30,12 @@
 		loading = false;
 	}
 
-	async function saveMatrix() {
+	async function saveMatrix(problem: HealthCheck.HealthCheckProblem, recipients: HealthCheck.HealthCheckRecipient[]) {
 		if (!matrix || saving) return;
 		saving = true;
 		try {
-			const data = await confirmSuccess(internal.postApi(matrix));
-			matrix = data.matrix;
+			const data = await confirmSuccess(internal.postApi({ problem, recipients }));
+			matrix = { ...matrix, [problem]: data.recipients };
 		} finally {
 			saving = false;
 		}
@@ -56,22 +56,23 @@
 
 	async function selectUserAsRecipient(user: App.User) {
 		if (!matrix || !selectedProblem) return;
-		matrix[selectedProblem] = [
-			...matrix[selectedProblem],
-			{
-				id: user.id || crypto.randomUUID(),
-				name: user.name || ''
-			}
-		];
+		const problem = selectedProblem; // capture before nullifying
+		const newContact: HealthCheck.HealthCheckRecipient = {
+			id: user.id,
+			name: user.name,
+		};
+		const updatedRecipients = [ ...matrix[problem], newContact ];
+		matrix[problem] = updatedRecipients;
 		isModalOpen = false;
 		selectedProblem = null;
-		await saveMatrix();
+		await saveMatrix(problem, updatedRecipients);
 	}
 
 	async function removeRecipient(problem: HealthCheck.HealthCheckProblem, index: number) {
 		if (!matrix) return;
-		matrix[problem] = matrix[problem].filter((_: App.BaseContact, i: number) => i !== index);
-		await saveMatrix();
+		const updatedRecipients = matrix[problem].filter((_, i: number) => i !== index);
+		matrix[problem] = updatedRecipients;
+		await saveMatrix(problem, updatedRecipients);
 	}
 
 	onMount(() => {

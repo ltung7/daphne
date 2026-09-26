@@ -918,7 +918,11 @@ declare global {
 			| LicenseExpiringIssue
 			| TaxiAuthorizationExpiringIssue;
 
-		type HealthCheckProblem = HealthIssue['type'];
+		type HealthCheckProblem =
+			| 'insurance_expiring'
+			| 'technical_expiring'
+			| 'license_expiring'
+			| 'taxi_authorization_expiring';
 
 		interface HealthCheckResult {
 			issues: HealthIssue[];
@@ -936,13 +940,13 @@ declare global {
 
 		type HealthCheckFn = (params?: HealthCheckParams) => Promise<HealthIssue[]>;
 
-		// Notification registry types
-		interface HealthCheckRecipientMap {
-			insurance_expiring: BaseContact[];
-			technical_expiring: BaseContact[];
-			license_expiring: BaseContact[];
-			taxi_authorization_expiring: BaseContact[];
+		interface HealthCheckRecipient {
+			id: string;
+			name: string;
 		}
+
+		// Notification registry types
+		type HealthCheckRecipientMap = Record<HealthCheckProblem, HealthCheckRecipient[]>;
 	}
 
 	namespace SvelteCustom {

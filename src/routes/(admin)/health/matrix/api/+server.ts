@@ -1,9 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import loadJson from '$lib/utils/loadJson';
-import saveJson from '$lib/utils/saveJson';
-
-const MATRIX_FILE = 'health_matrix';
+import { getHealthMatrix, setHealthMatrixRecipients, getHealthMatrixRecipients } from '$lib/server/db/firebase/healthMatrix.fdb';
 
 const defaultMatrix: HealthCheck.HealthCheckRecipientMap = {
 	insurance_expiring: [],
@@ -14,13 +11,14 @@ const defaultMatrix: HealthCheck.HealthCheckRecipientMap = {
 
 export const GET: RequestHandler = async () => {
 	try {
-		const matrix = await loadJson(MATRIX_FILE);
-		return json({ success: true, matrix });
-	} catch (error: any) {
-		if (error.code === 'ENOENT') {
-			// File doesn't exist yet, return default matrix
-			return json({ success: true, matrix: defaultMatrix });
+		const matrix = await getHealthMatrix();
+		const result = { ...defaultMatrix } as HealthCheck.HealthCheckRecipientMap;
+		for (const key in defaultMatrix) {
+			const problem = key as HealthCheck.HealthCheckProblem;
+			result[problem] = matrix[problem] ?? defaultMatrix[problem];
 		}
+		return json({ success: true, matrix: result });
+	} catch (error) {
 		console.error('Failed to load health matrix:', error);
 		return json({ success: false, error: 'Internal server error' }, { status: 500 });
 	}
@@ -28,9 +26,10 @@ export const GET: RequestHandler = async () => {
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
-		const matrix: HealthCheck.HealthCheckRecipientMap = await request.json();
-		await saveJson(matrix as any, MATRIX_FILE);
-		return json({ success: true, matrix });
+		const { problem, recipients }: { problem: HealthCheck.HealthCheckProblem; recipients: App.BaseContact[] } = await request.json();
+		await setHealthMatrixRecipients(problem, recipients);
+		const updated = await getHealthMatrixRecipients(problem);
+		return json({ success: true, recipients: updated ?? [] });
 	} catch (error) {
 		console.error('Failed to save health matrix:', error);
 		return json({ success: false, error: 'Internal server error' }, { status: 500 });
