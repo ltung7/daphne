@@ -5,9 +5,11 @@
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import { onMount } from 'svelte';
 	import { internal, confirmSuccess } from '$lib/nav/internal';
+	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
 
 	let matrix = $state<HealthCheck.HealthCheckRecipientMap | null>(null);
 	let loading = $state(true);
+	let saving = $state(false);
 	
 	let isModalOpen = $state(false);
 	let selectedProblem = $state<HealthCheck.HealthCheckProblem | null>(null);
@@ -29,9 +31,14 @@
 	}
 
 	async function saveMatrix() {
-		if (!matrix) return;
-		const data = await confirmSuccess(internal.postApi(matrix));
-		matrix = data.matrix;
+		if (!matrix || saving) return;
+		saving = true;
+		try {
+			const data = await confirmSuccess(internal.postApi(matrix));
+			matrix = data.matrix;
+		} finally {
+			saving = false;
+		}
 	}
 
 	async function openAddRecipientModal(problem: HealthCheck.HealthCheckProblem) {
@@ -47,24 +54,24 @@
 		}
 	}
 
-	function selectUserAsRecipient(user: App.User) {
+	async function selectUserAsRecipient(user: App.User) {
 		if (!matrix || !selectedProblem) return;
 		matrix[selectedProblem] = [
 			...matrix[selectedProblem],
 			{
 				id: user.id || crypto.randomUUID(),
-				name: user.name || '',
-				email: user.email || '',
-				preferredLanguage: user.preferredLanguage || 'pl'
+				name: user.name || ''
 			}
 		];
 		isModalOpen = false;
 		selectedProblem = null;
+		await saveMatrix();
 	}
 
-	function removeRecipient(problem: HealthCheck.HealthCheckProblem, index: number) {
+	async function removeRecipient(problem: HealthCheck.HealthCheckProblem, index: number) {
 		if (!matrix) return;
 		matrix[problem] = matrix[problem].filter((_: App.BaseContact, i: number) => i !== index);
+		await saveMatrix();
 	}
 
 	onMount(() => {
@@ -72,9 +79,7 @@
 	});
 </script>
 
-<PageTitle title="Odbiorcy powiadomień" subtitle="Matryca powiadomień systemowych">
-	<IconButton onclick={saveMatrix} caption="Zapisz" icon="disk" size={5} />
-</PageTitle>
+<PageTitle title="Odbiorcy powiadomień" subtitle="Matryca powiadomień systemowych" />
 
 {#if loading}
 	<Spinner />
@@ -93,14 +98,14 @@
 					{#each problems as { key, label }}
 						<tr>
 							<td class="fw-bold text-dark">{label}</td>
-							<td>
+							<td class="text-dark small">
 								{#if matrix[key].length === 0}
-									<div class="text-muted fst-italic small">Brak odbiorców</div>
+									<div class="text-muted fst-italic">Brak odbiorców</div>
 								{:else}
 									{#each matrix[key] as recipient, i}
-										<div class="d-flex align-items-center justify-content-between bg-light border rounded px-2 py-1 {i < matrix[key].length - 1 ? 'mb-2' : ''}">
+										<div class="d-flex align-items-center justify-content-between rounded">
 											<span class="fw-medium">{recipient.name}</span>
-											<button class="btn btn-sm btn-outline-danger py-0 px-2" onclick={() => removeRecipient(key, i)} title="Usuń"> &times; </button>
+											<TooltipSquareIconButton icon="cross-circle" hoverText="Usuń" onClick={() => removeRecipient(key, i)} size={6} color="dark" />
 										</div>
 									{/each}
 								{/if}
@@ -123,12 +128,7 @@
 		<div class="list-group">
 			{#each users as user}
 				{@const isAdded = matrix && selectedProblem ? matrix[selectedProblem].some(r => r.id === user.id) : false}
-				<button 
-					class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" 
-					class:bg-light={isAdded}
-					disabled={isAdded}
-					onclick={() => !isAdded && selectUserAsRecipient(user)}
-				>
+				<button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" class:bg-light={isAdded} disabled={isAdded} onclick={() => !isAdded && selectUserAsRecipient(user)}>
 					<div>
 						<strong>{user.name}</strong>
 						<br />
