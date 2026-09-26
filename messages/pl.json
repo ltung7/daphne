@@ -190,5 +190,6 @@
   "webpush_no_token": "Brak dostępnego tokenu rejestracji.",
   "webpush_error_retrieving": "Wystąpił błąd podczas pobierania tokenu:",
   "webpush_enable_notifications": "Włącz powiadomienia Push",
-  "webpush_revoke_notifications": "Odwołaj powiadomienia Push"
+  "webpush_revoke_notifications": "Odwołaj powiadomienia Push",
+  "webpush_title": "Powiadomienia"
 }

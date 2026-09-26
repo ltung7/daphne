@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "अनुरोधित रकम",
   "early_settlement_fee": "शुल्क",
   "early_settlement_actual_payout": "वास्तविक भुक्तानी",
-  "submit": "अनुरोध प्रस्तुत गर्नुहोस्"
+  "submit": "अनुरोध प्रस्तुत गर्नुहोस्",
+  "webpush_unsupported_browser": "यो ब्राउजर डेस्कटप सूचनाहरू समर्थन गर्दैन",
+  "webpush_no_token": "कोई पंजीकरण टोकन उपलब्ध छैन।",
+  "webpush_error_retrieving": "टोकन प्राप्त गर्दा त्रुटि भयो:",
+  "webpush_enable_notifications": "पुश सूचनाहरू सक्षम गर्नुहोस्",
+  "webpush_revoke_notifications": "पुश सूचनाहरू रद्द गर्नुहोस्",
+  "webpush_title": "सूचनाहरू"
 }

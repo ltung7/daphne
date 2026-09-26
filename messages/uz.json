@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "Запитана сума",
   "early_settlement_fee": "Плата",
   "early_settlement_actual_payout": "Реальна виплата",
-  "submit": "Завершити запит"
+  "submit": "Завершити запит",
+  "webpush_unsupported_browser": "Ushbu brauzer ish stoli bildirishnomalarini qo'llab-quvvatlamaydi",
+  "webpush_no_token": "Ro'yxatdan o'tish tokeni mavjud emas.",
+  "webpush_error_retrieving": "Tokenni olishda xatolik yuz berdi:",
+  "webpush_enable_notifications": "Push bildirishnomalarni yoqish",
+  "webpush_revoke_notifications": "Push bildirishnomalarni bekor qilish",
+  "webpush_title": "Bildirishnomalar"
 }

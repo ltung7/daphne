@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "Запытаная сума",
   "early_settlement_fee": "Камісія",
   "early_settlement_actual_payout": "Фактычная выплата",
-  "submit": "Адправіць запыт"
+  "submit": "Адправіць запыт",
+  "webpush_unsupported_browser": "Deze browser ondersteunt geen deskopposities",
+  "webpush_no_token": "Geen registratietoken beschikbaar.",
+  "webpush_error_retrieving": "Een fout is opgetreden tijdens het ophalen van het token:",
+  "webpush_enable_notifications": "Activeren van Push Benaderingen",
+  "webpush_revoke_notifications": "Opzeggen van Push Benaderingen",
+  "webpush_title": "Beloefdingen"
 }

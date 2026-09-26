@@ -187,5 +187,6 @@
   "webpush_no_token": "Nema dostupnog registracionog tokena.",
   "webpush_error_retrieving": "Došlo je do greške prilikom preuzimanja tokena:",
   "webpush_enable_notifications": "Omogući push obaveštenja",
-  "webpush_revoke_notifications": "Poništi push obaveštenja"
+  "webpush_revoke_notifications": "Poništi push obaveštenja",
+  "webpush_title": "Obaveštenja"
 }

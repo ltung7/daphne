@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "درخواستი თანხა",
   "early_settlement_fee": "ფასი",
   "early_settlement_actual_payout": "მიღებული Ödeme",
-  "submit": "درخواستი გაგზავნა"
+  "submit": "درخواستი გაგზავნა",
+  "webpush_unsupported_browser": "ეს ბრაუზერი არ მხარს უჭერს დესკტოპის შეტყობინებებს",
+  "webpush_no_token": "რეგისტრაციის ტოკენი არ არის ხელმისაწვდომი.",
+  "webpush_error_retrieving": "შეცდომა მოხდა ტოკენის რეტრივალის დროს:",
+  "webpush_enable_notifications": "ჩართე Push შეტყობინებები",
+  "webpush_revoke_notifications": "გააუქმე Push შეტყობინებები",
+  "webpush_title": "შეტყობინებები"
 }

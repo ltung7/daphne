@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "Suma solicitată",
   "early_settlement_fee": "Comisionă",
   "early_settlement_actual_payout": "Plată efectivă",
-  "submit": "Trimite cererea"
+  "submit": "Trimite cererea",
+  "webpush_unsupported_browser": "Acest browser nu susține notificările de pe desktop",
+  "webpush_no_token": "Nu există token de înregistrare disponibil.",
+  "webpush_error_retrieving": "A apărut o eroare la preluarea token-ului:",
+  "webpush_enable_notifications": "Activați notificările push",
+  "webpush_revoke_notifications": "Revocăţi notificările push",
+  "webpush_title": "Notificări"
 }

@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "Запрошена сума",
   "early_settlement_fee": "Комісія",
   "early_settlement_actual_payout": "Фактична виплата",
-  "submit": "Надіслати запит"
+  "submit": "Надіслати запит",
+  "webpush_unsupported_browser": "This browser does not support desktop notifications",
+  "webpush_no_token": "No registration token available.",
+  "webpush_error_retrieving": "An error occurred while retrieving token:",
+  "webpush_enable_notifications": "Enable Push Notifications",
+  "webpush_revoke_notifications": "Revoke Push Notifications",
+  "webpush_title": "Notifications"
 }

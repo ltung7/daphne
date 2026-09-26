@@ -181,5 +181,11 @@
   "early_settlement_requested_amount": "Hiniling na Halaga",
   "early_settlement_fee": "Bayad",
   "early_settlement_actual_payout": "Tunay na Bayad",
-  "submit": "Ipadala ang Kahilingan"
+  "submit": "Ipadala ang Kahilingan",
+  "webpush_unsupported_browser": "Ang browser na ito ay hindi sumusuporta sa desktop notifications",
+  "webpush_no_token": "Wala pang registration token",
+  "webpush_error_retrieving": "May nangyari nang malabo sa pagkuha ng token:",
+  "webpush_enable_notifications": "Pagpapatibay ng mga Push Notifications",
+  "webpush_revoke_notifications": "Pagsasara ng mga Push Notifications",
+  "webpush_title": "Mga Notipikasyon"
 }
