@@ -49,7 +49,7 @@
 		endLoad();
 		result = e.detail.result;
 		if (result.driverId.length && result.driverId !== driverId) {
-			addToast(`Niepoprawny numer rejestracyjny: ${result.driverId}`);
+			addToast(`Niepoprawny ID kierowcy: ${result.driverId}`);
 			return;
 		}
 		onProcessed?.(result);

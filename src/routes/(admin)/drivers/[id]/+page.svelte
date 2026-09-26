@@ -24,6 +24,7 @@
 	let driver: Driver.Driver = $state(untrack(() => data.driver));
 	let documents: Driver.DriverDocument[] = $state(untrack(() => data.documents));
 	let handoverModal: boolean = $state(false);
+	let editModal: boolean = $state(false);
 
 	const onFinished = (doc: Driver.DriverDocument) => {
 		if (documents.find((d) => d.id !== doc.id)) documents.push(doc);
@@ -32,12 +33,20 @@
 	const onstatuschanged = (status: Driver.Status) => {
 		driver.status = status;
 	};
+
+	const handleDriverUpdate = (response: any) => {
+		if (response?.driver) {
+			Object.assign(driver, response.driver);
+		}
+		editModal = false;
+	};
 </script>
 
 <PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczegóły zarejestrowanego kierowcy" />
 
 <PageTopActions>
 	<DriverStatusChanger {driver} {documents} {onstatuschanged} />
+	<IconButton class="ms-auto mb-0" icon="edit" caption="Edytuj" onclick={() => (editModal = true)} size={6} />
 </PageTopActions>
 
 <SectionCard title="Dane kierowcy">
@@ -48,11 +57,14 @@
 </SectionCard>
 
 {#if driver.status !== 'pending_verification'}
-	<DriverBalanceLedger 
-		driverId={driver.id} 
-		currentBalance={data.currentBalance} 
+	<DriverBalanceLedger
+		driverId={driver.id}
+		currentBalance={data.currentBalance}
 		cashBalance={data.cashBalance}
-		onBalanceUpdate={(cb, cash) => { data.currentBalance = cb; data.cashBalance = cash; }}
+		onBalanceUpdate={(cb, cash) => {
+			data.currentBalance = cb;
+			data.cashBalance = cash;
+		}}
 	/>
 
 	<SectionCard title="Pojazd">
@@ -123,3 +135,13 @@
 {/if}
 
 <ResetPasswordSection />
+
+{#if handoverModal}
+	<div class="position-fixed w-100 h-100 top-0 start-0 overflow-auto px-3 pb-3" style="z-index: 10" transition:fly>
+		<NewHandoverProtocol {driver} />
+	</div>
+{/if}
+
+{#if editModal}
+	<!-- TODO: Add -->
+{/if}

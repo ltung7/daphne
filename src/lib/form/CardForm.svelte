@@ -15,6 +15,7 @@
 		beforeSubmit?: (obj: T) => Partial<T>;
 		schema?: ZodType<T>;
 		footer?: Snippet;
+		patch?: boolean;
 		submitSnippet?: Snippet<[{ isValid: boolean, errors: Partial<Record<keyof T, string>>; touchAll: () => void }]>;
 		children: Snippet<
 			[
@@ -28,7 +29,7 @@
 		>;
 	}
 
-	let { item, cleanItem, onReset, submitSnippet, onResponse, beforeSubmit, testData, name = 'data', children, schema, footer }: Props = $props();
+	let { item, cleanItem, onReset, submitSnippet, onResponse, beforeSubmit, testData, name = 'data', children, schema, footer, patch = false }: Props = $props();
 
 	let touched = $state<Partial<Record<keyof T, boolean>>>({});
 
@@ -51,7 +52,7 @@
 			console.error(errors)
 			return false;
 		}
-		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item })));
+		const response = await confirmSuccess(wrapLoader(internal.postApi({ [name]: item }, patch ? 'patch' : 'post')));
 		if (response.success) onResponse?.(response);
 	};
 

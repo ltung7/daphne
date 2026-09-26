@@ -251,7 +251,7 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 	}
 };
 
-export const changeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any, user: App.User) => {
+export const handleChangeVehicleStatus = async (vehicleOrId: string | Vehicle.Vehicle, newStatus: Vehicle.Status, extraData: any, user: App.User) => {
 	const vehicle = typeof vehicleOrId === 'string' ? await getVehicle(vehicleOrId) : vehicleOrId;
 	if (!vehicle) throw error(404, 'Vehicle not found');
 

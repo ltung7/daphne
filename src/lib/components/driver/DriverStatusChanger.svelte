@@ -14,7 +14,7 @@
 	let { driver, documents = [], onstatuschanged }: Props = $props();
 </script>
 
-<div class="d-flex gap-3">
+<div class="d-flex flex-wrap gap-3">
 	{#if driver.status === 'pending_verification'}
 		<DriverVerification
 			{driver}

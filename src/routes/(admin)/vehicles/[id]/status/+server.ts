@@ -1,5 +1,5 @@
 import { restrictAdmin } from "$lib/server/auth";
-import { changeVehicleStatus } from "$lib/server/services/vehicleStatus.service";
+import { handleChangeVehicleStatus } from "$lib/server/services/vehicleStatus.service";
 import { getLatestVehicleStatusChanges } from "$lib/server/db/firebase/vehicleStatusChange.fdb";
 import type { RequestHandler } from "./$types";
 import { json } from "@sveltejs/kit";
@@ -10,7 +10,7 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
     restrictAdmin(locals)
 
     // Assuming params.id is the vehicle registration number
-    const result = await changeVehicleStatus(params.id, status, extraData, locals._user!);
+    const result = await handleChangeVehicleStatus(params.id, status, extraData, locals._user!);
     
     return json(result);
 };

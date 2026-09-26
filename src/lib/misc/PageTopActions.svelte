@@ -9,7 +9,7 @@
 </script>
 
 <div class="section-card card card-body p-2">
-    <div class="d-flex">
+    <div class="d-flex flex-wrap gap-3">
 	    {@render children?.()}
     </div>
 </div>
