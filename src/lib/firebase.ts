@@ -1,6 +1,6 @@
 // src/lib/firebase.ts
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
-import { getMessaging, getToken, onMessage, type Messaging } from 'firebase/messaging';
+import { getMessaging, getToken, onMessage, deleteToken, type Messaging } from 'firebase/messaging';
 import { browser } from '$app/environment';
 import {
   PUBLIC_FIREBASE_APIKEY,
@@ -33,4 +33,4 @@ if (browser) {
   messaging = getMessaging(app);
 }
 
-export { app, messaging, getToken, onMessage };
+export { app, messaging, getToken, onMessage, deleteToken };

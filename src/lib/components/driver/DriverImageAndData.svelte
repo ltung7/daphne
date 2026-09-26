@@ -24,7 +24,9 @@
 <div class="d-flex flex-column flex-lg-row">
 	<div class="driver-image rounded position-relative mx-auto">
 		<img src={driver.imageUrl ?? '/img/user.jpg'} alt={driver.name} />
-		<DriverContactActions driverId={driver.id} push={Boolean(driver.fcmToken?.length)} />
+		<div class="d-flex position-absolute bottom-0 start-0 justify-content-end w-100" style="background-color: rgba(216, 216, 216, 0.75)">
+			<DriverContactActions driverId={driver.id} push={Boolean(driver.fcmToken?.length)} />
+		</div>
 	</div>
 
 	<div class="w-100 ms-3">

@@ -1,5 +1,7 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
+import { PUBLIC_URL } from '$env/static/public';
+import { NOTIFICATION_ICON } from '$lib/assets/constants';
 
 export interface PushEnabledData {
     deviceDetails?: string;
@@ -13,8 +15,8 @@ export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = 
         return {
             title: m.push_enabled.title,
             body: m.push_enabled.body,
-            icon: '/icon.png',
-            click_action: '/'
+            icon: NOTIFICATION_ICON,
+            click_action: PUBLIC_URL + '/driver'
         };
     },
 };

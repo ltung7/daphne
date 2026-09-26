@@ -33,7 +33,7 @@ onBackgroundMessage(messaging, (payload) => {
     const notificationTitle = payload.notification?.title || 'Notification';
     const notificationOptions = {
         body: payload.notification?.body,
-        icon: '/icon.png'
+        icon: 'https://eisg.pl/wp-content/uploads/2015/12/eisg_logo.png'
     };
 
     // Need to cast `self` to ServiceWorkerGlobalScope to access registration

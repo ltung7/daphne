@@ -1,5 +1,7 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
+import { NOTIFICATION_ICON } from '$lib/assets/constants';
+import { PUBLIC_URL } from '$env/static/public';
 
 export interface AdminNotificationData {
     subject?: string;
@@ -26,8 +28,8 @@ export const adminNotification: NotificationDefinition<AdminNotificationData> = 
         return {
             title: data.subject || m.admin_notification.push_title,
             body: data.message.substring(0, 100),
-            icon: '/icon.png',
-            click_action: '/'
+            icon: NOTIFICATION_ICON,
+            click_action: PUBLIC_URL
         };
     },
 };

@@ -29,11 +29,11 @@
 
 	const onToken = async (fcmToken: string) => {
 		await internal.post('/driver/push', { fcmToken });
-	}
+	};
 
 	const onRevoke = async () => {
-		await confirmSuccess(internal.del('/driver/push'))
-	}
+		await confirmSuccess(internal.del('/driver/push'));
+	};
 </script>
 
 <ExpandableSection caption={m.driver_data_title()} icon="user" expanded={driverExpiringSoon}>
@@ -108,4 +108,8 @@
 	<NewInspectionLocalized vehicle={data.vehicle!} />
 </Offcanvas>
 
-<WebPush fcmToken={data.driver.fcmToken} {onToken} {onRevoke} />
+<ExpandableSection caption={m.webpush_title()} expanded={true}>
+	<div class="flex-center">
+		<WebPush fcmToken={data.driver.fcmToken} {onToken} {onRevoke} />
+	</div>
+</ExpandableSection>

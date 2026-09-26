@@ -361,3 +361,5 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		requiresReferenceId: true
 	}
 };
+
+export const NOTIFICATION_ICON = 'https://eisg.pl/wp-content/uploads/2015/12/eisg_logo.png';

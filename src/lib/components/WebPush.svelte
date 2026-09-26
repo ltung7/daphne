@@ -3,6 +3,7 @@
 	const messaging = firebase.messaging;
 	const getToken = firebase.getToken;
 	const onMessage = firebase.onMessage;
+	const deleteToken = firebase.deleteToken;
 	import { onMount } from 'svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { m } from '$lib/paraglide/messages.js';
@@ -40,7 +41,6 @@
 				});
 
 				if (currentToken) {
-					console.log('FCM Token:', currentToken);
 					if (onToken) onToken(currentToken);
 					fcmToken = currentToken;
 				} else {
@@ -52,7 +52,19 @@
 		}
 	}
 
-	function revokeNotificationPermission() {
+	async function revokeNotificationPermission() {
+		try {
+			if (messaging) {
+				const deleted = await deleteToken(messaging as any);
+				if (!deleted) {
+					addToast('Failed to delete FCM token.');
+				}
+			}
+		} catch (err) {
+			addToast(m.webpush_error_retrieving());
+			console.error(err)
+		}
+
 		if (onRevoke) onRevoke();
 		fcmToken = '';
 	}
@@ -61,7 +73,6 @@
 		// Listen for messages while the application is in the foreground
 		if (messaging) {
 			const unsubscribe = onMessage(messaging as any, (payload: any) => {
-				console.log('Foreground message received:', payload);
 				if (payload.notification) {
 					addToast(payload.notification.body, 'primary', payload.notification.title);
 				}
@@ -78,6 +89,7 @@
 		caption={m.webpush_revoke_notifications()}
 		icon="bell-slash"
 		color="danger"
+		size={6}
 	/>
 {:else}
 	<IconButton 
@@ -85,5 +97,6 @@
 		caption={m.webpush_enable_notifications()}
 		icon="bell"
 		color="primary"
+		size={6}
 	/>
 {/if}

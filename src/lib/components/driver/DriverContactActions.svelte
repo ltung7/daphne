@@ -51,11 +51,9 @@
 	let modalTitle = $derived(contactType === 'push' ? 'Wyślij powiadomienie Push' : contactType === 'email' ? 'Wyślij wiadomość e-mail' : 'Wyślij wiadomość SMS');
 </script>
 
-<div class="d-flex position-absolute bottom-0 start-0 justify-content-end w-100" style="background-color: rgba(216, 216, 216, 0.75)">
-	<TooltipSquareIconButton icon="bell-notification-social-media" hoverText="Wyślij powiadomienie Push" onClick={() => openModal('push')} disabled={!push} />
-	<TooltipSquareIconButton icon="message-sms" hoverText="Wyślij wiadomość SMS" onClick={() => openModal('sms')} disabled={!sms} />
-	<TooltipSquareIconButton icon="envelope-dot" hoverText="Wyślij wiadomość e-mail" onClick={() => openModal('email')} />
-</div>
+<TooltipSquareIconButton icon="bell-notification-social-media" hoverText="Wyślij powiadomienie Push" onClick={() => openModal('push')} disabled={!push} />
+<TooltipSquareIconButton icon="message-sms" hoverText="Wyślij wiadomość SMS" onClick={() => openModal('sms')} disabled={!sms} />
+<TooltipSquareIconButton icon="envelope-dot" hoverText="Wyślij wiadomość e-mail" onClick={() => openModal('email')} />
 
 <ClosableModal bind:isOpen={modalOpen} headerText={modalTitle} buttonCaption={isSending ? 'Wysyłanie...' : 'Wyślij'} onClick={sendMessage}>
 	{#if contactType !== 'sms'}
