@@ -1,15 +1,25 @@
 export * from './types';
 export { sendNotification } from './service';
 export { 
-    documentExpiredNotification, 
-    sendDocumentExpiredNotification, 
-    type DocumentExpiredData 
-} from './driver/documentExpiredNotification';
+    driverDocumentExpiredNotification, 
+    sendDriverDocumentExpiredNotification, 
+    type DriverDocumentExpiredData 
+} from './driver/driverDocumentNotifications';
 export { 
-    documentExpiringNotification, 
-    sendDocumentExpiringNotification, 
-    type DocumentExpiringData 
-} from './driver/documentExpiringNotification';
+    driverDocumentExpiringNotification, 
+    sendDriverDocumentExpiringNotification, 
+    type DriverDocumentExpiringData 
+} from './driver/driverDocumentNotifications';
+export {
+    vehicleDocumentExpiredNotification,
+    sendVehicleDocumentExpiredNotification,
+    type VehicleDocumentExpiredData
+} from './vehicle/vehicleDocumentNotifications';
+export {
+    vehicleDocumentExpiringNotification,
+    sendVehicleDocumentExpiringNotification,
+    type VehicleDocumentExpiringData
+} from './vehicle/vehicleDocumentNotifications';
 export {
     pushEnabledNotification,
     sendPushEnabledNotification,

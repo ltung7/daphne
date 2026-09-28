@@ -1,6 +1,6 @@
 import { getDriver, updateDriver } from '$lib/server/db/firebase/drivers.fdb';
-import { sendDocumentExpiringNotification } from '$lib/server/notifications/driver/documentExpiringNotification';
-import { sendDocumentExpiredNotification } from '$lib/server/notifications/driver/documentExpiredNotification';
+import { sendDriverDocumentExpiringNotification } from '$lib/server/notifications/driver/driverDocumentNotifications';
+import { sendDriverDocumentExpiredNotification } from '$lib/server/notifications/driver/driverDocumentNotifications';
 import { logger } from '$lib/utils/logger';
 
 /**
@@ -59,10 +59,12 @@ export async function resolveDriverExpirationIssues(
 				const documentName = getDocumentName(issue.type);
 				const expiryDate = formatDate(issue.expirationDate);
 
-				await sendDocumentExpiredNotification(contact, {
+				await sendDriverDocumentExpiredNotification(contact, {
 					documentName,
-					expiryDate
-				});
+					expiryDate,
+					driverId: driver.id,
+					driverName: driver.name
+				}, 'health_check');
 			}
 
 			// Update driver status if not already 'documents_expired'
@@ -77,11 +79,13 @@ export async function resolveDriverExpirationIssues(
 				const expiryDate = formatDate(issue.expirationDate);
 				const daysUntilExpiry = Math.ceil((new Date(issue.expirationDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
-				await sendDocumentExpiringNotification(contact, {
+				await sendDriverDocumentExpiringNotification(contact, {
 					documentName,
 					expiryDate,
-					daysUntilExpiry
-				});
+					daysUntilExpiry,
+					driverId: driver.id,
+					driverName: driver.name
+				}, 'health_check');
 			}
 		}
 	}

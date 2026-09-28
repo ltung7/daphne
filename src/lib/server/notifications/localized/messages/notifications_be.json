@@ -30,14 +30,14 @@
     "return_date": "Дата вяртання: {date}",
     "footer": "Дзякуй за супрацу."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Дакумент хутка заканчваецца",
     "greeting": "Шанаваны {driverName},",
     "body": "Ваш дакумент {documentName} заканчваецца праз {days} дзён ({expiryDate}).",
     "action_required": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
     "footer": "Ігнораванне гэтага папярэджання можа прывесці да абмежавання працы."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Дакумент заканчыўся - патрэбная дыя",
     "greeting": "Шанаваны {driverName},",
     "body": "Ваш дакумент {documentName} заканчыўся {expiryDate}.",

@@ -1,4 +1,9 @@
-# ADD_LANGUAGES Skill
+---
+name: add-languages
+description: Provides instructions for adding new supported languages to the application. Use this skill when asked to add a new language, support a new language, or configure locales.
+---
+
+# Add Languages
 
 This skill provides instructions for adding new supported languages to the application.
 
@@ -11,7 +16,7 @@ When asked to "add [Language]", "support [Language]", or "add a new language":
 
 ### 1. Identify the ISO Codes
 - Determine the ISO 639-1 language code (e.g., `es` for Spanish, `fr` for French).
-- Determine the primary ISO 3166-1 alpha-2 country code for the flag and country name (e.g., `co` for Colombia if targeting South American drivers, `ua` for Ukraine). *Note: The prompt specified to prioritize countries people are likely to immigrate to Poland from for work (e.g., Colombia instead of Spain for Spanish).*
+- Determine the primary ISO 3166-1 alpha-2 country code for the flag and country name (e.g., `co` for Colombia if targeting South American drivers, `ua` for Ukraine). *Note: Prioritize countries people are likely to immigrate to Poland from for work (e.g., Colombia instead of Spain for Spanish).*
 
 ### 2. Update Core Types (`src/app.d.ts`)
 - Locate the `App.Locale` type alias.
@@ -65,7 +70,7 @@ When asked to "add [Language]", "support [Language]", or "add a new language":
   ```
 
 ### 6. Create Translation Files
-- Use the [TRANSLATE](./TRANSLATE.md) skill to create the new JSON files.
+- Use the `translate-paraglide` skill to create the new JSON files.
 - Copy `messages/en.json` to `messages/[locale].json` and translate it.
 - Copy `src/lib/server/notifications/localized/messages/notifications_en.json` to `src/lib/server/notifications/localized/messages/notifications_[locale].json` and translate it.
 
@@ -82,6 +87,5 @@ When asked to "add [Language]", "support [Language]", or "add a new language":
   };
   ```
 
-### 8. Update the TRANSLATE Skill (`docs/skills/TRANSLATE.md`)
-- Open `docs/skills/TRANSLATE.md`.
-- Add the new language to the "Supported Languages" list so future translations are aware of it.
+### 8. Update Translation Documentation
+- Make sure to add the new language to any lists of supported languages in your translation documentation (e.g., the `translate-paraglide` skill) so future translations are aware of it.

@@ -66,6 +66,25 @@ declare global {
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
 
+		type NotificationType =
+			| 'reset_password'
+			| 'settlement'
+			| 'vehicle_assignment'
+			| 'vehicle_return'
+			| 'driver_document_expiring'
+			| 'driver_document_expired'
+			| 'vehicle_document_expiring'
+			| 'vehicle_document_expired'
+			| 'balance_negative'
+			| 'penalty_added'
+			| 'inspection_due'
+			| 'inspection_overdue'
+			| 'onboarding_approved'
+			| 'onboarding_rejected'
+			| 'push_enabled'
+			| 'admin_notification'
+			| 'common';
+
 		// Admin user roles
 		type AdminRole = 'moderator' | 'manager' | 'admin';
 
@@ -104,6 +123,31 @@ declare global {
 			timestamp: number;
 			updatedAt: number;
 			lastLoggedIn: number;
+		}
+
+		namespace Incident {
+			type Severity = 'low' | 'medium' | 'high' | 'critical';
+			type Status = 'info' | 'open' | 'resolved';
+			
+			type Category = 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
+			type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system';
+			
+			interface IncidentLog {
+				id: string;
+				title: string;
+				type?: NotificationType; // Mirrors notification type if generated from a notification
+				description: string;
+				category: Category;
+				severity: Severity;
+				status: Status;
+				source: Source;
+				metadata: Record<string, any>;
+				notes: string;
+				timestamp: number;
+				resolvedAt?: number;
+				resolvedBy?: string;
+				resolvedByName?: string;
+			}
 		}
 
 		// Authenticated user (admin only - drivers use UserBase via driver)

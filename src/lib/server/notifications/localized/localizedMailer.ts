@@ -4,8 +4,7 @@ import nodemailer from 'nodemailer';
 import { 
     getNotificationMessages, 
     interpolate, 
-    type NotificationMessages, 
-    type NotificationType 
+    type NotificationMessages
 } from './localizedMailerMessages';
 
 /** Props injected into every localized email component */
@@ -42,4 +41,4 @@ export const sendLocalizedRenderedEmail = async <T extends Record<string, any>>(
 
 // Re-export for convenience
 export { getNotificationMessages, interpolate };
-export type { NotificationMessages, NotificationType };
+export type { NotificationMessages };

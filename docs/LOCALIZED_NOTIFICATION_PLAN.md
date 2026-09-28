@@ -22,11 +22,9 @@ src/lib/server/notifications/
 │   ├── documentExpiringNotification.ts
 │   └── ...
 ├── admin/
-│   ├── vehicleAlertNotification.ts
+│   ├── vehicleInsuranceExpiringNotification.ts
+│   ├── vehicleTechnicalExpiringNotification.ts
 │   └── ...
-├── health/
-│   ├── healthCheckRegistry.ts   # Registry of health problem -> recipients
-│   └── healthCheckNotifications.ts # Notification definitions for health issues
 └── localized/                     
     ├── localizedMailerMessages.ts # Localized message index & interface (no Paraglide)
     ├── localizedMailer.ts         # render & inject _messages
@@ -187,51 +185,14 @@ interface UserBase extends BaseContact {
 }
 ```
 
-## 6. Health Check Notification Registry
-
-A registry mapping health check problem types to the users who should receive notifications about them. This registry is used by the health check notification service to determine recipients for each type of health issue.
-
-### Registry Structure
-
-```typescript
-// src/lib/server/notifications/health/healthCheckRegistry.ts
-import type { HealthCheckProblem } from '$lib/server/services/health/checkers/types';
-import type { BaseContact } from '$app.d.ts';
-
-export interface HealthCheckRecipientMap {
-    [problem: HealthCheckProblem]: BaseContact[];
-}
-
-// Health check problem types (matching HealthCheck.HealthIssue.type)
-export type HealthCheckProblem = 
-    | 'insurance_expiring'
-    | 'technical_expiring'
-    | 'license_expiring'
-    | 'taxi_authorization_expiring';
-
-// Example registry - populated at runtime from admin configuration
-export const healthCheckRecipientRegistry: HealthCheckRecipientMap = {
-    insurance_expiring: [],
-    technical_expiring: [],
-    license_expiring: [],
-    taxi_authorization_expiring: [],
-};
-```
-
-### Usage
-- Registry is populated from admin-configured notification preferences
-- Each health check type can have multiple recipients (admins, managers, fleet operators)
-- Recipients are `App.BaseContact` objects (id, email, name, preferredLanguage, phone, fcmToken)
-
 ## Advantages of this Architecture
 1. **DRY (Don't Repeat Yourself)**: You don't need 50 Svelte components. You just need 1 generic component, and 50 plain-text generators.
 2. **Channel Parity**: When defining a notification, you immediately see and define how it looks on Email, SMS, and Push. No hunting across different services.
 3. **Strict Typings without Boilerplate**: `sendDocumentExpiredNotification(user, { documentName, expiryDate })` guarantees data shape for callers while the underlying service handles generic abstraction.
 4. **Target agnostic**: Because generators consume `App.BaseContact`, notifications can trigger for drivers, admins, managers, or third-party contacts.
 5. **Localization Integration**: Bypasses Paraglide entirely. It uses exact dictionary objects (`m`) based on the contact's `preferredLanguage`, ensuring safety outside request contexts.
-6. **Health Check Registry**: Centralized mapping of health problems to notification recipients enables flexible routing without hardcoding recipients in checkers.
 
-## 7. Incident Logging System
+## 6. Incident Logging System
 
 The notification system acts as the central mechanism for generating persistent Incident Logs (e.g., accidents, suspensions, compliance violations). This keeps business logic inside the notification definitions and completely automates incident generation.
 
@@ -267,7 +228,11 @@ namespace Incident {
 
 ### 7.2 Incident Generation in Notifications
 
-The `NotificationDefinition` includes an optional `incident` generator. If defined, the dispatcher will *always* create an incident log (unless the generator explicitly returns `false`). Incidents are strictly logged in Polish.
+The `NotificationDefinition` includes an optional `incident` generator. If defined, the dispatcher will *always* create an incident log (unless the generator explicitly returns `false`). 
+
+**Incident Rules:**
+1. **Always use `m_pl`**: Incident logs are strict internal records. You must use the forced Polish dictionary (`m_pl` from `NotificationContext`) to generate the `title` and `description` (e.g., `title: interpolate(m_pl.document_expired.incident_title, {...})`). Never hardcode text.
+2. **Dynamic Source**: Do NOT hardcode the `source` (e.g., `health_check`) inside the generator. The source should be passed as part of the `TData` payload by whatever service (cron, webhook, API) is triggering the notification, or defaulted to `system` by the dispatcher.
 
 ```typescript
 // Context provides a forced Polish dictionary `m_pl` for internal logging

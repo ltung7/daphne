@@ -30,14 +30,14 @@
     "return_date": "वापसी तिथि: {date}",
     "footer": "आपके सहयोग के लिए धन्यवाद।"
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "दस्तावेज़ जल्द समाप्त हो रहा है",
     "greeting": "प्रिय {driverName},",
     "body": "आपका दस्तावेज़ {documentName} {days} दिनों में समाप्त हो रहा है ({expiryDate})।",
     "action_required": "कृपया दस्तावेज़ को जल्द से जल्द नवीनीकृत करें।",
     "footer": "इस चेतावनी को नजरअंदाज करने से कार्य प्रतिबंध हो सकते हैं।"
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "दस्तावेज़ समाप्त हो गया - कार्रवाई आवश्यक",
     "greeting": "प्रिय {driverName},",
     "body": "आपका दस्तावेज़ {documentName} {expiryDate} को समाप्त हो गया है।",

@@ -30,14 +30,14 @@
     "return_date": "Datum vraćanja: {date}",
     "footer": "Hvala na saradnji."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Dokument uskoro istekne",
     "greeting": "Poštovani {driverName},",
     "body": "Vaš dokument {documentName} ističe za {days} dana ({expiryDate}).",
     "action_required": "Molimo obnovite dokument što pre.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Dokument isteklo - potrebna akcija",
     "greeting": "Poštovani {driverName},",
     "body": "Vaš dokument {documentName} je istekao {expiryDate}.",

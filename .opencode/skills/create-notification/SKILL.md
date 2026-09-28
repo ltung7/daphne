@@ -1,4 +1,9 @@
-# CREATE_NOTIFICATION Skill
+---
+name: create-notification
+description: Provides instructions for creating and implementing new multi-channel notifications in the application's backend. Use this skill when asked to create a notification, add a new notification, or implement a notification event.
+---
+
+# Create Notification
 
 This skill provides instructions for creating new multi-channel notifications in the application's backend.
 
@@ -15,7 +20,7 @@ When asked to "create a notification", "add the [X] notification", or "implement
 
 ### 2. Update Translations First
 - Add the necessary translation keys to the English base file first (`src/lib/server/notifications/localized/messages/notifications_en.json`).
-- Provide translations for all other supported locales using the [TRANSLATE](./TRANSLATE.md) skill.
+- Provide translations for all other supported locales (use the `translate-paraglide` skill).
 - Update the `NotificationType` and `NotificationMessages` interfaces in `src/lib/server/notifications/localized/localizedMailerMessages.ts` to include the new keys.
 
 ### 3. Create the Notification Definition
@@ -27,7 +32,7 @@ When asked to "create a notification", "add the [X] notification", or "implement
   - `push`: Return `{ title, body, icon, click_action }`.
   - `sms` (optional): Return a plain text string.
   - `inapp` (optional): Return an HTML string for the in-app feed.
-  - `incident` (optional): Return `{ title, description, category, source? }` or `false`.
+  - `incident` (optional): Return `{ title, description, category }` or `false`.
     - **Note:** Incidents are internal audit logs. ALWAYS use the `ctx.m_pl` dictionary to ensure the incident log title and description are strictly in Polish, regardless of the recipient's preferred locale.
 
 ### 4. Create the Dispatcher Function

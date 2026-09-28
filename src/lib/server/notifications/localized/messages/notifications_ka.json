@@ -30,14 +30,14 @@
     "return_date": "დაბრუნების თარიღი: {date}",
     "footer": "მადლობა შეცნობისთვის."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "დოკუმენტი თუ Tämäences",
     "greeting": "მეგობრული {driverName},",
     "body": "თქვენი დოკუმენტი {documentName} ამოიწურება {days} დღეში ({expiryDate}).",
     "action_required": "გთხოვთ, რაც შეიძლება該文档をご更新ください。",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "დოკუმენტი ამოიწურა - საჭიროა მოქმედება",
     "greeting": "მეგობრული {driverName},",
     "body": "თქვენი დოკუმენტი {documentName} ამოიწურა {expiryDate}.",

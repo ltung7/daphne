@@ -10,12 +10,14 @@ export interface AdminNotificationData {
 }
 
 export const adminNotification: NotificationDefinition<AdminNotificationData> = {
-    id: 'driver.admin_notification',
+    id: 'admin_notification',
     priority: 'medium',
+
+    getBaseMessage: (m, data) => ({ title: data.subject || m.title, body: data.message }),
 
     email: (data, { m }) => {
         return {
-            subject: data.subject || m.admin_notification.email_subject,
+            subject: data.subject || m.email_subject,
             htmlBody: data.message.replace(/\n/g, '<br>'),
         };
     },
@@ -26,7 +28,7 @@ export const adminNotification: NotificationDefinition<AdminNotificationData> = 
 
     push: (data, { m }) => {
         return {
-            title: data.subject || m.admin_notification.push_title,
+            title: data.subject || m.push_title,
             body: data.message.substring(0, 100),
             icon: NOTIFICATION_ICON,
             click_action: PUBLIC_URL

@@ -1,4 +1,9 @@
-# TRANSLATE Skill
+---
+name: translate-paraglide
+description: Provides instructions for translating localization JSON files across the application. Use this skill when asked to translate, add translations for, or sync translations across different languages. Handles both Frontend (Paraglide) and Backend Notification translations.
+---
+
+# Translate Paraglide
 
 This skill provides instructions for translating localization files across the application. 
 
@@ -43,5 +48,5 @@ When asked to "translate", "add translations for", or "sync translations":
 
 ## Target Directories
 
-- [UI Messages](../../messages/) (`messages/*.json`)
-- [Notification Messages](../../src/lib/server/notifications/localized/messages/) (`src/lib/server/notifications/localized/messages/*.json`)
+- UI Messages (`messages/*.json`)
+- Notification Messages (`src/lib/server/notifications/localized/messages/*.json`)

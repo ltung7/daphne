@@ -2,19 +2,20 @@ import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
 import { NOTIFICATION_ICON } from '$lib/assets/constants';
+import { getBaseMessage } from '../localized/localizedMailerMessages';
 
 export interface PushEnabledData {
     deviceDetails?: string;
 }
 
 export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = {
-    id: 'driver.push_enabled',
+    id: 'push_enabled',
     priority: 'low',
-
+    getBaseMessage,
     push: (_data, { m }) => {
         return {
-            title: m.push_enabled.title,
-            body: m.push_enabled.body,
+            title: m.title,
+            body: m.body,
             icon: NOTIFICATION_ICON,
             click_action: PUBLIC_URL + '/driver'
         };

@@ -30,14 +30,14 @@
     "return_date": "Data zwrotu: {date}",
     "footer": "Dziękujemy za współpracę."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Dokument wkrótce wygasa",
     "greeting": "Szanowny {driverName},",
     "body": "Twój dokument {documentName} wygasa {days} dni ({expiryDate}).",
     "action_required": "Proszę o przedłużenie dokumentu jak najszybciej.",
     "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Dokument wygasł - konieczna akcja",
     "greeting": "Szanowny {driverName},",
     "body": "Twój dokument {documentName} wygasł {expiryDate}.",

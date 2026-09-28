@@ -30,14 +30,14 @@
     "return_date": "Data returnării: {date}",
     "footer": "Vă mulțumim pentru colaborare."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Documentul expiră curând",
     "greeting": "Stimate {driverName},",
     "body": "Documentul dumneavoastră {documentName} expiră în {days} zile ({expiryDate}).",
     "action_required": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Document expirat - acțiune necesară",
     "greeting": "Stimate {driverName},",
     "body": "Documentul dumneavoastră {documentName} a expirat pe {expiryDate}.",

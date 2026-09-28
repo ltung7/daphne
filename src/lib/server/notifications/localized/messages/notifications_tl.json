@@ -30,14 +30,14 @@
     "return_date": "Petsa ng pagbalik: {date}",
     "footer": "Salamat sa iyong kooperasyon."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Ang dokumento ay malapit nang mag-expire",
     "greeting": "Mahal na {driverName},",
     "body": "Ang iyong dokumentong {documentName} ay mag-eexpire sa loob ng {days} na araw ({expiryDate}).",
     "action_required": "Pakirenew ang dokumento sa lalong madaling panahon.",
     "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Ang dokumento ay expired - kailangan ng aksyon",
     "greeting": "Mahal na {driverName},",
     "body": "Ang iyong dokumentong {documentName} ay expire noong {expiryDate}.",

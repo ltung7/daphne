@@ -10,34 +10,27 @@ import tl from './messages/notifications_tl.json';
 import ro from './messages/notifications_ro.json';
 import sr from './messages/notifications_sr.json';
 
-/** Supported notification types (keys in JSON files) */
-export type NotificationType =
-    | 'reset_password'
-    | 'settlement'
-    | 'vehicle_assignment'
-    | 'vehicle_return'
-    | 'document_expiring'
-    | 'document_expired'
-    | 'balance_negative'
-    | 'penalty_added'
-    | 'inspection_due'
-    | 'inspection_overdue'
-    | 'onboarding_approved'
-    | 'onboarding_rejected'
-    | 'push_enabled'
-    | 'admin_notification'
-    | 'common';
+interface BaseMessage {
+    title: string;
+    body: string;
+}
+
+export interface MessageStructure extends BaseMessage {
+    [key: string]: string;
+}
 
 /** Type-safe interface for all notification messages - mirrors notifications_pl.json structure */
-export interface NotificationMessages {
+export interface NotificationMessages extends Record<App.NotificationType, MessageStructure> {
     reset_password: {
         title: string;
+        body: string;
         contents: string;
         footer: string;
         button_text: string;
     };
     settlement: {
         title: string;
+        body: string;
         greeting: string;
         summary: string;
         gross_earnings: string;
@@ -61,14 +54,28 @@ export interface NotificationMessages {
         return_date: string;
         footer: string;
     };
-    document_expiring: {
+    driver_document_expiring: {
         title: string;
         greeting: string;
         body: string;
         action_required: string;
         footer: string;
     };
-    document_expired: {
+    driver_document_expired: {
+        title: string;
+        greeting: string;
+        body: string;
+        consequence: string;
+        footer: string;
+    };
+    vehicle_document_expiring: {
+        title: string;
+        greeting: string;
+        body: string;
+        action_required: string;
+        footer: string;
+    };
+    vehicle_document_expired: {
         title: string;
         greeting: string;
         body: string;
@@ -118,10 +125,14 @@ export interface NotificationMessages {
         body: string;
     };
     admin_notification: {
+        title: string;
+        body: string;
         email_subject: string;
         push_title: string;
     };
     common: {
+        title: string;
+        body: string;
         app_name: string;
         footer_app_link: string;
         footer_confidential: string;
@@ -160,6 +171,11 @@ export function getNotificationMessages(locale: App.Locale): NotificationMessage
     return localeMap[locale] ?? localeMap.en!;
 }
 
+export function getNotificationMessageNode(locale: App.Locale, key: App.NotificationType): MessageStructure {
+    const m = getNotificationMessages(locale)
+    return m[key];
+}
+
 /**
  * Simple variable interpolation for message templates.
  * 
@@ -171,8 +187,13 @@ export function interpolate(template: string, vars: Record<string, string | numb
     return template.replace(/{(\w+)}/g, (_, key) => String(vars[key] ?? ''));
 }
 
+    
+export function getBaseMessage (m: MessageStructure, data: any): BaseMessage {
+    return { title: m.title, body: interpolate(m.body, data) };
+}
+
 /** Get messages for a specific notification type */
-export function getSpecificNotificationMessages<K extends NotificationType>(
+export function getSpecificNotificationMessages<K extends App.NotificationType>(
     locale: App.Locale,
     type: K
 ): NotificationMessages[K] {
@@ -181,5 +202,5 @@ export function getSpecificNotificationMessages<K extends NotificationType>(
 
 // Backward compatibility for any remaining imports
 export type EmailMessages = NotificationMessages;
-export type EmailNotificationType = NotificationType;
+export type EmailNotificationType = App.NotificationType;
 export const getEmailMessages = getNotificationMessages;

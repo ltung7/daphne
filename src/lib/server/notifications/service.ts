@@ -1,5 +1,5 @@
-import { getNotificationMessages } from './localized/localizedMailerMessages';
-import type { NotificationDefinition, NotificationContext, NotificationPriority } from './types';
+import { getNotificationMessageNode } from './localized/localizedMailerMessages';
+import type { NotificationDefinition, NotificationContext, NotificationPriority, IncidentPayload } from './types';
 import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
 import { sendWebPush } from '../services/webpush.service';
@@ -24,7 +24,8 @@ const PRIORITY_ORDER: Record<NotificationPriority, number> = {
 export async function sendNotification<TData>(
     user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
-    data: TData
+    data: TData,
+    incidentSource: App.Incident.Source = 'system'
 ): Promise<void> {
     // 1. Resolve Preferences
     const prefs = await getUserPreferences(user.id);
@@ -35,10 +36,15 @@ export async function sendNotification<TData>(
 
     // 2. Setup Context
     const locale = user.preferredLanguage || 'pl';
+    const m = getNotificationMessageNode(locale, notification.id);
+    const baseMessage = notification.getBaseMessage(m, data);
     const ctx: NotificationContext = {
+        ...baseMessage,
         locale,
-        m: getNotificationMessages(locale),
-        user
+        m,
+        m_pl: getNotificationMessageNode('pl', notification.id),
+        user,
+        incidentSource
     };
 
     // 3. Dispatch to Channels in parallel
@@ -65,6 +71,18 @@ export async function sendNotification<TData>(
     }
 
     if (promises.length) await Promise.allSettled(promises);
+
+    // 4. Incident Logging (if defined)
+    if (notification.incident) {
+        try {
+            const incident = await notification.incident(data, ctx);
+            if (incident) {
+                await logIncident(notification.id, incident, notification.priority, user, data);
+            }
+        } catch (err) {
+            logger.error(`Incident logging failed for ${notification.id}:`, err);
+        }
+    }
 }
 
 async function sendEmail<TData>(
@@ -147,4 +165,38 @@ async function getUserPreferences(_userId: string): Promise<UserPreferences> {
 
 function shouldSend(priority: NotificationPriority, prefs: UserPreferences): boolean {
     return PRIORITY_ORDER[priority] >= PRIORITY_ORDER[prefs.minPriority];
+}
+
+import { addIncident } from '../db/firebase/incidents.fdb';
+
+async function logIncident<TData>(
+    notificationId: App.NotificationType,
+    incident: IncidentPayload,
+    severity: NotificationPriority,
+    user: App.BaseContact,
+    data: TData
+): Promise<void> {
+    const newIncident: Omit<App.Incident.IncidentLog, 'id'> = {
+        title: incident.title,
+        type: incident.type || notificationId,
+        description: incident.description,
+        category: incident.category,
+        severity: severity,
+        status: 'open',
+        source: incident.source || 'system',
+        metadata: {
+            userId: user.id,
+            userName: user.name,
+            ...data
+        },
+        notes: '',
+        timestamp: Date.now()
+    };
+    
+    try {
+        const id = await addIncident(newIncident);
+        logger.log(`[INCIDENT LOG] Created incident ${id} - ${incident.title}`);
+    } catch (err) {
+        logger.error(`[INCIDENT LOG] Failed to save incident:`, err);
+    }
 }

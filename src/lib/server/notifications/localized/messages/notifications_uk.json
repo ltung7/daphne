@@ -30,14 +30,14 @@
     "return_date": "Дата повернення: {date}",
     "footer": "Дякуємо за співпрацю."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Документ скоро закінчується",
     "greeting": "Шановний {driverName},",
     "body": "Ваш документ {documentName} закінчується через {days} днів ({expiryDate}).",
     "action_required": "Будь ласка, подовжте термін дії документу якнайшвидше.",
     "footer": "Ігнорування цього попередження може призвести до обмеження роботи."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Документ закінчився - потрібна дія",
     "greeting": "Шановний {driverName},",
     "body": "Ваш документ {documentName} закінчився {expiryDate}.",

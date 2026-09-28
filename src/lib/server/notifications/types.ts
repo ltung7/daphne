@@ -1,11 +1,15 @@
-import type { NotificationMessages } from './localized/localizedMailerMessages';
+import type { MessageStructure } from './localized/localizedMailerMessages';
 
 export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 export interface NotificationContext {
+    title: string;
+    body: string;
     locale: App.Locale;
-    m: NotificationMessages;
+    m: MessageStructure;
+    m_pl: MessageStructure;
     user: App.BaseContact;
+    incidentSource: App.Incident.Source
 }
 
 export interface EmailPayload {
@@ -22,12 +26,27 @@ export interface WebPushPayload {
     click_action?: string;
 }
 
+export interface IncidentPayload {
+    title: string;
+    description: string;
+    category: App.Incident.Category;
+    source?: App.Incident.Source;
+    type?: App.NotificationType;
+}
+
+interface BaseMessage {
+    title: string;
+    body: string;
+}
+
 export interface NotificationDefinition<TData> {
-    id: string;
+    id: App.NotificationType;
     priority: NotificationPriority;
+    getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
     email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
     push?: (data: TData, ctx: NotificationContext) => WebPushPayload | Promise<WebPushPayload>;
     sms?: (data: TData, ctx: NotificationContext) => string | Promise<string>;
     inapp?: (data: TData, ctx: NotificationContext) => string | Promise<string>;
     webhook?: (data: TData, ctx: NotificationContext) => any;
+    incident?: (data: TData, ctx: NotificationContext) => IncidentPayload | false | Promise<IncidentPayload | false>;
 }

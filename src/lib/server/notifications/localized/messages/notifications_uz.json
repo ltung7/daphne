@@ -30,14 +30,14 @@
     "return_date": "Qaytarish sanasi: {date}",
     "footer": "Hamkorligingiz uchun rahmat."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Hujjat tez orada amal qilishni to'xtatadi",
     "greeting": "Aziz {driverName},",
     "body": "Sizning {documentName} hujjatingiz {days} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "action_required": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Hujjat amal qilmasdan qolgan - harakat kerak",
     "greeting": "Aziz {driverName},",
     "body": "Sizning {documentName} hujjatingiz {expiryDate} da amal qilishni to'xtatgan.",

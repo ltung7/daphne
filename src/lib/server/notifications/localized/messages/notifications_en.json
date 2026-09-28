@@ -30,14 +30,14 @@
     "return_date": "Return date: {date}",
     "footer": "Thank you for your cooperation."
   },
-  "document_expiring": {
+  "driver_document_expiring": {
     "title": "Document expiring soon",
     "greeting": "Dear {driverName},",
     "body": "Your document {documentName} expires in {days} days ({expiryDate}).",
     "action_required": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions."
   },
-  "document_expired": {
+  "driver_document_expired": {
     "title": "Document expired - action required",
     "greeting": "Dear {driverName},",
     "body": "Your document {documentName} expired on {expiryDate}.",
