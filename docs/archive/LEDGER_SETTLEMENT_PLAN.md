@@ -1,4 +1,12 @@
-# Driver Balance Ledger System - Implementation Plan
+# Driver Balance Ledger System - Implementation Plan (ARCHIVED)
+
+> **Status: ARCHIVED** — Superseded by `FLEET_PROFIT_SETTLEMENT_PLAN.md`
+> 
+> This plan covered the append-only event ledger for driver balance tracking.
+> The ledger infrastructure IS IMPLEMENTED (Firestore collection, API, admin UI).
+> The calculation layer was DEFERRED and never created.
+> 
+> New plan focuses on: fleet profit calculations, driver settlements, income reporting, cost matching.
 
 ## Overview
 Append-only event ledger for driver financial balance tracking. Each event represents a balance change (income, penalty, settlement, etc.) with running balance stored for O(1) current balance lookup.
@@ -422,8 +430,10 @@ recordEvent({
 - [x] Create `earlySettlements.fdb.ts` with CRUD operations (add, get, find, set, delete, exists)
 
 ### Calculation Logic (`src/lib/server/calculations/`)
-- [ ] Update `driverBalance.ts` pure functions for new event types — **DEFERRED**
-- [ ] Update `settlement.ts` - rename monthly → settlement, add early settlement logic — **DEFERRED**
+- [ ] **NOT CREATED** — directory and files don't exist
+- [ ] `driverBalance.ts` — pure functions for balance math (income, provision, net, verification)
+- [ ] `settlement.ts` — monthly/early settlement computation
+- **Status: DEFERRED** — no implementation until clear policy for settlement calculations
 
 ### Early Settlement Flow (New)
 - [x] Create early settlement entity (separate collection: `earlySettlements`)

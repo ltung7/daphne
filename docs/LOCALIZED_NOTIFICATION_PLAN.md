@@ -230,3 +230,107 @@ export const healthCheckRecipientRegistry: HealthCheckRecipientMap = {
 4. **Target agnostic**: Because generators consume `App.BaseContact`, notifications can trigger for drivers, admins, managers, or third-party contacts.
 5. **Localization Integration**: Bypasses Paraglide entirely. It uses exact dictionary objects (`m`) based on the contact's `preferredLanguage`, ensuring safety outside request contexts.
 6. **Health Check Registry**: Centralized mapping of health problems to notification recipients enables flexible routing without hardcoding recipients in checkers.
+
+## 7. Incident Logging System
+
+The notification system acts as the central mechanism for generating persistent Incident Logs (e.g., accidents, suspensions, compliance violations). This keeps business logic inside the notification definitions and completely automates incident generation.
+
+### 7.1 Schema
+
+All entity data is stored strictly in the `metadata` record. `resolvedBy` is the Admin's UID, and `resolvedByName` is their name.
+
+```typescript
+namespace Incident {
+    type Severity = 'low' | 'medium' | 'high' | 'critical';
+    type Status = 'info' | 'open' | 'resolved';
+    
+    type Category = 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
+    type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system';
+    
+    interface IncidentLog {
+        id: string;
+        title: string;
+        description: string;
+        category: Category;
+        severity: Severity;
+        status: Status;
+        source: Source;
+        metadata: Record<string, any>; // driverId, vehicleId, documentName, etc.
+        notes: string;
+        createdAt: string;
+        resolvedAt?: string;
+        resolvedBy?: string;     // Admin ID
+        resolvedByName?: string; // Admin Name
+    }
+}
+```
+
+### 7.2 Incident Generation in Notifications
+
+The `NotificationDefinition` includes an optional `incident` generator. If defined, the dispatcher will *always* create an incident log (unless the generator explicitly returns `false`). Incidents are strictly logged in Polish.
+
+```typescript
+// Context provides a forced Polish dictionary `m_pl` for internal logging
+export interface NotificationContext {
+    locale: App.Locale;
+    m: EmailMessages; // User's preferred language dict
+    m_pl: EmailMessages; // ALWAYS Polish dict (for incidents/internal logs)
+    user: App.BaseContact;
+}
+
+export interface IncidentPayload {
+    title: string;
+    description: string;
+    category: App.Incident.Category;
+    source?: App.Incident.Source; // Will default to 'system'
+}
+
+export interface NotificationDefinition<TData> {
+    id: string;
+    priority: NotificationPriority;
+    
+    email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
+    // ...
+    
+    // Generates the incident - returning false skips logging for this event
+    incident?: (data: TData, ctx: NotificationContext) => IncidentPayload | false | Promise<IncidentPayload | false>;
+}
+```
+
+### 7.3 Auto-Logging via Dispatcher
+
+The core `sendNotification` service automatically invokes `IncidentService.log` when an incident is generated.
+
+```typescript
+// src/lib/server/notifications/service.ts
+export async function sendNotification<TData>(/*...*/) {
+    // Context setup with injected Polish dictionary
+    const ctx: NotificationContext = {
+        locale,
+        m: getNotificationMessages(locale),
+        m_pl: getNotificationMessages('pl'),
+        user
+    };
+
+    // ALWAYS log incident if defined and doesn't return false
+    if (notification.incident) {
+        promises.push((async () => {
+            const inc = await notification.incident!(data, ctx);
+            if (inc) {
+                await IncidentService.log({
+                    title: inc.title,
+                    description: inc.description,
+                    category: inc.category,
+                    severity: notification.priority, // Inherits severity
+                    source: inc.source || 'system',
+                    metadata: {
+                        userId: user.id,
+                        userName: user.name,
+                        ...data // dump payload into metadata
+                    }
+                });
+            }
+        })());
+    }
+}
+```

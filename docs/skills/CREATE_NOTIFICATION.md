@@ -27,6 +27,8 @@ When asked to "create a notification", "add the [X] notification", or "implement
   - `push`: Return `{ title, body, icon, click_action }`.
   - `sms` (optional): Return a plain text string.
   - `inapp` (optional): Return an HTML string for the in-app feed.
+  - `incident` (optional): Return `{ title, description, category, source? }` or `false`.
+    - **Note:** Incidents are internal audit logs. ALWAYS use the `ctx.m_pl` dictionary to ensure the incident log title and description are strictly in Polish, regardless of the recipient's preferred locale.
 
 ### 4. Create the Dispatcher Function
 - Export a strictly typed function:
