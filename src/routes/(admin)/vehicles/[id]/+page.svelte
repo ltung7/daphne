@@ -9,13 +9,13 @@
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
-	import { fly } from 'svelte/transition';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import VehicleImageAndData from '$lib/components/vehicle/VehicleImageAndData.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import VehicleStatusChanger from '$lib/components/vehicle/VehicleStatusChanger.svelte';
 	import VehicleStatusHistory from '$lib/components/vehicle/VehicleStatusHistory.svelte';
+	import { Offcanvas } from '@sveltestrap/sveltestrap';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
@@ -69,7 +69,7 @@
 	{#snippet cta()}
 		<VehicleStatusHistory vehicleId={vehicle.registrationNumber} />
 	{/snippet}
-	
+
 	<VehicleImageAndData {vehicle} />
 </SectionCard>
 
@@ -108,8 +108,8 @@
 	{/if}
 </SectionCard>
 
-{#if handoverModal}
-	<div class="position-fixed w-100 h-100 top-0 start-0 overflow-auto px-3 pb-3" style="z-index: 10" transition:fly>
+<Offcanvas bind:isOpen={handoverModal} class="w-100" placement="end" header="Przypisz pojazd" toggle={() => handoverModal = !handoverModal}>
+	{#if handoverModal}
 		<NewHandoverProtocol {vehicle} />
-	</div>
-{/if}
+	{/if}
+</Offcanvas>

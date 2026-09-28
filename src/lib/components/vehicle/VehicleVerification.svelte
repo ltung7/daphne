@@ -60,8 +60,6 @@
 		{/each}
 	</ul>
 	{#snippet footer()}
-		<div class="d-flex justify-content-end w-100 p-3">
-			<button class="btn btn-success" onclick={verifyVehicle} disabled={verified !== required.length}>Zatwierdź i oznacz jako dostępny</button>
-		</div>
+		<button class="btn btn-success mb-0" onclick={verifyVehicle} disabled={verified !== required.length}>Zatwierdź i oznacz jako dostępny</button>
 	{/snippet}
 </ClosableModal>

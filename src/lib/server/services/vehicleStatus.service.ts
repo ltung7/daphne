@@ -4,6 +4,7 @@ import admin from 'firebase-admin';
 import { insertRandomLog } from '../db/tables/randomLogs.db';
 import { error } from "@sveltejs/kit";
 import { addVehicleStatusChange } from '../db/firebase/vehicleStatusChange.fdb';
+import { vehicleRequirements } from '$lib/assets/requirements';
 
 export interface AssignVehicleData {
 	registrationNumber: string; // registration number
@@ -206,8 +207,24 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 	precheck: {
 		available: async (vehicle, extraData) => {
 			if (!extraData.verificationResult) throw error(400, 'Missing verification data');
-			const verified = extraData.verificationResult === true;
-			if (!verified) throw error(400, 'Verification failed');
+			
+			// Get all required requirement nodes
+			const requiredNodes = vehicleRequirements
+				.filter(req => req.required)
+				.map(req => req.node);
+			
+			// Check all required requirements are satisfied
+			const allRequiredMet = requiredNodes.every(node => extraData.verificationResult[node] === true);
+			
+			if (!allRequiredMet) {
+				const failedRequirements = requiredNodes
+					.filter(node => extraData.verificationResult[node] !== true)
+					.map(node => {
+						const req = vehicleRequirements.find(r => r.node === node);
+						return req?.name || node;
+					});
+				throw error(400, `Verification failed. Missing requirements: ${failedRequirements.join(', ')}`);
+			}
 			return true;
 		},
 		broken: () => true,

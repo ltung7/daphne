@@ -150,12 +150,6 @@
 
 <ResetPasswordSection />
 
-{#if handoverModal}
-	<div class="position-fixed w-100 h-100 top-0 start-0 overflow-auto px-3 pb-3" style="z-index: 10" transition:fly>
-		<NewHandoverProtocol {driver} />
-	</div>
-{/if}
-
 <Offcanvas bind:isOpen={editModal} class="w-100" placement="end" header="Edytuj kierowcę" {toggle}>
 	<DriverForm bind:item={driver} cleanItem={untrack(() => data.driver)} onResponse={handleDriverUpdate} patch footer={footerSnippet} />
 </Offcanvas>
