@@ -186,6 +186,22 @@ export const driverDocumentCategories: Array<DriverDocumentCategory> = [
         ],
     },
 ];
+
+export const updatableDriverVariables: Array<keyof Driver.Driver> = [
+    'pesel',
+    'address',
+    'nationality',
+    'identificationDocumentNumber',
+    'identificationDocumentType',
+];
+
+export const driverVariableNames: Partial<Record<keyof Driver.Driver, string>> = {
+    pesel: 'PESEL',
+    address: 'Adres zamieszkania',
+    nationality: 'Narodowość',
+    identificationDocumentNumber: 'Numer dokumentu tożsamości',
+    identificationDocumentType: 'Rodzaj dokumentu tożsamości',
+};
 export const updatableVehicleVariables: Array<keyof Vehicle.Vehicle> = [ 'insuranceExpiration', 'technicalExpiration', 'firstRegistrationDate', 'color' ];
 
 export const vehicleVariableNames: Partial<Record<keyof Vehicle.Vehicle, string>> = {
