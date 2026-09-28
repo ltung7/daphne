@@ -35,14 +35,19 @@ src/lib/server/notifications/
 ## 2. Core Interfaces (`types.ts`)
 
 ```typescript
-import type { EmailMessages } from './localized/localizedMailerMessages';
+import type { MessageStructure } from './localized/localizedMailerMessages';
 
 export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 
 // Context provided by the service to the generators
 export interface NotificationContext {
+    title: string;
+    body: string;
+    title_pl: string;
+    body_pl: string;
     locale: App.Locale;
-    m: EmailMessages; // Localized dictionary
+    m: MessageStructure; // Localized dictionary for the specific notification
+    m_pl: MessageStructure; // Forced Polish dictionary for internal/incident logging
     user: App.BaseContact; // Recipient data
 }
 
@@ -50,7 +55,7 @@ export interface EmailPayload {
     subject: string;
     htmlBody: string; // Rendered into GenericNotificationMail.svelte
     component?: any;  // Optional custom component
-    props?: any;      # Optional custom props
+    props?: any;      // Optional custom props
 }
 
 export interface WebPushPayload {
@@ -60,77 +65,72 @@ export interface WebPushPayload {
     click_action?: string;
 }
 
+export interface IncidentPayload {
+    title: string;
+    description: string;
+    category: App.Incident.Category;
+    source?: App.Incident.Source;
+    type?: App.NotificationType;
+}
+
+interface BaseMessage {
+    title: string;
+    body: string;
+}
+
 export interface NotificationDefinition<TData> {
-    id: string; // e.g., 'driver.document_expiring'
+    id: App.NotificationType; // e.g., 'driver_document_expiring'
     priority: NotificationPriority;
     
-    // Required channel
-    email: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
+    // Generates the base title/body upfront to inject into context
+    getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
     
     // Optional channels
+    email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
     push?: (data: TData, ctx: NotificationContext) => WebPushPayload | Promise<WebPushPayload>;
     sms?: (data: TData, ctx: NotificationContext) => string | Promise<string>;
     inapp?: (data: TData, ctx: NotificationContext) => string | Promise<string>;
     webhook?: (data: TData, ctx: NotificationContext) => any;
+    incident?: (data: TData, ctx: NotificationContext) => IncidentPayload | false | Promise<IncidentPayload | false>;
 }
 ```
 
 ## 3. Example Notification Definition
 
-This is how a notification is defined. It handles all channels in one place, relies on `App.BaseContact` (so it can send to drivers, admins, or external contacts), and provides a strictly-typed dispatcher.
+This is how a notification is defined easily. By utilizing `prepareNotificationChannels`, you don't need to manually write boilerplate for SMS, Push, In-App, and Incidents. The core `title` and `body` are automatically extracted and localized using the `getBaseMessage` method.
 
 ```typescript
-// src/lib/server/notifications/driver/documentExpiredNotification.ts
+// src/lib/server/notifications/driver/pushEnabledNotification.ts
 import type { NotificationDefinition } from '../types';
-import { interpolate } from '../localized/localizedMailerMessages';
 import { sendNotification } from '../service';
+import { PUBLIC_URL } from '$env/static/public';
+import { getBaseMessage } from '../localized/localizedMailerMessages';
+import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
-export interface DocumentExpiredData {
-    documentName: string;
-    expiryDate: string;
+export interface PushEnabledData {
+    deviceDetails?: string;
 }
 
-export const documentExpiredNotification: NotificationDefinition<DocumentExpiredData> = {
-    id: 'driver.document_expired',
-    priority: 'critical',
+// Automatically generates sms, push, inapp, and incident using ctx.title and ctx.body
+const channels = prepareNotificationChannels({
+    action: PUBLIC_URL + '/driver',
+    channels: ['push'] // optionally restrict which channels to generate
+});
 
-    email: (data, { m, user }) => {
-        const t = m.document_expired;
-        return {
-            subject: t.title,
-            htmlBody: `
-                <p>${interpolate(t.greeting, { driverName: user.name })}</p>
-                <p>${interpolate(t.body, { documentName: data.documentName, expiryDate: data.expiryDate })}</p>
-                <p style="color: #d32f2f;">${t.consequence}</p>
-                <p>${t.footer}</p>
-            `
-        };
-    },
-
-    sms: (data, { m }) => {
-        const bodyText = interpolate(m.document_expired.body, { documentName: data.documentName, expiryDate: data.expiryDate });
-        return `EISG: ${bodyText} ${m.document_expired.consequence}`;
-    },
-
-    push: (data, { m }) => ({
-        title: m.document_expired.title,
-        body: interpolate(m.document_expired.body, { documentName: data.documentName, expiryDate: data.expiryDate }),
-        icon: '/icons/alert-critical.png',
-        click_action: '/driver/documents'
-    }),
-    
-    inapp: (data, { m }) => `
-        <strong>${m.document_expired.title}</strong><br/>
-        ${interpolate(m.document_expired.body, { documentName: `<b>${data.documentName}</b>`, expiryDate: data.expiryDate })}
-    `
+export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = {
+    id: 'push_enabled',
+    priority: 'low',
+    getBaseMessage,
+    ...channels
 };
 
 /** Strictly typed export */
-export async function sendDocumentExpiredNotification(
+export async function sendPushEnabledNotification(
     user: App.BaseContact, 
-    data: DocumentExpiredData
+    data: PushEnabledData = {}, 
+    incidentSource: App.Incident.Source = 'system'
 ): Promise<void> {
-    return sendNotification(user, documentExpiredNotification, data);
+    return sendNotification(user, pushEnabledNotification, data, incidentSource);
 }
 ```
 
@@ -228,72 +228,57 @@ namespace Incident {
 
 ### 7.2 Incident Generation in Notifications
 
-The `NotificationDefinition` includes an optional `incident` generator. If defined, the dispatcher will *always* create an incident log (unless the generator explicitly returns `false`). 
+The `NotificationDefinition` includes an optional `incident` generator. If defined, the dispatcher will *always* create an incident log (unless the generator explicitly returns `false`). The `prepareNotificationChannels` factory automatically wires this up for you using `ctx.title_pl` and `ctx.body_pl`.
 
 **Incident Rules:**
-1. **Always use `m_pl`**: Incident logs are strict internal records. You must use the forced Polish dictionary (`m_pl` from `NotificationContext`) to generate the `title` and `description` (e.g., `title: interpolate(m_pl.document_expired.incident_title, {...})`). Never hardcode text.
-2. **Dynamic Source**: Do NOT hardcode the `source` (e.g., `health_check`) inside the generator. The source should be passed as part of the `TData` payload by whatever service (cron, webhook, API) is triggering the notification, or defaulted to `system` by the dispatcher.
+1. **Always use Polish**: Incident logs are strict internal records. The context provides `ctx.title_pl` and `ctx.body_pl` which are guaranteed to be generated using the Polish dictionary (`m_pl`), regardless of the recipient's preferred locale.
+2. **Dynamic Source via Dispatcher**: Do NOT hardcode the `source` (e.g., `health_check`) inside the generator. The source is passed dynamically at dispatch time to the wrapper function (e.g., `sendDocumentExpiredNotification(user, data, 'cron_job')`) which forwards it directly to the DB layer.
 
 ```typescript
-// Context provides a forced Polish dictionary `m_pl` for internal logging
+// Context provides forced Polish strings for internal logging
 export interface NotificationContext {
-    locale: App.Locale;
-    m: EmailMessages; // User's preferred language dict
-    m_pl: EmailMessages; // ALWAYS Polish dict (for incidents/internal logs)
-    user: App.BaseContact;
+    title_pl: string;
+    body_pl: string;
+    // ...
 }
 
 export interface IncidentPayload {
     title: string;
     description: string;
     category: App.Incident.Category;
-    source?: App.Incident.Source; // Will default to 'system'
-}
-
-export interface NotificationDefinition<TData> {
-    id: string;
-    priority: NotificationPriority;
-    
-    email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
-    // ...
-    
-    // Generates the incident - returning false skips logging for this event
-    incident?: (data: TData, ctx: NotificationContext) => IncidentPayload | false | Promise<IncidentPayload | false>;
+    source?: App.Incident.Source; 
 }
 ```
 
 ### 7.3 Auto-Logging via Dispatcher
 
-The core `sendNotification` service automatically invokes `IncidentService.log` when an incident is generated.
+The core `sendNotification` service automatically invokes `logIncident` when an incident is generated, safely executing it in parallel with other channel dispatches.
 
 ```typescript
 // src/lib/server/notifications/service.ts
-export async function sendNotification<TData>(/*...*/) {
-    // Context setup with injected Polish dictionary
-    const ctx: NotificationContext = {
-        locale,
-        m: getNotificationMessages(locale),
-        m_pl: getNotificationMessages('pl'),
-        user
-    };
+export async function sendNotification<TData>(
+    // ...
+    incidentSource: App.Incident.Source = 'system'
+) {
+    // ... setup context ...
 
     // ALWAYS log incident if defined and doesn't return false
     if (notification.incident) {
         promises.push((async () => {
-            const inc = await notification.incident!(data, ctx);
-            if (inc) {
-                await IncidentService.log({
-                    title: inc.title,
-                    description: inc.description,
-                    category: inc.category,
-                    severity: notification.priority, // Inherits severity
-                    source: inc.source || 'system',
-                    metadata: {
-                        userId: user.id,
-                        userName: user.name,
-                        ...data // dump payload into metadata
-                    }
-                });
+            try {
+                const inc = await notification.incident!(data, ctx);
+                if (inc) {
+                    await logIncident(
+                        notification.id, 
+                        inc, 
+                        notification.priority, 
+                        user, 
+                        data, 
+                        incidentSource // Dynamic runtime source passed down
+                    );
+                }
+            } catch (err) {
+                // error handling
             }
         })());
     }

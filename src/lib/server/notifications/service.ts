@@ -37,14 +37,18 @@ export async function sendNotification<TData>(
     // 2. Setup Context
     const locale = user.preferredLanguage || 'pl';
     const m = getNotificationMessageNode(locale, notification.id);
+    const m_pl = getNotificationMessageNode('pl', notification.id);
     const baseMessage = notification.getBaseMessage(m, data);
+    const baseMessagePl = notification.getBaseMessage(m_pl, data);
     const ctx: NotificationContext = {
-        ...baseMessage,
+        title: baseMessage.title,
+        body: baseMessage.body,
+        title_pl: baseMessagePl.title,
+        body_pl: baseMessagePl.body,
         locale,
         m,
-        m_pl: getNotificationMessageNode('pl', notification.id),
-        user,
-        incidentSource
+        m_pl,
+        user
     };
 
     // 3. Dispatch to Channels in parallel
@@ -70,19 +74,21 @@ export async function sendNotification<TData>(
         promises.push(sendInApp(user.id, notification, data, ctx));
     }
 
-    if (promises.length) await Promise.allSettled(promises);
-
     // 4. Incident Logging (if defined)
     if (notification.incident) {
-        try {
-            const incident = await notification.incident(data, ctx);
-            if (incident) {
-                await logIncident(notification.id, incident, notification.priority, user, data);
+        promises.push((async () => {
+            try {
+                const incident = await notification.incident!(data, ctx);
+                if (incident) {
+                    await logIncident(notification.id, incident, notification.priority, user, data, incidentSource);
+                }
+            } catch (err) {
+                logger.error(`Incident logging failed for ${notification.id}:`, err);
             }
-        } catch (err) {
-            logger.error(`Incident logging failed for ${notification.id}:`, err);
-        }
+        })());
     }
+
+    if (promises.length) await Promise.allSettled(promises);
 }
 
 async function sendEmail<TData>(
@@ -174,7 +180,8 @@ async function logIncident<TData>(
     incident: IncidentPayload,
     severity: NotificationPriority,
     user: App.BaseContact,
-    data: TData
+    data: TData,
+    incidentSource: App.Incident.Source
 ): Promise<void> {
     const newIncident: Omit<App.Incident.IncidentLog, 'id'> = {
         title: incident.title,
@@ -183,7 +190,7 @@ async function logIncident<TData>(
         category: incident.category,
         severity: severity,
         status: 'open',
-        source: incident.source || 'system',
+        source: incident.source || incidentSource,
         metadata: {
             userId: user.id,
             userName: user.name,

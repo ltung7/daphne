@@ -1,30 +1,28 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { NOTIFICATION_ICON } from '$lib/assets/constants';
 import { getBaseMessage } from '../localized/localizedMailerMessages';
+import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface PushEnabledData {
     deviceDetails?: string;
 }
 
+const channels = prepareNotificationChannels({
+    action: PUBLIC_URL + '/driver',
+    channels: [ 'push' ]
+});
+
 export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = {
     id: 'push_enabled',
     priority: 'low',
     getBaseMessage,
-    push: (_data, { m }) => {
-        return {
-            title: m.title,
-            body: m.body,
-            icon: NOTIFICATION_ICON,
-            click_action: PUBLIC_URL + '/driver'
-        };
-    },
+    ...channels
 };
 
 /**
  * Dispatch the Push Enabled notification through all preferred channels.
  */
-export async function sendPushEnabledNotification(user: App.BaseContact, data: PushEnabledData = {}): Promise<void> {
-    return sendNotification(user, pushEnabledNotification, data);
+export async function sendPushEnabledNotification(user: App.BaseContact, data: PushEnabledData = {}, incidentSource: App.Incident.Source = 'system'): Promise<void> {
+    return sendNotification(user, pushEnabledNotification, data, incidentSource);
 }

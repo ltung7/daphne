@@ -26,20 +26,47 @@ When asked to "create a notification", "add the [X] notification", or "implement
 ### 3. Create the Notification Definition
 - Create a new file in `src/lib/server/notifications/driver/` or `src/lib/server/notifications/admin/`.
 - Export a constant of type `NotificationDefinition<[Name]Data>`.
-- Define the `id` (e.g., `driver.settlement_calculated`) and `priority` (`low`, `medium`, `high`, `critical`).
-- Implement the channel generators:
-  - `email`: Return `{ subject, htmlBody }`. Use `interpolate(t.key, vars)` and standard inline HTML styling.
-  - `push`: Return `{ title, body, icon, click_action }`.
-  - `sms` (optional): Return a plain text string.
-  - `inapp` (optional): Return an HTML string for the in-app feed.
-  - `incident` (optional): Return `{ title, description, category }` or `false`.
-    - **Note:** Incidents are internal audit logs. ALWAYS use the `ctx.m_pl` dictionary to ensure the incident log title and description are strictly in Polish, regardless of the recipient's preferred locale.
+- Define the `id` (e.g., `driver_settlement_calculated`) and `priority` (`low`, `medium`, `high`, `critical`).
+- Use `getBaseMessage` from `src/lib/server/notifications/localized/localizedMailerMessages.ts` to automatically populate the base `title` and `body`.
+- Use the `prepareNotificationChannels` factory (`src/lib/server/notifications/general/prepareNotificationChannels.ts`) to easily auto-generate the `sms`, `push`, `inapp`, and `incident` channels based on the localized title and body.
+- Implement the `email` channel manually (if needed) to handle complex HTML layouts.
+
+Example:
+```typescript
+import type { NotificationDefinition } from '../types';
+import { sendNotification } from '../service';
+import { PUBLIC_URL } from '$env/static/public';
+import { getBaseMessage } from '../localized/localizedMailerMessages';
+import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
+
+export interface SomeData {
+    value: string;
+}
+
+const channels = prepareNotificationChannels({
+    action: PUBLIC_URL + '/some-path',
+    incidentCategory: 'compliance' // false to disable incident logging
+});
+
+export const someNotification: NotificationDefinition<SomeData> = {
+    id: 'some_notification_id', // Must exist in App.NotificationType
+    priority: 'medium',
+    getBaseMessage,
+    ...channels,
+    // Add custom email layout if GenericNotificationMail isn't enough
+    // email: (data, ctx) => { ... } 
+};
+```
 
 ### 4. Create the Dispatcher Function
-- Export a strictly typed function:
+- Export a strictly typed function that passes through `incidentSource`.
   ```typescript
-  export async function send[Name]Notification(user: App.BaseContact, data: [Name]Data): Promise<void> {
-      return sendNotification(user, [name]Notification, data);
+  export async function send[Name]Notification(
+      user: App.BaseContact, 
+      data: [Name]Data,
+      incidentSource: App.Incident.Source = 'system'
+  ): Promise<void> {
+      return sendNotification(user, someNotification, data, incidentSource);
   }
   ```
 
@@ -49,4 +76,5 @@ When asked to "create a notification", "add the [X] notification", or "implement
 ## Reference Materials
 - [Notification Types](../../src/lib/server/notifications/types.ts)
 - [Dispatcher Service](../../src/lib/server/notifications/service.ts)
-- Example implementation: [documentExpiredNotification.ts](../../src/lib/server/notifications/driver/documentExpiredNotification.ts)
+- [Channel Factory](../../src/lib/server/notifications/general/prepareNotificationChannels.ts)
+- Example implementation: [pushEnabledNotification.ts](../../src/lib/server/notifications/driver/pushEnabledNotification.ts)

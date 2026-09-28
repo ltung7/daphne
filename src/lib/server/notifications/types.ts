@@ -5,11 +5,12 @@ export type NotificationPriority = 'low' | 'medium' | 'high' | 'critical';
 export interface NotificationContext {
     title: string;
     body: string;
+    title_pl: string;
+    body_pl: string;
     locale: App.Locale;
     m: MessageStructure;
     m_pl: MessageStructure;
     user: App.BaseContact;
-    incidentSource: App.Incident.Source
 }
 
 export interface EmailPayload {
