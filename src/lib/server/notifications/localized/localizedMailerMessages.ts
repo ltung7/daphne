@@ -32,7 +32,7 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
         title: string;
         greeting: string;
         body: string;
-        action_required: string;
+        consequence: string;
         footer: string;
     };
     driver_document_expired: {
@@ -46,7 +46,7 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
         title: string;
         greeting: string;
         body: string;
-        action_required: string;
+        consequence: string;
         footer: string;
     };
     vehicle_document_expired: {
@@ -71,7 +71,7 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
     early_settlement_requested: {
         title: string;
         body: string;
-        action_required: string;
+        consequence: string;
     };
     early_settlement_info: {
         title: string;

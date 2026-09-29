@@ -10,7 +10,7 @@
     "title": "Hujjat tez orada amal qilishni to'xtatadi",
     "greeting": "Aziz {driverName},",
     "body": "Sizning {documentName} hujjatingiz {days} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
-    "action_required": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
+    "consequence": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "Erta hisob-kitob qilish bo'yicha yangi so'rov",
     "body": "Haydovchi {driverName} {requestedAmount} PLN miqdorida erta hisob-kitob qilishni so'radi.",
-    "action_required": "Iltimos, so'rovni administrator panelida ko'rib chiqing."
+    "consequence": "Iltimos, so'rovni administrator panelida ko'rib chiqing."
   },
   "early_settlement_info": {
     "title": "Erta hisob-kitob holati: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Avtomobil hujjatining muddati tez orada tugaydi",
+    "greeting": "Hurmatli {userName},",
+    "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {daysUntilExpiry} kundan ({expiryDate}) so'ng tugaydi.",
+    "consequence": "Iltimos, hujjatni iloji boricha tezroq yangilang.",
+    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish avtomobilning bloklanishiga olib kelishi mumkin."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Avtomobil hujjatining muddati tugadi - chora ko'rish talab etiladi",
+    "greeting": "Hurmatli {userName},",
+    "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {expiryDate} da tugadi.",
+    "consequence": "Avtomobil yangilanmaguncha bloklanishi mumkin.",
+    "footer": "Yangilash uchun administrator bilan bog'laning."
   },
   "push_enabled": {
     "title": "",

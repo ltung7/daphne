@@ -10,7 +10,7 @@
     "title": "Dokument uskoro istekne",
     "greeting": "Poštovani {driverName},",
     "body": "Vaš dokument {documentName} ističe za {days} dana ({expiryDate}).",
-    "action_required": "Molimo obnovite dokument što pre.",
+    "consequence": "Molimo obnovite dokument što pre.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
   },
   "driver_document_expired": {
@@ -34,7 +34,7 @@
   "early_settlement_requested": {
     "title": "Novi zahtev za prevremeno poravnanje",
     "body": "Vozač {driverName} je zatražio prevremeno poravnanje u iznosu od {requestedAmount} PLN.",
-    "action_required": "Molimo vas da pregledate zahtev u administratorskom panelu."
+    "consequence": "Molimo vas da pregledate zahtev u administratorskom panelu."
   },
   "early_settlement_info": {
     "title": "Status prevremenog poravnanja: {status}",
@@ -52,18 +52,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Dokument vozila uskoro ističe",
+    "greeting": "Poštovani/a {userName},",
+    "body": "Dokument {documentName} za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
+    "consequence": "Molimo vas da obnovite dokument što je pre moguće.",
+    "footer": "Ignorisanje ovog upozorenja može rezultirati onemogućavanjem vozila."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Dokument vozila je istekao - potrebna akcija",
+    "greeting": "Poštovani/a {userName},",
+    "body": "Dokument {documentName} za vozilo {registrationNumber} je istekao {expiryDate}.",
+    "consequence": "Vozilo može biti onemogućeno do obnavljanja.",
+    "footer": "Kontaktirajte administratora za obnovu."
   },
   "template_notification": {
     "title": "",

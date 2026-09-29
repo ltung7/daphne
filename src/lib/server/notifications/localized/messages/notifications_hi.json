@@ -10,7 +10,7 @@
     "title": "दस्तावेज़ जल्द समाप्त हो रहा है",
     "greeting": "प्रिय {driverName},",
     "body": "आपका दस्तावेज़ {documentName} {days} दिनों में समाप्त हो रहा है ({expiryDate})।",
-    "action_required": "कृपया दस्तावेज़ को जल्द से जल्द नवीनीकृत करें।",
+    "consequence": "कृपया दस्तावेज़ को जल्द से जल्द नवीनीकृत करें।",
     "footer": "इस चेतावनी को नजरअंदाज करने से कार्य प्रतिबंध हो सकते हैं।"
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "नया प्रारंभिक निपटान अनुरोध",
     "body": "ड्राइवर {driverName} ने {requestedAmount} PLN के प्रारंभिक निपटान का अनुरोध किया है।",
-    "action_required": "कृपया व्यवस्थापक पैनल में अनुरोध की समीक्षा करें।"
+    "consequence": "कृपया व्यवस्थापक पैनल में अनुरोध की समीक्षा करें।"
   },
   "early_settlement_info": {
     "title": "प्रारंभिक निपटान स्थिति: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "वाहन के दस्तावेज़ की अवधि जल्द ही समाप्त हो रही है",
+    "greeting": "प्रिय {userName},",
+    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {documentName} की अवधि {daysUntilExpiry} दिनों ({expiryDate}) में समाप्त हो रही है।",
+    "consequence": "कृपया जल्द से जल्द दस्तावेज़ का नवीनीकरण करें।",
+    "footer": "इस चेतावनी को अनदेखा करने से वाहन अक्षम हो सकता है।"
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "वाहन के दस्तावेज़ की अवधि समाप्त - कार्रवाई आवश्यक है",
+    "greeting": "प्रिय {userName},",
+    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {documentName} की अवधि {expiryDate} को समाप्त हो गई।",
+    "consequence": "नवीनीकरण तक वाहन अक्षम किया जा सकता है।",
+    "footer": "नवीनीकरण के लिए प्रशासक से संपर्क करें।"
   },
   "push_enabled": {
     "title": "",

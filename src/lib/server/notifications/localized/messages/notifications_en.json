@@ -10,7 +10,7 @@
     "title": "Document expiring soon",
     "greeting": "Dear {driverName},",
     "body": "Your document {documentName} expires in {days} days ({expiryDate}).",
-    "action_required": "Please renew the document as soon as possible.",
+    "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions."
   },
   "driver_document_expired": {
@@ -38,7 +38,7 @@
   "early_settlement_requested": {
     "title": "New Early Settlement Request",
     "body": "Driver {driverName} has requested an early settlement of {requestedAmount} PLN.",
-    "action_required": "Please review the request in the admin panel."
+    "consequence": "Please review the request in the admin panel."
   },
   "early_settlement_info": {
     "title": "Early Settlement Status: {status}",
@@ -56,17 +56,17 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Vehicle document expiring soon",
+    "greeting": "Dear {userName},",
+    "body": "The document {documentName} for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
+    "consequence": "Please renew the document as soon as possible.",
+    "footer": "Ignoring this warning may result in the vehicle being disabled."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Vehicle document expired - action required",
+    "greeting": "Dear {userName},",
+    "body": "The document {documentName} for vehicle {registrationNumber} expired on {expiryDate}.",
+    "consequence": "The vehicle may be disabled until renewal.",
+    "footer": "Contact the administrator to renew."
   }
 }

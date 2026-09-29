@@ -76,7 +76,11 @@ export const someNotification: NotificationDefinition<SomeData> = {
   }
   ```
 
-### 5. Export from Index
+### 5. Add Testing Data
+- In `src/lib/server/notifications/testNotification.ts`, add a default payload for your new notification under `defaultTestData`.
+- Precede the key with the comment `/** TODO: Test notification */`. This serves as a reminder that the notification still requires manual verification via the test endpoint before it can be considered production-ready. Once manually tested and verified, the `/** TODO: Test notification */` comment will be removed.
+
+### 6. Export from Index
 - Export the notification definition, the dispatcher function, and the data interface from `src/lib/server/notifications/index.ts`.
 
 ## Reference Materials

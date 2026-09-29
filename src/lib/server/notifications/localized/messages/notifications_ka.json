@@ -10,7 +10,7 @@
     "title": "დოკუმენტი თუ Tämäences",
     "greeting": "მეგობრული {driverName},",
     "body": "თქვენი დოკუმენტი {documentName} ამოიწურება {days} დღეში ({expiryDate}).",
-    "action_required": "გთხოვთ, რაც შეიძლება該文档をご更新ください。",
+    "consequence": "გთხოვთ, რაც შეიძლება該文档をご更新ください。",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "ახალი ადრეული ანგარიშსწორების მოთხოვნა",
     "body": "მძღოლმა {driverName} მოითხოვა ადრეული ანგარიშსწორება {requestedAmount} PLN-ის ოდენობით.",
-    "action_required": "გთხოვთ, გადაამოწმოთ მოთხოვნა ადმინისტრატორის პანელში."
+    "consequence": "გთხოვთ, გადაამოწმოთ მოთხოვნა ადმინისტრატორის პანელში."
   },
   "early_settlement_info": {
     "title": "ადრეული ანგარიშსწორების სტატუსი: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "ავტომობილის დოკუმენტს მალე გაუვა ვადა",
+    "greeting": "ძვირფასო {userName},",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გასდის {daysUntilExpiry} დღეში ({expiryDate}).",
+    "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
+    "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "ავტომობილის დოკუმენტს ვადა გაუვიდა - საჭიროა ქმედება",
+    "greeting": "ძვირფასო {userName},",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გაუვიდა {expiryDate}-ში.",
+    "consequence": "განახლებამდე ავტომობილი შეიძლება დაიბლოკოს.",
+    "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს."
   },
   "push_enabled": {
     "title": "",

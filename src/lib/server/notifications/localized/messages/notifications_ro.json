@@ -10,7 +10,7 @@
     "title": "Documentul expiră curând",
     "greeting": "Stimate {driverName},",
     "body": "Documentul dumneavoastră {documentName} expiră în {days} zile ({expiryDate}).",
-    "action_required": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
+    "consequence": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "Nouă solicitare de decontare anticipată",
     "body": "Șoferul {driverName} a solicitat o decontare anticipată de {requestedAmount} PLN.",
-    "action_required": "Vă rugăm să revizuiți solicitarea în panoul de administrare."
+    "consequence": "Vă rugăm să revizuiți solicitarea în panoul de administrare."
   },
   "early_settlement_info": {
     "title": "Starea decontării anticipate: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Documentul vehiculului expiră în curând",
+    "greeting": "Dragă {userName},",
+    "body": "Documentul {documentName} pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
+    "consequence": "Te rugăm să reînnoiești documentul cât mai curând posibil.",
+    "footer": "Ignorarea acestui avertisment poate duce la dezactivarea vehiculului."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Documentul vehiculului a expirat - acțiune necesară",
+    "greeting": "Dragă {userName},",
+    "body": "Documentul {documentName} pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
+    "consequence": "Vehiculul poate fi dezactivat până la reînnoire.",
+    "footer": "Contactează administratorul pentru reînnoire."
   },
   "push_enabled": {
     "title": "",

@@ -26,7 +26,7 @@ export const earlySettlementRequestedNotification: NotificationDefinition<EarlyS
                     ${ctx.body}
                 </p>
                 <p style="color: #1976d2; font-weight: 500; font-size: 15px; margin-bottom: 16px;">
-                    ${ctx.m.action_required}
+                    ${ctx.m.consequence}
                 </p>
             `
         };

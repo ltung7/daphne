@@ -10,7 +10,7 @@
     "title": "कागजात चाँडै समाप्त हुनेछ",
     "greeting": "प्रिय {driverName},",
     "body": "तपाईंको कागजात {documentName} {days} दिनमा समाप्त हुनेछ ({expiryDate})।",
-    "action_required": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
+    "consequence": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।"
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "नयाँ प्रारम्भिक बस्ती अनुरोध",
     "body": "चालक {driverName} ले {requestedAmount} PLN को प्रारम्भिक बस्तीको लागि अनुरोध गरेका छन्।",
-    "action_required": "कृपया व्यवस्थापक प्यानलमा अनुरोधको समीक्षा गर्नुहोस्।"
+    "consequence": "कृपया व्यवस्थापक प्यानलमा अनुरोधको समीक्षा गर्नुहोस्।"
   },
   "early_settlement_info": {
     "title": "प्रारम्भिक बस्ती स्थिति: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "सवारी साधनको कागजात चाँडै समाप्त हुँदैछ",
+    "greeting": "प्रिय {userName},",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
+    "consequence": "कृपया कागजात जतिसक्दो चाँडो नवीकरण गर्नुहोस्।",
+    "footer": "यो चेतावनीलाई बेवास्ता गर्नाले सवारी साधन असक्षम हुन सक्छ।"
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "सवारी साधनको कागजात समाप्त भयो - कारबाही आवश्यक छ",
+    "greeting": "प्रिय {userName},",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {expiryDate} मा समाप्त भयो।",
+    "consequence": "नवीकरण नभएसम्म सवारी साधन असक्षम हुन सक्छ।",
+    "footer": "नवीकरणको लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
   },
   "push_enabled": {
     "title": "",

@@ -36,15 +36,3 @@ export async function sendTemplateNotification(
 ): Promise<void> {
     return sendNotification(user, templateNotification, data, incidentSource);
 }
-
-export const sendTestTemplateNotification = async (customField: string) => {
-    const user: App.BaseContact = {
-        email: 'tomasz.le@finnergroup.com',
-        id: '',
-        name: 'Tomasz',
-        preferredLanguage: 'en',
-        fcmToken: 'eNdK0UbOtIoDf8CGrgKLXX:APA91bEQymLhGKpGRbvtp1vcncOdBNvro4bH6m6ajQu8o7TGrDNbBoPgvrzm9ZekxCFAi1T90h3l64_q2TckoAagbZ143uD1lQQoyNDAEQ7iU38csNwr_Dc',
-        phone: '+48506349870'
-    }
-    return sendTemplateNotification(user, { customField })
-}

@@ -10,7 +10,7 @@
     "title": "Ang dokumento ay malapit nang mag-expire",
     "greeting": "Mahal na {driverName},",
     "body": "Ang iyong dokumentong {documentName} ay mag-eexpire sa loob ng {days} na araw ({expiryDate}).",
-    "action_required": "Pakirenew ang dokumento sa lalong madaling panahon.",
+    "consequence": "Pakirenew ang dokumento sa lalong madaling panahon.",
     "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "Bagong Kahilingan sa Maagang Pag-aayos",
     "body": "Humiling ang tsuper na si {driverName} ng maagang pag-aayos na nagkakahalaga ng {requestedAmount} PLN.",
-    "action_required": "Pakisuri ang kahilingan sa panel ng admin."
+    "consequence": "Pakisuri ang kahilingan sa panel ng admin."
   },
   "early_settlement_info": {
     "title": "Katayuan ng Maagang Pag-aayos: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Malapit na mag-expire ang dokumento ng sasakyan",
+    "greeting": "Mahal na {userName},",
+    "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay mag-eexpire sa loob ng {daysUntilExpiry} araw ({expiryDate}).",
+    "consequence": "Mangyaring i-renew ang dokumento sa lalong madaling panahon.",
+    "footer": "Ang pagbabalewala sa babalang ito ay maaaring magresulta sa pag-disable ng sasakyan."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Nag-expire na ang dokumento ng sasakyan - kailangan ng aksyon",
+    "greeting": "Mahal na {userName},",
+    "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay nag-expire noong {expiryDate}.",
+    "consequence": "Maaaring ma-disable ang sasakyan hanggang sa ma-renew ito.",
+    "footer": "Makipag-ugnayan sa administrator para mag-renew."
   },
   "push_enabled": {
     "title": "",

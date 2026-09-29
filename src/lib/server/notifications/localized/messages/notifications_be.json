@@ -10,7 +10,7 @@
     "title": "Дакумент хутка заканчваецца",
     "greeting": "Шанаваны {driverName},",
     "body": "Ваш дакумент {documentName} заканчваецца праз {days} дзён ({expiryDate}).",
-    "action_required": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
+    "consequence": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
     "footer": "Ігнораванне гэтага папярэджання можа прывесці да абмежавання працы."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "Новы запыт на датэрміновы разлік",
     "body": "Кіроўца {driverName} адправіў запыт на датэрміновы разлік на суму {requestedAmount} PLN.",
-    "action_required": "Калі ласка, праверце запыт у панэлі адміністратара."
+    "consequence": "Калі ласка, праверце запыт у панэлі адміністратара."
   },
   "early_settlement_info": {
     "title": "Статус датэрміновага разліку: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Тэрмін дзеяння дакумента на транспартны сродак хутка заканчваецца",
+    "greeting": "Паважаны(ая) {userName},",
+    "body": "Тэрмін дзеяння дакумента {documentName} для транспартнага сродку {registrationNumber} заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
+    "consequence": "Калі ласка, абнавіце дакумент як мага хутчэй.",
+    "footer": "Ігнараванне гэтага папярэджання можа прывесці да блакавання транспартнага сродку."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Тэрмін дзеяння дакумента на транспартны сродак скончыўся - патрабуецца дзеянне",
+    "greeting": "Паважаны(ая) {userName},",
+    "body": "Тэрмін дзеяння дакумента {documentName} для транспартнага сродку {registrationNumber} скончыўся {expiryDate}.",
+    "consequence": "Транспартны сродак можа быць заблакаваны да абнаўлення.",
+    "footer": "Звяжыцеся з адміністратарам для абнаўлення."
   },
   "push_enabled": {
     "title": "",

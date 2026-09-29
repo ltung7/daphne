@@ -10,7 +10,7 @@
     "title": "Документ скоро закінчується",
     "greeting": "Шановний {driverName},",
     "body": "Ваш документ {documentName} закінчується через {days} днів ({expiryDate}).",
-    "action_required": "Будь ласка, подовжте термін дії документу якнайшвидше.",
+    "consequence": "Будь ласка, подовжте термін дії документу якнайшвидше.",
     "footer": "Ігнорування цього попередження може призвести до обмеження роботи."
   },
   "driver_document_expired": {
@@ -29,7 +29,7 @@
   "early_settlement_requested": {
     "title": "Новий запит на достроковий розрахунок",
     "body": "Водій {driverName} надіслав запит на достроковий розрахунок на суму {requestedAmount} PLN.",
-    "action_required": "Будь ласка, перегляньте запит у панелі адміністратора."
+    "consequence": "Будь ласка, перегляньте запит у панелі адміністратора."
   },
   "early_settlement_info": {
     "title": "Статус дострокового розрахунку: {status}",
@@ -47,18 +47,18 @@
     "unsubscribe_link": ""
   },
   "vehicle_document_expiring": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "action_required": "",
-    "footer": ""
+    "title": "Термін дії документа на транспортний засіб скоро закінчується",
+    "greeting": "Шановний(а) {userName},",
+    "body": "Термін дії документа {documentName} для транспортного засобу {registrationNumber} закінчується через {daysUntilExpiry} днів ({expiryDate}).",
+    "consequence": "Будь ласка, оновіть документ якомога швидше.",
+    "footer": "Ігнорування цього попередження може призвести до блокування транспортного засобу."
   },
   "vehicle_document_expired": {
-    "title": "",
-    "greeting": "",
-    "body": "",
-    "consequence": "",
-    "footer": ""
+    "title": "Термін дії документа на транспортний засіб закінчився - потрібна дія",
+    "greeting": "Шановний(а) {userName},",
+    "body": "Термін дії документа {documentName} для транспортного засобу {registrationNumber} закінчився {expiryDate}.",
+    "consequence": "Транспортний засіб може бути заблоковано до оновлення.",
+    "footer": "Зв'яжіться з адміністратором для оновлення."
   },
   "push_enabled": {
     "title": "",
