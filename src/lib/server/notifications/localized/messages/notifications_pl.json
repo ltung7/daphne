@@ -8,21 +8,18 @@
   },
   "driver_document_expiring": {
     "title": "Dokument wkrótce wygasa",
-    "greeting": "Szanowny {driverName},",
     "body": "Twój dokument {documentName} wygasa {days} dni ({expiryDate}).",
     "consequence": "Proszę o przedłużenie dokumentu jak najszybciej.",
     "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy."
   },
   "driver_document_expired": {
     "title": "Dokument wygasł - konieczna akcja",
-    "greeting": "Szanowny {driverName},",
     "body": "Twój dokument {documentName} wygasł {expiryDate}.",
     "consequence": "Twoje konto może zostać ograniczone do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia."
   },
   "push_enabled": {
     "title": "Powiadomienia włączone",
-    "greeting": "Witaj {driverName},",
     "body": "Pomyślnie aktywowałeś powiadomienia push dla tego urządzenia."
   },
   "admin_notification": {
@@ -40,31 +37,33 @@
     "body": "Kierowca {driverName} poprosił o wcześniejsze rozliczenie na kwotę {requestedAmount} PLN.",
     "consequence": "Proszę przejrzeć prośbę w panelu administratora."
   },
-  "early_settlement_info": {
-    "title": "Status wcześniejszego rozliczenia: {status}",
-    "greeting": "Drogi/a {driverName},",
-    "body": "Twoja prośba o wcześniejsze rozliczenie na kwotę {requestedAmount} PLN została {status}.",
+  "early_settlement_approved": {
+    "title": "Wcześniejsze rozliczenie zatwierdzone",
+    "body": "Twoja prośba o wcześniejsze rozliczenie na kwotę {requestedAmount} PLN została zatwierdzona.",
+    "footer": "W razie pytań prosimy o kontakt z administratorem floty."
+  },
+  "early_settlement_rejected": {
+    "title": "Wcześniejsze rozliczenie odrzucone",
+    "body": "Twoja prośba o wcześniejsze rozliczenie na kwotę {requestedAmount} PLN została odrzucona.",
     "footer": "W razie pytań prosimy o kontakt z administratorem floty."
   },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Powiadomienie od",
+    "footer_confidential": "Ta wiadomość zawiera poufne informacje stanowiące tajemnicę handlową Everest International Service Group sp. z o.o. z siedzibą w Warszawie i jest prawnie chroniona. Dostęp do treści tej wiadomości otrzymanej pomyłkowo, jej dalsze przekazywanie, kopiowanie, rozpowszechnianie lub jakiekolwiek inne wykorzystanie, lub podjęcie jakichkolwiek działań na podstawie w niej zawartych informacji, nawet przez osoby będące jej przeznaczonymi odbiorcami, bez uprzedniej pisemnej zgody Everest International Service Group sp. z o.o. jest prawnie zabronione. Naruszenie powyższego zakazu pociąga za sobą odpowiedzialność cywilną i karną.",
+    "unsubscribe": "Jeśli nie chcesz otrzymywać takich powiadomień,",
+    "unsubscribe_link": "kliknij tutaj, aby się wypisać."
   },
   "vehicle_document_expiring": {
     "title": "Dokument pojazdu wkrótce wygasa",
-    "greeting": "Szanowny {userName},",
     "body": "Dokument {documentName} dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o odnowienie dokumentu jak najszybciej.",
     "footer": "Zignorowanie tego ostrzeżenia może skutkować zablokowaniem pojazdu."
   },
   "vehicle_document_expired": {
     "title": "Dokument pojazdu wygasł - konieczna akcja",
-    "greeting": "Szanowny {userName},",
     "body": "Dokument {documentName} dla pojazdu {registrationNumber} wygasł {expiryDate}.",
     "consequence": "Pojazd może zostać zablokowany do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia."

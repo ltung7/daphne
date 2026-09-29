@@ -41,7 +41,12 @@ export {
     type EarlySettlementRequestedData
 } from './driver/earlySettlementRequestedNotification';
 export {
-    earlySettlementInfoNotification,
-    sendEarlySettlementInfoNotification,
-    type EarlySettlementInfoData
-} from './driver/earlySettlementInfoNotification';
+    earlySettlementApprovedNotification,
+    sendEarlySettlementApprovedNotification,
+    type EarlySettlementApprovedData
+} from './driver/earlySettlementApprovedNotification';
+export {
+    earlySettlementRejectedNotification,
+    sendEarlySettlementRejectedNotification,
+    type EarlySettlementRejectedData
+} from './driver/earlySettlementRejectedNotification';

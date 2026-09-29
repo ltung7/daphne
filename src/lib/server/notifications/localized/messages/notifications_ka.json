@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "დოკუმენტი თუ Tämäences",
-    "greeting": "მეგობრული {driverName},",
     "body": "თქვენი დოკუმენტი {documentName} ამოიწურება {days} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება該文档をご更新ください。",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს."
   },
   "driver_document_expired": {
     "title": "დოკუმენტი ამოიწურა - საჭიროა მოქმედება",
-    "greeting": "მეგობრული {driverName},",
     "body": "თქვენი დოკუმენტი {documentName} ამოიწურა {expiryDate}.",
     "consequence": "თქვენი ანგარიში შეიძლება იყოს შეზღუდული მონაწილეობის აღდგენამდე.",
     "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "ავტოპარკის ადმინისტრატორის შეტყობინება",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "ავტოპარკის ადმინისტრატორის შეტყობინება",
+    "push_title": "ადმინისტრატორის ახალი შეტყობინება"
   },
   "early_settlement_requested": {
     "title": "ახალი ადრეული ანგარიშსწორების მოთხოვნა",
     "body": "მძღოლმა {driverName} მოითხოვა ადრეული ანგარიშსწორება {requestedAmount} PLN-ის ოდენობით.",
     "consequence": "გთხოვთ, გადაამოწმოთ მოთხოვნა ადმინისტრატორის პანელში."
   },
-  "early_settlement_info": {
-    "title": "ადრეული ანგარიშსწორების სტატუსი: {status}",
-    "greeting": "ძვირფასო {driverName},",
-    "body": "თქვენი ადრეული ანგარიშსწორების მოთხოვნა {requestedAmount} PLN-ზე იქნა {status}.",
-    "footer": "კითხვების შემთხვევაში, გთხოვთ, დაუკავშირდეთ ფლოტის ადმინისტრატორს."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "შეტყობინებაა",
+    "footer_confidential": "ეს შეტყობინება შეიცავს კონფიდენციურ ინფორმაციას, რაც „Everest International Service Group“ ს.ს. შ’empêcher commerciaL წიგნისაა, რომლის დარეგისტრირებული ოფისი ვარშავაშია და რომელიც კანონით არის დაცული. ამ შეტყობინების შინაარსის, შემოწმებითი მიღების შემთხვევაში, მისი დამატებითი გადაწერა, კოპირება, ვრცელება ან ნებისმიერი სხვა გამოყენება, ან იმას დაფუძნებული ნებისმიერი ქმედება, এমনაც მისი მიმღებლებიც იყვნენ, „Everest International Service Group“ ს.ს.-ის წინადადებით წერილ თანხმობის გარეშე, კანონით არის აკრძალული. ზემოთხსენებულ აკრძალვის დარღვევა",
+    "unsubscribe": "თუ არ გსურთ, რომ ასეთი შეტყობინებები მიიღოთ,",
+    "unsubscribe_link": "დააწკაპუნეთ აქ, რათა გაუქმოთ გამოწერა."
   },
   "vehicle_document_expiring": {
     "title": "ავტომობილის დოკუმენტს მალე გაუვა ვადა",
-    "greeting": "ძვირფასო {userName},",
     "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გასდის {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა."
   },
   "vehicle_document_expired": {
     "title": "ავტომობილის დოკუმენტს ვადა გაუვიდა - საჭიროა ქმედება",
-    "greeting": "ძვირფასო {userName},",
     "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გაუვიდა {expiryDate}-ში.",
     "consequence": "განახლებამდე ავტომობილი შეიძლება დაიბლოკოს.",
     "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს."
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "Push-შეტყობინებები ჩართულია",
+    "body": "თქვენ წარმატებით ჩაართვეთ Push-შეტყობინებები ამ устроysisთვის."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "შაბლონი შეტყობინება",
+    "body": "ეს არის შაბლონი შეტყობინება მომხმარებლის მონაცემებით: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "ადრეული ანგარიშსწორება დამტკიცებულია",
+    "body": "თქვენი მოთხოვნა ადრეულ ანგარიშსწორებაზე {requestedAmount} PLN-სთვის დამტკიცებულია.",
+    "footer": "თუ გაქვთ კითხვები, გთხოვთ დაუკავშირდეთ ფლოტის ადმინისტრატორს."
+  },
+  "early_settlement_rejected": {
+    "title": "ადრეული ანგარიშსწორება უარყოფილია",
+    "body": "თქვენი მოთხოვნა ადრეულ ანგარიშსწორებაზე {requestedAmount} PLN-სთვის უარყოფილია.",
+    "footer": "თუ გაქვთ კითხვები, გთხოვთ დაუკავშირდეთ ფლოტის ადმინისტრატორს."
   }
 }

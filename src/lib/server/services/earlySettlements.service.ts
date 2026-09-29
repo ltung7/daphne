@@ -5,7 +5,8 @@ import { EARLY_SETTLEMENT_FEE_RATE } from '$lib/assets/constants';
 import { db } from '$lib/server/db/firebase/firebase';
 import { getDriver } from '$lib/server/db/firebase/drivers.fdb';
 import { sendEarlySettlementRequestedNotification } from '$lib/server/notifications/driver/earlySettlementRequestedNotification';
-import { sendEarlySettlementInfoNotification } from '$lib/server/notifications/driver/earlySettlementInfoNotification';
+import { sendEarlySettlementApprovedNotification } from '$lib/server/notifications/driver/earlySettlementApprovedNotification';
+import { sendEarlySettlementRejectedNotification } from '$lib/server/notifications/driver/earlySettlementRejectedNotification';
 
 interface CreateEarlySettlementParams {
 	driverId: string;
@@ -119,18 +120,17 @@ export async function rejectEarlySettlement(
 	try {
 		const driver = await getDriver(earlySettlement.driverId);
 		if (driver) {
-			await sendEarlySettlementInfoNotification(
+			await sendEarlySettlementRejectedNotification(
 				driver as unknown as App.BaseContact,
 				{ 
 					driverName: earlySettlement.driverName, 
-					requestedAmount: earlySettlement.requestedAmount, 
-					status: 'rejected' 
+					requestedAmount: earlySettlement.requestedAmount 
 				},
 				'admin_manual'
 			);
 		}
 	} catch (e) {
-		console.error('Failed to send early settlement info notification (rejected)', e);
+		console.error('Failed to send early settlement rejected notification', e);
 	}
 }
 
@@ -236,17 +236,16 @@ export async function approveEarlySettlement(
 		const esData = esDoc.data() as DriverBalance.EarlySettlement;
 		const driver = await getDriver(esData.driverId);
 		if (driver) {
-			await sendEarlySettlementInfoNotification(
+			await sendEarlySettlementApprovedNotification(
 				driver as unknown as App.BaseContact,
 				{ 
 					driverName: esData.driverName, 
-					requestedAmount: esData.requestedAmount, 
-					status: 'approved' 
+					requestedAmount: esData.requestedAmount 
 				},
 				'admin_manual'
 			);
 		}
 	} catch (e) {
-		console.error('Failed to send early settlement info notification (approved)', e);
+		console.error('Failed to send early settlement approved notification', e);
 	}
 }

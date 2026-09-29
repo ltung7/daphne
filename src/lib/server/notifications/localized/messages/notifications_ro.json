@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "Documentul expiră curând",
-    "greeting": "Stimate {driverName},",
     "body": "Documentul dumneavoastră {documentName} expiră în {days} zile ({expiryDate}).",
     "consequence": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
   },
   "driver_document_expired": {
     "title": "Document expirat - acțiune necesară",
-    "greeting": "Stimate {driverName},",
     "body": "Documentul dumneavoastră {documentName} a expirat pe {expiryDate}.",
     "consequence": "Contul dumneavoastră poate fi restricționat până la reînnoire.",
     "footer": "Contactați administratorul pentru reînnoire."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "Mesaj de la administratorul flotei",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "Mesaj de la administratorul flotei",
+    "push_title": "Mesaj nou de la administrator"
   },
   "early_settlement_requested": {
     "title": "Nouă solicitare de decontare anticipată",
     "body": "Șoferul {driverName} a solicitat o decontare anticipată de {requestedAmount} PLN.",
     "consequence": "Vă rugăm să revizuiți solicitarea în panoul de administrare."
   },
-  "early_settlement_info": {
-    "title": "Starea decontării anticipate: {status}",
-    "greeting": "Dragă {driverName},",
-    "body": "Solicitarea dumneavoastră de decontare anticipată pentru {requestedAmount} PLN a fost {status}.",
-    "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Notificare de la",
+    "footer_confidential": "Acest mesaj conține informații confidențiale ce constituie un secret comercial al Everest International Service Group sp. z o.o. cu sediul înregistrat la Varșovia și este protejat legal. Accesarea conținutului acestui mesaj primit din greșeală, transmiterea sa ulterioară, copierea, distribuirea sau orice altă utilizare, sau întreprinderea oricărei acțiuni pe baza informațiilor conținute în el, chiar și de persoanele fiind destinatarii săi, fără acordul scris prealabil al Everest International Service Group sp. z o.o. este interzisă legal. Neînțelegerea interzicției de mai sus va atrage răspundere civilă și penală.",
+    "unsubscribe": "Dacă nu doriți să primiți astfel de notificări,",
+    "unsubscribe_link": "faceți clic aici pentru a vă dezabona."
   },
   "vehicle_document_expiring": {
     "title": "Documentul vehiculului expiră în curând",
-    "greeting": "Dragă {userName},",
     "body": "Documentul {documentName} pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
     "consequence": "Te rugăm să reînnoiești documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la dezactivarea vehiculului."
   },
   "vehicle_document_expired": {
     "title": "Documentul vehiculului a expirat - acțiune necesară",
-    "greeting": "Dragă {userName},",
     "body": "Documentul {documentName} pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
     "consequence": "Vehiculul poate fi dezactivat până la reînnoire.",
     "footer": "Contactează administratorul pentru reînnoire."
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "Notificări Push Activate",
+    "body": "Ați activat cu succes notificările push pentru acest dispozitiv."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "Notificare Șablon",
+    "body": "Aceasta este o notificare șablon cu date personalizate: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "Decontare anticipată aprobată",
+    "body": "Solicitarea dumneavoastră de decontare anticipată pentru {requestedAmount} PLN a fost aprobată.",
+    "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
+  },
+  "early_settlement_rejected": {
+    "title": "Decontare anticipată respinsă",
+    "body": "Solicitarea dumneavoastră de decontare anticipată pentru {requestedAmount} PLN a fost respinsă.",
+    "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
   }
 }

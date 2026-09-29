@@ -8,65 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "Dokument uskoro istekne",
-    "greeting": "Poštovani {driverName},",
     "body": "Vaš dokument {documentName} ističe za {days} dana ({expiryDate}).",
     "consequence": "Molimo obnovite dokument što pre.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
   },
   "driver_document_expired": {
     "title": "Dokument isteklo - potrebna akcija",
-    "greeting": "Poštovani {driverName},",
     "body": "Vaš dokument {documentName} je istekao {expiryDate}.",
     "consequence": "Vaš nalog može biti ograničen do obnove.",
     "footer": "Kontaktirajte administratora za obnavljanje."
   },
   "push_enabled": {
     "title": "Push obaveštenja omoguđena",
-    "greeting": "Poštovani {driverName},",
     "body": "Uspešno ste omogućili push obaveštenja za ovaj uređaj."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "Poruka od administratora flote",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "Poruka od administratora flote",
+    "push_title": "Nova poruka od administratora"
   },
   "early_settlement_requested": {
     "title": "Novi zahtev za prevremeno poravnanje",
     "body": "Vozač {driverName} je zatražio prevremeno poravnanje u iznosu od {requestedAmount} PLN.",
     "consequence": "Molimo vas da pregledate zahtev u administratorskom panelu."
   },
-  "early_settlement_info": {
-    "title": "Status prevremenog poravnanja: {status}",
-    "greeting": "Dragi/a {driverName},",
-    "body": "Vaš zahtev za prevremeno poravnanje u iznosu od {requestedAmount} PLN je {status}.",
-    "footer": "Ako imate bilo kakvih pitanja, kontaktirajte administratora flote."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Obaveštenje od",
+    "footer_confidential": "Ova poruka sadrži poverljive informacije koje čine poslovnu tajnu Everest International Service Group sp. z o.o. sa registrovanom sedište u Varšavi i pravno je zaštićena. Pristup sadržaju ove poruke primljene pogrešno, njeno dalje prosljeđivanje, kopiranje, distribucija ili bilo kakva druga upotreba, ili preduzimanje bilo kakvih radnji na osnovu informacija sadržanih u njoj, čak i od strane osoba koje su njene namjeravane primaocе, bez prethodnog pismenog pristanka Everest International Service Group sp. z o.o. je zabranjeno zakonom. Nepoštovanje gore navedene zabrane će podrazumijevati civilnu i kaznenu odgovornost.",
+    "unsubscribe": "Ako ne želite da primate takva obaveštenja,",
+    "unsubscribe_link": "kliknite ovde da se odjavite."
   },
   "vehicle_document_expiring": {
     "title": "Dokument vozila uskoro ističe",
-    "greeting": "Poštovani/a {userName},",
     "body": "Dokument {documentName} za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo vas da obnovite dokument što je pre moguće.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati onemogućavanjem vozila."
   },
   "vehicle_document_expired": {
     "title": "Dokument vozila je istekao - potrebna akcija",
-    "greeting": "Poštovani/a {userName},",
     "body": "Dokument {documentName} za vozilo {registrationNumber} je istekao {expiryDate}.",
     "consequence": "Vozilo može biti onemogućeno do obnavljanja.",
     "footer": "Kontaktirajte administratora za obnovu."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "Šablon obaveštenja",
+    "body": "Ovo je šablon obaveštenja sa prilagođenim podacima: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "Rano izmirenje odobreno",
+    "body": "Vaš zahtev za rano izmirenje u iznosu od {requestedAmount} PLN je odobren.",
+    "footer": "Ako imate bilo kakvih pitanja, kontaktirajte administratora voznog parka."
+  },
+  "early_settlement_rejected": {
+    "title": "Rano izmirenje odbijeno",
+    "body": "Vaš zahtev za rano izmirenje u iznosu od {requestedAmount} PLN je odbijen.",
+    "footer": "Ako imate bilo kakvih pitanja, kontaktirajte administratora voznog parka."
   }
 }

@@ -8,21 +8,18 @@
   },
   "driver_document_expiring": {
     "title": "Document expiring soon",
-    "greeting": "Dear {driverName},",
     "body": "Your document {documentName} expires in {days} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions."
   },
   "driver_document_expired": {
     "title": "Document expired - action required",
-    "greeting": "Dear {driverName},",
     "body": "Your document {documentName} expired on {expiryDate}.",
     "consequence": "Your account may be restricted until renewal.",
     "footer": "Contact the administrator to renew."
   },
   "push_enabled": {
     "title": "Push Notifications Enabled",
-    "greeting": "Dear {driverName},",
     "body": "You have successfully enabled push notifications for this device."
   },
   "admin_notification": {
@@ -40,31 +37,33 @@
     "body": "Driver {driverName} has requested an early settlement of {requestedAmount} PLN.",
     "consequence": "Please review the request in the admin panel."
   },
-  "early_settlement_info": {
-    "title": "Early Settlement Status: {status}",
-    "greeting": "Dear {driverName},",
-    "body": "Your early settlement request for {requestedAmount} PLN has been {status}.",
+  "early_settlement_approved": {
+    "title": "Early Settlement Approved",
+    "body": "Your early settlement request for {requestedAmount} PLN has been approved.",
+    "footer": "If you have any questions, please contact the fleet administrator."
+  },
+  "early_settlement_rejected": {
+    "title": "Early Settlement Rejected",
+    "body": "Your early settlement request for {requestedAmount} PLN has been rejected.",
     "footer": "If you have any questions, please contact the fleet administrator."
   },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Notification from",
+    "footer_confidential": "This message contains confidential information constituting a trade secret of Everest International Service Group sp. z o.o. with its registered office in Warsaw and is legally protected. Access to the content of this message received by mistake, its further transmission, copying, distribution or any other use, or taking any action based on the information contained therein, even by persons being its intended recipients, without the prior written consent of Everest International Service Group sp. z o.o. is legally prohibited. Failure to comply with the above prohibition shall result in civil and criminal liability.",
+    "unsubscribe": "If you don't want to receive such notifications,",
+    "unsubscribe_link": "click here to unsubscribe."
   },
   "vehicle_document_expiring": {
     "title": "Vehicle document expiring soon",
-    "greeting": "Dear {userName},",
     "body": "The document {documentName} for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in the vehicle being disabled."
   },
   "vehicle_document_expired": {
     "title": "Vehicle document expired - action required",
-    "greeting": "Dear {userName},",
     "body": "The document {documentName} for vehicle {registrationNumber} expired on {expiryDate}.",
     "consequence": "The vehicle may be disabled until renewal.",
     "footer": "Contact the administrator to renew."

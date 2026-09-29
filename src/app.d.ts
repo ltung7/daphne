@@ -76,7 +76,8 @@ type NotificationType =
 		| 'admin_notification'
 		| 'template_notification'
 		| 'early_settlement_requested'
-		| 'early_settlement_info'
+		| 'early_settlement_approved'
+		| 'early_settlement_rejected'
 		| 'common';
 
 		// Admin user roles
@@ -978,14 +979,6 @@ type NotificationType =
 		};
 
 		type HealthCheckFn = (params?: HealthCheckParams) => Promise<HealthIssue[]>;
-
-		interface HealthCheckRecipient {
-			id: string;
-			name: string;
-		}
-
-		// Notification registry types
-		type HealthCheckRecipientMap = Record<HealthCheckProblem, HealthCheckRecipient[]>;
 	}
 
 	namespace SvelteCustom {

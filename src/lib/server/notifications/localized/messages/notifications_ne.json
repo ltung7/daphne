@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "कागजात चाँडै समाप्त हुनेछ",
-    "greeting": "प्रिय {driverName},",
     "body": "तपाईंको कागजात {documentName} {days} दिनमा समाप्त हुनेछ ({expiryDate})।",
     "consequence": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।"
   },
   "driver_document_expired": {
     "title": "कागजात समाप्त - कारवाही आवश्यक",
-    "greeting": "प्रिय {driverName},",
     "body": "तपाईंको कागजात {documentName} {expiryDate} मा समाप्त भएको छ।",
     "consequence": "नवीकरण सम्म तपाईंको खाता प्रतिबन्ध हुन सक्छ।",
     "footer": "नवीकरणका लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "फ्लीट प्रशासकबाट सन्देश",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "फ्लीट प्रशासकबाट सन्देश",
+    "push_title": "प्रशासकबाट नयाँ सन्देश"
   },
   "early_settlement_requested": {
     "title": "नयाँ प्रारम्भिक बस्ती अनुरोध",
     "body": "चालक {driverName} ले {requestedAmount} PLN को प्रारम्भिक बस्तीको लागि अनुरोध गरेका छन्।",
     "consequence": "कृपया व्यवस्थापक प्यानलमा अनुरोधको समीक्षा गर्नुहोस्।"
   },
-  "early_settlement_info": {
-    "title": "प्रारम्भिक बस्ती स्थिति: {status}",
-    "greeting": "प्रिय {driverName},",
-    "body": "{requestedAmount} PLN को लागि तपाईंको प्रारम्भिक बस्ती अनुरोध {status} भएको छ।",
-    "footer": "यदि तपाईंसँग कुनै प्रश्नहरू छन् भने, कृपया फ्लीट प्रशासकलाई सम्पर्क गर्नुहोस्।"
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "सूचना बाट",
+    "footer_confidential": "यो सन्देशमा गोपनीय जानकारी छ जुन एभरेस्ट इन्टरनेशनल सर्भिस ग्रुप स्प. जेड.ओ.ओ. को व्यापारिक रहस्य हो जसको दर्ता कार्यालय वार्सा मा छ र यो कानूनी रूपमा संरक्षित छ। यो सन्देश भूलबश प्राप्त भएको अवस्थामा यसको विषयवस्तुमा पहुँच, यसको अग्रेषण, प्रतिलिपि, वितरण वा कुनै पनि अन्य प्रयोग, वा यसमा समावेश जानकारीमा आधारित कुनै पनि कार्य गर्नु, त्यसैले पनि यसको इच्छित प्राप्तकर्ताहरू द्वारापनि, एभरेस्ट इन्टरनेशनल सर्भिस ग्रुप स्प. जेड.ओ.ओ. को पूर्व लिखित सहमति बिना कानूनी रूपमा निषेध छ। उपरोक्त निषेधको उल्लंघन गर्दा सिविल र फौजदारी दायित्व हुन्छ।",
+    "unsubscribe": "यदि तपाईं यस्ता सूचना प्राप्त गर्न चाहन्नुहुन्छ भने,",
+    "unsubscribe_link": "सदस्यता समाप्त गर्न यहाँ क्लिक गर्नुहोस्।"
   },
   "vehicle_document_expiring": {
     "title": "सवारी साधनको कागजात चाँडै समाप्त हुँदैछ",
-    "greeting": "प्रिय {userName},",
     "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
     "consequence": "कृपया कागजात जतिसक्दो चाँडो नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनीलाई बेवास्ता गर्नाले सवारी साधन असक्षम हुन सक्छ।"
   },
   "vehicle_document_expired": {
     "title": "सवारी साधनको कागजात समाप्त भयो - कारबाही आवश्यक छ",
-    "greeting": "प्रिय {userName},",
     "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {expiryDate} मा समाप्त भयो।",
     "consequence": "नवीकरण नभएसम्म सवारी साधन असक्षम हुन सक्छ।",
     "footer": "नवीकरणको लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "पुश सूचना सक्षम",
+    "body": "तपाईंले यो उपकरणका लागि पुश सूचना सफलतापूर्वक सक्षम गर्नुभएको छ।"
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "टेम्पलेट सूचना",
+    "body": "यो कस्टम डेटा सहितको एक टेम्पलेट सूचना हो: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "प्रारम्भिक सेटलमेन्ट स्वीकृत",
+    "body": "{requestedAmount} PLN को लागी तपाईंको प्रारम्भिक सेटलमेन्ट अनुरोध स्वीकृत गरिएको छ।",
+    "footer": "यदि तपाइँसँग कुनै प्रश्नहरू छन् भने, कृपया फ्लीट प्रशासकलाई सम्पर्क गर्नुहोस्।"
+  },
+  "early_settlement_rejected": {
+    "title": "प्रारम्भिक सेटलमेन्ट अस्वीकृत",
+    "body": "{requestedAmount} PLN को लागी तपाईंको प्रारम्भिक सेटलमेन्ट अनुरोध अस्वीकृत गरिएको छ।",
+    "footer": "यदि तपाइँसँग कुनै प्रश्नहरू छन् भने, कृपया फ्लीट प्रशासकलाई सम्पर्क गर्नुहोस्।"
   }
 }

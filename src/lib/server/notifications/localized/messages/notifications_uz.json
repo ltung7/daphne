@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "Hujjat tez orada amal qilishni to'xtatadi",
-    "greeting": "Aziz {driverName},",
     "body": "Sizning {documentName} hujjatingiz {days} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
   },
   "driver_document_expired": {
     "title": "Hujjat amal qilmasdan qolgan - harakat kerak",
-    "greeting": "Aziz {driverName},",
     "body": "Sizning {documentName} hujjatingiz {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Hisobingiz yangilanmaguncha cheklanishi mumkin.",
     "footer": "Yangilash uchun administrator bilan bog'laning."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "Avtopark administratoridan xabar",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "Avtopark administratoridan xabar",
+    "push_title": "Administratordan yangi xabar"
   },
   "early_settlement_requested": {
     "title": "Erta hisob-kitob qilish bo'yicha yangi so'rov",
     "body": "Haydovchi {driverName} {requestedAmount} PLN miqdorida erta hisob-kitob qilishni so'radi.",
     "consequence": "Iltimos, so'rovni administrator panelida ko'rib chiqing."
   },
-  "early_settlement_info": {
-    "title": "Erta hisob-kitob holati: {status}",
-    "greeting": "Hurmatli {driverName},",
-    "body": "Sizning {requestedAmount} PLN uchun erta hisob-kitob qilish bo'yicha so'rovingiz {status} bo'ldi.",
-    "footer": "Savollaringiz bo'lsa, iltimos, avtopark ma'muri bilan bog'laning."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Bildirishnoma dan",
+    "footer_confidential": "Ushbu xabar \"Everest International Service Group\" MChJ ning (ro'yxatdan o'tgan manzili Varshavda) kommersiy sirrini tarkib etuvchi maxfiy ma'lumotlarni o'z ichiga oladi va qonun bilan himoyalangan. Bu xabar xato bilan olingan holda, uning mazmuniga kirish, undan tashqari, ularning uzatilishi, nusxalanishi, tarqatilishi yoki undagi ma'lumotlar asosida amal qilinishi, hatto u qabul qiluvchilari bo'lsa ham, \"Everest International Service Group\" MChJ ning oldindan yozik roziligi yo'qida qonun bilan taqiqlanadi. Yuqoridagi taqqiqqa rioya qilmaslik fuqarolik va jinoyat javobgarligiga olib keladi.",
+    "unsubscribe": "Agar siz bunday bildirishnomalarni olishni xohlamasangiz,",
+    "unsubscribe_link": "ro'yxatdan o'chish uchun bu yerni bosing."
   },
   "vehicle_document_expiring": {
     "title": "Avtomobil hujjatining muddati tez orada tugaydi",
-    "greeting": "Hurmatli {userName},",
     "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {daysUntilExpiry} kundan ({expiryDate}) so'ng tugaydi.",
     "consequence": "Iltimos, hujjatni iloji boricha tezroq yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish avtomobilning bloklanishiga olib kelishi mumkin."
   },
   "vehicle_document_expired": {
     "title": "Avtomobil hujjatining muddati tugadi - chora ko'rish talab etiladi",
-    "greeting": "Hurmatli {userName},",
     "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {expiryDate} da tugadi.",
     "consequence": "Avtomobil yangilanmaguncha bloklanishi mumkin.",
     "footer": "Yangilash uchun administrator bilan bog'laning."
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "Push-bildirishnomalar yoqildi",
+    "body": "Siz ushbu qurizma uchun push-bildirishnomalarni muvaffaqiyatli yoqdingiz."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "Shablon bildirishnoma",
+    "body": "Bu maxsus ma'lumotlar bilan shablon bildirishnoma: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "Erta hisob-kitob tasdiqlandi",
+    "body": "Sizning {requestedAmount} PLN uchun erta hisob-kitob so'rovingiz tasdiqlandi.",
+    "footer": "Agar savollaringiz bo'lsa, iltimos, avtopark ma'muriyatiga murojaat qiling."
+  },
+  "early_settlement_rejected": {
+    "title": "Erta hisob-kitob rad etildi",
+    "body": "Sizning {requestedAmount} PLN uchun erta hisob-kitob so'rovingiz rad etildi.",
+    "footer": "Agar savollaringiz bo'lsa, iltimos, avtopark ma'muriyatiga murojaat qiling."
   }
 }

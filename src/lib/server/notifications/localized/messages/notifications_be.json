@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "Дакумент хутка заканчваецца",
-    "greeting": "Шанаваны {driverName},",
     "body": "Ваш дакумент {documentName} заканчваецца праз {days} дзён ({expiryDate}).",
     "consequence": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
     "footer": "Ігнораванне гэтага папярэджання можа прывесці да абмежавання працы."
   },
   "driver_document_expired": {
     "title": "Дакумент заканчыўся - патрэбная дыя",
-    "greeting": "Шанаваны {driverName},",
     "body": "Ваш дакумент {documentName} заканчыўся {expiryDate}.",
     "consequence": "Ваш уліковы запіс можа быць абмежаваны да аднаўлення.",
     "footer": "Звярніцеся да адміністратара для аднаўлення."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "Паведамленне ад адміністратара аўтапарку",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "Паведамленне ад адміністратара аўтапарку",
+    "push_title": "Новае паведамленне ад адміністратара"
   },
   "early_settlement_requested": {
     "title": "Новы запыт на датэрміновы разлік",
     "body": "Кіроўца {driverName} адправіў запыт на датэрміновы разлік на суму {requestedAmount} PLN.",
     "consequence": "Калі ласка, праверце запыт у панэлі адміністратара."
   },
-  "early_settlement_info": {
-    "title": "Статус датэрміновага разліку: {status}",
-    "greeting": "Паважаны(ая) {driverName},",
-    "body": "Ваш запыт на датэрміновы разлік на суму {requestedAmount} PLN быў {status}.",
-    "footer": "Калі ў вас ёсць пытанні, звярніцеся да адміністратара аўтапарка."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Паведамленне ад",
+    "footer_confidential": "Гэтае паведамленне замяшчае канфідэнцыйную інфармацыю, якая з'яўляецца камерцыйнай тайнай ТАА \"Everest International Service Group\" з зарэгістраванай адрасам у Варшаве і ахоўваецца заканам. Доступ да зместу гэтага паведамлення, атрымангага памылковай, яго далейшая перадача, капававанне, распаўсюджванне ці любое іншае выкарыстанне, або зачыненне любых дзеянняў на аснове інфармацыі, якая ў ім замяшчаецца, напрыклад, асобамі, каму яно адрасаванае, без папярэдняй пісьмавай згоды ТАА \"Everest International Service Group\" забаронена заканам. Недатрыманне вышэйзазначанай забароны цягне за сабой грамадзянскую і kryminalnu адказнасць.",
+    "unsubscribe": "Калі вы не хочаце атрымліваць такія адведамленні,",
+    "unsubscribe_link": "цісніце тут, каб адпісацца."
   },
   "vehicle_document_expiring": {
     "title": "Тэрмін дзеяння дакумента на транспартны сродак хутка заканчваецца",
-    "greeting": "Паважаны(ая) {userName},",
     "body": "Тэрмін дзеяння дакумента {documentName} для транспартнага сродку {registrationNumber} заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
     "consequence": "Калі ласка, абнавіце дакумент як мага хутчэй.",
     "footer": "Ігнараванне гэтага папярэджання можа прывесці да блакавання транспартнага сродку."
   },
   "vehicle_document_expired": {
     "title": "Тэрмін дзеяння дакумента на транспартны сродак скончыўся - патрабуецца дзеянне",
-    "greeting": "Паважаны(ая) {userName},",
     "body": "Тэрмін дзеяння дакумента {documentName} для транспартнага сродку {registrationNumber} скончыўся {expiryDate}.",
     "consequence": "Транспартны сродак можа быць заблакаваны да абнаўлення.",
     "footer": "Звяжыцеся з адміністратарам для абнаўлення."
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "Push-адведамленні ўключаны",
+    "body": "Вы паспяхова ўключылі push-адведамленні для гэтага прылады."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "Шаблонае адведамленне",
+    "body": "Гэта шаблонае адведамленне з карыстацкімі дадзенамі: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "Ранейшы разлік ухвалены",
+    "body": "Ваш запыт на ранейшы разлік на суму {requestedAmount} PLN быў ухвалены.",
+    "footer": "Калі ў вас ёсць пытанні, звярніцеся да адміністратара аўтапарка."
+  },
+  "early_settlement_rejected": {
+    "title": "Ранейшы разлік адхілены",
+    "body": "Ваш запыт на ранейшы разлік на суму {requestedAmount} PLN быў адхілены.",
+    "footer": "Калі ў вас ёсць пытанні, звярніцеся да адміністратара аўтапарка."
   }
 }

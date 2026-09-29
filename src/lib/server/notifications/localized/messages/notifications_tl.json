@@ -8,64 +8,64 @@
   },
   "driver_document_expiring": {
     "title": "Ang dokumento ay malapit nang mag-expire",
-    "greeting": "Mahal na {driverName},",
     "body": "Ang iyong dokumentong {documentName} ay mag-eexpire sa loob ng {days} na araw ({expiryDate}).",
     "consequence": "Pakirenew ang dokumento sa lalong madaling panahon.",
     "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho."
   },
   "driver_document_expired": {
     "title": "Ang dokumento ay expired - kailangan ng aksyon",
-    "greeting": "Mahal na {driverName},",
     "body": "Ang iyong dokumentong {documentName} ay expire noong {expiryDate}.",
     "consequence": "Ang iyong account ay maaaring limitahan hanggang sa ma-renew.",
     "footer": "Makipag-ugnayan sa administrator para sa renewal."
   },
   "admin_notification": {
-    "title": "Message from fleet administrator",
+    "title": "Mensahe mula sa Fleet Administrator",
     "body": "{message}",
-    "email_subject": "Message from fleet administrator",
-    "push_title": "New message from administrator"
+    "email_subject": "Mensahe mula sa Fleet Administrator",
+    "push_title": "Bagong mensahe mula sa Administrator"
   },
   "early_settlement_requested": {
     "title": "Bagong Kahilingan sa Maagang Pag-aayos",
     "body": "Humiling ang tsuper na si {driverName} ng maagang pag-aayos na nagkakahalaga ng {requestedAmount} PLN.",
     "consequence": "Pakisuri ang kahilingan sa panel ng admin."
   },
-  "early_settlement_info": {
-    "title": "Katayuan ng Maagang Pag-aayos: {status}",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang iyong kahilingan sa maagang pag-aayos para sa {requestedAmount} PLN ay na-{status}.",
-    "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa administrator ng fleet."
-  },
   "common": {
     "title": "",
     "body": "",
-    "app_name": "",
-    "footer_app_link": "",
-    "footer_confidential": "",
-    "unsubscribe": "",
-    "unsubscribe_link": ""
+    "app_name": "EISG",
+    "footer_app_link": "Abiso mula sa",
+    "footer_confidential": "Ang mensahe na ito ay naglalaman ng konfidensyal na impormasyon na nagiging isang trade secret ng Everest International Service Group sp. z o.o. na may nakatalang opisina sa Warsaw at legal na protektado. Ang access sa nilalaman ng mensahe na itong natanggap nang hindi sinasadya, ang pag-forward nito, pagkopya, pagdistribute, o anumang ibang paggamit, o paggawa ng anumang aksyon batay sa impormasyon na nasa loob nito, kahit na ng mga taong ito ay tinutuo nang recipients, nang walang nakaraang nakasulat na pahintulot mula sa Everest International Service Group sp. z o.o. ay batas na ipinagbabawal. Ang paglabag sa nasabing ipinagbabawal ay magdudulot ng sibil at kriminal na pananagutan.",
+    "unsubscribe": "Kung ayaw mo nang matanggap ang ganitong mga abiso,",
+    "unsubscribe_link": "i-click dito para mag-unsubscribe."
   },
   "vehicle_document_expiring": {
     "title": "Malapit na mag-expire ang dokumento ng sasakyan",
-    "greeting": "Mahal na {userName},",
     "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay mag-eexpire sa loob ng {daysUntilExpiry} araw ({expiryDate}).",
     "consequence": "Mangyaring i-renew ang dokumento sa lalong madaling panahon.",
     "footer": "Ang pagbabalewala sa babalang ito ay maaaring magresulta sa pag-disable ng sasakyan."
   },
   "vehicle_document_expired": {
     "title": "Nag-expire na ang dokumento ng sasakyan - kailangan ng aksyon",
-    "greeting": "Mahal na {userName},",
     "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay nag-expire noong {expiryDate}.",
     "consequence": "Maaaring ma-disable ang sasakyan hanggang sa ma-renew ito.",
     "footer": "Makipag-ugnayan sa administrator para mag-renew."
   },
   "push_enabled": {
-    "title": "",
-    "body": ""
+    "title": "Pinagana ang Push Notifications",
+    "body": "Matagumpay mong pinagana ang push notifications para sa device na ito."
   },
   "template_notification": {
-    "title": "",
-    "body": ""
+    "title": "Template Notification",
+    "body": "Ito ay isang template notification na may custom na data: {customField}"
+  },
+  "early_settlement_approved": {
+    "title": "Maagang Settlement Inaprubahan",
+    "body": "Ang iyong kahilingan sa maagang settlement para sa {requestedAmount} PLN ay naaprubahan.",
+    "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa fleet administrator."
+  },
+  "early_settlement_rejected": {
+    "title": "Maagang Settlement Tinanggihan",
+    "body": "Ang iyong kahilingan sa maagang settlement para sa {requestedAmount} PLN ay tinanggihan.",
+    "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa fleet administrator."
   }
 }

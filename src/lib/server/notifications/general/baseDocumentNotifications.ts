@@ -30,9 +30,6 @@ function createBaseDocumentNotificationDefinition<TData extends BaseDocumentExpi
             return {
                 subject: ctx.title,
                 htmlBody: `
-                    <p style="font-size: 16px; margin-bottom: 16px;">
-                        ${interpolate(ctx.m.greeting, { driverName: ctx.user.name, userName: ctx.user.name })}
-                    </p>
                     <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
                         ${ctx.body}
                     </p>

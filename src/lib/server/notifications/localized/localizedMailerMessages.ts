@@ -10,7 +10,7 @@ import tl from './messages/notifications_tl.json';
 import ro from './messages/notifications_ro.json';
 import sr from './messages/notifications_sr.json';
 
-interface BaseMessage {
+export interface BaseMessage {
     title: string;
     body: string;
 }
@@ -30,28 +30,24 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
     };
     driver_document_expiring: {
         title: string;
-        greeting: string;
         body: string;
         consequence: string;
         footer: string;
     };
     driver_document_expired: {
         title: string;
-        greeting: string;
         body: string;
         consequence: string;
         footer: string;
     };
     vehicle_document_expiring: {
         title: string;
-        greeting: string;
         body: string;
         consequence: string;
         footer: string;
     };
     vehicle_document_expired: {
         title: string;
-        greeting: string;
         body: string;
         consequence: string;
         footer: string;
@@ -73,9 +69,13 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
         body: string;
         consequence: string;
     };
-    early_settlement_info: {
+    early_settlement_approved: {
         title: string;
-        greeting: string;
+        body: string;
+        footer: string;
+    };
+    early_settlement_rejected: {
+        title: string;
         body: string;
         footer: string;
     };
@@ -139,6 +139,10 @@ export function interpolate(template: string, vars: Record<string, string | numb
     
 export function getBaseMessage (m: MessageStructure, data: any): BaseMessage {
     return { title: m.title, body: interpolate(m.body, data) };
+}
+
+export function getBaseMessageAndTitle (m: MessageStructure, data: any): BaseMessage {
+    return { title: interpolate(m.title, data), body: interpolate(m.body, data) };
 }
 
 /** Get messages for a specific notification type */
