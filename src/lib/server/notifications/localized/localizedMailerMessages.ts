@@ -20,75 +20,7 @@ export interface MessageStructure extends BaseMessage {
 }
 
 /** Type-safe interface for all notification messages - mirrors notifications_pl.json structure */
-export interface NotificationMessages extends Record<App.NotificationType, MessageStructure> {
-    reset_password: {
-        title: string;
-        body: string;
-        contents: string;
-        footer: string;
-        button_text: string;
-    };
-    driver_document_expiring: {
-        title: string;
-        body: string;
-        consequence: string;
-        footer: string;
-    };
-    driver_document_expired: {
-        title: string;
-        body: string;
-        consequence: string;
-        footer: string;
-    };
-    vehicle_document_expiring: {
-        title: string;
-        body: string;
-        consequence: string;
-        footer: string;
-    };
-    vehicle_document_expired: {
-        title: string;
-        body: string;
-        consequence: string;
-        footer: string;
-    };
-    push_enabled: {
-        title: string;
-        body: string;
-    };
-    admin_notification: {
-        title: string;
-        body: string;
-    };
-    template_notification: {
-        title: string;
-        body: string;
-    };
-    early_settlement_requested: {
-        title: string;
-        body: string;
-        consequence: string;
-    };
-    early_settlement_approved: {
-        title: string;
-        body: string;
-        footer: string;
-    };
-    early_settlement_rejected: {
-        title: string;
-        body: string;
-        footer: string;
-    };
-    common: {
-        title: string;
-        body: string;
-        app_name: string;
-        footer_app_link: string;
-        footer_confidential: string;
-        unsubscribe: string;
-        unsubscribe_link: string;
-    };
-}
+export type NotificationMessages = Record<App.NotificationType, MessageStructure>;
 
 /** Runtime locale map - English is default fallback */
 const localeMap: Partial<Record<App.Locale, NotificationMessages>> = {

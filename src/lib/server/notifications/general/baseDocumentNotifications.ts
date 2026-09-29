@@ -1,5 +1,5 @@
 import type { NotificationDefinition, NotificationPriority } from '../types';
-import { interpolate, getBaseMessage } from '../localized/localizedMailerMessages';
+import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from './prepareNotificationChannels';
 import { PUBLIC_URL } from '$env/static/public';
 
@@ -25,6 +25,8 @@ function createBaseDocumentNotificationDefinition<TData extends BaseDocumentExpi
     return {
         id,
         priority,
+		admin: true,
+		client: true,
         getBaseMessage,
         email: (data, ctx) => {
             return {

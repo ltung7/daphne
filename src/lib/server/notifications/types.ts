@@ -8,9 +8,10 @@ export interface NotificationContext {
     title_pl: string;
     body_pl: string;
     locale: App.Locale;
-    m: MessageStructure;
-    m_pl: MessageStructure;
-    user: App.BaseContact;
+    m: MessageStructure; // Localized dictionary for the specific notification
+    m_pl: MessageStructure; // Forced Polish dictionary for internal/incident logging
+    user: App.BaseContact; // Recipient data
+    isAdminCopy?: boolean; // Determines if this notification is a carbon copy to admins
 }
 
 export interface EmailPayload {
@@ -43,6 +44,8 @@ interface BaseMessage {
 export interface NotificationDefinition<TData> {
     id: App.NotificationType;
     priority: NotificationPriority;
+    admin: boolean;
+    client: boolean;
     getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
     email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
     push?: (data: TData, ctx: NotificationContext) => WebPushPayload | Promise<WebPushPayload>;

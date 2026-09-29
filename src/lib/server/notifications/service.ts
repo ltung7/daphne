@@ -4,6 +4,7 @@ import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
 import { sendWebPush } from '../services/webpush.service';
 import { logger } from '$lib/utils/logger';
+import { getIncidentMatrixRecipients } from '../db/firebase/incidentMatrix.fdb';
 
 type UserPreferences = {
     channels: {
@@ -25,7 +26,8 @@ export async function sendNotification<TData>(
     user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
     data: TData,
-    incidentSource: App.Incident.Source = 'system'
+    incidentSource: App.Incident.Source = 'system',
+    isAdminCopy: boolean = false
 ): Promise<void> {
     // 1. Resolve Preferences
     const prefs = await getUserPreferences(user.id);
@@ -48,7 +50,8 @@ export async function sendNotification<TData>(
         locale,
         m,
         m_pl,
-        user
+        user,
+        isAdminCopy
     };
 
     // 3. Dispatch to Channels in parallel
@@ -74,21 +77,38 @@ export async function sendNotification<TData>(
         promises.push(sendInApp(user.id, notification, data, ctx));
     }
 
-    // 4. Incident Logging (if defined)
-    if (notification.incident) {
-        promises.push((async () => {
-            try {
-                const incident = await notification.incident!(data, ctx);
-                if (incident) {
-                    await logIncident(notification.id, incident, notification.priority, user, data, incidentSource);
-                }
-            } catch (err) {
-                logger.error(`Incident logging failed for ${notification.id}:`, err);
-            }
-        })());
-    }
+	// 4. Incident Logging (if defined)
+	if (notification.incident && !ctx.isAdminCopy) {
+		promises.push((async () => {
+			try {
+				const incident = await notification.incident!(data, ctx);
+				if (incident) {
+					await logIncident(notification.id, incident, notification.priority, user, data, incidentSource);
+				}
+			} catch (err) {
+				logger.error(`Incident logging failed for ${notification.id}:`, err);
+			}
+		})());
+	}
 
-    if (promises.length) await Promise.allSettled(promises);
+	// 5. Dispatch to registered matrix admins
+	if (notification.admin && !ctx.isAdminCopy) {
+		promises.push((async () => {
+			try {
+				const admins = await getIncidentMatrixRecipients(notification.id);
+				if (admins && admins.length > 0) {
+					const adminPromises = admins.map(admin => {
+						return sendNotification(admin, notification, data, incidentSource, true);
+					});
+					await Promise.allSettled(adminPromises);
+				}
+			} catch (err) {
+				logger.error(`Failed to dispatch to matrix admins for ${notification.id}:`, err);
+			}
+		})());
+	}
+
+	if (promises.length) await Promise.allSettled(promises);
 }
 
 async function sendEmail<TData>(

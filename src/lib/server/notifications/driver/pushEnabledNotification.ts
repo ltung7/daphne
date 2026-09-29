@@ -16,6 +16,8 @@ const channels = prepareNotificationChannels({
 export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = {
     id: 'push_enabled',
     priority: 'low',
+    client: true,
+    admin: false,
     getBaseMessage,
     ...channels
 };

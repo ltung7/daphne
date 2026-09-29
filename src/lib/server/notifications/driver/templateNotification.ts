@@ -16,6 +16,8 @@ const channels = prepareNotificationChannels({
 export const templateNotification: NotificationDefinition<TemplateNotificationData> = {
     id: 'template_notification',
     priority: 'low',
+    client: true,
+    admin: false,
     getBaseMessage,
     email(data, ctx) {
         return {

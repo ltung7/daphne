@@ -12,6 +12,8 @@ export interface AdminNotificationData {
 export const adminNotification: NotificationDefinition<AdminNotificationData> = {
     id: 'admin_notification',
     priority: 'medium',
+    client: true,
+    admin: false,
 
     getBaseMessage: (m, data) => ({ title: data.subject || m.title, body: data.message }),
 

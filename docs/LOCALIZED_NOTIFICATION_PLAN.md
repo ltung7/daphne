@@ -81,6 +81,8 @@ interface BaseMessage {
 export interface NotificationDefinition<TData> {
     id: App.NotificationType; // e.g., 'driver_document_expiring'
     priority: NotificationPriority;
+    client: boolean; // Determines if this is sent to the client (driver)
+    admin: boolean;  // Determines if this is sent to admins
     
     // Generates the base title/body upfront to inject into context
     getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
@@ -99,6 +101,11 @@ export interface NotificationDefinition<TData> {
 
 This is how a notification is defined easily. By utilizing `prepareNotificationChannels`, you don't need to manually write boilerplate for SMS, Push, In-App, and Incidents. The core `title` and `body` are automatically extracted and localized using the `getBaseMessage` method.
 
+### Recipient Targeting & Action Links
+Notifications can be targeted at drivers (`client: true`), administrators (`admin: true`), or both. Because drivers and admins interact with different parts of the application, push notification action links must be routed accordingly. 
+
+By default, the `prepareNotificationChannels` factory assumes an admin preset link (e.g., `/admin/fleet`). However, when a notification is marked `client: true`, the underlying system automatically rewrites the push notification's action link to route the driver to the correct interface (e.g., `/driver`) rather than the admin dashboard.
+
 ```typescript
 // src/lib/server/notifications/driver/pushEnabledNotification.ts
 import type { NotificationDefinition } from '../types';
@@ -112,14 +119,17 @@ export interface PushEnabledData {
 }
 
 // Automatically generates sms, push, inapp, and incident using ctx.title and ctx.body
+// Every time a push notification is intended for a client, its action link is rewritten to '/driver' instead of the preset admin action link.
 const channels = prepareNotificationChannels({
-    action: PUBLIC_URL + '/driver',
+    action: PUBLIC_URL + '/admin/fleet', // Default admin link
     channels: ['push'] // optionally restrict which channels to generate
 });
 
 export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = {
     id: 'push_enabled',
     priority: 'low',
+    client: true,
+    admin: false,
     getBaseMessage,
     ...channels
 };
@@ -254,16 +264,21 @@ export interface IncidentPayload {
 
 The core `sendNotification` service automatically invokes `logIncident` when an incident is generated, safely executing it in parallel with other channel dispatches.
 
+Additionally, if a notification has `admin: true` and the context is not already an admin copy (`!ctx.isAdminCopy`), the system will query the Incidents Matrix (located at `/incidents/matrix`) for the specific notification type. If recipients are registered for that notification type in the matrix, the system will automatically dispatch the exact same notification message to those registered administrators by recursively calling `sendNotification` with the `isAdminCopy` flag set to `true`. This ensures admins receive a carbon copy of the notification without triggering duplicate incident logs or infinite loops.
+
 ```typescript
 // src/lib/server/notifications/service.ts
 export async function sendNotification<TData>(
-    // ...
-    incidentSource: App.Incident.Source = 'system'
-) {
-    // ... setup context ...
+    user: App.BaseContact, 
+    notification: NotificationDefinition<TData>, 
+    data: TData,
+    incidentSource: App.Incident.Source = 'system',
+    isAdminCopy: boolean = false
+): Promise<void> {
+    // ... setup context with isAdminCopy ...
 
-    // ALWAYS log incident if defined and doesn't return false
-    if (notification.incident) {
+    // ALWAYS log incident if defined and doesn't return false (skip for admin copies)
+    if (notification.incident && !ctx.isAdminCopy) {
         promises.push((async () => {
             try {
                 const inc = await notification.incident!(data, ctx);
@@ -282,5 +297,30 @@ export async function sendNotification<TData>(
             }
         })());
     }
+    
+    // Dispatch to registered matrix admins (skip for admin copies to prevent loops)
+    if (notification.admin && !ctx.isAdminCopy) {
+        promises.push((async () => {
+            try {
+                const admins = await getIncidentMatrixRecipients(notification.id);
+                if (admins && admins.length > 0) {
+                    const adminPromises = admins.map(admin => {
+                        return sendNotification(admin, notification, data, incidentSource, true);
+                    });
+                    await Promise.allSettled(adminPromises);
+                }
+            } catch (err) {
+                // error handling
+            }
+        })());
+    }
 }
 ```
+
+## 7. Implementation Progress Updates
+
+*   **Greeting Fields Removed**: To unify incident logs and cross-channel formatting, the `greeting` property (e.g., "Dear {driverName}") has been entirely stripped from `localizedMailerMessages.ts` definitions and all language JSON files (`messages/*.json`). Notifications are now direct and actionable without salutations.
+*   **Incident Matrix Migration**: The `healthMatrix` concept has been generalized and migrated to `incidentMatrix`. It is now accessible via `/incidents/matrix` instead of `/health/matrix`. It stores recipient maps keyed by generic `App.NotificationType` (e.g., `vehicle_document_expiring`) rather than specific `HealthCheckProblem` enums, allowing any system event to broadcast to an admin distribution list.
+*   **Empty Metadata Handling**: UIs displaying incident logs, such as `IncidentMetadata.svelte`, will selectively hide the metadata `<pre>` container if the associated `metadata` payload is empty or undefined, reducing visual clutter on the admin details page.
+*   **Strict Audience Targeting**: The `client` and `admin` boolean flags in `NotificationDefinition` have been made strictly required, forcing every notification definition to explicitly state its intended audience, ensuring precise push notification action link routing and matrix distribution without fallback ambiguities.
+*   **Typed Matrix Exclusions**: The incidents matrix specifically relies on `App.MatrixNotificationType`, which explicitly uses TypeScript's `Exclude` utility to remove system/internal notifications (like `push_enabled`, `reset_password`, or `common`) from the matrix management interface, preventing administrators from accidentally subscribing to internal operational noise.
