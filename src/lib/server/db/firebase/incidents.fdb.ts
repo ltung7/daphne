@@ -1,4 +1,4 @@
-import { setItem, getItemById, getItems, batchOperations, addItem } from "./firebase";
+import { setItem, getItemById, getItems, addItem, queryItems, countQueryItems } from "./firebase";
 
 const collectionName: string = 'incidents';
 
@@ -18,4 +18,16 @@ export const getIncident = async <T=App.Incident.IncidentLog> (id: string): Prom
 
 export const findIncidents = async <T=App.Incident.IncidentLog> (query: App.FirebaseItemsQuery = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
     return getItems(collectionName, query, select);
+}
+
+export const queryIncidents = async <T=App.Incident.IncidentLog> (queries: App.FirebaseQueryList, select: App.FirebaseItemsFields = false, order: App.FirebaseOrderQuery = false, limit: number | false = false): Promise<T[]> => {
+    return queryItems(collectionName, queries, select, order, limit);
+}
+
+export const queryIncidentsPaginated = async <T=App.Incident.IncidentLog> (queries: App.FirebaseQueryList, limit: number = 50): Promise<T[]> => {
+    return queryItems(collectionName, queries, false, [ 'timestamp', 'desc' ], limit);
+}
+
+export const countOpenIncidents = async (): Promise<number> => {
+    return countQueryItems(collectionName, [ [ 'status', '==', 'open' ] ]);
 }

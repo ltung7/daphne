@@ -66,19 +66,24 @@ declare global {
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
 
-type NotificationType =
-		| 'reset_password'
-		| 'driver_document_expiring'
-		| 'driver_document_expired'
-		| 'vehicle_document_expiring'
-		| 'vehicle_document_expired'
-		| 'push_enabled'
-		| 'admin_notification'
-		| 'template_notification'
-		| 'early_settlement_requested'
-		| 'early_settlement_approved'
-		| 'early_settlement_rejected'
-		| 'common';
+		type NotificationType =
+			| 'reset_password'
+			| 'driver_document_expiring'
+			| 'driver_document_expired'
+			| 'vehicle_document_expiring'
+			| 'vehicle_document_expired'
+			| 'push_enabled'
+			| 'admin_notification'
+			| 'template_notification'
+			| 'early_settlement_requested'
+			| 'early_settlement_approved'
+			| 'early_settlement_rejected'
+			| 'common';
+
+		type MatrixNotificationType = Exclude<
+			NotificationType,
+			'push_enabled' | 'template_notification' | 'common' | 'reset_password' | 'admin_notification'
+		>;
 
 		// Admin user roles
 		type AdminRole = 'moderator' | 'manager' | 'admin';
@@ -123,10 +128,10 @@ type NotificationType =
 		namespace Incident {
 			type Severity = 'low' | 'medium' | 'high' | 'critical';
 			type Status = 'info' | 'open' | 'resolved';
-			
+
 			type Category = 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
 			type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system';
-			
+
 			interface IncidentLog {
 				id: string;
 				title: string;
@@ -661,7 +666,7 @@ type NotificationType =
 			drivingLicenses: DrivingLicense[];
 		};
 
-		
+
 		interface DriverStatusChange {
 			status: Driver.Status;
 			userId: string;

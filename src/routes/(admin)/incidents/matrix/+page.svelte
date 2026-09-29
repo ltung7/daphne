@@ -7,21 +7,26 @@
 	import { internal, confirmSuccess } from '$lib/nav/internal';
 	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
 
-	let matrix = $state<HealthCheck.HealthCheckRecipientMap | null>(null);
+	let matrix = $state<Partial<Record<App.MatrixNotificationType, App.BaseContact[]>> | null>(null);
 	let loading = $state(true);
 	let saving = $state(false);
 	
 	let isModalOpen = $state(false);
-	let selectedProblem = $state<HealthCheck.HealthCheckProblem | null>(null);
+	let selectedProblem = $state<App.MatrixNotificationType | null>(null);
 	let users = $state<App.User[]>([]);
 	let loadingUsers = $state(false);
 
-	const problems: { key: HealthCheck.HealthCheckProblem; label: string }[] = [
-		{ key: 'insurance_expiring', label: 'Wygasa ubezpieczenie' },
-		{ key: 'technical_expiring', label: 'Wygasa przegląd techniczny' },
-		{ key: 'license_expiring', label: 'Wygasa prawo jazdy' },
-		{ key: 'taxi_authorization_expiring', label: 'Wygasa identyfikator taxi' }
-	];
+	const problems: Record<App.MatrixNotificationType, string> = {
+		early_settlement_requested: 'Złożenie wniosku o wcześniejsze rozliczenie (kierowca)',
+		early_settlement_approved: 'Zatwierdzenie wniosku o wcześniejsze rozliczenie',
+		early_settlement_rejected: 'Odrzucenie wniosku o wcześniejsze rozliczenie',
+		
+		driver_document_expiring: 'Zbliżające się wygaśnięcie dokumentu kierowcy (np. prawo jazdy, badanie lekarskie)',
+		driver_document_expired: 'Wygaśnięcie dokumentu kierowcy',
+		
+		vehicle_document_expiring: 'Zbliżające się wygaśnięcie dokumentu pojazdu (np. polisa, przegląd techniczny)',
+		vehicle_document_expired: 'Wygaśnięcie dokumentu pojazdu'
+	};
 
 	async function loadMatrix() {
 		loading = true;
@@ -30,7 +35,7 @@
 		loading = false;
 	}
 
-	async function saveMatrix(problem: HealthCheck.HealthCheckProblem, recipients: HealthCheck.HealthCheckRecipient[]) {
+	async function saveMatrix(problem: App.MatrixNotificationType, recipients: App.BaseContact[]) {
 		if (!matrix || saving) return;
 		saving = true;
 		try {
@@ -41,7 +46,7 @@
 		}
 	}
 
-	async function openAddRecipientModal(problem: HealthCheck.HealthCheckProblem) {
+	async function openAddRecipientModal(problem: App.MatrixNotificationType) {
 		selectedProblem = problem;
 		isModalOpen = true;
 		if (users.length === 0 && !loadingUsers) {
@@ -57,20 +62,22 @@
 	async function selectUserAsRecipient(user: App.User) {
 		if (!matrix || !selectedProblem) return;
 		const problem = selectedProblem; // capture before nullifying
-		const newContact: HealthCheck.HealthCheckRecipient = {
+		const newContact: App.BaseContact = {
 			id: user.id,
 			name: user.name,
+			email: user.email,
+			preferredLanguage: user.preferredLanguage || 'pl'
 		};
-		const updatedRecipients = [ ...matrix[problem], newContact ];
+		const updatedRecipients = [ ...(matrix[problem] || []), newContact ];
 		matrix[problem] = updatedRecipients;
 		isModalOpen = false;
 		selectedProblem = null;
 		await saveMatrix(problem, updatedRecipients);
 	}
 
-	async function removeRecipient(problem: HealthCheck.HealthCheckProblem, index: number) {
+	async function removeRecipient(problem: App.MatrixNotificationType, index: number) {
 		if (!matrix) return;
-		const updatedRecipients = matrix[problem].filter((_, i: number) => i !== index);
+		const updatedRecipients = (matrix[problem] || []).filter((_, i: number) => i !== index);
 		matrix[problem] = updatedRecipients;
 		await saveMatrix(problem, updatedRecipients);
 	}
@@ -96,23 +103,23 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each problems as { key, label }}
+					{#each Object.entries(problems) as [ key, label ]}
 						<tr>
 							<td class="fw-bold text-dark">{label}</td>
 							<td class="text-dark small">
-								{#if matrix[key].length === 0}
+								{#if !matrix[key as App.MatrixNotificationType] || (matrix[key as App.MatrixNotificationType]?.length ?? 0) === 0}
 									<div class="text-muted fst-italic">Brak odbiorców</div>
 								{:else}
-									{#each matrix[key] as recipient, i}
+									{#each matrix[key as App.MatrixNotificationType] || [] as recipient, i}
 										<div class="d-flex align-items-center justify-content-between rounded">
 											<span class="fw-medium">{recipient.name}</span>
-											<TooltipSquareIconButton icon="cross-circle" hoverText="Usuń" onClick={() => removeRecipient(key, i)} size={6} color="dark" />
+											<TooltipSquareIconButton icon="cross-circle" hoverText="Usuń" onClick={() => removeRecipient(key as App.MatrixNotificationType, i)} size={6} color="dark" />
 										</div>
 									{/each}
 								{/if}
 							</td>
 							<td class="py-1">
-								<IconButton outline onclick={() => openAddRecipientModal(key)} caption="Dodaj odbiorcę" size={6} icon="add" />
+								<IconButton outline onclick={() => openAddRecipientModal(key as App.MatrixNotificationType)} caption="Dodaj odbiorcę" size={6} icon="add" />
 							</td>
 						</tr>
 					{/each}
@@ -128,7 +135,7 @@
 	{:else}
 		<div class="list-group">
 			{#each users as user}
-				{@const isAdded = matrix && selectedProblem ? matrix[selectedProblem].some(r => r.id === user.id) : false}
+				{@const isAdded = matrix && selectedProblem ? (matrix[selectedProblem] || []).some(r => r.id === user.id) : false}
 				<button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" class:bg-light={isAdded} disabled={isAdded} onclick={() => !isAdded && selectUserAsRecipient(user)}>
 					<div>
 						<strong>{user.name}</strong>

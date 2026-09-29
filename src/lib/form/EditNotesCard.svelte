@@ -7,9 +7,10 @@
 	interface Props {
 		notes: string;
 		editMode?: boolean;
+        onChange?: () => void;
 	}
 
-	let { notes = $bindable(), editMode = $bindable(false) }: Props = $props();
+	let { notes = $bindable(), editMode = $bindable(false), onChange }: Props = $props();
 
 	const toggle = () => {
 		editMode = !editMode;
@@ -24,7 +25,7 @@
 	{/snippet}
 
 	{#if editMode}
-		<CustomFormTextarea bind:value={notes} size={4} class="mb-0" />
+		<CustomFormTextarea bind:value={notes} size={4} class="mb-0" {onChange} />
 	{:else if notes.length}
 		{notes}
 	{:else}

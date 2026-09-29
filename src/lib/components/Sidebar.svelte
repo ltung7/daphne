@@ -5,6 +5,8 @@
 	import UIcon from '$lib/misc/UIcon.svelte'; // Assuming this is your icon component
 	import TooltipText from '$lib/misc/TooltipText.svelte';
 
+	let { openIncidentsCount = 0 }: { openIncidentsCount?: number } = $props();
+
 	// TypeScript Interfaces
 	interface SubItem {
 		title: string;
@@ -30,6 +32,7 @@
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
 		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
 		{ id: 8, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' },
+		{ id: 9, title: 'Incydenty', icon: 'triangle-warning', link: '/incidents' },
 	]);
 
 	function toggleSidebar() {
@@ -112,9 +115,19 @@
 					{:else}
 						<TooltipText hide={layoutState.isSidebarExpanded} hoverText={item.title} placement="right">
 							<a href={item.link} class="btn w-100 text-start d-flex align-items-center nav-btn" class:active={layoutState.activeMenuId === item.id} onclick={() => setActive(item.id)}>
-								<span class="nav-icon-wrapper"><UIcon name={item.icon} size={4} /></span>
+								<span class="nav-icon-wrapper">
+									<UIcon name={item.icon} size={4} />
+									{#if !layoutState.isSidebarExpanded && item.id === 9 && openIncidentsCount > 0}
+										<span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+											<span class="visually-hidden">New alerts</span>
+										</span>
+									{/if}
+								</span>
 								{#if layoutState.isSidebarExpanded}
-									<span class="ms-3 text-truncate">{item.title}</span>
+									<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
+									{#if item.id === 9 && openIncidentsCount > 0}
+										<span class="badge bg-danger ms-2">{openIncidentsCount}</span>
+									{/if}
 								{/if}
 							</a>
 						</TooltipText>

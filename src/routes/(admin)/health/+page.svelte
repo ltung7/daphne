@@ -50,7 +50,7 @@
 <PageTitle title="Zdrowie floty" subtitle="Status pojazdów i kierowców">
 	<div class="d-flex gap-2">
 		<IconButton icon="check-circle" caption="Sprawdź teraz" color="primary" onclick={triggerHealthCheck} disabled={checking || loading} size={5} />
-		<IconLink icon="users" caption="Odbiorcy" outline href="/health/matrix" size={5} class="mb-0" />
+		<IconLink icon="users" caption="Odbiorcy" outline href="/incidents/matrix" size={5} class="mb-0" />
 	</div>
 </PageTitle>
 
