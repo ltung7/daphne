@@ -26,8 +26,17 @@ export async function sendNotification<TData>(
     user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
     data: TData,
-    incidentSource: App.Incident.Source = 'system',
-    isAdminCopy: boolean = false
+    incidentSource: App.Incident.Source = 'system'
+): Promise<void> {
+    return _dispatchNotification(user, notification, data, incidentSource, false);
+}
+
+async function _dispatchNotification<TData>(
+    user: App.BaseContact, 
+    notification: NotificationDefinition<TData>, 
+    data: TData,
+    incidentSource: App.Incident.Source,
+    isAdminCopy: boolean
 ): Promise<void> {
     // 1. Resolve Preferences
     const prefs = await getUserPreferences(user.id);
@@ -57,24 +66,28 @@ export async function sendNotification<TData>(
     // 3. Dispatch to Channels in parallel
     const promises: Promise<void>[] = [];
 
-    // --- EMAIL ---
-    if (user.email && notification.email && prefs.channels.email !== false) {
-        promises.push(sendEmail(user.email, notification, data, ctx));
-    }
+    const shouldDispatchChannels = ctx.isAdminCopy || notification.client;
 
-    // --- SMS ---
-    if (notification.sms && user.phone && prefs.channels.sms !== false) {
-        promises.push(sendSms(user.phone, notification, data, ctx));
-    }
+    if (shouldDispatchChannels) {
+        // --- EMAIL ---
+        if (user.email && notification.email && prefs.channels.email !== false) {
+            promises.push(sendEmail(user.email, notification, data, ctx));
+        }
 
-    // --- PUSH ---
-    if (notification.push && user.fcmToken && prefs.channels.push !== false) {
-        promises.push(sendPush(user.fcmToken, notification, data, ctx));
-    }
+        // --- SMS ---
+        if (notification.sms && user.phone && prefs.channels.sms !== false) {
+            promises.push(sendSms(user.phone, notification, data, ctx));
+        }
 
-    // --- IN-APP ---
-    if (notification.inapp) {
-        promises.push(sendInApp(user.id, notification, data, ctx));
+        // --- PUSH ---
+        if (notification.push && user.fcmToken && prefs.channels.push !== false) {
+            promises.push(sendPush(user.fcmToken, notification, data, ctx));
+        }
+
+        // --- IN-APP ---
+        if (notification.inapp) {
+            promises.push(sendInApp(user.id, notification, data, ctx));
+        }
     }
 
 	// 4. Incident Logging (if defined)
@@ -98,7 +111,7 @@ export async function sendNotification<TData>(
 				const admins = await getIncidentMatrixRecipients(notification.id);
 				if (admins && admins.length > 0) {
 					const adminPromises = admins.map(admin => {
-						return sendNotification(admin, notification, data, incidentSource, true);
+						return _dispatchNotification(admin, notification, data, incidentSource, true);
 					});
 					await Promise.allSettled(adminPromises);
 				}

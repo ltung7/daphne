@@ -108,7 +108,7 @@
 </script>
 
 <PageTitle title="Incydenty" subtitle="Zgłoszone problemy i wydarzenia">
-	<IconLink href="/incidents/matrix" caption="Matryca" icon="table" />
+	<IconLink href="/incidents/matrix" caption="Matryca odpowiedzialności" icon="table" />
 </PageTitle>
 
 <div class="card mb-3">

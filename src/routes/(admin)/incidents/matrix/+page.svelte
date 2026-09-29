@@ -87,7 +87,7 @@
 	});
 </script>
 
-<PageTitle title="Odbiorcy powiadomień" subtitle="Matryca powiadomień systemowych" />
+<PageTitle title="Odbiorcy powiadomień" subtitle="Matryca odpowiedzialności" />
 
 {#if loading}
 	<Spinner />
@@ -97,16 +97,16 @@
 			<table class="table table-hover table-bordered align-middle mb-0">
 				<thead class="table-light">
 					<tr>
-						<th style="width: 270px">Problem</th>
-						<th>Odbiorcy</th>
+						<th>Problem</th>
+						<th style="width: clamp(200px, 25vw, 400px);">Odbiorcy</th>
 						<th style="width: 140px">Dodaj</th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each Object.entries(problems) as [ key, label ]}
 						<tr>
-							<td class="fw-bold text-dark">{label}</td>
-							<td class="text-dark small">
+							<td class="fw-bold text-dark text-wrap">{label}</td>
+							<td class="text-dark small text-wrap">
 								{#if !matrix[key as App.MatrixNotificationType] || (matrix[key as App.MatrixNotificationType]?.length ?? 0) === 0}
 									<div class="text-muted fst-italic">Brak odbiorców</div>
 								{:else}

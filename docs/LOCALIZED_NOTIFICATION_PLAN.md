@@ -264,7 +264,11 @@ export interface IncidentPayload {
 
 The core `sendNotification` service automatically invokes `logIncident` when an incident is generated, safely executing it in parallel with other channel dispatches.
 
-Additionally, if a notification has `admin: true` and the context is not already an admin copy (`!ctx.isAdminCopy`), the system will query the Incidents Matrix (located at `/incidents/matrix`) for the specific notification type. If recipients are registered for that notification type in the matrix, the system will automatically dispatch the exact same notification message to those registered administrators by recursively calling `sendNotification` with the `isAdminCopy` flag set to `true`. This ensures admins receive a carbon copy of the notification without triggering duplicate incident logs or infinite loops.
+To ensure notifications behave correctly based on their target audience:
+- **Client Delivery:** Channel messages (Email, SMS, Push) are ONLY sent to the primary user if `client: true`. If `client: false`, the system will quietly skip sending direct messages to the primary user.
+- **Incident Guard:** Incidents are always logged if the `incident` generator is defined and returns a payload, regardless of `client` or `admin` flags. This allows you to create "silent" notifications (`client: false, admin: false`) that purely generate an internal incident log without bothering anyone with emails or push notifications.
+
+Additionally, if a notification has `admin: true` and the context is not already an admin copy (`!ctx.isAdminCopy`), the system will query the Incidents Matrix (located at `/incidents/matrix`) for the specific notification type. If recipients are registered for that notification type in the matrix, the system will automatically dispatch the exact same notification message to those registered administrators by internally calling a private recursive dispatch function with an `isAdminCopy` flag set to `true`. This ensures admins receive a carbon copy of the notification without triggering duplicate incident logs or infinite loops, and keeps the public `sendNotification` signature clean.
 
 ```typescript
 // src/lib/server/notifications/service.ts
@@ -272,10 +276,25 @@ export async function sendNotification<TData>(
     user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
     data: TData,
-    incidentSource: App.Incident.Source = 'system',
-    isAdminCopy: boolean = false
+    incidentSource: App.Incident.Source = 'system'
+): Promise<void> {
+    return _dispatchNotification(user, notification, data, incidentSource, false);
+}
+
+async function _dispatchNotification<TData>(
+    user: App.BaseContact, 
+    notification: NotificationDefinition<TData>, 
+    data: TData,
+    incidentSource: App.Incident.Source,
+    isAdminCopy: boolean
 ): Promise<void> {
     // ... setup context with isAdminCopy ...
+
+    // Only dispatch to channels if this is an admin copy or explicitly meant for the client
+    const shouldDispatchChannels = ctx.isAdminCopy || notification.client;
+    if (shouldDispatchChannels) {
+        // ... dispatch emails, sms, push ...
+    }
 
     // ALWAYS log incident if defined and doesn't return false (skip for admin copies)
     if (notification.incident && !ctx.isAdminCopy) {
@@ -305,7 +324,7 @@ export async function sendNotification<TData>(
                 const admins = await getIncidentMatrixRecipients(notification.id);
                 if (admins && admins.length > 0) {
                     const adminPromises = admins.map(admin => {
-                        return sendNotification(admin, notification, data, incidentSource, true);
+                        return _dispatchNotification(admin, notification, data, incidentSource, true);
                     });
                     await Promise.allSettled(adminPromises);
                 }

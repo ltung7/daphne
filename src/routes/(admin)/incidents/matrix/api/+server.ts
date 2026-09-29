@@ -2,12 +2,14 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { getIncidentMatrix, setIncidentMatrixRecipients, getIncidentMatrixRecipients } from '$lib/server/db/firebase/incidentMatrix.fdb';
 
-const defaultMatrix: Partial<Record<App.MatrixNotificationType, App.BaseContact[]>> = {
+const defaultMatrix: Record<App.MatrixNotificationType, App.BaseContact[]> = {
 	vehicle_document_expiring: [],
 	vehicle_document_expired: [],
 	driver_document_expiring: [],
 	driver_document_expired: [],
-    early_settlement_requested: []
+	early_settlement_requested: [],
+	early_settlement_approved: [],
+	early_settlement_rejected: []
 };
 
 export const GET: RequestHandler = async () => {
