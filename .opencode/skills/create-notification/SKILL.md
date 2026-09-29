@@ -52,9 +52,15 @@ export const someNotification: NotificationDefinition<SomeData> = {
     id: 'some_notification_id', // Must exist in App.NotificationType
     priority: 'medium',
     getBaseMessage,
+    email: (data, ctx) => ({
+        subject: ctx.title,
+        htmlBody: `
+            <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
+                ${ctx.body}
+            </p>
+        `
+    }),
     ...channels,
-    // Add custom email layout if GenericNotificationMail isn't enough
-    // email: (data, ctx) => { ... } 
 };
 ```
 

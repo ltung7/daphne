@@ -10,7 +10,7 @@
 		driverName: string;
 		balance: number;
 		submitUrl?: string;
-		onsuccess?: () => void;
+		onsuccess?: (id: string | undefined) => void;
 	}
 
 	let { driverId, driverName, balance, submitUrl, onsuccess }: Props = $props();
@@ -48,8 +48,8 @@
 				requestedAmount: amount
 			})
 		);
-		if (response.ok) {
-			onsuccess?.();
+		if (response.success) {
+			onsuccess?.(response?.earlySettlement?.id);
 		}
 	}
 </script>

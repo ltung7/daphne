@@ -28,32 +28,6 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
         footer: string;
         button_text: string;
     };
-    settlement: {
-        title: string;
-        body: string;
-        greeting: string;
-        summary: string;
-        gross_earnings: string;
-        platform_commission: string;
-        fleet_provision: string;
-        cost_deductions: string;
-        net_payout: string;
-        footer: string;
-    };
-    vehicle_assignment: {
-        title: string;
-        greeting: string;
-        body: string;
-        handover_date: string;
-        footer: string;
-    };
-    vehicle_return: {
-        title: string;
-        greeting: string;
-        body: string;
-        return_date: string;
-        footer: string;
-    };
     driver_document_expiring: {
         title: string;
         greeting: string;
@@ -82,53 +56,28 @@ export interface NotificationMessages extends Record<App.NotificationType, Messa
         consequence: string;
         footer: string;
     };
-    balance_negative: {
-        title: string;
-        greeting: string;
-        body: string;
-        footer: string;
-    };
-    penalty_added: {
-        title: string;
-        greeting: string;
-        body: string;
-        footer: string;
-    };
-    inspection_due: {
-        title: string;
-        greeting: string;
-        body: string;
-        footer: string;
-    };
-    inspection_overdue: {
-        title: string;
-        greeting: string;
-        body: string;
-        consequence: string;
-        footer: string;
-    };
-    onboarding_approved: {
-        title: string;
-        greeting: string;
-        body: string;
-        footer: string;
-    };
-    onboarding_rejected: {
-        title: string;
-        greeting: string;
-        body: string;
-        footer: string;
-    };
     push_enabled: {
         title: string;
-        greeting: string;
         body: string;
     };
     admin_notification: {
         title: string;
         body: string;
-        email_subject: string;
-        push_title: string;
+    };
+    template_notification: {
+        title: string;
+        body: string;
+    };
+    early_settlement_requested: {
+        title: string;
+        body: string;
+        action_required: string;
+    };
+    early_settlement_info: {
+        title: string;
+        greeting: string;
+        body: string;
+        footer: string;
     };
     common: {
         title: string;
@@ -180,8 +129,8 @@ export function getNotificationMessageNode(locale: App.Locale, key: App.Notifica
  * Simple variable interpolation for message templates.
  * 
  * @example
- * interpolate(messages.settlement.title, { period: '01.2024' })
- * // => "Rozliczenie za okres 01.2024"
+ * interpolate(messages.reset_password.title, { period: '01.2024' })
+ * // => "Zresetuj swoje hasło"
  */
 export function interpolate(template: string, vars: Record<string, string | number>): string {
     return template.replace(/{(\w+)}/g, (_, key) => String(vars[key] ?? ''));

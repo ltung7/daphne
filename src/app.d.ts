@@ -66,24 +66,18 @@ declare global {
 		// User type discriminator
 		type UserType = 'driver' | 'admin';
 
-		type NotificationType =
-			| 'reset_password'
-			| 'settlement'
-			| 'vehicle_assignment'
-			| 'vehicle_return'
-			| 'driver_document_expiring'
-			| 'driver_document_expired'
-			| 'vehicle_document_expiring'
-			| 'vehicle_document_expired'
-			| 'balance_negative'
-			| 'penalty_added'
-			| 'inspection_due'
-			| 'inspection_overdue'
-			| 'onboarding_approved'
-			| 'onboarding_rejected'
-			| 'push_enabled'
-			| 'admin_notification'
-			| 'common';
+type NotificationType =
+		| 'reset_password'
+		| 'driver_document_expiring'
+		| 'driver_document_expired'
+		| 'vehicle_document_expiring'
+		| 'vehicle_document_expired'
+		| 'push_enabled'
+		| 'admin_notification'
+		| 'template_notification'
+		| 'early_settlement_requested'
+		| 'early_settlement_info'
+		| 'common';
 
 		// Admin user roles
 		type AdminRole = 'moderator' | 'manager' | 'admin';

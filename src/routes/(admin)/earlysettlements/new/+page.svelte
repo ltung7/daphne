@@ -39,8 +39,10 @@
 		await formComponent?.submit();
 	};
 
-	const onSuccess = () => {
-		goto('/earlysettlements');
+	const onSuccess = (id: string | undefined) => {
+		let url = '/earlysettlements'
+		if (id?.length) url += '/' + id;
+		goto(url);
 	};
 </script>
 

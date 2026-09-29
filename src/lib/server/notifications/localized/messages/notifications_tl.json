@@ -3,32 +3,8 @@
     "title": "I-reset ang iyong password",
     "contents": "I-click ang ibaba na button upang lumikha ng bagong password para sa iyong account:",
     "footer": "Ang link ay mawawala pagkatapos ng 1 oras. Kung hindi mo hiningang i-reset ang password, maari mong hindi pansinin ang email na ito.",
-    "button_text": "I-reset ang Password"
-  },
-  "settlement": {
-    "title": "Pagkakabayad para sa panahon {period}",
-    "greeting": "Mahal na {driverName},",
-    "summary": "Narito ang mga detalye ng iyong pagkakabayad:",
-    "gross_earnings": "Kabuuang kita (Uber/Bolt)",
-    "platform_commission": "Komisyon ng platform",
-    "fleet_provision": "Provision ng fleet",
-    "cost_deductions": "Operational na gastusin",
-    "net_payout": "Net na payout",
-    "footer": "Kung mayroon kang mga tanong, makipag-ugnayan sa fleet administrator."
-  },
-  "vehicle_assignment": {
-    "title": "Bagong sasakyan na inassign",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ikaw ay inassign sa sasakyan {vehicleRegistration} ({vehicleMakeModel}).",
-    "handover_date": "Petsa ng turnover: {date}",
-    "footer": "Pakibigay ang kumpirmasyon ng pagtatanggap ng sasakyan."
-  },
-  "vehicle_return": {
-    "title": "Pagbalik ng sasakyan na kumpirmado",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang pagbalik ng sasakyan {vehicleRegistration} ay naitala na.",
-    "return_date": "Petsa ng pagbalik: {date}",
-    "footer": "Salamat sa iyong kooperasyon."
+    "button_text": "I-reset ang Password",
+    "body": ""
   },
   "driver_document_expiring": {
     "title": "Ang dokumento ay malapit nang mag-expire",
@@ -44,52 +20,52 @@
     "consequence": "Ang iyong account ay maaaring limitahan hanggang sa ma-renew.",
     "footer": "Makipag-ugnayan sa administrator para sa renewal."
   },
-  "balance_negative": {
-    "title": "Negatibong account balance",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang iyong balance ay {balance} PLN. Pakilunas ang mga utang.",
-    "footer": "Pakimakipag-ugnayan agad sa administrator."
+  "admin_notification": {
+    "title": "Message from fleet administrator",
+    "body": "{message}",
+    "email_subject": "Message from fleet administrator",
+    "push_title": "New message from administrator"
   },
-  "penalty_added": {
-    "title": "Nadagdag na multa",
-    "greeting": "Mahal na {driverName},",
-    "body": "Isang multa na {amount} PLN ay idinagdag para sa: {reason}.",
-    "footer": "Mga detalye sa driver panel."
+  "early_settlement_requested": {
+    "title": "Bagong Kahilingan sa Maagang Pag-aayos",
+    "body": "Humiling ang tsuper na si {driverName} ng maagang pag-aayos na nagkakahalaga ng {requestedAmount} PLN.",
+    "action_required": "Pakisuri ang kahilingan sa panel ng admin."
   },
-  "inspection_due": {
-    "title": "Paalala: inspection ng sasakyan",
+  "early_settlement_info": {
+    "title": "Katayuan ng Maagang Pag-aayos: {status}",
     "greeting": "Mahal na {driverName},",
-    "body": "Ang inspection ng sasakyan {vehicleRegistration} ay naka-schedule sa {date}.",
-    "footer": "Pakitapos ang inspection on time."
-  },
-  "inspection_overdue": {
-    "title": "Overdue na ang inspection ng sasakyan",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang inspection ng sasakyan {vehicleRegistration} ay naka-schedule noong {date} at hindi natapos.",
-    "consequence": "Ang sasakyan ay maaaring alisin sa serbisyo.",
-    "footer": "Gawin ang inspection agad."
-  },
-  "onboarding_approved": {
-    "title": "Beripikasyon nakatapos nang matagumpay",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang iyong account ay na-verify na. Maari ka nang magsimulang magtrabaho.",
-    "footer": "Welcome aboard."
-  },
-  "onboarding_rejected": {
-    "title": "Beripikasyon tinanggihan",
-    "greeting": "Mahal na {driverName},",
-    "body": "Ang iyong beripikasyon ay tinanggihan. Dahilan: {reason}.",
-    "footer": "Makipag-ugnayan sa administrator para sa detalye."
+    "body": "Ang iyong kahilingan sa maagang pag-aayos para sa {requestedAmount} PLN ay na-{status}.",
+    "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa administrator ng fleet."
   },
   "common": {
-    "app_name": "EISG",
-    "footer_app_link": "Notifikasyon mula sa app",
-    "footer_confidential": "Ang mensahe na ito ay naglalaman ng confidential na impormasyon na nagiging trade secret ng Everest International Service Group sp. z o.o. na nakabase sa Warsaw at legal na protektado. Ang pag-access sa nilalaman ng mensahe na natanggap nang aksidente, ang pag-forward, kopya, pagkalat, o anumang ibang paggamit, o paggawa ng anumang aksyon batay sa impormasyon na nasa loob, kahit ng mga taong tumanggap nito, nang walang nakasulat na pahintulot mula sa Everest International Service Group sp. z o.o. ay ipinagbabawal ng batas. Ang paglabag sa itaas na babala ay magdudulot ng sibil at kriminal na pananagutan.",
-    "unsubscribe": "Kung ayaw mo nang tumanggap ng ganitong notifikasyon,",
-    "unsubscribe_link": "i-click dito para i-unsubscribe."
+    "title": "",
+    "body": "",
+    "app_name": "",
+    "footer_app_link": "",
+    "footer_confidential": "",
+    "unsubscribe": "",
+    "unsubscribe_link": ""
   },
-  "admin_notification": {
-    "email_subject": "Mensahe mula sa fleet administrator",
-    "push_title": "Bagong mensahe mula sa administrator"
+  "vehicle_document_expiring": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "action_required": "",
+    "footer": ""
+  },
+  "vehicle_document_expired": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "consequence": "",
+    "footer": ""
+  },
+  "push_enabled": {
+    "title": "",
+    "body": ""
+  },
+  "template_notification": {
+    "title": "",
+    "body": ""
   }
 }

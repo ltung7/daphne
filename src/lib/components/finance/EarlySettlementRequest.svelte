@@ -8,9 +8,10 @@
 		driverId: string;
 		driverName: string;
 		balance: number;
+		onsuccess?: (id: string | undefined) => void;
 	}
 
-	let { driverId, driverName, balance }: Props = $props();
+	let { driverId, driverName, balance, onsuccess }: Props = $props();
 
 	let isOpen = $state(false);
 	let formComponent = $state<ReturnType<typeof EarlySettlementForm>>();
@@ -26,10 +27,14 @@
 	async function handleSubmit() {
 		await formComponent?.submit();
 	}
+
+	function handleSuccess (id: string | undefined) {
+		onsuccess?.(id)
+	}
 </script>
 
 <IconButton icon="fee" caption={m.early_settlement_request()} size={6} onclick={openModal} />
 
 <ClosableModal {isOpen} toggle={closeModal} headerText={m.early_settlement_request()} size="md" buttonCaption={m.submit()} onClick={handleSubmit}>
-	<EarlySettlementForm {driverId} {driverName} {balance} bind:this={formComponent} onsuccess={closeModal} />
+	<EarlySettlementForm {driverId} {driverName} {balance} bind:this={formComponent} onsuccess={handleSuccess} />
 </ClosableModal>

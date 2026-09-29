@@ -3,32 +3,8 @@
     "title": "Скиньте свій пароль",
     "contents": "Натисніть кнопку нижче, щоб створити новий пароль для свого облікового запису:",
     "footer": "Посилання закінчується через 1 годину. Якщо ви не запитували скидання пароля, проігноруйте цей лист.",
-    "button_text": "Скинути пароль"
-  },
-  "settlement": {
-    "title": "Розрахунок за період {period}",
-    "greeting": "Шановний {driverName},",
-    "summary": "Нижче наведено деталі вашого розрахунку:",
-    "gross_earnings": "Загальний заробіток (Uber/Bolt)",
-    "platform_commission": "Кomisія платформи",
-    "fleet_provision": "Провізія флоту",
-    "cost_deductions": "Операційні витрати",
-    "net_payout": "Чиста виплата",
-    "footer": "Якщо у вас є питання, зверніться до адміністратора флоту."
-  },
-  "vehicle_assignment": {
-    "title": "Призначено новий транспорт",
-    "greeting": "Шановний {driverName},",
-    "body": "Вас призначено до транспорту {vehicleRegistration} ({vehicleMakeModel}).",
-    "handover_date": "Дата передачі: {date}",
-    "footer": "Будь ласка, підтвердіть отримання транспорту."
-  },
-  "vehicle_return": {
-    "title": "Повернення транспорту підтверджено",
-    "greeting": "Шановний {driverName},",
-    "body": "Повернення транспорту {vehicleRegistration} зафіксовано.",
-    "return_date": "Дата повернення: {date}",
-    "footer": "Дякуємо за співпрацю."
+    "button_text": "Скинути пароль",
+    "body": ""
   },
   "driver_document_expiring": {
     "title": "Документ скоро закінчується",
@@ -44,52 +20,52 @@
     "consequence": "Ваш обліковий запис може бути обмежений до відновлення.",
     "footer": "Зверніться до адміністратора для відновлення."
   },
-  "balance_negative": {
-    "title": "Негативний баланс рахунку",
-    "greeting": "Шановний {driverName},",
-    "body": "Ваш баланс становить {balance} PLN. Будь ласка, сплатіть заборгованість.",
-    "footer": "Будь ласка, терміново зверніться до адміністратора."
+  "admin_notification": {
+    "title": "Message from fleet administrator",
+    "body": "{message}",
+    "email_subject": "Message from fleet administrator",
+    "push_title": "New message from administrator"
   },
-  "penalty_added": {
-    "title": "Додано штраф",
-    "greeting": "Шановний {driverName},",
-    "body": "Нараховано штраф у розмірі {amount} PLN за: {reason}.",
-    "footer": "Деталі в панелі водія."
+  "early_settlement_requested": {
+    "title": "Новий запит на достроковий розрахунок",
+    "body": "Водій {driverName} надіслав запит на достроковий розрахунок на суму {requestedAmount} PLN.",
+    "action_required": "Будь ласка, перегляньте запит у панелі адміністратора."
   },
-  "inspection_due": {
-    "title": "Нагадування: техогляд транспорту",
-    "greeting": "Шановний {driverName},",
-    "body": "Техогляд транспорту {vehicleRegistration} заплановано на {date}.",
-    "footer": "Будь ласка, пройдіть техогляд вчасно."
-  },
-  "inspection_overdue": {
-    "title": "Техогляд транспорту протерміновано",
-    "greeting": "Шановний {driverName},",
-    "body": "Техогляд транспорту {vehicleRegistration} був запланований на {date} і не був пройдений.",
-    "consequence": "Транспорт може бути виведений з експлуатації.",
-    "footer": "Негайно пройдіть техогляд."
-  },
-  "onboarding_approved": {
-    "title": "Верифікацію успішно завершено",
-    "greeting": "Шановний {driverName},",
-    "body": "Ваш обліковий запис верифіковано. Ви можете починати роботу.",
-    "footer": "Ласкаво просимо до співпраці."
-  },
-  "onboarding_rejected": {
-    "title": "Верифікацію відхилено",
-    "greeting": "Шановний {driverName},",
-    "body": "Вашу верифікацію відхилено. Причина: {reason}.",
-    "footer": "Зверніться до адміністратора за деталями."
+  "early_settlement_info": {
+    "title": "Статус дострокового розрахунку: {status}",
+    "greeting": "Шановний(а) {driverName},",
+    "body": "Ваш запит на достроковий розрахунок на суму {requestedAmount} PLN було {status}.",
+    "footer": "Якщо у вас виникли запитання, зверніться до адміністратора автопарку."
   },
   "common": {
-    "app_name": "EISG",
-    "footer_app_link": "Сповіщення з додатку",
-    "footer_confidential": "Це повідомлення містить конфіденційну інформацію, що є комерційною таємницею ТОВ «Everest International Service Group» з зареєстрованою адресою у Варшаві і є правово захищеною. Отримання доступу до вмісту повідомлення, одержаного помилково, його подальша передача, копіювання, розповсюдження або будь-яке інше використання, а також вчинення будь-яких дій на основі у ньому міститься інформації, навіть особами, якими є його належними адресатами, без попередньої письмової згоди ТОВ «Everest International Service Group» є правово забороненою. Недотримання вищезазначеного заборону тягне за собою притягнення до цивільно-правової та кримінальної відповідальності.",
-    "unsubscribe": "Якщо ви не хочете отримувати такі сповіщення,",
-    "unsubscribe_link": "натисніть тут, щоб відмовитися від підписки."
+    "title": "",
+    "body": "",
+    "app_name": "",
+    "footer_app_link": "",
+    "footer_confidential": "",
+    "unsubscribe": "",
+    "unsubscribe_link": ""
   },
-  "admin_notification": {
-    "email_subject": "Повідомлення від адміністратора флоту",
-    "push_title": "Нове повідомлення від адміністратора"
+  "vehicle_document_expiring": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "action_required": "",
+    "footer": ""
+  },
+  "vehicle_document_expired": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "consequence": "",
+    "footer": ""
+  },
+  "push_enabled": {
+    "title": "",
+    "body": ""
+  },
+  "template_notification": {
+    "title": "",
+    "body": ""
   }
 }

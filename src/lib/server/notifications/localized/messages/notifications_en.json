@@ -3,32 +3,8 @@
     "title": "Reset your password",
     "contents": "Click the button below to create a new password for your account:",
     "footer": "The link expires after 1 hour. If you did not request a password reset, please ignore this email.",
-    "button_text": "Reset Password"
-  },
-  "settlement": {
-    "title": "Settlement for period {period}",
-    "greeting": "Dear {driverName},",
-    "summary": "Below are the details of your settlement:",
-    "gross_earnings": "Gross earnings (Uber/Bolt)",
-    "platform_commission": "Platform commission",
-    "fleet_provision": "Fleet provision",
-    "cost_deductions": "Operational costs",
-    "net_payout": "Net payout",
-    "footer": "If you have any questions, please contact the fleet administrator."
-  },
-  "vehicle_assignment": {
-    "title": "New vehicle assigned",
-    "greeting": "Dear {driverName},",
-    "body": "You have been assigned to vehicle {vehicleRegistration} ({vehicleMakeModel}).",
-    "handover_date": "Handover date: {date}",
-    "footer": "Please confirm receipt of the vehicle."
-  },
-  "vehicle_return": {
-    "title": "Vehicle return confirmed",
-    "greeting": "Dear {driverName},",
-    "body": "Return of vehicle {vehicleRegistration} has been recorded.",
-    "return_date": "Return date: {date}",
-    "footer": "Thank you for your cooperation."
+    "button_text": "Reset Password",
+    "body": ""
   },
   "driver_document_expiring": {
     "title": "Document expiring soon",
@@ -44,57 +20,53 @@
     "consequence": "Your account may be restricted until renewal.",
     "footer": "Contact the administrator to renew."
   },
-  "balance_negative": {
-    "title": "Negative account balance",
-    "greeting": "Dear {driverName},",
-    "body": "Your balance is {balance} PLN. Please settle outstanding amounts.",
-    "footer": "Please contact the administrator urgently."
-  },
-  "penalty_added": {
-    "title": "Penalty added",
-    "greeting": "Dear {driverName},",
-    "body": "A penalty of {amount} PLN has been applied for: {reason}.",
-    "footer": "Details available in the driver panel."
-  },
-  "inspection_due": {
-    "title": "Reminder: vehicle inspection due",
-    "greeting": "Dear {driverName},",
-    "body": "Inspection for vehicle {vehicleRegistration} is scheduled for {date}.",
-    "footer": "Please complete the inspection on time."
-  },
-  "inspection_overdue": {
-    "title": "Vehicle inspection overdue",
-    "greeting": "Dear {driverName},",
-    "body": "Inspection for vehicle {vehicleRegistration} was due on {date} and was not completed.",
-    "consequence": "Vehicle may be taken out of service.",
-    "footer": "Complete inspection immediately."
-  },
-  "onboarding_approved": {
-    "title": "Verification completed successfully",
-    "greeting": "Dear {driverName},",
-    "body": "Your account has been verified. You can start working.",
-    "footer": "Welcome aboard."
-  },
-  "onboarding_rejected": {
-    "title": "Verification rejected",
-    "greeting": "Dear {driverName},",
-    "body": "Your verification was rejected. Reason: {reason}.",
-    "footer": "Contact the administrator for details."
-  },
   "push_enabled": {
     "title": "Push Notifications Enabled",
     "greeting": "Dear {driverName},",
     "body": "You have successfully enabled push notifications for this device."
   },
   "admin_notification": {
+    "title": "Message from fleet administrator",
+    "body": "{message}",
     "email_subject": "Message from fleet administrator",
     "push_title": "New message from administrator"
   },
+  "template_notification": {
+    "title": "Template Notification",
+    "body": "This is a template notification with custom data: {customField}"
+  },
+  "early_settlement_requested": {
+    "title": "New Early Settlement Request",
+    "body": "Driver {driverName} has requested an early settlement of {requestedAmount} PLN.",
+    "action_required": "Please review the request in the admin panel."
+  },
+  "early_settlement_info": {
+    "title": "Early Settlement Status: {status}",
+    "greeting": "Dear {driverName},",
+    "body": "Your early settlement request for {requestedAmount} PLN has been {status}.",
+    "footer": "If you have any questions, please contact the fleet administrator."
+  },
   "common": {
-    "app_name": "EISG",
-    "footer_app_link": "Notification from",
-    "footer_confidential": "This message contains confidential information constituting a trade secret of Everest International Service Group sp. z o.o. with its registered office in Warsaw and is legally protected. Access to the content of this message received by mistake, its further transmission, copying, distribution or any other use, or taking any action based on the information contained therein, even by persons being its intended recipients, without the prior written consent of Everest International Service Group sp. z o.o. is legally prohibited. Failure to comply with the above prohibition shall result in civil and criminal liability.",
-    "unsubscribe": "If you don't want to receive such notifications,",
-    "unsubscribe_link": "click here to unsubscribe."
+    "title": "",
+    "body": "",
+    "app_name": "",
+    "footer_app_link": "",
+    "footer_confidential": "",
+    "unsubscribe": "",
+    "unsubscribe_link": ""
+  },
+  "vehicle_document_expiring": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "action_required": "",
+    "footer": ""
+  },
+  "vehicle_document_expired": {
+    "title": "",
+    "greeting": "",
+    "body": "",
+    "consequence": "",
+    "footer": ""
   }
 }

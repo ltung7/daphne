@@ -3,6 +3,9 @@ import { getCurrentBalance } from '$lib/server/db/firebase/driverBalanceEvents.f
 import { addEarlySettlement, getEarlySettlement, setEarlySettlement } from '$lib/server/db/firebase/earlySettlements.fdb';
 import { EARLY_SETTLEMENT_FEE_RATE } from '$lib/assets/constants';
 import { db } from '$lib/server/db/firebase/firebase';
+import { getDriver } from '$lib/server/db/firebase/drivers.fdb';
+import { sendEarlySettlementRequestedNotification } from '$lib/server/notifications/driver/earlySettlementRequestedNotification';
+import { sendEarlySettlementInfoNotification } from '$lib/server/notifications/driver/earlySettlementInfoNotification';
 
 interface CreateEarlySettlementParams {
 	driverId: string;
@@ -63,6 +66,19 @@ export async function createEarlySettlement(params: CreateEarlySettlementParams)
 		...earlySettlementData
 	};
 
+	try {
+		const driver = await getDriver(driverId);
+		if (driver) {
+			await sendEarlySettlementRequestedNotification(
+				driver as unknown as App.BaseContact,
+				{ driverName, requestedAmount },
+				driverId === createdBy ? 'driver_app' : 'admin_manual'
+			);
+		}
+	} catch (e) {
+		console.error('Failed to send early settlement requested notification', e);
+	}
+
 	return { earlySettlement };
 }
 
@@ -99,6 +115,23 @@ export async function rejectEarlySettlement(
 		rejectedByName,
 		rejectionReason: reason
 	});
+
+	try {
+		const driver = await getDriver(earlySettlement.driverId);
+		if (driver) {
+			await sendEarlySettlementInfoNotification(
+				driver as unknown as App.BaseContact,
+				{ 
+					driverName: earlySettlement.driverName, 
+					requestedAmount: earlySettlement.requestedAmount, 
+					status: 'rejected' 
+				},
+				'admin_manual'
+			);
+		}
+	} catch (e) {
+		console.error('Failed to send early settlement info notification (rejected)', e);
+	}
 }
 
 export async function approveEarlySettlement(
@@ -196,4 +229,24 @@ export async function approveEarlySettlement(
 		};
 		transaction.set(feeEventRef, feeEvent);
 	});
+
+	try {
+		const firestore = db();
+		const esDoc = await firestore.collection('earlySettlements').doc(id).get();
+		const esData = esDoc.data() as DriverBalance.EarlySettlement;
+		const driver = await getDriver(esData.driverId);
+		if (driver) {
+			await sendEarlySettlementInfoNotification(
+				driver as unknown as App.BaseContact,
+				{ 
+					driverName: esData.driverName, 
+					requestedAmount: esData.requestedAmount, 
+					status: 'approved' 
+				},
+				'admin_manual'
+			);
+		}
+	} catch (e) {
+		console.error('Failed to send early settlement info notification (approved)', e);
+	}
 }

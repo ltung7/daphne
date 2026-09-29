@@ -30,3 +30,18 @@ export {
     sendAdminNotification,
     type AdminNotificationData
 } from './driver/adminNotification';
+export {
+    templateNotification,
+    sendTemplateNotification,
+    type TemplateNotificationData
+} from './driver/templateNotification';
+export {
+    earlySettlementRequestedNotification,
+    sendEarlySettlementRequestedNotification,
+    type EarlySettlementRequestedData
+} from './driver/earlySettlementRequestedNotification';
+export {
+    earlySettlementInfoNotification,
+    sendEarlySettlementInfoNotification,
+    type EarlySettlementInfoData
+} from './driver/earlySettlementInfoNotification';
