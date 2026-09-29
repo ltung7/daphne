@@ -1,13 +1,15 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+	import type { Snippet } from 'svelte';
+	import IconLink from './IconLink.svelte';
 
 	interface Props {
 		title: string;
+		back?: string;
 		subtitle?: string;
 		children?: Snippet;
 	}
 
-	let { title, subtitle, children }: Props = $props();
+	let { title, subtitle, back, children }: Props = $props();
 </script>
 
 <svelte:head>
@@ -25,5 +27,7 @@
 		<div>
 			{@render children?.()}
 		</div>
+	{:else if back?.length}
+		<IconLink icon="left" color="dark" caption="Powrót do listy" href={back} />
 	{/if}
 </div>
