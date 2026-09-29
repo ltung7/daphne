@@ -16,7 +16,8 @@ import { pushEnabledNotification, type PushEnabledData } from './driver/pushEnab
 import { adminNotification, type AdminNotificationData } from './driver/adminNotification';
 import { templateNotification, type TemplateNotificationData } from './driver/templateNotification';
 import { earlySettlementRequestedNotification, type EarlySettlementRequestedData } from './driver/earlySettlementRequestedNotification';
-import { earlySettlementInfoNotification, type EarlySettlementInfoData } from './driver/earlySettlementInfoNotification';
+import { earlySettlementApprovedNotification, type EarlySettlementApprovedData } from './driver/earlySettlementApprovedNotification';
+import { earlySettlementRejectedNotification, type EarlySettlementRejectedData } from './driver/earlySettlementRejectedNotification';
 
 const testReceiver: App.BaseContact = {
     email: 'tomasz.le@finnergroup.com',
@@ -36,7 +37,8 @@ const notificationsMap: Partial<Record<App.NotificationType, NotificationDefinit
     admin_notification: adminNotification,
     template_notification: templateNotification,
     early_settlement_requested: earlySettlementRequestedNotification,
-    early_settlement_info: earlySettlementInfoNotification,
+    early_settlement_approved: earlySettlementApprovedNotification,
+    early_settlement_rejected: earlySettlementRejectedNotification,
 };
 
 const defaultTestData: Record<App.NotificationType, any> = {
@@ -78,12 +80,12 @@ const defaultTestData: Record<App.NotificationType, any> = {
         registrationNumber: 'WA12345'
     } as VehicleDocumentExpiringData,
 
-    /** TODO: Test notification */
+    /** Tested 29.09 */
     push_enabled: {
         deviceDetails: 'iPhone 13, iOS 15'
     } as PushEnabledData,
 
-    /** TODO: Test notification */
+    /** Tested 29.09 */
     admin_notification: {
         subject: 'Test Admin Alert',
         message: 'This is a test notification from the admin system.',
@@ -95,18 +97,23 @@ const defaultTestData: Record<App.NotificationType, any> = {
         customField: 'Test Custom Field Value'
     } as TemplateNotificationData,
 
-    /** TODO: Test notification */
+    /** Tested 29.09 */
     early_settlement_requested: {
         driverName: 'Jan Kowalski',
         requestedAmount: 500
     } as EarlySettlementRequestedData,
 
-    /** TODO: Test notification */
-    early_settlement_info: {
+    /** Tested 29.09 */
+    early_settlement_approved: {
         driverName: 'Jan Kowalski',
-        requestedAmount: 500,
-        status: 'approved'
-    } as EarlySettlementInfoData
+        requestedAmount: 500
+    } as EarlySettlementApprovedData,
+
+    /** Tested 29.09 */
+    early_settlement_rejected: {
+        driverName: 'Jan Kowalski',
+        requestedAmount: 500
+    } as EarlySettlementRejectedData
 };
 
 export const sendTestNotification = async <TData = any>(

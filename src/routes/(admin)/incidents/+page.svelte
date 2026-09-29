@@ -175,16 +175,16 @@
 				<td class="fw-bold py-1">
 					{incident.title}
 				</td>
-				<td class="py-1">
+				<td class="py-1 text-center">
 					<IncidentSeverityBadge severity={incident.severity} small />
 				</td>
-				<td class="py-1">
+				<td class="py-1 text-center">
 					<IncidentStatusBadge status={incident.status} small />
 				</td>
-				<td class="py-1">
+				<td class="py-1 text-center">
 					<IncidentCategoryBadge category={incident.category} small />
 				</td>
-				<td class="py-1">
+				<td class="py-1 text-center">
 					<IncidentSourceBadge source={incident.source} small />
 				</td>
 			{/snippet}

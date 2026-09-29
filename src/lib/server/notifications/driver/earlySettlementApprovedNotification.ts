@@ -1,13 +1,12 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessage, interpolate } from '../localized/localizedMailerMessages';
+import { getBaseMessageAndTitle } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
-export interface EarlySettlementInfoData {
+export interface EarlySettlementApprovedData {
     driverName: string;
     requestedAmount: number;
-    status: 'approved' | 'rejected';
 }
 
 const channels = prepareNotificationChannels({
@@ -15,17 +14,16 @@ const channels = prepareNotificationChannels({
     incidentCategory: false // Just an info to driver, no incident needed
 });
 
-export const earlySettlementInfoNotification: NotificationDefinition<EarlySettlementInfoData> = {
-    id: 'early_settlement_info',
+export const earlySettlementApprovedNotification: NotificationDefinition<EarlySettlementApprovedData> = {
+    id: 'early_settlement_approved',
     priority: 'low',
-    getBaseMessage,
+    client: true,
+    admin: false,
+    getBaseMessage: getBaseMessageAndTitle,
     email: (data, ctx) => {
         return {
             subject: ctx.title,
             htmlBody: `
-                <p style="font-size: 16px; margin-bottom: 16px;">
-                    ${interpolate(ctx.m.greeting, { driverName: ctx.user.name })}
-                </p>
                 <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
                     ${ctx.body}
                 </p>
@@ -38,10 +36,10 @@ export const earlySettlementInfoNotification: NotificationDefinition<EarlySettle
     ...channels
 };
 
-export async function sendEarlySettlementInfoNotification(
+export async function sendEarlySettlementApprovedNotification(
     user: App.BaseContact, 
-    data: EarlySettlementInfoData,
+    data: EarlySettlementApprovedData,
     incidentSource: App.Incident.Source = 'system'
 ): Promise<void> {
-    return sendNotification(user, earlySettlementInfoNotification, data, incidentSource);
+    return sendNotification(user, earlySettlementApprovedNotification, data, incidentSource);
 }
