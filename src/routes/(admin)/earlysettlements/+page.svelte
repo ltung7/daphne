@@ -57,7 +57,7 @@
 </PageTitle>
 
 <div class="card">
-	<div class="card-body text-center">
+	<div class="card-body text-center p-0">
 		<DatatableWrapper {loaded} data={earlySettlements} {headers} hasTimestamp>
 			{#snippet row(row)}
 				<td class="py-1">

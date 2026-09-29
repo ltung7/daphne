@@ -3,7 +3,6 @@
 	import type { PageProps } from './$types';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import { plTimezone } from '$lib/utils/tz';
 	import CustomFormRoleSelect from '$lib/form/CustomFormRoleSelect.svelte';
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
@@ -23,9 +22,7 @@
 	};
 </script>
 
-<PageTitle title="Użytkownik {user.name}" subtitle="Rola: {user.role}">
-	<IconLink icon="left" caption="Powrót do listy" href="/users" />
-</PageTitle>
+<PageTitle title="Użytkownik {user.name}" subtitle="Rola: {user.role}" back="/users" />
 
 <SectionCard title="Dane użytkownika">
 	<div class="row mb-3">

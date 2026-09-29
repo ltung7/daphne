@@ -37,12 +37,12 @@
 	onMount(loadData);
 </script>
 
-<PageTitle title="Wydania pojazdów" subtitle="Lista protokołów zdawczo odboirczych">
+<PageTitle title="Wydania pojazdów" subtitle="Lista protokołów zdawczo odbiorczych">
 	<IconLink icon="add" caption="Nowy protokół" href="/handovers/new" />
 </PageTitle>
 
 <div class="card">
-	<div class="card-body text-center">
+	<div class="card-body text-center p-0">
 		<DatatableWrapper {loaded} data={handovers} {headers} hasTimestamp>
 			{#snippet row(row)}
 				<td class="py-1">

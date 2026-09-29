@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { m } from '$lib/paraglide/messages.js';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import SearchBar from '$lib/misc/SearchBar.svelte';
 	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
@@ -46,9 +45,7 @@
 	};
 </script>
 
-<PageTitle title={m.early_settlement_request()} subtitle={m.early_settlement_payout_info()}>
-	<IconLink icon="left" caption="Powrót" href="/earlysettlements" />
-</PageTitle>
+<PageTitle title={m.early_settlement_request()} subtitle={m.early_settlement_payout_info()} back="/earlysettlements" />
 
 <div class="card">
 	<div class="card-body">

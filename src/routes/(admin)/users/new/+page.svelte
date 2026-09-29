@@ -3,7 +3,6 @@
 	import { newUserSchema } from '$lib/assets/zodschemas/newuser.zod';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import { goto } from '$app/navigation';
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
@@ -33,9 +32,7 @@
 	};
 </script>
 
-<PageTitle title="Nowy użytkownik" subtitle="Utwórz nowego użytkownika systemu">
-	<IconLink icon="left" caption="Powrót do listy" href="/users" />
-</PageTitle>
+<PageTitle title="Nowy użytkownik" subtitle="Utwórz nowego użytkownika systemu" back="/users" />
 
 <CardForm item={user} cleanItem={cleanUser} {onResponse} {onReset} {beforeSubmit} schema={newUserSchema} name="user">
 	{#snippet children({ errors, touch })}

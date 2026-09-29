@@ -10,7 +10,7 @@
 	let type = $state(untrack(() => data.vehicleType));
 </script>
 
-<PageTitle title={type.name} subtitle="Szczegóły typu pojazdu" />
+<PageTitle title={type.name} subtitle="Szczegóły typu pojazdu" back="/vehicletypes" />
 
 <SectionCard title="Konfiguracja wspólna">
 	<div class="d-flex">

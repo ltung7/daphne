@@ -17,7 +17,6 @@
 	import { cleanVehicleType } from '$lib/assets/cleanItems';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import { fuelNames } from '$lib/assets/constants';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import { TabContent, TabPane } from '@sveltestrap/sveltestrap';
 	import IconButton from '$lib/misc/IconButton.svelte';
@@ -104,9 +103,7 @@
 	}
 </script>
 
-<PageTitle title="Nowy rodzaj pojazdu" subtitle="Dodaj nowy typ pojazdu do systemu">
-	<IconLink icon="left" caption="Powrót do listy" href="/vehicletypes" />
-</PageTitle>
+<PageTitle title="Nowy rodzaj pojazdu" subtitle="Dodaj nowy typ pojazdu do systemu" back="/vehicletypes" />
 
 <TabContent class="card">
 	<TabPane class="card-body" tabId="ai" tab="Generuj AI" active>

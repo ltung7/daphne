@@ -5,7 +5,6 @@
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
 	import { internal } from '$lib/nav/internal';
-	import { goto } from '$app/navigation';
 	import { untrack } from 'svelte';
 
 	interface Props {
@@ -87,9 +86,7 @@
 	}
 </script>
 
-<PageTitle title="Wniosek o wcześniejsze rozliczenie" subtitle={earlySettlement.id}>
-	<IconButton icon="arrow-left" caption="Wróć do listy" color="secondary" outline onclick={() => goto('/earlysettlements')} />
-</PageTitle>
+<PageTitle title="Wniosek o wcześniejsze rozliczenie" subtitle={earlySettlement.id} back="/earlysettlements" />
 
 <div class="row">
 	<div class={isRequested ? "col-md-8" : "col-md-12"}>

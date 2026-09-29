@@ -55,7 +55,7 @@
 	</div>
 {/snippet}
 
-<PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczegóły zarejestrowanego kierowcy" />
+<PageTitle title="Dane kierowcy {driver.name}" subtitle="Szczegóły zarejestrowanego kierowcy" back="/drivers" />
 
 <PageTopActions>
 	<DriverStatusChanger {driver} {documents} {onstatuschanged} />

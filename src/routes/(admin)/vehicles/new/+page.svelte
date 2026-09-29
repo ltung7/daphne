@@ -91,9 +91,7 @@
 	});
 </script>
 
-<PageTitle title="Nowy pojazd" subtitle="Wprowadź dane nowego pojazdu do systemu">
-	<IconLink icon="left" caption="Powrót do listy" href="/vehicles" />
-</PageTitle>
+<PageTitle title="Nowy pojazd" subtitle="Wprowadź dane nowego pojazdu do systemu" back="/vehicles" />
 
 <CardForm item={vehicle} cleanItem={cleanVehicle} {onResponse} {testData}>
 	<div class="flex-between">

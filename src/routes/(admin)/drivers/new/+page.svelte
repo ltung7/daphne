@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { cleanDriver } from '$lib/assets/cleanItems';
 	import { onMount } from 'svelte';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import { goto } from '$app/navigation';
@@ -92,9 +91,7 @@
 	};
 </script>
 
-<PageTitle title="Nowy kierowca" subtitle="Wprowadź dane nowego kierowcy do systemu">
-	<IconLink icon="left" caption="Powrót do listy" href="/drivers" />
-</PageTitle>
+<PageTitle title="Nowy kierowca" subtitle="Wprowadź dane nowego kierowcy do systemu" back="/drivers" />
 
 <DriverForm bind:item={driver} bind:this={driverFormRef} cleanItem={cleanDriver} {onResponse} {onReset} {testData} schema={newDriverDataSchema} />
 

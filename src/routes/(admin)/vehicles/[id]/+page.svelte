@@ -59,7 +59,7 @@
 	};
 </script>
 
-<PageTitle title="Dane pojazdu {vehicle.registrationNumber}" subtitle="Szczególy pojazdu" />
+<PageTitle title="Dane pojazdu {vehicle.registrationNumber}" subtitle="Szczególy pojazdu" back="/vehicles" />
 
 <PageTopActions>
 	<VehicleStatusChanger {vehicle} type={data.type} {documents} {onstatuschanged} />

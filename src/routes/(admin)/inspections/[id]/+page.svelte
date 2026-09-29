@@ -3,7 +3,6 @@
 	import type { PageProps } from './$types';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import { plTimezone } from '$lib/utils/tz';
 	import { ALL_INSPECTION_ITEMS } from '$lib/components/inspection/inspection';
 	import ImageFallback from '$lib/misc/ImageFallback.svelte';
@@ -19,9 +18,7 @@
 	const keyFromIndex = (index: any, key: any) => index[key];
 </script>
 
-<PageTitle title="Inspekcja {inspection.registrationNumber}" subtitle="{inspection.monthly ? 'Miesięczna' : 'Codzienna'} inspekcja">
-	<IconLink icon="left" caption="Powrót do listy" href="/inspections" />
-</PageTitle>
+<PageTitle title="Inspekcja {inspection.registrationNumber}" subtitle="{inspection.monthly ? 'Miesięczna' : 'Codzienna'} inspekcja" back="/inspections" />
 
 <SectionCard title="Dane inspekcji">
 	<div class="row mb-3">
