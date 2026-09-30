@@ -5,12 +5,13 @@
 	import { internal } from '$lib/nav/internal';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
+	import IconButton from '$lib/misc/IconButton.svelte';
 
 	let earlySettlements: DriverBalance.EarlySettlement[] = $state([]);
 	let loaded = $state(false);
 
-	const loadData = () => {
-		internal.get('/earlysettlements/api').then((response) => {
+	const loadData = (force: boolean = false) => {
+		internal.getApi({}, force).then((response) => {
 			earlySettlements = response.earlySettlements;
 			loaded = true;
 		});
@@ -26,22 +27,32 @@
 	];
 
 	function getStatusBadgeClass(status: string) {
-		switch(status) {
-			case 'requested': return 'bg-info';
-			case 'approved': return 'bg-success';
-			case 'rejected': return 'bg-danger';
-			case 'cancelled': return 'bg-secondary';
-			default: return 'bg-dark';
+		switch (status) {
+			case 'requested':
+				return 'bg-dark';
+			case 'approved':
+				return 'bg-success';
+			case 'rejected':
+				return 'bg-danger';
+			case 'cancelled':
+				return 'bg-secondary';
+			default:
+				return 'bg-dark';
 		}
 	}
 
 	function getStatusLabel(status: string) {
-		switch(status) {
-			case 'requested': return 'Oczekujący';
-			case 'approved': return 'Zatwierdzony';
-			case 'rejected': return 'Odrzucony';
-			case 'cancelled': return 'Anulowany';
-			default: return status;
+		switch (status) {
+			case 'requested':
+				return 'Oczekujący';
+			case 'approved':
+				return 'Zatwierdzony';
+			case 'rejected':
+				return 'Odrzucony';
+			case 'cancelled':
+				return 'Anulowany';
+			default:
+				return status;
 		}
 	}
 
@@ -53,7 +64,10 @@
 </script>
 
 <PageTitle title="Wcześniejsze rozliczenia" subtitle="Lista wniosków o wcześniejsze rozliczenie">
-	<IconLink size={5} icon="add" href="/earlysettlements/new" caption="Nowy wniosek" />
+	<div class="flex-center gap-3">
+		<IconButton size={5} icon="refresh" caption="Odśwież" onclick={() => loadData(true)} />
+		<IconLink size={5} icon="add" href="/earlysettlements/new" caption="Nowy wniosek" />
+	</div>
 </PageTitle>
 
 <div class="card">

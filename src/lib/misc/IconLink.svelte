@@ -17,7 +17,7 @@
     }
 
     let {
-        class: className = $bindable(''),
+        class: className = $bindable('mb-0'),
         onClick = undefined,
         color = 'primary',
         outline = false,

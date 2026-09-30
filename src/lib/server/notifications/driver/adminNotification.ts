@@ -1,7 +1,6 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { NOTIFICATION_ICON } from '$lib/assets/constants';
-import { PUBLIC_URL } from '$env/static/public';
 
 export interface AdminNotificationData {
     subject?: string;
@@ -33,7 +32,7 @@ export const adminNotification: NotificationDefinition<AdminNotificationData> = 
             title: data.subject || m.push_title,
             body: data.message.substring(0, 100),
             icon: NOTIFICATION_ICON,
-            click_action: PUBLIC_URL
+            click_action: '/driver'
         };
     },
 };

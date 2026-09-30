@@ -238,6 +238,7 @@ declare global {
 			status: Status; // available | assigned | broken | unmovable | etc.
 			assignedDriverName?: string; // Driver name if currently assigned
 			assignedDriverId?: string; // Driver ID if currently assigned
+			handoverId?: string; // Handover document ID that assigned this vehicle
 			fuelConsumption?: number; // L/100km avg for this vehicle
 			taxiRegistration?: number;
 
@@ -636,6 +637,7 @@ declare global {
 				model: string;              // e.g., "Toyota Yaris"
 				imageUrl?: string;           // URL to vehicle image
 				timestamp: number;
+				handoverId: string;          // Handover document ID
 			}
 
 			status: Status; // Must match enum defined elsewhere
@@ -804,6 +806,11 @@ declare global {
 			printed?: number;
 			closed: false | number;
 			url?: string;
+
+			// Unilateral fields (uses base HandoverDocument for mileage, fuel, place, etc.)
+			witness?: string;
+			reasonForRecovery?: string;
+			foundItems?: string[]; // Driver's personal items found in vehicle
 		}
 
 		type HandoverImageType = 'signedprintout' | 'image';

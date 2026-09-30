@@ -13,6 +13,7 @@
 		limit?: number;
 		fetchUrl: string;
 		list?: string; // The property name in the response containing the array (e.g. 'events')
+		lastUpdate?: number;
 
 		// Data resolvers
 		getIcon?: (item: T) => string;
@@ -23,7 +24,7 @@
 		moreDetails?: Snippet<[T]>;
 	}
 
-	let { header, buttonCaption, limit = 10, fetchUrl, list = 'events', getIcon, getColor, listItem, moreDetails }: Props = $props();
+	let { header, buttonCaption, limit = 10, fetchUrl, list = 'events', getIcon, getColor, listItem, moreDetails, lastUpdate }: Props = $props();
 
 	let items = $state<Array<T>>([]);
 	let loading = $state(false);
@@ -33,7 +34,8 @@
 	let offset = $state(0);
 	let isOpen = $state(false);
 	let modalIsOpen = $state(false);
-	let detail: T | undefined = $state()
+	let detail: T | undefined = $state();
+	let lastUpdateStore = $state(0)
 
 	const open = async () => {
 		isOpen = true;
@@ -49,7 +51,7 @@
 		error = null;
 
 		try {
-			const response = await internal.get(fetchUrl, { limit, offset: newOffset });
+			const response = await internal.get(fetchUrl, { limit, offset: newOffset, lastUpdate });
 			if (!response) {
 				throw new Error('Failed to fetch data');
 			}
@@ -85,6 +87,12 @@
 	const loadMore = () => {
 		loadItems(offset, true);
 	};
+
+	$effect(() => {
+		if (!lastUpdate || lastUpdateStore === lastUpdate) return;
+		lastUpdateStore = lastUpdate;
+		items = [];
+	})
 </script>
 
 <IconButton size={6} icon="pending" caption={buttonCaption} onclick={open} />

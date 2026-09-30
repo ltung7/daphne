@@ -40,13 +40,15 @@ export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Pr
 	const updateVehicleData: Partial<Vehicle.Vehicle> = {
 		assignedDriverId: driverId,
 		assignedDriverName: driverName,
+		handoverId: handoverId,
 		status: 'assigned'
 	}
 	const updateDriverData: Partial<Driver.Driver> = {
 		assignedVehicle: {
 			model,
 			registrationNumber,
-			timestamp
+			timestamp,
+			handoverId
 		}
 	}
 	if (imageUrl && updateDriverData.assignedVehicle) updateDriverData.assignedVehicle.imageUrl = imageUrl;

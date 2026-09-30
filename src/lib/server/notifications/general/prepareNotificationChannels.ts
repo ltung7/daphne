@@ -1,5 +1,4 @@
 import type { NotificationContext, NotificationDefinition } from '../types';
-import { PUBLIC_URL } from '$env/static/public';
 import { NOTIFICATION_ICON } from '$lib/assets/constants';
 
 type ChannelType = 'sms' | 'push' | 'inapp' | 'incident';
@@ -29,7 +28,7 @@ export function prepareNotificationChannels(
                 title: ctx.title,
                 body: ctx.body,
                 icon: config.pushIcon ?? NOTIFICATION_ICON,
-                click_action: config.action ?? PUBLIC_URL
+                click_action: config.action ?? '/'
             };
         };
     }

@@ -5,9 +5,10 @@
 
 	interface Props {
 		driverId: string;
+		lastUpdate: number;
 	}
 
-	let { driverId }: Props = $props();
+	let { driverId, lastUpdate }: Props = $props();
 
 	const formatPLN = (amount: number): string => {
 		return new Intl.NumberFormat('pl-PL', {
@@ -19,7 +20,7 @@
 	};
 </script>
 
-<OffcanvasTimeline header="Historia salda" buttonCaption="Historia" fetchUrl={`/drivers/${driverId}/balance`} getIcon={(event: DriverBalance.BalanceEvent) => balanceEventTypeConfig[event.type]?.icon || 'info-circle'} getColor={(event: DriverBalance.BalanceEvent) => balanceEventTypeConfig[event.type]?.color || 'primary'}>
+<OffcanvasTimeline header="Historia salda" buttonCaption="Historia" fetchUrl={`/drivers/${driverId}/balance`} getIcon={(event: DriverBalance.BalanceEvent) => balanceEventTypeConfig[event.type]?.icon || 'info-circle'} {lastUpdate} getColor={(event: DriverBalance.BalanceEvent) => balanceEventTypeConfig[event.type]?.color || 'primary'}>
 	{#snippet listItem(event: DriverBalance.BalanceEvent)}
 		<span class="text-dark font-weight-bold fs-6">
 			{balanceEventTypeConfig[event.type]?.caption || 'Zdarzenie'}

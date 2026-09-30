@@ -10,6 +10,7 @@
 	interface SubItem {
 		title: string;
 		link: string;
+		icon?: string;
 	}
 
 	interface MenuItem {
@@ -24,15 +25,23 @@
 	// Menu Data (fi-rr- prefixes removed)
 	let menuItems: MenuItem[] = $state([
 		{ id: 1, title: 'Dashboard', icon: 'apps', link: '/panel' },
-		{ id: 2, title: 'Flota', icon: 'cars', link: '/vehicles' },
+		{
+			id: 2,
+			title: 'Flota',
+			icon: 'cars',
+			subItems: [
+				{ title: 'Pojazdy', icon: 'car-side', link: '/vehicles' },
+				{ title: 'Wydania', icon: 'user-key', link: '/handovers' },
+				{ title: 'Inspekcje', icon: 'assessment', link: '/inspections' },
+				{ title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' }
+			]
+		},
 		{ id: 3, title: 'Kierowcy', icon: 'steering-wheel', link: '/drivers' },
-		{ id: 4, title: 'Wydania', icon: 'user-key', link: '/handovers' },
-		{ id: 5, title: 'Inspekcja', icon: 'assessment', link: '/inspections' },
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
-		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
-		{ id: 8, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' },
+		{ id: 7, title: 'Wczesne Rozliczenia', icon: 'money', link: '/earlysettlements' },
 		{ id: 9, title: 'Zdarzenia', icon: 'triangle-warning', link: '/incidents' },
-		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' }
+		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' },
+		{ id: 11, title: 'Wyloguj', icon: 'power', link: '/logout' }
 	]);
 
 	let notificationCount = $state(0);
@@ -115,10 +124,15 @@
 
 						{#if layoutState.isSidebarExpanded}
 							<Collapse isOpen={item.isOpen}>
-								<ul class="list-unstyled ps-4 ms-2 mt-1 border-start">
+								<ul class="list-unstyled ps-3 ms-2 mt-1 border-start">
 									{#each item.subItems as sub}
 										<li>
-											<a href={sub.link} class="d-block py-2 px-3 text-decoration-none nav-link-sub text-truncate" onclick={() => setActive(item.id)}>
+											<a href={sub.link} class="d-flex align-items-center py-2 px-3 text-decoration-none nav-link-sub text-truncate small text-dark" onclick={() => setActive(item.id)}>
+												{#if sub.icon}
+													<span class="me-2 d-flex align-items-center">
+														<UIcon name={sub.icon} size={5} />
+													</span>
+												{/if}
 												{sub.title}
 											</a>
 										</li>

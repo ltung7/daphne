@@ -161,7 +161,7 @@ export const internal = {
     del,
     status,
     download,
-    getApi: (data?: Record<string,any>) => get(window.location.pathname + '/api', data, {}, true),
+    getApi: (data?: Record<string,any>, force: boolean = false) => get(window.location.pathname + '/api', data, force ? { headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } } : {}, true),
     delApi: (data?: Record<string,any>) => del(window.location.pathname + '/api', data, {}, true),
     postApi: (data: Record<string,any>, method: 'post' | 'patch' | 'delete' = 'post', config: Record<string,any> = {}) => post(window.location.pathname + '/api', data, config, method, true)
 }
