@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Dokument {documentName} uskoro istekne",
-    "body": "Dokument {categoryName} ({documentName}) ističe za {daysUntilExpiry} dana ({expiryDate}).",
+    "title": "Dokument {categoryName} uskoro istekne",
+    "body": "Dokument {categoryName} ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo obnovite dokument što pre.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada.",
     "driving_license_category": "vozačka dozvola",
@@ -17,8 +17,8 @@
     "medical_category": "medicinsko uverenje"
   },
   "driver_document_expired": {
-    "title": "Dokument {documentName} je istekao - potrebna akcija",
-    "body": "Dokument {categoryName} ({documentName}) je istekao {expiryDate}.",
+    "title": "Dokument {categoryName} je istekao - potrebna akcija",
+    "body": "Dokument {categoryName} je istekao {expiryDate}.",
     "consequence": "Vaš nalog može biti ograničen do obnove.",
     "footer": "Kontaktirajte administratora za obnavljanje.",
     "driving_license_category": "vozačka dozvola",
@@ -51,8 +51,8 @@
     "unsubscribe_link": "kliknite ovde da se odjavite."
   },
   "vehicle_document_expiring": {
-    "title": "Dokument {documentName} vozila uskoro istekne",
-    "body": "Dokument {categoryName} ({documentName}) za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
+    "title": "Dokument {categoryName} vozila uskoro istekne",
+    "body": "Dokument {categoryName} za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo vas da obnovite dokument što je pre moguće.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati onemogućavanjem vozila.",
     "registration_category": "registracioni dokument",
@@ -64,8 +64,8 @@
     "handover_category": "dokument preuzimanja"
   },
   "vehicle_document_expired": {
-    "title": "Dokument {documentName} vozila je istekao - potrebna akcija",
-    "body": "Dokument {categoryName} ({documentName}) za vozilo {registrationNumber} je istekao {expiryDate}.",
+    "title": "Dokument {categoryName} vozila je istekao - potrebna akcija",
+    "body": "Dokument {categoryName} za vozilo {registrationNumber} je istekao {expiryDate}.",
     "consequence": "Vozilo može biti onemogućeno do obnavljanja.",
     "footer": "Kontaktirajte administratora za obnovu.",
     "registration_category": "registracioni dokument",

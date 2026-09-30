@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Dokument {documentName} wkrótce wygasa",
-    "body": "Twój {categoryName} ({documentName}) wygasa za {daysUntilExpiry} dni ({expiryDate}).",
+    "title": "Dokument {categoryName} wkrótce wygasa",
+    "body": "Twój {categoryName} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o przedłużenie dokumentu jak najszybciej.",
     "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy.",
     "driving_license_category": "prawo jazdy",
@@ -17,8 +17,8 @@
     "medical_category": "zaświadczenie lekarskie"
   },
   "driver_document_expired": {
-    "title": "Dokument {documentName} wygasł - konieczna akcja",
-    "body": "Twój {categoryName} ({documentName}) wygasł {expiryDate}.",
+    "title": "Dokument {categoryName} wygasł - konieczna akcja",
+    "body": "Twój {categoryName} wygasł {expiryDate}.",
     "consequence": "Twoje konto może zostać ograniczone do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia.",
     "driving_license_category": "prawo jazdy",
@@ -65,8 +65,8 @@
     "unsubscribe_link": "kliknij tutaj, aby się wypisać."
   },
   "vehicle_document_expiring": {
-    "title": "Dokument pojazdu {documentName} wkrótce wygasa",
-    "body": "Dokument {categoryName} ({documentName}) dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
+    "title": "Dokument pojazdu {categoryName} wkrótce wygasa",
+    "body": "Dokument {categoryName} dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o odnowienie dokumentu jak najszybciej.",
     "footer": "Zignorowanie tego ostrzeżenia może skutkować zablokowaniem pojazdu.",
     "registration_category": "dokument rejestracyjny",
@@ -78,8 +78,8 @@
     "handover_category": "dokument przekazania"
   },
   "vehicle_document_expired": {
-    "title": "Dokument pojazdu {documentName} wygasł - konieczna akcja",
-    "body": "Dokument {categoryName} ({documentName}) dla pojazdu {registrationNumber} wygasł {expiryDate}.",
+    "title": "Dokument pojazdu {categoryName} wygasł - konieczna akcja",
+    "body": "Dokument {categoryName} dla pojazdu {registrationNumber} wygasł {expiryDate}.",
     "consequence": "Pojazd może zostać zablokowany do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia.",
     "registration_category": "dokument rejestracyjny",

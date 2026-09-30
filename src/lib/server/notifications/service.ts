@@ -26,7 +26,7 @@ const PRIORITY_ORDER: Record<NotificationPriority, number> = {
 };
 
 export async function sendNotification<TData>(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     notification: NotificationDefinition<TData>, 
     data: TData,
     incidentSource: App.Incident.Source = 'system',
@@ -36,22 +36,23 @@ export async function sendNotification<TData>(
 }
 
 async function _dispatchNotification<TData>(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     notification: NotificationDefinition<TData>, 
     data: TData,
     incidentSource: App.Incident.Source,
     isAdminCopy: boolean,
     dumpOnly: boolean
 ): Promise<void> {
-    // 1. Resolve Preferences
-    const prefs = await getUserPreferences(user.id);
-    if (!shouldSend(notification.priority, prefs)) {
+    // 1. Resolve Preferences (fallback to all enabled if no user)
+    const prefs = user ? await getUserPreferences(user.id) : { channels: { email: true, sms: true, push: true }, minPriority: 'low' };
+    
+    if (user && !shouldSend(notification.priority, prefs)) {
         logger.log(`Notification ${notification.id} dropped for user ${user.id} due to preferences`);
         return;
     }
 
     // 2. Setup Context
-    const locale = user.preferredLanguage || 'pl';
+    const locale = user?.preferredLanguage || 'pl';
     const m = getNotificationMessageNode(locale, notification.id);
     const m_pl = getNotificationMessageNode('pl', notification.id);
     const getBaseMsg = notification.getBaseMessage ?? defaultGetBaseMessage;
@@ -72,9 +73,10 @@ async function _dispatchNotification<TData>(
     // 3. Dispatch to Channels in parallel
     const promises: Promise<void>[] = [];
 
-    const shouldDispatchChannels = ctx.isAdminCopy || notification.client;
+    // Only dispatch to client channels if this is an admin copy or explicitly meant for the client AND user exists
+    const shouldDispatchChannels = ctx.isAdminCopy || (notification.client && user !== null);
 
-    if (shouldDispatchChannels) {
+    if (shouldDispatchChannels && user) {
         // --- EMAIL ---
         if (user.email && notification.email && prefs.channels.email !== false) {
             promises.push(sendEmail(user.email, notification, data, ctx, dumpOnly));
@@ -260,7 +262,7 @@ async function logIncident<TData>(
     notificationId: App.NotificationType,
     incident: IncidentPayload,
     severity: NotificationPriority,
-    user: App.BaseContact,
+    user: App.BaseContact | null,
     data: TData,
     incidentSource: App.Incident.Source,
     dumpOnly: boolean
@@ -274,8 +276,8 @@ async function logIncident<TData>(
         status: 'open',
         source: incident.source || incidentSource,
         metadata: {
-            userId: user.id,
-            userName: user.name,
+            userId: user?.id || null,
+            userName: user?.name || null,
             ...data
         },
         notes: '',

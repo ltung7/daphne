@@ -36,13 +36,13 @@ vehicleDocumentExpiringNotification.getBaseMessage = getCategorizedBaseMessage;
 /**
  * Dispatch the Vehicle Document Expired notification through all preferred channels.
  */
-export async function sendVehicleDocumentExpiredNotification(user: App.BaseContact, data: Omit<VehicleDocumentExpiredData, 'documentType'> & { documentType: VehicleDocumentType }, incidentSource: App.Incident.Source = 'system'): Promise<void> {
+export async function sendVehicleDocumentExpiredNotification(user: App.BaseContact | null, data: Omit<VehicleDocumentExpiredData, 'documentType'> & { documentType: VehicleDocumentType }, incidentSource: App.Incident.Source = 'system'): Promise<void> {
     return sendNotification(user, vehicleDocumentExpiredNotification, data, incidentSource);
 }
 
 /**
  * Dispatch the Vehicle Document Expiring notification through all preferred channels.
  */
-export async function sendVehicleDocumentExpiringNotification(user: App.BaseContact, data: Omit<VehicleDocumentExpiringData, 'documentType'> & { documentType: VehicleDocumentType }, incidentSource: App.Incident.Source = 'system'): Promise<void> {
+export async function sendVehicleDocumentExpiringNotification(user: App.BaseContact | null, data: Omit<VehicleDocumentExpiringData, 'documentType'> & { documentType: VehicleDocumentType }, incidentSource: App.Incident.Source = 'system'): Promise<void> {
     return sendNotification(user, vehicleDocumentExpiringNotification, data, incidentSource);
 }

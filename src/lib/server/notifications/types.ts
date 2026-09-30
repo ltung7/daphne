@@ -10,7 +10,7 @@ export interface NotificationContext {
     locale: App.Locale;
     m: MessageStructure; // Localized dictionary for the specific notification
     m_pl: MessageStructure; // Forced Polish dictionary for internal/incident logging
-    user: App.BaseContact; // Recipient data
+    user: App.BaseContact | null; // Recipient data
     isAdminCopy?: boolean; // Determines if this notification is a carbon copy to admins
 }
 

@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Document {documentName} expiring soon",
-    "body": "Document {categoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
+    "title": "Document {categoryName} expiring soon",
+    "body": "Document {categoryName} expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions.",
     "driving_license_category": "driving license",
@@ -17,8 +17,8 @@
     "medical_category": "medical certificate"
   },
   "driver_document_expired": {
-    "title": "Document {documentName} expired - action required",
-    "body": "Document {categoryName} ({documentName}) expired on {expiryDate}.",
+    "title": "Document {categoryName} expired - action required",
+    "body": "Document {categoryName} expired on {expiryDate}.",
     "consequence": "Your account may be restricted until renewal.",
     "footer": "Contact the administrator to renew.",
     "driving_license_category": "driving license",
@@ -65,8 +65,8 @@
     "unsubscribe_link": "click here to unsubscribe."
   },
   "vehicle_document_expiring": {
-    "title": "Vehicle document {documentName} expiring soon",
-    "body": "The {categoryName} ({documentName}) for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
+    "title": "Vehicle document {categoryName} expiring soon",
+    "body": "The {categoryName} for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in the vehicle being disabled.",
     "registration_category": "registration document",
@@ -78,8 +78,8 @@
     "handover_category": "handover document"
   },
   "vehicle_document_expired": {
-    "title": "Vehicle document {documentName} expired - action required",
-    "body": "The {categoryName} ({documentName}) for vehicle {registrationNumber} expired on {expiryDate}.",
+    "title": "Vehicle document {categoryName} expired - action required",
+    "body": "The {categoryName} for vehicle {registrationNumber} expired on {expiryDate}.",
     "consequence": "The vehicle may be disabled until renewal.",
     "footer": "Contact the administrator to renew.",
     "registration_category": "registration document",

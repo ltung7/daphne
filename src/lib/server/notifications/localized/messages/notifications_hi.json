@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "दस्तावेज़ {documentName} जल्द समाप्त हो रहा है",
-    "body": "दस्तावेज़ {categoryName} ({documentName}) {daysUntilExpiry} दिनों में समाप्त हो रहा है ({expiryDate})।",
+    "title": "दस्तावेज़ {categoryName} जल्द समाप्त हो रहा है",
+    "body": "दस्तावेज़ {categoryName} {daysUntilExpiry} दिनों में समाप्त हो रहा है ({expiryDate})।",
     "consequence": "कृपया दस्तावेज़ को जल्द से जल्द नवीनीकृत करें।",
     "footer": "इस चेतावनी को नजरअंदाज करने से कार्य प्रतिबंध हो सकते हैं।",
     "driving_license_category": "ड्राइविंग लाइसेंस",
@@ -17,8 +17,8 @@
     "medical_category": "चिकित्सा प्रमाणपत्र"
   },
   "driver_document_expired": {
-    "title": "दस्तावेज़ {documentName} समाप्त हो गया - कार्रवाई आवश्यक",
-    "body": "दस्तावेज़ {categoryName} ({documentName}) {expiryDate} को समाप्त हो गया है।",
+    "title": "दस्तावेज़ {categoryName} समाप्त हो गया - कार्रवाई आवश्यक",
+    "body": "दस्तावेज़ {categoryName} {expiryDate} को समाप्त हो गया है।",
     "consequence": "नवीनीकरण तक आपका खाता प्रतिबंधित हो सकता है।",
     "footer": "नवीनीकरण के लिए व्यवस्थापक से संपर्क करें।",
     "driving_license_category": "ड्राइविंग लाइसेंस",
@@ -47,8 +47,8 @@
     "unsubscribe_link": "सदस्यता समाप्त करने के लिए यहां क्लिक करें।"
   },
   "vehicle_document_expiring": {
-    "title": "वाहन का दस्तावेज़ {documentName} जल्द समाप्त हो रहा है",
-    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {categoryName} ({documentName}) {daysUntilExpiry} दिनों ({expiryDate}) में समाप्त हो रहा है।",
+    "title": "वाहन का दस्तावेज़ {categoryName} जल्द समाप्त हो रहा है",
+    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {categoryName} {daysUntilExpiry} दिनों ({expiryDate}) में समाप्त हो रहा है।",
     "consequence": "कृपया जल्द से जल्द दस्तावेज़ का नवीनीकरण करें।",
     "footer": "इस चेतावनी को अनदेखा करने से वाहन अक्षम हो सकता है।",
     "registration_category": "पंजीकरण दस्तावेज़",
@@ -60,8 +60,8 @@
     "handover_category": "हैंडओवर दस्तावेज़"
   },
   "vehicle_document_expired": {
-    "title": "वाहन का दस्तावेज़ {documentName} समाप्त हो गया - कार्रवाई आवश्यक है",
-    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {categoryName} ({documentName}) {expiryDate} को समाप्त हो गया।",
+    "title": "वाहन का दस्तावेज़ {categoryName} समाप्त हो गया - कार्रवाई आवश्यक है",
+    "body": "वाहन {registrationNumber} के लिए दस्तावेज़ {categoryName} {expiryDate} को समाप्त हो गया।",
     "consequence": "नवीनीकरण तक वाहन अक्षम किया जा सकता है।",
     "footer": "नवीनीकरण के लिए प्रशासक से संपर्क करें।",
     "registration_category": "पंजीकरण दस्तावेज़",

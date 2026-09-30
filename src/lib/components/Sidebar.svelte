@@ -5,7 +5,7 @@
 	import UIcon from '$lib/misc/UIcon.svelte'; // Assuming this is your icon component
 	import TooltipText from '$lib/misc/TooltipText.svelte';
 
-	let { openIncidentsCount = 0 }: { openIncidentsCount?: number } = $props();
+	
 
 	// TypeScript Interfaces
 	interface SubItem {
@@ -118,19 +118,10 @@
 							<a href={item.link} class="btn w-100 text-start d-flex align-items-center nav-btn" class:active={layoutState.activeMenuId === item.id} onclick={() => setActive(item.id)}>
 								<span class="nav-icon-wrapper">
 									<UIcon name={item.icon} size={4} />
-									{#if !layoutState.isSidebarExpanded && item.id === 9 && openIncidentsCount > 0}
-										<span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-											<span class="visually-hidden">New alerts</span>
-										</span>
-									{/if}
 								</span>
 								{#if layoutState.isSidebarExpanded}
-									<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
-									{#if item.id === 9 && openIncidentsCount > 0}
-										<span class="badge bg-danger ms-2">{openIncidentsCount}</span>
-									{/if}
-								{/if}
-							</a>
+<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
+								</a>
 						</TooltipText>
 					{/if}
 				</li>

@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "დოკუმენტი {documentName} მალე ამოიწურება",
-    "body": "დოკუმენტი {categoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "title": "დოკუმენტი {categoryName} მალე ამოიწურება",
+    "body": "დოკუმენტი {categoryName} ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს.",
     "driving_license_category": "მძღოლის მოწმობა",
@@ -17,8 +17,8 @@
     "medical_category": "მედიცინური სერტიფიკატი"
   },
   "driver_document_expired": {
-    "title": "დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
-    "body": "დოკუმენტი {categoryName} ({documentName}) ამოიწურა {expiryDate}.",
+    "title": "დოკუმენტი {categoryName} ამოიწურა - საჭიროა მოქმედება",
+    "body": "დოკუმენტი {categoryName} ამოიწურა {expiryDate}.",
     "consequence": "თქვენი ანგარიში შეიძლება იყოს შეზღუდული მონაწილეობის აღდგენამდე.",
     "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის.",
     "driving_license_category": "მძღოლის მოწმობა",
@@ -47,8 +47,8 @@
     "unsubscribe_link": "დააწკაპუნეთ აქ, რათა გაუქმოთ გამოწერა."
   },
   "vehicle_document_expiring": {
-    "title": "ავტომობილის დოკუმენტი {documentName} მალე ამოიწურება",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "title": "ავტომობილის დოკუმენტი {categoryName} მალე ამოიწურება",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა.",
     "registration_category": "რეგისტრაციის დოკუმენტი",
@@ -60,8 +60,8 @@
     "handover_category": "მიცემის-მიღების დოკუმენტი"
   },
   "vehicle_document_expired": {
-    "title": "ავტომობილის დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ({documentName}) ამოიწურა {expiryDate}-ში.",
+    "title": "ავტომობილის დოკუმენტი {categoryName} ამოიწურა - საჭიროა მოქმედება",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ამოიწურა {expiryDate}-ში.",
     "consequence": "განახლებამდე ავტომობილი შეიძლება დაიბლოკოს.",
     "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს.",
     "registration_category": "რეგისტრაციის დოკუმენტი",

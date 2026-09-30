@@ -7,8 +7,8 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "कागजात {documentName} चाँडै समाप्त हुनेछ",
-    "body": "कागजात {categoryName} ({documentName}) {daysUntilExpiry} दिनमा समाप्त हुनेछ ({expiryDate})।",
+    "title": "कागजात {categoryName} चाँडै समाप्त हुनेछ",
+    "body": "कागजात {categoryName} {daysUntilExpiry} दिनमा समाप्त हुनेछ ({expiryDate})।",
     "consequence": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।",
     "driving_license_category": "ड्राइभिङ लाइसेन्स",
@@ -17,8 +17,8 @@
     "medical_category": "चिकित्सा प्रमाणपत्र"
   },
   "driver_document_expired": {
-    "title": "कागजात {documentName} समाप्त - कारवाही आवश्यक",
-    "body": "कागजात {categoryName} ({documentName}) {expiryDate} मा समाप्त भएको छ।",
+    "title": "कागजात {categoryName} समाप्त - कारवाही आवश्यक",
+    "body": "कागजात {categoryName} {expiryDate} मा समाप्त भएको छ।",
     "consequence": "नवीकरण सम्म तपाईंको खाता प्रतिबन्ध हुन सक्छ।",
     "footer": "नवीकरणका लागि प्रशासकलाई सम्पर्क गर्नुहोस्।",
     "driving_license_category": "ड्राइभिङ लाइसेन्स",
@@ -47,8 +47,8 @@
     "unsubscribe_link": "सदस्यता समाप्त गर्न यहाँ क्लिक गर्नुहोस्।"
   },
   "vehicle_document_expiring": {
-    "title": "सवारी साधनको कागजात {documentName} चाँडै समाप्त हुनेछ",
-    "body": "सवारी साधन {registrationNumber} को लागि कागजात {categoryName} ({documentName}) को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
+    "title": "सवारी साधनको कागजात {categoryName} चाँडै समाप्त हुनेछ",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {categoryName} को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
     "consequence": "कृपया कागजात जतिसक्दो चाँडो नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनीलाई बेवास्ता गर्नाले सवारी साधन असक्षम हुन सक्छ।",
     "registration_category": "दर्ता कागजात",
@@ -60,8 +60,8 @@
     "handover_category": "हस्तान्तरण कागजात"
   },
   "vehicle_document_expired": {
-    "title": "सवारी साधनको कागजात {documentName} समाप्त भयो - कारबाही आवश्यक छ",
-    "body": "सवारी साधन {registrationNumber} को लागि कागजात {categoryName} ({documentName}) को म्याद {expiryDate} मा समाप्त भयो।",
+    "title": "सवारी साधनको कागजात {categoryName} समाप्त भयो - कारबाही आवश्यक छ",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {categoryName} को म्याद {expiryDate} मा समाप्त भयो।",
     "consequence": "नवीकरण नभएसम्म सवारी साधन असक्षम हुन सक्छ।",
     "footer": "नवीकरणको लागि प्रशासकलाई सम्पर्क गर्नुहोस्।",
     "registration_category": "दर्ता कागजात",

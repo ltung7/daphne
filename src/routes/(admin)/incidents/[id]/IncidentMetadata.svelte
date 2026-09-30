@@ -14,46 +14,46 @@
 	<SectionCard title="Metadane">
 		<table class="table small mb-0">
 			<tbody>
-<!-- CUSTOM FIELDS -->
-			{#if metadata.userId && metadata.userName}
-				<tr>
-					<td style="width: 200px">Żądający</td>
-					<td>
-						{#if metadata.driverName === metadata.userName}
-							Kierowca {metadata.driverName}
-						{:else}
-							Użytkownik {metadata.userName}
-						{/if}
-					</td>
-				</tr>
-			{/if}
-			
-			{#if metadata.driverId && metadata.driverName}
-				<tr>
-					<td style="width: 200px">Kierowca</td>
-					<td>
-						<a href="/drivers/{metadata.driverd}">{metadata.driverName}</a>
-					</td>
-				</tr>
-			{/if}
+				<!-- CUSTOM FIELDS -->
+				{#if metadata.userId && metadata.userName}
+					<tr>
+						<td style="width: 200px">Żądający</td>
+						<td>
+							{#if metadata.driverName === metadata.userName}
+								Kierowca {metadata.driverName}
+							{:else}
+								Użytkownik {metadata.userName}
+							{/if}
+						</td>
+					</tr>
+				{/if}
 
-{#if metadata.registrationNumber}
-			<tr>
-				<td style="width: 200px">Pojazd</td>
-				<td>
-					<a href="/vehicles/{metadata.registrationNumber}">{metadata.registrationNumber}</a>
-				</td>
-			</tr>
-		{/if}
+				{#if metadata.driverId && metadata.driverName}
+					<tr>
+						<td style="width: 200px">Kierowca</td>
+						<td>
+							<a href="/drivers/{metadata.driverd}">{metadata.driverName}</a>
+						</td>
+					</tr>
+				{/if}
 
-		{#if metadata.documentName && metadata.categoryName}
-			<tr>
-				<td style="width: 200px">Dokument</td>
-				<td>{metadata.categoryName} {metadata.documentName}</td>
-			</tr>
-		{/if}
+				{#if metadata.registrationNumber}
+					<tr>
+						<td style="width: 200px">Pojazd</td>
+						<td>
+							<a href="/vehicles/{metadata.registrationNumber}">{metadata.registrationNumber}</a>
+						</td>
+					</tr>
+				{/if}
 
-		{#if metadata.expiryDate}
+				{#if metadata.documentName || metadata.categoryName}
+					<tr>
+						<td style="width: 200px">Dokument</td>
+						<td>{metadata.categoryName} {metadata.documentName}</td>
+					</tr>
+				{/if}
+
+				{#if metadata.expiryDate}
 					<tr>
 						<td style="width: 200px">Data ważności</td>
 						<td>

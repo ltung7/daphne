@@ -48,7 +48,7 @@ export interface NotificationContext {
     locale: App.Locale;
     m: MessageStructure; // Localized dictionary for the specific notification
     m_pl: MessageStructure; // Forced Polish dictionary for internal/incident logging
-    user: App.BaseContact; // Recipient data
+    user: App.BaseContact | null; // Recipient data (null if no primary recipient)
 }
 
 export interface EmailPayload {
@@ -134,7 +134,7 @@ export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = 
 
 /** Strictly typed export */
 export async function sendPushEnabledNotification(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     data: PushEnabledData = {}, 
     incidentSource: App.Incident.Source = 'system'
 ): Promise<void> {
@@ -149,22 +149,24 @@ Instead of a class, a pure function coordinates routing:
 ```typescript
 // src/lib/server/notifications/service.ts
 export async function sendNotification<TData>(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     notification: NotificationDefinition<TData>, 
     data: TData
 ): Promise<void> {
-    // 1. Resolve Preferences & filter out based on minPriority
-    const prefs = await getUserPreferences(user.id);
-    if (!shouldSend(notification.priority, prefs)) return;
+    // 1. Resolve Preferences (fallback to default if user is null)
+    const locale = user?.preferredLanguage || 'pl';
+    const prefs = user ? await getUserPreferences(user.id) : getDefaultPreferences();
+    
+    if (user && !shouldSend(notification.priority, prefs)) return;
 
     // 2. Setup Context
-    const locale = user.preferredLanguage || 'pl';
     const ctx: NotificationContext = { locale, m: getEmailMessages(locale), user };
 
     const promises: Promise<void>[] = [];
 
     // 3. Dispatch to specific channels (parallelized)
-    if (user.email && prefs.channels.email !== false) {
+    // Only dispatch to client channels if user is present
+    if (user && user.email && prefs.channels.email !== false) {
         promises.push(sendEmail(user.email, notification, data, ctx));
     }
     // ... handles sms, push, inapp ...
@@ -262,16 +264,23 @@ export interface IncidentPayload {
 
 The core `sendNotification` service automatically invokes `logIncident` when an incident is generated, safely executing it in parallel with other channel dispatches.
 
+**Primary Recipient (`user`) can be `null`:** 
+The `user` parameter (the first argument) is always present but may be `null` (e.g., a vehicle expiration notification for a vehicle with no assigned driver). 
+- When `user` is `null`, no `client: true` messages (Email, SMS, Push) will be sent to any primary recipient.
+- However, notifications to administrators (`admin: true`) via the Incident Matrix and the generation of `incident` logs will still proceed normally.
+
 To ensure notifications behave correctly based on their target audience:
-- **Client Delivery:** Channel messages (Email, SMS, Push) are ONLY sent to the primary user if `client: true`. If `client: false`, the system will quietly skip sending direct messages to the primary user.
-- **Incident Guard:** Incidents are always logged if the `incident` generator is defined and returns a payload, regardless of `client` or `admin` flags. This allows you to create "silent" notifications (`client: false, admin: false`) that purely generate an internal incident log without bothering anyone with emails or push notifications.
+- **Client Delivery:** Channel messages (Email, SMS, Push) are ONLY sent to the primary user if `client: true` AND `user` is not null. If `client: false` or `user` is null, the system will quietly skip sending direct messages to the primary user.
+- **Incident Guard:** Incidents are always logged if the `incident` generator is defined and returns a payload, regardless of `client` or `admin` flags, and regardless of whether a `user` was provided.
+
+> **Note on Required Receivers:** While the core dispatcher allows `user` to be `null`, specific business logic or notification types might still effectively require a recipient for the communication to fulfill its purpose (e.g., password resets or personal onboarding). If `user` is `null`, the system ensures that no "ghost" messages are sent to the client side, while maintaining visibility for admins and audit logs.
 
 Additionally, if a notification has `admin: true` and the context is not already an admin copy (`!ctx.isAdminCopy`), the system will query the Incidents Matrix (located at `/incidents/matrix`) for the specific notification type. If recipients are registered for that notification type in the matrix, the system will automatically dispatch the exact same notification message to those registered administrators by internally calling a private recursive dispatch function with an `isAdminCopy` flag set to `true`. This ensures admins receive a carbon copy of the notification without triggering duplicate incident logs or infinite loops, and keeps the public `sendNotification` signature clean.
 
 ```typescript
 // src/lib/server/notifications/service.ts
 export async function sendNotification<TData>(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     notification: NotificationDefinition<TData>, 
     data: TData,
     incidentSource: App.Incident.Source = 'system'
@@ -280,7 +289,7 @@ export async function sendNotification<TData>(
 }
 
 async function _dispatchNotification<TData>(
-    user: App.BaseContact, 
+    user: App.BaseContact | null, 
     notification: NotificationDefinition<TData>, 
     data: TData,
     incidentSource: App.Incident.Source,
@@ -288,8 +297,8 @@ async function _dispatchNotification<TData>(
 ): Promise<void> {
     // ... setup context with isAdminCopy ...
 
-    // Only dispatch to channels if this is an admin copy or explicitly meant for the client
-    const shouldDispatchChannels = ctx.isAdminCopy || notification.client;
+    // Only dispatch to channels if this is an admin copy or explicitly meant for the client (and user exists)
+    const shouldDispatchChannels = isAdminCopy || (notification.client && user !== null);
     if (shouldDispatchChannels) {
         // ... dispatch emails, sms, push ...
     }
