@@ -1,7 +1,6 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface TemplateNotificationData {
@@ -18,7 +17,6 @@ export const templateNotification: NotificationDefinition<TemplateNotificationDa
     priority: 'low',
     client: true,
     admin: false,
-    getBaseMessage,
     email(data, ctx) {
         return {
             subject: ctx.title,

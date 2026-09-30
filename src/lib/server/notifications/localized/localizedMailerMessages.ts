@@ -73,10 +73,6 @@ export function getBaseMessage (m: MessageStructure, data: any): BaseMessage {
     return { title: m.title, body: interpolate(m.body, data) };
 }
 
-export function getBaseMessageAndTitle (m: MessageStructure, data: any): BaseMessage {
-    return { title: interpolate(m.title, data), body: interpolate(m.body, data) };
-}
-
 /** Get messages for a specific notification type */
 export function getSpecificNotificationMessages<K extends App.NotificationType>(
     locale: App.Locale,

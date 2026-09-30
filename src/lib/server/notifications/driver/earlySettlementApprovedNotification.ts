@@ -1,7 +1,6 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessageAndTitle } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface EarlySettlementApprovedData {
@@ -19,7 +18,6 @@ export const earlySettlementApprovedNotification: NotificationDefinition<EarlySe
     priority: 'low',
     client: true,
     admin: false,
-    getBaseMessage: getBaseMessageAndTitle,
     email: (data, ctx) => {
         return {
             subject: ctx.title,

@@ -1,9 +1,9 @@
 import type { NotificationDefinition, NotificationPriority } from '../types';
-import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from './prepareNotificationChannels';
 import { PUBLIC_URL } from '$env/static/public';
 
 export interface BaseDocumentExpiredData {
+    documentType: string;
     documentName: string;
     expiryDate: string;
 }
@@ -27,7 +27,6 @@ function createBaseDocumentNotificationDefinition<TData extends BaseDocumentExpi
         priority,
 		admin: true,
 		client: true,
-        getBaseMessage,
         email: (data, ctx) => {
             return {
                 subject: ctx.title,

@@ -1,10 +1,14 @@
-import { getNotificationMessageNode } from './localized/localizedMailerMessages';
+import { getNotificationMessageNode, getBaseMessage as defaultGetBaseMessage } from './localized/localizedMailerMessages';
 import type { NotificationDefinition, NotificationContext, NotificationPriority, IncidentPayload } from './types';
 import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
-import { sendWebPush } from '../services/webpush.service';
-import { logger } from '$lib/utils/logger';
+import { sendWebPush, type WebPushPayload } from '../services/webpush.service';
+import { logger, LOGGER_COLORS } from '$lib/utils/logger';
+import { isDev } from '$lib/utils/isDev';
 import { getIncidentMatrixRecipients } from '../db/firebase/incidentMatrix.fdb';
+
+// eslint-disable-next-line no-constant-binary-expression
+const DUMP_MESSAGES = true && isDev;
 
 type UserPreferences = {
     channels: {
@@ -49,8 +53,9 @@ async function _dispatchNotification<TData>(
     const locale = user.preferredLanguage || 'pl';
     const m = getNotificationMessageNode(locale, notification.id);
     const m_pl = getNotificationMessageNode('pl', notification.id);
-    const baseMessage = notification.getBaseMessage(m, data);
-    const baseMessagePl = notification.getBaseMessage(m_pl, data);
+    const getBaseMsg = notification.getBaseMessage ?? defaultGetBaseMessage;
+    const baseMessage = getBaseMsg(m, data);
+    const baseMessagePl = getBaseMsg(m_pl, data);
     const ctx: NotificationContext = {
         title: baseMessage.title,
         body: baseMessage.body,
@@ -133,6 +138,12 @@ async function sendEmail<TData>(
     try {
         const emailData = await notification.email!(data, ctx);
         
+        if (DUMP_MESSAGES) {
+            logger.log(`[DUMP EMAIL] ${notification.id} -> ${email}`, LOGGER_COLORS.MAGENTA);
+            logger.inspect({ subject: emailData.subject, htmlBody: emailData.htmlBody, component: emailData.component?.name, props: emailData.props });
+            return;
+        }
+
         // Use generic component for standard emails
         const component = emailData.component || GenericNotificationMail;
         const props = emailData.props || { 
@@ -158,6 +169,13 @@ async function sendSms<TData>(
 ): Promise<void> {
     try {
         const smsText = await notification.sms!(data, ctx);
+        
+        if (DUMP_MESSAGES) {
+            logger.log(`[DUMP SMS] ${notification.id} -> ${phone}`, LOGGER_COLORS.MAGENTA);
+            logger.inspect(smsText);
+            return;
+        }
+
         // TODO: Implement SMS transport
         console.log(`[SMS to ${phone}] ${smsText}`);
     } catch (err) {
@@ -173,11 +191,20 @@ async function sendPush<TData>(
 ): Promise<void> {
     try {
         const pushData = await notification.push!(data, ctx);
-        if (pushData) sendWebPush(fcmToken, pushData.title, pushData.body)
+        
+        if (DUMP_MESSAGES) {
+            logger.log(`[DUMP PUSH] ${notification.id} -> ${fcmToken.substring(0, 20)}...`, LOGGER_COLORS.MAGENTA);
+            logger.inspect(pushData);
+            // return; TODO: DELETE TEST
+        }
+
+        if (pushData) sendWebPush(fcmToken, pushData as WebPushPayload)
     } catch (err) {
         console.error(`Push send failed for ${notification.id}:`, err);
     }
 }
+
+import { addNotification } from '../db/firebase/userNotifications.fdb';
 
 async function sendInApp<TData>(
     userId: string,
@@ -186,9 +213,25 @@ async function sendInApp<TData>(
     ctx: NotificationContext
 ): Promise<void> {
     try {
-        const inappHtml = await notification.inapp!(data, ctx);
-        // TODO: Implement Firestore insert for in-app notifications
-        console.log(`[IN-APP for ${userId}]`, inappHtml);
+        const body = await notification.inapp!(data, ctx);
+        
+        if (DUMP_MESSAGES) {
+            logger.log(`[DUMP IN-APP] ${notification.id} -> ${userId}`, LOGGER_COLORS.MAGENTA);
+            logger.inspect(body);
+            return;
+        }
+
+        const newNotification: Omit<App.InAppNotification, 'id'> = {
+            userId,
+            type: notification.id,
+            title: ctx.title,
+            body,
+            metadata: data as any,
+            read: false,
+            timestamp: Date.now()
+        };
+
+        await addNotification(newNotification);
     } catch (err) {
         console.error(`In-app save failed for ${notification.id}:`, err);
     }
@@ -233,6 +276,12 @@ async function logIncident<TData>(
         timestamp: Date.now()
     };
     
+    if (DUMP_MESSAGES) {
+        logger.log(`[DUMP INCIDENT] ${notificationId} - ${incident.title}`, LOGGER_COLORS.MAGENTA);
+        logger.inspect(newIncident);
+        return;
+    }
+
     try {
         const id = await addIncident(newIncident);
         logger.log(`[INCIDENT LOG] Created incident ${id} - ${incident.title}`);

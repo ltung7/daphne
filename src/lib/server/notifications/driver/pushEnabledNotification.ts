@@ -1,7 +1,6 @@
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface PushEnabledData {
@@ -18,7 +17,6 @@ export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = 
     priority: 'low',
     client: true,
     admin: false,
-    getBaseMessage,
     ...channels
 };
 

@@ -65,15 +65,29 @@
     "unsubscribe_link": "kliknij tutaj, aby się wypisać."
   },
   "vehicle_document_expiring": {
-    "title": "Dokument pojazdu wkrótce wygasa",
-    "body": "Dokument {documentName} dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
+    "title": "Dokument pojazdu {documentName} wkrótce wygasa",
+    "body": "Dokument {documentCategoryName} ({documentName}) dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o odnowienie dokumentu jak najszybciej.",
-    "footer": "Zignorowanie tego ostrzeżenia może skutkować zablokowaniem pojazdu."
+    "footer": "Zignorowanie tego ostrzeżenia może skutkować zablokowaniem pojazdu.",
+    "registration_category": "dokument rejestracyjny",
+    "insurance_category": "polisa ubezpieczenia",
+    "technical_category": "badanie techniczne",
+    "taxi_license_category": "licencja taksówkarska",
+    "platform_category": "zatwierdzenie platformy",
+    "equipment_category": "certyfikat wyposażenia",
+    "handover_category": "dokument przekazania"
   },
   "vehicle_document_expired": {
-    "title": "Dokument pojazdu wygasł - konieczna akcja",
-    "body": "Dokument {documentName} dla pojazdu {registrationNumber} wygasł {expiryDate}.",
+    "title": "Dokument pojazdu {documentName} wygasł - konieczna akcja",
+    "body": "Dokument {documentCategoryName} ({documentName}) dla pojazdu {registrationNumber} wygasł {expiryDate}.",
     "consequence": "Pojazd może zostać zablokowany do momentu odnowienia.",
-    "footer": "Skontaktuj się z administratorem w celu odnowienia."
+    "footer": "Skontaktuj się z administratorem w celu odnowienia.",
+    "registration_category": "dokument rejestracyjny",
+    "insurance_category": "polisa ubezpieczenia",
+    "technical_category": "badanie techniczne",
+    "taxi_license_category": "licencja taksówkarska",
+    "platform_category": "zatwierdzenie platformy",
+    "equipment_category": "certyfikat wyposażenia",
+    "handover_category": "dokument przekazania"
   }
 }

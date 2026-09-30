@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "Dokument {documentName} uskoro istekne",
-    "body": "Vaš {documentCategoryName} ({documentName}) ističe za {daysUntilExpiry} dana ({expiryDate}).",
+    "body": "Dokument {documentCategoryName} ({documentName}) ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo obnovite dokument što pre.",
-    "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
+    "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada.",
+    "driving_license_category": "vozačka dozvola",
+    "taxi_authorization_category": "taksi autorizacija",
+    "identification_category": "lični dokument",
+    "medical_category": "medicinsko uverenje"
   },
   "driver_document_expired": {
     "title": "Dokument {documentName} je istekao - potrebna akcija",
-    "body": "Vaš {documentCategoryName} ({documentName}) je istekao {expiryDate}.",
+    "body": "Dokument {documentCategoryName} ({documentName}) je istekao {expiryDate}.",
     "consequence": "Vaš nalog može biti ograničen do obnove.",
-    "footer": "Kontaktirajte administratora za obnavljanje."
+    "footer": "Kontaktirajte administratora za obnavljanje.",
+    "driving_license_category": "vozačka dozvola",
+    "taxi_authorization_category": "taksi autorizacija",
+    "identification_category": "lični dokument",
+    "medical_category": "medicinsko uverenje"
   },
   "push_enabled": {
     "title": "Push obaveštenja omoguđena",
@@ -43,16 +51,30 @@
     "unsubscribe_link": "kliknite ovde da se odjavite."
   },
   "vehicle_document_expiring": {
-    "title": "Dokument vozila uskoro ističe",
-    "body": "Dokument {documentName} za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
+    "title": "Dokument {documentName} vozila uskoro istekne",
+    "body": "Dokument {documentCategoryName} ({documentName}) za vozilo {registrationNumber} ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo vas da obnovite dokument što je pre moguće.",
-    "footer": "Ignorisanje ovog upozorenja može rezultirati onemogućavanjem vozila."
+    "footer": "Ignorisanje ovog upozorenja može rezultirati onemogućavanjem vozila.",
+    "registration_category": "registracioni dokument",
+    "insurance_category": "polisa osiguranja",
+    "technical_category": "tehnički pregled",
+    "taxi_license_category": "taksi dozvola",
+    "platform_category": "platforma odobrenje",
+    "equipment_category": "oprema sertifikat",
+    "handover_category": "dokument preuzimanja"
   },
   "vehicle_document_expired": {
-    "title": "Dokument vozila je istekao - potrebna akcija",
-    "body": "Dokument {documentName} za vozilo {registrationNumber} je istekao {expiryDate}.",
+    "title": "Dokument {documentName} vozila je istekao - potrebna akcija",
+    "body": "Dokument {documentCategoryName} ({documentName}) za vozilo {registrationNumber} je istekao {expiryDate}.",
     "consequence": "Vozilo može biti onemogućeno do obnavljanja.",
-    "footer": "Kontaktirajte administratora za obnovu."
+    "footer": "Kontaktirajte administratora za obnovu.",
+    "registration_category": "registracioni dokument",
+    "insurance_category": "polisa osiguranja",
+    "technical_category": "tehnički pregled",
+    "taxi_license_category": "taksi dozvola",
+    "platform_category": "platforma odobrenje",
+    "equipment_category": "oprema sertifikat",
+    "handover_category": "dokument preuzimanja"
   },
   "template_notification": {
     "title": "Šablon obaveštenja",

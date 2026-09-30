@@ -84,8 +84,8 @@ export interface NotificationDefinition<TData> {
     client: boolean; // Determines if this is sent to the client (driver)
     admin: boolean;  // Determines if this is sent to admins
     
-    // Generates the base title/body upfront to inject into context
-    getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
+    // Optional. Automatically falls back to general getBaseMessage using title and body
+    getBaseMessage?: (m: MessageStructure, data: TData) => BaseMessage;
     
     // Optional channels
     email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
@@ -111,7 +111,6 @@ By default, the `prepareNotificationChannels` factory assumes an admin preset li
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface PushEnabledData {
@@ -130,7 +129,6 @@ export const pushEnabledNotification: NotificationDefinition<PushEnabledData> = 
     priority: 'low',
     client: true,
     admin: false,
-    getBaseMessage,
     ...channels
 };
 
@@ -336,6 +334,16 @@ async function _dispatchNotification<TData>(
 }
 ```
 
+## 8. WebPush Click Action Handling
+
+The `sendWebPush` function in `src/lib/server/services/webpush.service.ts` handles the `click_action` URL normalization:
+
+- If `click_action` is a relative path starting with `/` (e.g., `/admin/fleet`, `/driver`), it is automatically prepended with `PUBLIC_URL` from the environment.
+- If `click_action` is not provided or is empty, it defaults to `PUBLIC_URL` (the root of the application).
+- Absolute URLs (starting with `http://` or `https://`) are passed through unchanged.
+
+This ensures that notification definitions can use convenient relative paths (e.g., `/admin/fleet`) while the actual FCM payload contains fully qualified URLs ready for the client to handle.
+
 ## 7. Implementation Progress Updates
 
 *   **Greeting Fields Removed**: To unify incident logs and cross-channel formatting, the `greeting` property (e.g., "Dear {driverName}") has been entirely stripped from `localizedMailerMessages.ts` definitions and all language JSON files (`messages/*.json`). Notifications are now direct and actionable without salutations.
@@ -343,3 +351,4 @@ async function _dispatchNotification<TData>(
 *   **Empty Metadata Handling**: UIs displaying incident logs, such as `IncidentMetadata.svelte`, will selectively hide the metadata `<pre>` container if the associated `metadata` payload is empty or undefined, reducing visual clutter on the admin details page.
 *   **Strict Audience Targeting**: The `client` and `admin` boolean flags in `NotificationDefinition` have been made strictly required, forcing every notification definition to explicitly state its intended audience, ensuring precise push notification action link routing and matrix distribution without fallback ambiguities.
 *   **Typed Matrix Exclusions**: The incidents matrix specifically relies on `App.MatrixNotificationType`, which explicitly uses TypeScript's `Exclude` utility to remove system/internal notifications (like `push_enabled`, `reset_password`, or `common`) from the matrix management interface, preventing administrators from accidentally subscribing to internal operational noise.
+*   **In-App Notifications Implementation**: Implemented Firestore collection `userNotifications` (using the same structure for both admins and drivers as they share a Firebase auth `id`). `sendInApp` channel uses `InAppNotification` interface containing a `read` property (either `false` or read timestamp). Implemented unified API endpoints (`/api/notifications`) and notification UI pages (`/driver/notifications` and `/admin/notifications`) with `InAppNotificationItem.svelte` component.

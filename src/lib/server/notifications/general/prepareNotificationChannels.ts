@@ -36,7 +36,7 @@ export function prepareNotificationChannels(
 
     if (requestedChannels.includes('inapp')) {
         result.inapp = (_: unknown, ctx: NotificationContext) => {
-            return `<strong>${ctx.title}</strong><br/>${ctx.body}`;
+            return ctx.body;
         };
     }
 

@@ -5,6 +5,7 @@ import type { LayoutServerLoad } from './$types';
 import { findVehicleDocuments } from '$lib/server/db/firebase/vehicleDocuments.fdb';
 import { findDriverDocuments } from '$lib/server/db/firebase/driverDocuments.fdb';
 import { getLatestBalanceEvent } from '$lib/server/db/firebase/driverBalanceEvents.fdb';
+import { getUserNotifications } from '$lib/server/db/firebase/userNotifications.fdb';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
 	if (!locals._driver) {
@@ -27,5 +28,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	documents = [ ...vehicleDocuments, ...driverDocuments ];
 	const balance = await getLatestBalanceEvent(driver.id)
 	
-	return { driver, vehicle, documents, locale: locals.locale, exp, balance };
+	const notifications = await getUserNotifications(user.id);
+	
+	return { driver, vehicle, documents, locale: locals.locale, exp, balance, notifications };
 };

@@ -125,10 +125,20 @@ declare global {
 			lastLoggedIn: number;
 		}
 
+		interface InAppNotification {
+			id: string;
+			userId: string; // To allow querying all for a user if we use a flat collection
+			type: NotificationType;
+			title: string;
+			body: string;
+			metadata: Record<string, any>;
+			read: false | number; // false if unread, timestamp if read
+			timestamp: number;
+		}
+
 		namespace Incident {
 			type Severity = 'low' | 'medium' | 'high' | 'critical';
 			type Status = 'info' | 'open' | 'resolved';
-
 			type Category = 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
 			type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system';
 

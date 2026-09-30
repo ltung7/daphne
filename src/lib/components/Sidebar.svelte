@@ -32,7 +32,8 @@
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
 		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
 		{ id: 8, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' },
-		{ id: 9, title: 'Incydenty', icon: 'triangle-warning', link: '/incidents' },
+		{ id: 9, title: 'Zdarzenia', icon: 'triangle-warning', link: '/incidents' },
+		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' },
 	]);
 
 	function toggleSidebar() {

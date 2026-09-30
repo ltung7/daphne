@@ -26,8 +26,7 @@ When asked to "create a notification", "add the [X] notification", or "implement
 ### 3. Create the Notification Definition
 - Create a new file in `src/lib/server/notifications/driver/` or `src/lib/server/notifications/admin/`.
 - Export a constant of type `NotificationDefinition<[Name]Data>`.
-- Define the `id` (e.g., `driver_settlement_calculated`) and `priority` (`low`, `medium`, `high`, `critical`).
-- Use `getBaseMessage` from `src/lib/server/notifications/localized/localizedMailerMessages.ts` to automatically populate the base `title` and `body`.
+- Determine the `id` (e.g., `driver_settlement_calculated`) and `priority` (`low`, `medium`, `high`, `critical`).
 - Use the `prepareNotificationChannels` factory (`src/lib/server/notifications/general/prepareNotificationChannels.ts`) to easily auto-generate the `sms`, `push`, `inapp`, and `incident` channels based on the localized title and body.
 - Implement the `email` channel manually (if needed) to handle complex HTML layouts.
 
@@ -36,7 +35,6 @@ Example:
 import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
-import { getBaseMessage } from '../localized/localizedMailerMessages';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
 
 export interface SomeData {
@@ -51,7 +49,8 @@ const channels = prepareNotificationChannels({
 export const someNotification: NotificationDefinition<SomeData> = {
     id: 'some_notification_id', // Must exist in App.NotificationType
     priority: 'medium',
-    getBaseMessage,
+    client: true,
+    admin: false,
     email: (data, ctx) => ({
         subject: ctx.title,
         htmlBody: `

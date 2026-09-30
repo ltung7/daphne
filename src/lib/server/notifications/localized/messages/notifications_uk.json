@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "Документ {documentName} скоро закінчується",
-    "body": "Ваш {documentCategoryName} ({documentName}) закінчується через {daysUntilExpiry} днів ({expiryDate}).",
+    "body": "Документ {documentCategoryName} ({documentName}) закінчується через {daysUntilExpiry} днів ({expiryDate}).",
     "consequence": "Будь ласка, подовжте термін дії документу якнайшвидше.",
-    "footer": "Ігнорування цього попередження може призвести до обмеження роботи."
+    "footer": "Ігнорування цього попередження може призвести до обмеження роботи.",
+    "driving_license_category": "водійське посвідчення",
+    "taxi_authorization_category": "таксі авторизація",
+    "identification_category": "документ особи",
+    "medical_category": "медичне свідоцтво"
   },
   "driver_document_expired": {
     "title": "Документ {documentName} закінчився - потрібна дія",
-    "body": "Ваш {documentCategoryName} ({documentName}) закінчився {expiryDate}.",
+    "body": "Документ {documentCategoryName} ({documentName}) закінчився {expiryDate}.",
     "consequence": "Ваш обліковий запис може бути обмежений до відновлення.",
-    "footer": "Зверніться до адміністратора для відновлення."
+    "footer": "Зверніться до адміністратора для відновлення.",
+    "driving_license_category": "водійське посвідчення",
+    "taxi_authorization_category": "таксі авторизація",
+    "identification_category": "документ особи",
+    "medical_category": "медичне свідоцтво"
   },
   "admin_notification": {
     "title": "Повідомлення від адміністратора автопарку",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "натисніть тут, щоб відписатися."
   },
   "vehicle_document_expiring": {
-    "title": "Термін дії документа на транспортний засіб скоро закінчується",
-    "body": "Термін дії документа {documentName} для транспортного засобу {registrationNumber} закінчується через {daysUntilExpiry} днів ({expiryDate}).",
+    "title": "Документ транспортного засобу {documentName} скоро закінчується",
+    "body": "Документ {documentCategoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчується через {daysUntilExpiry} днів ({expiryDate}).",
     "consequence": "Будь ласка, оновіть документ якомога швидше.",
-    "footer": "Ігнорування цього попередження може призвести до блокування транспортного засобу."
+    "footer": "Ігнорування цього попередження може призвести до блокування транспортного засобу.",
+    "registration_category": "реєстраційний документ",
+    "insurance_category": "страхова поліса",
+    "technical_category": "технічний огляд",
+    "taxi_license_category": "таксі ліцензія",
+    "platform_category": "платформне схвалення",
+    "equipment_category": "сертифікат обладнання",
+    "handover_category": "документ передачі"
   },
   "vehicle_document_expired": {
-    "title": "Термін дії документа на транспортний засіб закінчився - потрібна дія",
-    "body": "Термін дії документа {documentName} для транспортного засобу {registrationNumber} закінчився {expiryDate}.",
+    "title": "Документ транспортного засобу {documentName} закінчився - потрібна дія",
+    "body": "Документ {documentCategoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчився {expiryDate}.",
     "consequence": "Транспортний засіб може бути заблоковано до оновлення.",
-    "footer": "Зв'яжіться з адміністратором для оновлення."
+    "footer": "Зв'яжіться з адміністратором для оновлення.",
+    "registration_category": "реєстраційний документ",
+    "insurance_category": "страхова поліса",
+    "technical_category": "технічний огляд",
+    "taxi_license_category": "таксі ліцензія",
+    "platform_category": "платформне схвалення",
+    "equipment_category": "сертифікат обладнання",
+    "handover_category": "документ передачі"
   },
   "push_enabled": {
     "title": "Push-сповіщення увімкнено",

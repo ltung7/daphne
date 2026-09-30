@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "Documentul {documentName} expiră curând",
-    "body": "Dumneavoastră {documentCategoryName} ({documentName}) expiră în {daysUntilExpiry} zile ({expiryDate}).",
+    "body": "Documentul {documentCategoryName} ({documentName}) expiră în {daysUntilExpiry} zile ({expiryDate}).",
     "consequence": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
-    "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
+    "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă.",
+    "driving_license_category": "permis de conducere",
+    "taxi_authorization_category": "autorizație taxi",
+    "identification_category": "document de identitate",
+    "medical_category": "certificat medical"
   },
   "driver_document_expired": {
     "title": "Documentul {documentName} a expirat - acțiune necesară",
-    "body": "Dumneavoastră {documentCategoryName} ({documentName}) a expirat pe {expiryDate}.",
+    "body": "Documentul {documentCategoryName} ({documentName}) a expirat pe {expiryDate}.",
     "consequence": "Contul dumneavoastră poate fi restricționat până la reînnoire.",
-    "footer": "Contactați administratorul pentru reînnoire."
+    "footer": "Contactați administratorul pentru reînnoire.",
+    "driving_license_category": "permis de conducere",
+    "taxi_authorization_category": "autorizație taxi",
+    "identification_category": "document de identitate",
+    "medical_category": "certificat medical"
   },
   "admin_notification": {
     "title": "Mesaj de la administratorul flotei",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "faceți clic aici pentru a vă dezabona."
   },
   "vehicle_document_expiring": {
-    "title": "Documentul vehiculului expiră în curând",
-    "body": "Documentul {documentName} pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
-    "consequence": "Te rugăm să reînnoiești documentul cât mai curând posibil.",
-    "footer": "Ignorarea acestui avertisment poate duce la dezactivarea vehiculului."
+    "title": "Documentul {documentName} al vehiculului expiră curând",
+    "body": "Documentul {documentCategoryName} ({documentName}) pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
+    "consequence": "Vă rugăm să reînnoiești documentul cât mai curând posibil.",
+    "footer": "Ignorarea acestui avertisment poate duce la dezactivarea vehiculului.",
+    "registration_category": "document de înmatriculare",
+    "insurance_category": "polită de asigurare",
+    "technical_category": "inspecție tehnică",
+    "taxi_license_category": "licență taxi",
+    "platform_category": "aprobare platformă",
+    "equipment_category": "certificat echipament",
+    "handover_category": "document preluare"
   },
   "vehicle_document_expired": {
-    "title": "Documentul vehiculului a expirat - acțiune necesară",
-    "body": "Documentul {documentName} pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
+    "title": "Documentul {documentName} al vehiculului a expirat - acțiune necesară",
+    "body": "Documentul {documentCategoryName} ({documentName}) pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
     "consequence": "Vehiculul poate fi dezactivat până la reînnoire.",
-    "footer": "Contactează administratorul pentru reînnoire."
+    "footer": "Contactați administratorul pentru reînnoire.",
+    "registration_category": "document de înmatriculare",
+    "insurance_category": "polită de asigurare",
+    "technical_category": "inspecție tehnică",
+    "taxi_license_category": "licență taxi",
+    "platform_category": "aprobare platformă",
+    "equipment_category": "certificat echipament",
+    "handover_category": "document preluare"
   },
   "push_enabled": {
     "title": "Notificări Push Activate",

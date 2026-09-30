@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "कागजात {documentName} चाँडै समाप्त हुनेछ",
-    "body": "तपाईंको {documentCategoryName} ({documentName}) {daysUntilExpiry} दिनमा समाप्त हुनेछ ({expiryDate})।",
+    "body": "कागजात {documentCategoryName} ({documentName}) {daysUntilExpiry} दिनमा समाप्त हुनेछ ({expiryDate})।",
     "consequence": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
-    "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।"
+    "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।",
+    "driving_license_category": "ड्राइभिङ लाइसेन्स",
+    "taxi_authorization_category": "ट्याक्सी प्राधिकरण",
+    "identification_category": "पहिचान दस्तावेज",
+    "medical_category": "चिकित्सा प्रमाणपत्र"
   },
   "driver_document_expired": {
     "title": "कागजात {documentName} समाप्त - कारवाही आवश्यक",
-    "body": "तपाईंको {documentCategoryName} ({documentName}) {expiryDate} मा समाप्त भएको छ।",
+    "body": "कागजात {documentCategoryName} ({documentName}) {expiryDate} मा समाप्त भएको छ।",
     "consequence": "नवीकरण सम्म तपाईंको खाता प्रतिबन्ध हुन सक्छ।",
-    "footer": "नवीकरणका लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
+    "footer": "नवीकरणका लागि प्रशासकलाई सम्पर्क गर्नुहोस्।",
+    "driving_license_category": "ड्राइभिङ लाइसेन्स",
+    "taxi_authorization_category": "ट्याक्सी प्राधिकरण",
+    "identification_category": "पहिचान दस्तावेज",
+    "medical_category": "चिकित्सा प्रमाणपत्र"
   },
   "admin_notification": {
     "title": "फ्लीट प्रशासकबाट सन्देश",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "सदस्यता समाप्त गर्न यहाँ क्लिक गर्नुहोस्।"
   },
   "vehicle_document_expiring": {
-    "title": "सवारी साधनको कागजात चाँडै समाप्त हुँदैछ",
-    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
+    "title": "सवारी साधनको कागजात {documentName} चाँडै समाप्त हुनेछ",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentCategoryName} ({documentName}) को म्याद {daysUntilExpiry} दिनहरू ({expiryDate}) मा समाप्त हुन्छ।",
     "consequence": "कृपया कागजात जतिसक्दो चाँडो नवीकरण गर्नुहोस्।",
-    "footer": "यो चेतावनीलाई बेवास्ता गर्नाले सवारी साधन असक्षम हुन सक्छ।"
+    "footer": "यो चेतावनीलाई बेवास्ता गर्नाले सवारी साधन असक्षम हुन सक्छ।",
+    "registration_category": "दर्ता कागजात",
+    "insurance_category": "बीमा पलिसी",
+    "technical_category": "प्राविधिक निरीक्षण",
+    "taxi_license_category": "ट्याक्सी लाइसेन्स",
+    "platform_category": "प्लेटफर्म अनुमोदन",
+    "equipment_category": "उपकरण प्रमाणपत्र",
+    "handover_category": "हस्तान्तरण कागजात"
   },
   "vehicle_document_expired": {
-    "title": "सवारी साधनको कागजात समाप्त भयो - कारबाही आवश्यक छ",
-    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentName} को म्याद {expiryDate} मा समाप्त भयो।",
+    "title": "सवारी साधनको कागजात {documentName} समाप्त भयो - कारबाही आवश्यक छ",
+    "body": "सवारी साधन {registrationNumber} को लागि कागजात {documentCategoryName} ({documentName}) को म्याद {expiryDate} मा समाप्त भयो।",
     "consequence": "नवीकरण नभएसम्म सवारी साधन असक्षम हुन सक्छ।",
-    "footer": "नवीकरणको लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
+    "footer": "नवीकरणको लागि प्रशासकलाई सम्पर्क गर्नुहोस्।",
+    "registration_category": "दर्ता कागजात",
+    "insurance_category": "बीमा पलिसी",
+    "technical_category": "प्राविधिक निरीक्षण",
+    "taxi_license_category": "ट्याक्सी लाइसेन्स",
+    "platform_category": "प्लेटफर्म अनुमोदन",
+    "equipment_category": "उपकरण प्रमाणपत्र",
+    "handover_category": "हस्तान्तरण कागजात"
   },
   "push_enabled": {
     "title": "पुश सूचना सक्षम",

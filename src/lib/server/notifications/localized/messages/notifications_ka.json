@@ -7,16 +7,24 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "დოკუმენტი {documentName} თუesto 가깝습니다",
-    "body": "თქვენი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "title": "დოკუმენტი {documentName} მალე ამოიწურება",
+    "body": "დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
-    "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს."
+    "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს.",
+    "driving_license_category": "მძღოლის მოწმობა",
+    "taxi_authorization_category": "ტაქსი ავტორიზაცია",
+    "identification_category": "იდენტობათა დოკუმენტი",
+    "medical_category": "მედიცინური სერტიფიკატი"
   },
   "driver_document_expired": {
     "title": "დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
-    "body": "თქვენი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}.",
+    "body": "დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}.",
     "consequence": "თქვენი ანგარიში შეიძლება იყოს შეზღუდული მონაწილეობის აღდგენამდე.",
-    "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის."
+    "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის.",
+    "driving_license_category": "მძღოლის მოწმობა",
+    "taxi_authorization_category": "ტაქსი ავტორიზაცია",
+    "identification_category": "იდენტობათა დოკუმენტი",
+    "medical_category": "მედიცინური სერტიფიკატი"
   },
   "admin_notification": {
     "title": "ავტოპარკის ადმინისტრატორის შეტყობინება",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "დააწკაპუნეთ აქ, რათა გაუქმოთ გამოწერა."
   },
   "vehicle_document_expiring": {
-    "title": "ავტომობილის დოკუმენტს მალე გაუვა ვადა",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გასდის {daysUntilExpiry} დღეში ({expiryDate}).",
+    "title": "ავტომობილის დოკუმენტი {documentName} მალე ამოიწურება",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
-    "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა."
+    "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა.",
+    "registration_category": "რეგისტრაციის დოკუმენტი",
+    "insurance_category": "დაზღვევის პოლისი",
+    "technical_category": "ტექნიკური შემოწმება",
+    "taxi_license_category": "ტაქსის ლიცენზია",
+    "platform_category": "პლატფორმის დადასტურება",
+    "equipment_category": "avinishing이의 სერტიფიკატი",
+    "handover_category": "მიცემის-მიღების დოკუმენტი"
   },
   "vehicle_document_expired": {
-    "title": "ავტომობილის დოკუმენტს ვადა გაუვიდა - საჭიროა ქმედება",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტს {documentName} ვადა გაუვიდა {expiryDate}-ში.",
+    "title": "ავტომობილის დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}-ში.",
     "consequence": "განახლებამდე ავტომობილი შეიძლება დაიბლოკოს.",
-    "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს."
+    "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს.",
+    "registration_category": "რეგისტრაციის დოკუმენტი",
+    "insurance_category": "დაზღვევის პოლისი",
+    "technical_category": "ტექნიკური შემოწმება",
+    "taxi_license_category": "ტაქსის ლიცენზია",
+    "platform_category": "პლატფორმის დადასტურება",
+    "equipment_category": "avinishing이의 სერტიფიკატი",
+    "handover_category": "მიცემის-მიღების დოკუმენტი"
   },
   "push_enabled": {
     "title": "Push-შეტყობინებები ჩართულია",

@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "Ang dokumentong {documentName} ay malapit nang mag-expire",
-    "body": "Ang iyong {documentCategoryName} ({documentName}) ay mag-eexpire sa loob ng {daysUntilExpiry} na araw ({expiryDate}).",
+    "body": "Ang dokumentong {documentCategoryName} ({documentName}) ay mag-eexpire sa loob ng {daysUntilExpiry} na araw ({expiryDate}).",
     "consequence": "Pakirenew ang dokumento sa lalong madaling panahon.",
-    "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho."
+    "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho.",
+    "driving_license_category": "lisensya sa pagmamaneho",
+    "taxi_authorization_category": "taxi authorization",
+    "identification_category": "dokumento ng pagkakakilanlan",
+    "medical_category": "medikal na sertipiko"
   },
   "driver_document_expired": {
     "title": "Ang dokumentong {documentName} ay expired - kailangan ng aksyon",
-    "body": "Ang iyong {documentCategoryName} ({documentName}) ay expire noong {expiryDate}.",
+    "body": "Ang dokumentong {documentCategoryName} ({documentName}) ay expire noong {expiryDate}.",
     "consequence": "Ang iyong account ay maaaring limitahan hanggang sa ma-renew.",
-    "footer": "Makipag-ugnayan sa administrator para sa renewal."
+    "footer": "Makipag-ugnayan sa administrator para sa renewal.",
+    "driving_license_category": "lisensya sa pagmamaneho",
+    "taxi_authorization_category": "taxi authorization",
+    "identification_category": "dokumento ng pagkakakilanlan",
+    "medical_category": "medikal na sertipiko"
   },
   "admin_notification": {
     "title": "Mensahe mula sa Fleet Administrator",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "i-click dito para mag-unsubscribe."
   },
   "vehicle_document_expiring": {
-    "title": "Malapit na mag-expire ang dokumento ng sasakyan",
-    "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay mag-eexpire sa loob ng {daysUntilExpiry} araw ({expiryDate}).",
+    "title": "Ang dokumentong {documentName} ng sasakyan ay malapit nang mag-expire",
+    "body": "Ang dokumentong {documentCategoryName} ({documentName}) para sa sasakyang {registrationNumber} ay mag-eexpire sa loob ng {daysUntilExpiry} na araw ({expiryDate}).",
     "consequence": "Mangyaring i-renew ang dokumento sa lalong madaling panahon.",
-    "footer": "Ang pagbabalewala sa babalang ito ay maaaring magresulta sa pag-disable ng sasakyan."
+    "footer": "Ang pagbabalewala sa babalang ito ay maaaring magresulta sa pag-disable ng sasakyan.",
+    "registration_category": "dokumento ng rejistrasyon",
+    "insurance_category": "polisa ng insurance",
+    "technical_category": "technical inspection",
+    "taxi_license_category": "lisensya ng taxi",
+    "platform_category": "platform approval",
+    "equipment_category": "sertipiko ng equipment",
+    "handover_category": "dokumento ng handover"
   },
   "vehicle_document_expired": {
-    "title": "Nag-expire na ang dokumento ng sasakyan - kailangan ng aksyon",
-    "body": "Ang dokumentong {documentName} para sa sasakyang {registrationNumber} ay nag-expire noong {expiryDate}.",
+    "title": "Ang dokumentong {documentName} ng sasakyan ay expired - kailangan ng aksyon",
+    "body": "Ang dokumentong {documentCategoryName} ({documentName}) para sa sasakyang {registrationNumber} ay nag-expire noong {expiryDate}.",
     "consequence": "Maaaring ma-disable ang sasakyan hanggang sa ma-renew ito.",
-    "footer": "Makipag-ugnayan sa administrator para mag-renew."
+    "footer": "Makipag-ugnayan sa administrator para mag-renew.",
+    "registration_category": "dokumento ng rejistrasyon",
+    "insurance_category": "polisa ng insurance",
+    "technical_category": "technical inspection",
+    "taxi_license_category": "lisensya ng taxi",
+    "platform_category": "platform approval",
+    "equipment_category": "sertipiko ng equipment",
+    "handover_category": "dokumento ng handover"
   },
   "push_enabled": {
     "title": "Pinagana ang Push Notifications",

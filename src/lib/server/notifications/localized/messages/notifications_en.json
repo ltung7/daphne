@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Document {documentName} expiring soon",
-    "body": "Your {documentCategoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
+    "body": "Document {documentCategoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions.",
     "driving_license_category": "driving license",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Document {documentName} expired - action required",
-    "body": "Your {documentCategoryName} ({documentName}) expired on {expiryDate}.",
+    "body": "Document {documentCategoryName} ({documentName}) expired on {expiryDate}.",
     "consequence": "Your account may be restricted until renewal.",
     "footer": "Contact the administrator to renew.",
     "driving_license_category": "driving license",
@@ -65,15 +65,29 @@
     "unsubscribe_link": "click here to unsubscribe."
   },
   "vehicle_document_expiring": {
-    "title": "Vehicle document expiring soon",
-    "body": "The document {documentName} for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
+    "title": "Vehicle document {documentName} expiring soon",
+    "body": "The {documentCategoryName} ({documentName}) for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
-    "footer": "Ignoring this warning may result in the vehicle being disabled."
+    "footer": "Ignoring this warning may result in the vehicle being disabled.",
+    "registration_category": "registration document",
+    "insurance_category": "insurance policy",
+    "technical_category": "technical inspection",
+    "taxi_license_category": "taxi license",
+    "platform_category": "platform approval",
+    "equipment_category": "equipment certificate",
+    "handover_category": "handover document"
   },
   "vehicle_document_expired": {
-    "title": "Vehicle document expired - action required",
-    "body": "The document {documentName} for vehicle {registrationNumber} expired on {expiryDate}.",
+    "title": "Vehicle document {documentName} expired - action required",
+    "body": "The {documentCategoryName} ({documentName}) for vehicle {registrationNumber} expired on {expiryDate}.",
     "consequence": "The vehicle may be disabled until renewal.",
-    "footer": "Contact the administrator to renew."
+    "footer": "Contact the administrator to renew.",
+    "registration_category": "registration document",
+    "insurance_category": "insurance policy",
+    "technical_category": "technical inspection",
+    "taxi_license_category": "taxi license",
+    "platform_category": "platform approval",
+    "equipment_category": "equipment certificate",
+    "handover_category": "handover document"
   }
 }

@@ -46,7 +46,7 @@ export interface NotificationDefinition<TData> {
     priority: NotificationPriority;
     admin: boolean;
     client: boolean;
-    getBaseMessage: (m: MessageStructure, data: TData) => BaseMessage;
+    getBaseMessage?: (m: MessageStructure, data: TData) => BaseMessage;
     email?: (data: TData, ctx: NotificationContext) => EmailPayload | Promise<EmailPayload>;
     push?: (data: TData, ctx: NotificationContext) => WebPushPayload | Promise<WebPushPayload>;
     sms?: (data: TData, ctx: NotificationContext) => string | Promise<string>;

@@ -8,15 +8,23 @@
   },
   "driver_document_expiring": {
     "title": "Hujjat {documentName} tez orada amal qilishni to'xtatadi",
-    "body": "Sizning {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
+    "body": "Hujjat {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
-    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
+    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin.",
+    "driving_license_category": "haydovchilik guvohnomasi",
+    "taxi_authorization_category": "taksi avtorizatsiyasi",
+    "identification_category": "shaxsiy hujjat",
+    "medical_category": "tibbiy guvohnoma"
   },
   "driver_document_expired": {
     "title": "Hujjat {documentName} amal qilmasdan qolgan - harakat kerak",
-    "body": "Sizning {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
+    "body": "Hujjat {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Hisobingiz yangilanmaguncha cheklanishi mumkin.",
-    "footer": "Yangilash uchun administrator bilan bog'laning."
+    "footer": "Yangilash uchun administrator bilan bog'laning.",
+    "driving_license_category": "haydovchilik guvohnomasi",
+    "taxi_authorization_category": "taksi avtorizatsiyasi",
+    "identification_category": "shaxsiy hujjat",
+    "medical_category": "tibbiy guvohnoma"
   },
   "admin_notification": {
     "title": "Avtopark administratoridan xabar",
@@ -39,16 +47,30 @@
     "unsubscribe_link": "ro'yxatdan o'chish uchun bu yerni bosing."
   },
   "vehicle_document_expiring": {
-    "title": "Avtomobil hujjatining muddati tez orada tugaydi",
-    "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {daysUntilExpiry} kundan ({expiryDate}) so'ng tugaydi.",
+    "title": "Avtomobil hujjati {documentName} tez orada amal qilishni to'xtatadi",
+    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni iloji boricha tezroq yangilang.",
-    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish avtomobilning bloklanishiga olib kelishi mumkin."
+    "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish avtomobilning bloklanishiga olib kelishi mumkin.",
+    "registration_category": "ro'yxatdan o'tkazish hujjati",
+    "insurance_category": "sug'urta polisi",
+    "technical_category": "texnik ko'rik",
+    "taxi_license_category": "taksi litsenziyasi",
+    "platform_category": "platform tasdiqlash",
+    "equipment_category": "jihozlashuv sertifikati",
+    "handover_category": "o'tkazib berish hujjati"
   },
   "vehicle_document_expired": {
-    "title": "Avtomobil hujjatining muddati tugadi - chora ko'rish talab etiladi",
-    "body": "{registrationNumber} raqamli avtomobil uchun {documentName} hujjatining muddati {expiryDate} da tugadi.",
+    "title": "Avtomobil hujjati {documentName} amal qilmasdan qolgan - harakat kerak",
+    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Avtomobil yangilanmaguncha bloklanishi mumkin.",
-    "footer": "Yangilash uchun administrator bilan bog'laning."
+    "footer": "Yangilash uchun administrator bilan bog'laning.",
+    "registration_category": "ro'yxatdan o'tkazish hujjati",
+    "insurance_category": "sug'urta polisi",
+    "technical_category": "texnik ko'rik",
+    "taxi_license_category": "taksi litsenziyasi",
+    "platform_category": "platform tasdiqlash",
+    "equipment_category": "jihozlashuv sertifikati",
+    "handover_category": "o'tkazib berish hujjati"
   },
   "push_enabled": {
     "title": "Push-bildirishnomalar yoqildi",
