@@ -1,4 +1,14 @@
-# Fleet Profit & Driver Settlement System - Implementation Plan
+# Fleet Profit & Driver Settlement System - Implementation Plan (ARCHIVED)
+
+> **Status: ARCHIVED** — Superseded by and fused into `MONTHLY_COMPANY_LEDGER_PLAN.md`
+> 
+> Automated weekly settlement batching and automated cost allocation services are DEFERRED.
+> All operational accounting, weekly ride ingestion, monthly driver settlements, and 3-tier P&L reporting (Company, Vehicle, Driver) are unified under `MONTHLY_COMPANY_LEDGER_PLAN.md` with full manual entry/failsafe support.
+> 
+> Key rules established:
+> - Ride platforms (Uber/Bolt) report and settle weekly (`YYYY-Www`).
+> - Company makes driver payouts monthly (`YYYY-MM`), except for early settlement requests which are paid out ad-hoc at any time.
+> - Cash handling options are deferred.
 
 ## Overview
 Profit calculation engine for the fleet. Turns raw income (Uber/Bolt), costs (fuel, maintenance, insurance, fines), and driver provisions into:
@@ -15,7 +25,7 @@ Uses the existing `driverBalanceEvents` ledger as the immutable audit trail. All
 ### ✅ Implemented (Ledger Infrastructure)
 | Component | Location | Status |
 |-----------|----------|--------|
-| **Driver Balance Ledger UI** | `src/lib/components/finance/DriverBalanceLedger.svelte` | Complete — shows current balance, cash balance, action buttons (penalty, deduction, payout, cash deposit, cash adjustment, early settlement), paginated history offcanvas |
+| **Driver Balance Ledger UI** | `src/lib/components/finance/DriverBalanceLedger.svelte` | Complete — shows current balance, action buttons (penalty, deduction, payout, early settlement), paginated history offcanvas |
 | **Ledger API (admin)** | `src/routes/(admin)/drivers/[id]/balance/+server.ts` | Complete — GET paginated events, POST direct events, POST early settlement requests |
 | **Early Settlement Flow** | `src/lib/server/services/earlySettlements.service.ts` + admin pages | Complete — request → approve (atomic 2-event transaction: settlement + discount) / reject / cancel |
 | **Idempotency Keys** | `src/lib/server/services/ledger.service.ts` | Complete — all event types, DB-level dedup via doc ID |
@@ -27,8 +37,7 @@ namespace DriverBalance {
   type BalanceEventType = 
     | 'income_uber' | 'income_bolt'
     | 'penalty' | 'settlement' | 'repayments'
-    | 'early_settlement_discount'
-    | 'cash_collection' | 'cash_deposit' | 'cash_adjustment';
+    | 'early_settlement_discount';
 
   type BalanceEventStatus = 'confirmed' | 'cancelled' | 'reversed';
 
@@ -40,8 +49,8 @@ namespace DriverBalance {
     amount: number;                // PLN, 2dp, signed (+income, -expense)
     runningBalance: number;        // balance AFTER event
     referenceId?: string;
-    referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash';
-    metadata: Record<string, any>; // { period, trips, grossEarnings, cashCollected, ... }
+    referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement';
+    metadata: Record<string, any>; // { period, trips, grossEarnings, ... }
     timestamp: number;
     createdBy: string;
     createdByName: string;
@@ -105,8 +114,8 @@ src/lib/server/services/
 
 | Source | Collection/Table | Key Fields |
 |--------|------------------|------------|
-| Uber trips/earnings | `uberReports` (BigQuery/Firestore) | driverId, period, grossEarnings, platformCommission, cashCollected, trips |
-| Bolt trips/earnings | `boltReports` | driverId, period, grossEarnings, platformCommission, cashCollected, trips |
+| Uber trips/earnings | `uberReports` (BigQuery/Firestore) | driverId, period, grossEarnings, platformCommission, trips |
+| Bolt trips/earnings | `boltReports` | driverId, period, grossEarnings, platformCommission, trips |
 | Fuel cards | `fuelTransactions` | vehicleId, driverId, amount, date, station |
 | Maintenance | `maintenanceRecords` | vehicleId, cost, date, description |
 | Insurance | `insurancePolicies` | vehicleId, premium, periodStart, periodEnd |
@@ -129,13 +138,10 @@ interface SettlementBreakdown {
   // Income (from Uber/Bolt reports)
   uberGross: number;
   uberPlatformCommission: number;
-  uberCashCollected: number;
   boltGross: number;
   boltPlatformCommission: number;
-  boltCashCollected: number;
   totalGross: number;
   totalPlatformCommission: number;
-  totalCashCollected: number;
   
   // Fleet provision (configurable per driver/vehicle)
   provisionRate: number;           // e.g., 0.15 = 15%
@@ -148,13 +154,8 @@ interface SettlementBreakdown {
   finesCost: number;
   totalCosts: number;
   
-  // Cash reconciliation
-  cashDeposited: number;           // from cash_deposit events
-  cashAdjusted: number;            // from cash_adjustment events
-  netCashPosition: number;         // totalCashCollected - cashDeposited + cashAdjusted
-  
   // Final
-  netPayout: number;               // totalGross - platformCommission - provision - totalCosts - netCashPosition
+  netPayout: number;               // totalGross - platformCommission - provision - totalCosts
   
   // Ledger events to create (idempotent)
   ledgerEvents: Omit<BalanceEvent, 'id' | 'runningBalance' | 'timestamp' | 'createdBy' | 'createdByName'>[];
@@ -165,7 +166,6 @@ interface SettlementBreakdown {
 - Provision rate: per driver? per vehicle? tiered by tenure?
 - Cost allocation: fuel → assigned driver at transaction date? maintenance → driver at time of service?
 - Insurance proration: daily? monthly? per-km?
-- Cash handling: negative cash position deducted from payout? carried forward?
 
 ### 2. Fleet P&L (`fleetProfit.service.ts`)
 
@@ -226,7 +226,7 @@ async function ingestUberReport(report: UberReport): Promise<BalanceEvent[]> {
   // 1. Validate report completeness
   // 2. For each driver in report:
   //    - Create income_uber event (idempotency: u:{driverId}:{YYYY}W{WW})
-  //    - metadata: { period, trips, grossEarnings, platformCommission, cashCollected }
+  //    - metadata: { period, trips, grossEarnings, platformCommission }
   // 3. Return created events
 }
 
@@ -238,11 +238,11 @@ async function ingestBoltReport(report: BoltReport): Promise<BalanceEvent[]> {
 ### 4. Cost Allocation (`costAllocation.service.ts`)
 
 ```typescript
-// Fuel card transaction → cash_collection or penalty event
+// Fuel card transaction → repayments event
 async function allocateFuelTransaction(txn: FuelTransaction): Promise<BalanceEvent> {
   // Find driver assigned to vehicle at txn.date
-  // Create cash_collection (negative = driver owes) or penalty
-  // Idempotency: c:{driverId}:{YYYY}{MM}{DD} or p:{penaltyId}
+  // Create repayments (deduction from driver balance)
+  // Idempotency: r:{txnId}
 }
 
 // Maintenance record → penalty event
@@ -266,7 +266,7 @@ async function allocateFine(fine: Fine): Promise<BalanceEvent> {
 ### 5. Settlement Runner (`settlementRunner.service.ts`)
 
 ```typescript
-// Orchestrator: run weekly/monthly batch
+// Orchestrator: run monthly batch
 async function runPeriodSettlement(period: string): Promise<SettlementRunResult> {
   // 1. Get all active drivers in period
   // 2. For each: compute SettlementBreakdown via driverSettlement.service
@@ -286,7 +286,7 @@ async function runPeriodSettlement(period: string): Promise<SettlementRunResult>
 | Uber report ingested | `incomeReporting.service.ts` | `income_uber` (per driver/week) |
 | Bolt report ingested | `incomeReporting.service.ts` | `income_bolt` (per driver/week) |
 | Period settlement run | `settlementRunner.service.ts` | `settlement` (per driver/month) |
-| Fuel transaction | `costAllocation.service.ts` | `cash_collection` (negative) |
+| Fuel transaction | `costAllocation.service.ts` | `repayments` (deduction) |
 | Maintenance done | `costAllocation.service.ts` | `penalty` |
 | Insurance prorated | `costAllocation.service.ts` | `penalty` (monthly) |
 | Fine issued | `costAllocation.service.ts` | `penalty` |
@@ -315,8 +315,8 @@ async function runPeriodSettlement(period: string): Promise<SettlementRunResult>
 | Default provision rate | `src/lib/assets/constants.ts` | **UNDEFINED** |
 | Per-driver provision overrides | Driver document? | **UNDEFINED** |
 | Cost allocation rules | Config object / DB | **UNDEFINED** |
-| Settlement frequency | Weekly (Uber/Bolt) vs Monthly | **UNDEFINED** |
-| Cash reconciliation policy | Deduct negative cash from payout? | **UNDEFINED** |
+| Settlement frequency | Monthly driver payouts, weekly platform ingestion | Resolved in `MONTHLY_COMPANY_LEDGER_PLAN.md` |
+| Cash reconciliation policy | Deferred | Deferred |
 | Insurance proration method | Daily / monthly / per-km | **UNDEFINED** |
 
 ---
@@ -355,13 +355,13 @@ async function runPeriodSettlement(period: string): Promise<SettlementRunResult>
 
 ---
 
-## Open Questions (Blockers)
+## Open Questions (Resolved in `MONTHLY_COMPANY_LEDGER_PLAN.md`)
 
-1. **Provision model**: Flat % of gross? Tiered? Per-vehicle? Per-driver agreement?
-2. **Cost allocation**: Fuel → driver at pump date? Maintenance → driver at service date? Insurance → daily proration across active drivers?
-3. **Settlement period**: Match Uber/Bolt weekly? Or calendar monthly?
-4. **Cash handling**: Negative cash position = deduct from next payout? Separate invoice?
-5. **Historical data**: Backfill past periods? Start fresh from "go-live" date?
+1. **Provision model**: Flat % of gross configured per driver or per batch entry.
+2. **Cost allocation**: Fuel → driver at pump date; maintenance → vehicle overhead or driver penalty; insurance → vehicle overhead.
+3. **Settlement period**: Ride platform reports ingested weekly; driver payouts executed monthly.
+4. **Cash handling**: Deferred.
+5. **Historical data**: Start fresh from go-live date.
 
 ---
 

@@ -997,6 +997,101 @@ declare global {
 		type HealthCheckFn = (params?: HealthCheckParams) => Promise<HealthIssue[]>;
 	}
 
+	namespace CompanyLedger {
+		type LedgerEventType =
+			| 'platform_payout_uber'
+			| 'platform_payout_bolt'
+			| 'expense'
+			| 'driver_payouts_batch';
+
+		type ExpenseCategory =
+			| 'fuel'
+			| 'maintenance'
+			| 'insurance'
+			| 'ticket'
+			| 'cleaning'
+			| 'towing'
+			| 'lease'
+			| 'office'
+			| 'other';
+
+		type ReportStatus = 'draft' | 'finalized';
+
+		interface LedgerEvent {
+			id: string;
+			period: string;
+			type: LedgerEventType;
+			amount: number;
+			driverId?: string;
+			vehicleId?: string;
+			referenceId?: string;
+			metadata: {
+				expenseCategory?: ExpenseCategory;
+				description?: string;
+				[key: string]: any;
+			};
+			timestamp: number;
+			createdBy: string;
+			createdByName: string;
+		}
+
+		type IdempotencyKeyFormats = {
+			platform_payout_uber: `up:${string}:${number}W${number}`;
+			platform_payout_bolt: `bp:${string}:${number}W${number}`;
+			expense: `ex:${string}:${number}`;
+			driver_payouts_batch: `dpb:${string}:${number}`;
+		};
+
+		type EventTypeKey = keyof IdempotencyKeyFormats;
+
+		interface MonthlyReport {
+			id: string;
+			period: string;
+
+			totalGrossRevenue: number;
+			totalDriverPayouts: number;
+			totalCompanyExpenses: number;
+			companyNetProfit: number;
+
+			vehiclePnL: Record<string, {
+				revenue: number;
+				costs: number;
+				profit: number;
+			}>;
+
+			driverPnL: Record<string, {
+				revenue: number;
+				costs: number;
+				profit: number;
+			}>;
+
+			status: ReportStatus;
+			generatedAt: number;
+			generatedBy: string;
+			generatedByName: string;
+		}
+
+		interface ReconciliationCheck {
+			period: string;
+			fuel: {
+				companyPaid: number;
+				driverDeducted: number;
+				delta: number;
+			};
+			tickets: {
+				companyPaid: number;
+				driverDeducted: number;
+				delta: number;
+			};
+			platformPayouts: {
+				uberReceived: number;
+				boltReceived: number;
+				driverIncomeRecorded: number;
+				companyProvisionRecorded: number;
+			};
+		}
+	}
+
 	namespace SvelteCustom {
 		type DatatableHeaders<T = string> = [T, string][];
 

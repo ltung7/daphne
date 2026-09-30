@@ -1,7 +1,7 @@
 # Job Scheduling & Infrastructure Plan
 
 > **Status**: New plan — consolidates all periodic/scheduled jobs from existing plans
-> **Related**: `VEHICLE-STATUS-TRANSITION-PLAN-PART2.md` (health check resolver), `FLEET_PROFIT_SETTLEMENT_PLAN.md` (settlement runner), `FLEET_PLAN.md` (sync, telemetry, alerts), `DRIVER-STATUS-TRANSITION-PLAN.md` (leave transitions, document expiry), `EMAIL_NOTIFICATIONS_PLAN.md` (mail queue worker)
+> **Related**: `VEHICLE-STATUS-TRANSITION-PLAN-PART2.md` (health check resolver), `MONTHLY_COMPANY_LEDGER_PLAN.md` (settlement & company ledger), `FLEET_PLAN.md` (sync, telemetry, alerts), `DRIVER-STATUS-TRANSITION-PLAN.md` (leave transitions, document expiry), `EMAIL_NOTIFICATIONS_PLAN.md` (mail queue worker)
 
 ---
 
@@ -52,7 +52,7 @@
 ### 2. Uber/Bolt Sync Jobs
 
 #### 2.1 Daily Earnings Sync
-- **Source**: `FLEET_PLAN.md` §3.2, `FLEET_PROFIT_SETTLEMENT_PLAN.md` §3
+- **Source**: `FLEET_PLAN.md` §3.2, `MONTHLY_COMPANY_LEDGER_PLAN.md`
 - **Trigger**: Daily cron (04:00 UTC) — after platform payouts finalize
 - **Logic**: 
   - Uber: `incomeReporting.ingestUberReport()` → creates `income_uber` ledger events (idempotency key: `u:{driverId}:{YYYY}W{WW}`)
@@ -77,33 +77,32 @@
 ### 3. Settlement & Finance Jobs
 
 #### 3.1 Period Settlement Run
-- **Source**: `FLEET_PROFIT_SETTLEMENT_PLAN.md` §5, `settlementRunner.service.ts`
+- **Source**: `MONTHLY_COMPANY_LEDGER_PLAN.md`, `monthlySettlement.service.ts`
 - **Trigger**: 
-  - **Weekly** (matching Uber/Bolt payout): Monday 06:00 UTC
   - **Monthly** (calendar): 1st of month 06:00 UTC
-- **Logic**: `settlementRunner.runPeriodSettlement(period)` 
+- **Logic**: `monthlySettlement.runMonthlySettlement(period)` 
   - Get all active drivers in period
-  - For each: compute `SettlementBreakdown` via `driverSettlement.service`
-  - Write ledger events atomically (batch): `settlement` per driver
+  - Compute final monthly balance (accumulated weekly earnings - deductions - early settlements)
+  - Write ledger events atomically (batch): `settlement` per driver + `driver_payouts_batch` in company ledger
   - Return summary: `{ processed, failed, totalPayout, totalProvision }`
 - **Idempotency**: Key `s:{driverId}:{period}`
 - **File**: `src/lib/server/jobs/periodSettlementRunner.job.ts` (new)
 
 #### 3.2 Insurance Proration (Monthly)
-- **Source**: `FLEET_PROFIT_SETTLEMENT_PLAN.md` §4, `costAllocation.service.ts`
+- **Source**: `MONTHLY_COMPANY_LEDGER_PLAN.md`
 - **Trigger**: Monthly cron (2nd of month 02:00 UTC)
-- **Logic**: `costAllocation.allocateInsurancePremium(policy)` → splits premium across period, creates `penalty` ledger events per driver per month
+- **Logic**: Splits premium across period, logs `expense` in company ledger
 - **File**: `src/lib/server/jobs/monthlyInsuranceProration.job.ts` (new)
 
 #### 3.3 Fuel Transaction Allocation (Event-driven, batched daily)
-- **Source**: `FLEET_PROFIT_SETTLEMENT_PLAN.md` §4, `costAllocation.service.ts`
+- **Source**: `MONTHLY_COMPANY_LEDGER_PLAN.md`
 - **Trigger**: Daily cron (06:00 UTC) + webhook on new transaction
-- **Logic**: `costAllocation.allocateFuelTransaction(txn)` → finds driver assigned at `txn.date` → creates `cash_collection` (negative) event
-- **Idempotency**: Key `c:{driverId}:{YYYY}{MM}{DD}`
+- **Logic**: `costAllocation.allocateFuelTransaction(txn)` → finds driver assigned at `txn.date` → creates `repayments` deduction event
+- **Idempotency**: Key `r:{txnId}`
 - **File**: `src/lib/server/jobs/dailyFuelAllocation.job.ts` (new)
 
 #### 3.4 Maintenance/Fines Allocation (Event-driven)
-- **Source**: `FLEET_PROFIT_SETTLEMENT_PLAN.md` §4
+- **Source**: `MONTHLY_COMPANY_LEDGER_PLAN.md`
 - **Trigger**: On record creation (webhook/admin action)
 - **Logic**: `costAllocation.allocateMaintenance(record)`, `costAllocation.allocateFine(fine)` → creates `penalty` events
 - **Idempotency**: Key `p:{maintenanceId}` / `p:{fineId}`
