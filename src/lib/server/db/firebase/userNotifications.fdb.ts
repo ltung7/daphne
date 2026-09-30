@@ -1,4 +1,4 @@
-import { addItem, getItems, updateItem, getItemById } from './firebase';
+import { addItem, getItems, updateItem, getItemById, countItems } from './firebase';
 
 const collectionName = 'userNotifications';
 
@@ -26,4 +26,8 @@ export const getNotification = async (id: string): Promise<App.InAppNotification
 
 export const updateNotification = async (id: string, data: Partial<App.InAppNotification>) => {
     return updateItem(id, data, collectionName);
+}
+
+export const getUnreadCount = async (userId: string): Promise<number> => {
+    return countItems(collectionName, { userId, read: false })
 }

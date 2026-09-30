@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte';
 	import { Collapse } from '@sveltestrap/sveltestrap';
 	import { layoutState } from '$lib/nav/stores.svelte';
-	import UIcon from '$lib/misc/UIcon.svelte'; // Assuming this is your icon component
+	import UIcon from '$lib/misc/UIcon.svelte';
 	import TooltipText from '$lib/misc/TooltipText.svelte';
+	import { fly } from 'svelte/transition';
 
 	// TypeScript Interfaces
 	interface SubItem {
@@ -34,10 +35,11 @@
 		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' }
 	]);
 
+	let notificationCount = $state(0);
+
 	function toggleSidebar() {
 		layoutState.isSidebarExpanded = !layoutState.isSidebarExpanded;
 		if (!layoutState.isSidebarExpanded) {
-			// Auto-close submenus when collapsing sidebar
 			menuItems.forEach((item) => (item.isOpen = false));
 		}
 	}
@@ -53,12 +55,23 @@
 		layoutState.activeMenuId = id;
 	}
 
+	async function fetchNotificationCount() {
+		try {
+			const res = await fetch('/notifications/api?count=true');
+			const data = await res.json();
+			if (data.success && typeof data.count === 'number') {
+				notificationCount = data.count;
+			}
+		} catch {
+			// silently fail
+		}
+	}
+
 	// Set active menu item based on current URL on mount
 	onMount(() => {
 		const currentPath = window.location.pathname;
 		const matchingItem = menuItems.find((item) => {
 			if (!item.link) return false;
-			// Exact match for root, prefix match for others
 			if (item.link === '/') {
 				return currentPath === '/';
 			}
@@ -67,6 +80,8 @@
 		if (matchingItem) {
 			setActive(matchingItem.id);
 		}
+
+		setTimeout(fetchNotificationCount, 1000);
 	});
 </script>
 
@@ -118,6 +133,9 @@
 									<UIcon name={item.icon} size={4} />
 								</span>
 								<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
+								{#if item.id === 10 && notificationCount > 0}
+									<span transition:fly class="badge bg-danger rounded-pill ms-2">{notificationCount}</span>
+								{/if}
 							</a>
 						</TooltipText>
 					{/if}

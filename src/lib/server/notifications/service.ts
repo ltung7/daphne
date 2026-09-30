@@ -44,7 +44,7 @@ async function _dispatchNotification<TData>(
     dumpOnly: boolean
 ): Promise<void> {
     // 1. Resolve Preferences (fallback to all enabled if no user)
-    const prefs = user ? await getUserPreferences(user.id) : { channels: { email: true, sms: true, push: true }, minPriority: 'low' };
+    const prefs = await getUserPreferences(user?.id);
     
     if (user && !shouldSend(notification.priority, prefs)) {
         logger.log(`Notification ${notification.id} dropped for user ${user.id} due to preferences`);
@@ -244,7 +244,7 @@ async function sendInApp<TData>(
     }
 }
 
-async function getUserPreferences(_userId: string): Promise<UserPreferences> {
+async function getUserPreferences(_userId: string | undefined): Promise<UserPreferences> {
     // TODO: Fetch from Firestore
     return { 
         channels: { email: true, sms: true, push: true }, 
