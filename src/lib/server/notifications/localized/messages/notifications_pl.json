@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Dokument {documentName} wkrótce wygasa",
-    "body": "Twój {documentCategoryName} ({documentName}) wygasa za {daysUntilExpiry} dni ({expiryDate}).",
+    "body": "Twój {categoryName} ({documentName}) wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o przedłużenie dokumentu jak najszybciej.",
     "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy.",
     "driving_license_category": "prawo jazdy",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Dokument {documentName} wygasł - konieczna akcja",
-    "body": "Twój {documentCategoryName} ({documentName}) wygasł {expiryDate}.",
+    "body": "Twój {categoryName} ({documentName}) wygasł {expiryDate}.",
     "consequence": "Twoje konto może zostać ograniczone do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia.",
     "driving_license_category": "prawo jazdy",
@@ -66,7 +66,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Dokument pojazdu {documentName} wkrótce wygasa",
-    "body": "Dokument {documentCategoryName} ({documentName}) dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
+    "body": "Dokument {categoryName} ({documentName}) dla pojazdu {registrationNumber} wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o odnowienie dokumentu jak najszybciej.",
     "footer": "Zignorowanie tego ostrzeżenia może skutkować zablokowaniem pojazdu.",
     "registration_category": "dokument rejestracyjny",
@@ -79,7 +79,7 @@
   },
   "vehicle_document_expired": {
     "title": "Dokument pojazdu {documentName} wygasł - konieczna akcja",
-    "body": "Dokument {documentCategoryName} ({documentName}) dla pojazdu {registrationNumber} wygasł {expiryDate}.",
+    "body": "Dokument {categoryName} ({documentName}) dla pojazdu {registrationNumber} wygasł {expiryDate}.",
     "consequence": "Pojazd może zostać zablokowany do momentu odnowienia.",
     "footer": "Skontaktuj się z administratorem w celu odnowienia.",
     "registration_category": "dokument rejestracyjny",

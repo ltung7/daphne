@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Hujjat {documentName} tez orada amal qilishni to'xtatadi",
-    "body": "Hujjat {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
+    "body": "Hujjat {categoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin.",
     "driving_license_category": "haydovchilik guvohnomasi",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Hujjat {documentName} amal qilmasdan qolgan - harakat kerak",
-    "body": "Hujjat {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
+    "body": "Hujjat {categoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Hisobingiz yangilanmaguncha cheklanishi mumkin.",
     "footer": "Yangilash uchun administrator bilan bog'laning.",
     "driving_license_category": "haydovchilik guvohnomasi",
@@ -48,7 +48,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Avtomobil hujjati {documentName} tez orada amal qilishni to'xtatadi",
-    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
+    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {categoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni iloji boricha tezroq yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish avtomobilning bloklanishiga olib kelishi mumkin.",
     "registration_category": "ro'yxatdan o'tkazish hujjati",
@@ -61,7 +61,7 @@
   },
   "vehicle_document_expired": {
     "title": "Avtomobil hujjati {documentName} amal qilmasdan qolgan - harakat kerak",
-    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
+    "body": "{registrationNumber} raqamli avtomobil uchun hujjat {categoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Avtomobil yangilanmaguncha bloklanishi mumkin.",
     "footer": "Yangilash uchun administrator bilan bog'laning.",
     "registration_category": "ro'yxatdan o'tkazish hujjati",

@@ -2,6 +2,7 @@ import { getDriver, updateDriver } from '$lib/server/db/firebase/drivers.fdb';
 import { sendDriverDocumentExpiringNotification } from '$lib/server/notifications/driver/driverDocumentNotifications';
 import { sendDriverDocumentExpiredNotification } from '$lib/server/notifications/driver/driverDocumentNotifications';
 import { logger } from '$lib/utils/logger';
+import type { DriverDocumentType } from '$lib/server/notifications/driver/driverDocumentNotifications';
 
 /**
  * Resolves driver expiration health issues.
@@ -58,12 +59,14 @@ export async function resolveDriverExpirationIssues(
 			for (const issue of driverIssues.filter(i => i.severity === 'critical')) {
 				const documentName = getDocumentName(issue.type);
 				const expiryDate = formatDate(issue.expirationDate);
+				const documentType = getDocumentType(issue.type);
 
 				await sendDriverDocumentExpiredNotification(contact, {
 					documentName,
 					expiryDate,
 					driverId: driver.id,
-					driverName: driver.name
+					driverName: driver.name,
+					documentType
 				}, 'health_check');
 			}
 
@@ -78,13 +81,15 @@ export async function resolveDriverExpirationIssues(
 				const documentName = getDocumentName(issue.type);
 				const expiryDate = formatDate(issue.expirationDate);
 				const daysUntilExpiry = Math.ceil((new Date(issue.expirationDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+				const documentType = getDocumentType(issue.type);
 
 				await sendDriverDocumentExpiringNotification(contact, {
 					documentName,
 					expiryDate,
 					daysUntilExpiry,
 					driverId: driver.id,
-					driverName: driver.name
+					driverName: driver.name,
+					documentType
 				}, 'health_check');
 			}
 		}
@@ -99,6 +104,17 @@ function getDocumentName(type: string): string {
 			return 'Upoważnienia taksówki';
 		default:
 			return 'Dokumentu';
+	}
+}
+
+function getDocumentType(type: string): DriverDocumentType {
+	switch (type) {
+		case 'license_expiring':
+			return 'driving_license';
+		case 'taxi_authorization_expiring':
+			return 'taxi_authorization';
+		default:
+			return 'driving_license';
 	}
 }
 

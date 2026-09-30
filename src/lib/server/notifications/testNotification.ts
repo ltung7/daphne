@@ -1,4 +1,5 @@
 import { sendNotification } from './service';
+import { isDev } from '$lib/utils/isDev';
 import type { NotificationDefinition } from './types';
 import { 
     driverDocumentExpiredNotification, 
@@ -19,8 +20,11 @@ import { earlySettlementRequestedNotification, type EarlySettlementRequestedData
 import { earlySettlementApprovedNotification, type EarlySettlementApprovedData } from './driver/earlySettlementApprovedNotification';
 import { earlySettlementRejectedNotification, type EarlySettlementRejectedData } from './driver/earlySettlementRejectedNotification';
 
+// eslint-disable-next-line no-constant-binary-expression
+const DUMP_MESSAGES = true && isDev;
+
 const testReceiver: App.BaseContact = {
-    email: 'tomasz.le@finnergroup.com',
+    email: 'admin@macropart.com',
     id: 'test-user',
     name: 'Tomasz',
     preferredLanguage: 'en',
@@ -48,36 +52,40 @@ const defaultTestData: Record<App.NotificationType, any> = {
     /** No test */
     common: {},
 
-    /** TODO: Test notification */
+    /** Tested 30.09 */
     driver_document_expired: {
-        documentName: 'Driving License',
+        documentName: 'ABC123XZ',
         expiryDate: '2023-12-31',
         driverId: 'drv_123',
-        driverName: 'Jan Kowalski'
+        driverName: 'Jan Kowalski',
+        documentType: 'driving_license'
     } as DriverDocumentExpiredData,
 
-    /** TODO: Test notification */
+    /** Tested 30.09 */
     driver_document_expiring: {
-        documentName: 'Driving License',
+        documentName: 'ABC123XZ',
         expiryDate: '2024-01-15',
         daysUntilExpiry: 14,
         driverId: 'drv_123',
-        driverName: 'Jan Kowalski'
+        driverName: 'Jan Kowalski',
+        documentType: 'taxi_authorization'
     } as DriverDocumentExpiringData,
 
-    /** TODO: Test notification */
+    /** Tested 30.09 */
     vehicle_document_expired: {
-        documentName: 'Vehicle Insurance',
+        documentName: 'ABC123XZ',
         expiryDate: '2023-12-31',
-        registrationNumber: 'WA12345'
+        registrationNumber: 'WA12345',
+        documentType: 'insurance'
     } as VehicleDocumentExpiredData,
 
-    /** TODO: Test notification */
+    /** Tested 30.09 */
     vehicle_document_expiring: {
-        documentName: 'Vehicle Insurance',
+        documentName: 'ABC123XZ',
         expiryDate: '2024-01-15',
         daysUntilExpiry: 14,
-        registrationNumber: 'WA12345'
+        registrationNumber: 'WA12345',
+        documentType: 'technical'
     } as VehicleDocumentExpiringData,
 
     /** Tested 29.09 */
@@ -125,5 +133,6 @@ export const sendTestNotification = async <TData = any>(
         throw new Error(`Notification definition not found for id: ${notificationId}`);
     }
     const payload = data ?? (defaultTestData[notificationId] as TData);
-    return sendNotification(testReceiver, notification, payload);
+    const dumpOnly = DUMP_MESSAGES;
+    return sendNotification(testReceiver, notification, payload, 'system', dumpOnly);
 };

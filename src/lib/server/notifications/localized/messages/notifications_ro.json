@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Documentul {documentName} expiră curând",
-    "body": "Documentul {documentCategoryName} ({documentName}) expiră în {daysUntilExpiry} zile ({expiryDate}).",
+    "body": "Documentul {categoryName} ({documentName}) expiră în {daysUntilExpiry} zile ({expiryDate}).",
     "consequence": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă.",
     "driving_license_category": "permis de conducere",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Documentul {documentName} a expirat - acțiune necesară",
-    "body": "Documentul {documentCategoryName} ({documentName}) a expirat pe {expiryDate}.",
+    "body": "Documentul {categoryName} ({documentName}) a expirat pe {expiryDate}.",
     "consequence": "Contul dumneavoastră poate fi restricționat până la reînnoire.",
     "footer": "Contactați administratorul pentru reînnoire.",
     "driving_license_category": "permis de conducere",
@@ -48,7 +48,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Documentul {documentName} al vehiculului expiră curând",
-    "body": "Documentul {documentCategoryName} ({documentName}) pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
+    "body": "Documentul {categoryName} ({documentName}) pentru vehiculul {registrationNumber} expiră în {daysUntilExpiry} zile ({expiryDate}).",
     "consequence": "Vă rugăm să reînnoiești documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la dezactivarea vehiculului.",
     "registration_category": "document de înmatriculare",
@@ -61,7 +61,7 @@
   },
   "vehicle_document_expired": {
     "title": "Documentul {documentName} al vehiculului a expirat - acțiune necesară",
-    "body": "Documentul {documentCategoryName} ({documentName}) pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
+    "body": "Documentul {categoryName} ({documentName}) pentru vehiculul {registrationNumber} a expirat pe {expiryDate}.",
     "consequence": "Vehiculul poate fi dezactivat până la reînnoire.",
     "footer": "Contactați administratorul pentru reînnoire.",
     "registration_category": "document de înmatriculare",

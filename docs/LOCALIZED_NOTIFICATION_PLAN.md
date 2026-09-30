@@ -352,3 +352,68 @@ This ensures that notification definitions can use convenient relative paths (e.
 *   **Strict Audience Targeting**: The `client` and `admin` boolean flags in `NotificationDefinition` have been made strictly required, forcing every notification definition to explicitly state its intended audience, ensuring precise push notification action link routing and matrix distribution without fallback ambiguities.
 *   **Typed Matrix Exclusions**: The incidents matrix specifically relies on `App.MatrixNotificationType`, which explicitly uses TypeScript's `Exclude` utility to remove system/internal notifications (like `push_enabled`, `reset_password`, or `common`) from the matrix management interface, preventing administrators from accidentally subscribing to internal operational noise.
 *   **In-App Notifications Implementation**: Implemented Firestore collection `userNotifications` (using the same structure for both admins and drivers as they share a Firebase auth `id`). `sendInApp` channel uses `InAppNotification` interface containing a `read` property (either `false` or read timestamp). Implemented unified API endpoints (`/api/notifications`) and notification UI pages (`/driver/notifications` and `/admin/notifications`) with `InAppNotificationItem.svelte` component.
+
+## 8. Flat Category Key Pattern for Document Expiration Notifications
+
+For document expiration notifications (driver & vehicle), use **flat keys** in message JSON instead of nested objects.
+
+### Structure
+
+```json
+"driver_document_expiring": {
+  "title": "Document {documentName} expiring soon",
+  "body": "Document {categoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
+  "driving_license_category": "driving license",
+  "taxi_authorization_category": "taxi authorization",
+  "identification_category": "identity document",
+  "medical_category": "medical certificate"
+}
+```
+
+**Not nested:**
+```json
+"categories": { "driving_license": "..." }  // ❌ avoid
+```
+
+### Why flat keys
+
+1. **TypeScript compatibility** - `MessageStructure` index signature only allows `string` values: `[key: string]: string`
+2. **Simple runtime lookup** - `m[\`${documentType}_category\`]` 
+3. **Consistency** - Works identically across all 11 locales (en, pl, uk, be, hi, ne, uz, ka, tl, ro, sr)
+
+### Document type mapping
+
+| Notification | Code `documentType` | Message key suffix |
+|-------------|---------------------|-------------------|
+| Driver | `driving_license` | `driving_license_category` |
+| Driver | `taxi_authorization` | `taxi_authorization_category` |
+| Driver | `identification` | `identification_category` |
+| Driver | `medical` | `medical_category` |
+| Vehicle | `registration` | `registration_category` |
+| Vehicle | `insurance` | `insurance_category` |
+| Vehicle | `technical` | `technical_category` |
+| Vehicle | `taxi_license` | `taxi_license_category` |
+| Vehicle | `platform` | `platform_category` |
+| Vehicle | `equipment` | `equipment_category` |
+| Vehicle | `handover` | `handover_category` |
+
+### Implementation
+
+In `driverDocumentNotifications.ts` and `vehicleDocumentNotifications.ts`:
+
+```typescript
+function createDriverGetBaseMessage(notificationId: App.NotificationType) {
+    return (m: { title: string; body: string; [key: string]: string }, data: DriverDocumentExpiredData | DriverDocumentExpiringData) => {
+        const categoryKey = `${data.documentType}_category`;
+        const categoryName = m[categoryKey] ?? data.documentType;
+        // ... interpolate {categoryName} with categoryName
+    };
+}
+```
+
+The notification definition overrides `getBaseMessage`:
+```typescript
+driverDocumentExpiredNotification.getBaseMessage = createDriverGetBaseMessage('driver_document_expired');
+```
+
+Callers pass raw document types (e.g., `driving_license_front`), which are auto-mapped to categories via `getDocumentCategory()` helper.

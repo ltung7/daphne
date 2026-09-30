@@ -34,6 +34,45 @@
 	const onRevoke = async () => {
 		await confirmSuccess(internal.del('/driver/push'));
 	};
+
+	let notifications = $state<App.InAppNotification[]>([]);
+	
+	$effect(() => {
+		if (data.notifications) {
+			notifications = data.notifications;
+		}
+	});
+	let unreadCount = $derived(notifications.filter(n => n.read === false).length);
+
+	async function handleMarkRead(id: string) {
+		const notification = notifications.find(n => n.id === id);
+		if (!notification || notification.read) return;
+		try {
+			const res = await internal.patch('/api/notifications', { notificationId: id });
+			if (res) {
+				notifications = notifications.map(n => 
+					n.id === id ? { ...n, read: Date.now() } : n
+				);
+			}
+		} catch (err) {
+			console.error(err);
+		}
+	}
+	
+	async function handleMarkAllRead() {
+        if (!notifications.some(n => n.read === false)) return;
+        try {
+            const res = await internal.patch('/api/notifications', { action: 'markAllRead' });
+            if (res) {
+                notifications = notifications.map(n => ({
+                    ...n,
+                    read: n.read === false ? Date.now() : n.read
+                }));
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
 </script>
 
 <ExpandableSection caption={m.driver_data_title()} icon="user" expanded={driverExpiringSoon}>
@@ -109,6 +148,51 @@
 </Offcanvas>
 
 <ExpandableSection caption={m.webpush_title()} expanded={true}>
+	{#if notifications.length > 0}
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<h6 class="mb-0">
+				Notifications 
+				{#if unreadCount > 0}
+					<span class="badge bg-primary ms-2">{unreadCount}</span>
+				{/if}
+			</h6>
+			{#if unreadCount > 0}
+				<button class="btn btn-sm btn-outline-primary" onclick={handleMarkAllRead}>
+					Mark all read
+				</button>
+			{/if}
+		</div>
+		<div class="notifications-list mb-4">
+			{#each notifications as notification (notification.id)}
+				<div class="card mb-2 {notification.read === false ? 'border-primary bg-light' : ''}">
+					<div class="card-body py-2 px-3">
+						<div class="d-flex justify-content-between align-items-start">
+							<div>
+								<h6 class="card-title mb-1">
+									{@html notification.title}
+								</h6>
+								<p class="card-text mb-1 small">
+									{@html notification.body}
+								</p>
+								<small class="text-muted">
+									{new Date(notification.timestamp).toLocaleString()}
+								</small>
+							</div>
+							{#if notification.read === false}
+								<button 
+									class="btn btn-sm btn-link text-decoration-none ms-2 p-0" 
+									onclick={() => handleMarkRead(notification.id)}
+									title="Mark as read"
+								>
+									<i class="material-icons text-primary" style="font-size: 20px;">check_circle</i>
+								</button>
+							{/if}
+						</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
 	<div class="flex-center">
 		<WebPush fcmToken={data.driver.fcmToken} {onToken} {onRevoke} />
 	</div>

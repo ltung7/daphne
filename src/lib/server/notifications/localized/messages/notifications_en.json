@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Document {documentName} expiring soon",
-    "body": "Document {documentCategoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
+    "body": "Document {categoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in work restrictions.",
     "driving_license_category": "driving license",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Document {documentName} expired - action required",
-    "body": "Document {documentCategoryName} ({documentName}) expired on {expiryDate}.",
+    "body": "Document {categoryName} ({documentName}) expired on {expiryDate}.",
     "consequence": "Your account may be restricted until renewal.",
     "footer": "Contact the administrator to renew.",
     "driving_license_category": "driving license",
@@ -66,7 +66,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Vehicle document {documentName} expiring soon",
-    "body": "The {documentCategoryName} ({documentName}) for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
+    "body": "The {categoryName} ({documentName}) for vehicle {registrationNumber} expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
     "footer": "Ignoring this warning may result in the vehicle being disabled.",
     "registration_category": "registration document",
@@ -79,7 +79,7 @@
   },
   "vehicle_document_expired": {
     "title": "Vehicle document {documentName} expired - action required",
-    "body": "The {documentCategoryName} ({documentName}) for vehicle {registrationNumber} expired on {expiryDate}.",
+    "body": "The {categoryName} ({documentName}) for vehicle {registrationNumber} expired on {expiryDate}.",
     "consequence": "The vehicle may be disabled until renewal.",
     "footer": "Contact the administrator to renew.",
     "registration_category": "registration document",

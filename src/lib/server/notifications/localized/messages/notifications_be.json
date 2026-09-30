@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Дакумент {documentName} хутка заканчваецца",
-    "body": "Дакумент {documentCategoryName} ({documentName}) заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
+    "body": "Дакумент {categoryName} ({documentName}) заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
     "consequence": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
     "footer": "Ігнораванне гэтага папярэджання можа прывесці да абмежавання працы.",
     "driving_license_category": "вадзьская дазвол",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Дакумент {documentName} заканчыўся - патрэбная дыя",
-    "body": "Дакумент {documentCategoryName} ({documentName}) заканчыўся {expiryDate}.",
+    "body": "Дакумент {categoryName} ({documentName}) заканчыўся {expiryDate}.",
     "consequence": "Ваш уліковы запіс можа быць абмежаваны да аднаўлення.",
     "footer": "Звярніцеся да адміністратара для аднаўлення.",
     "driving_license_category": "вадзьская дазвол",
@@ -48,7 +48,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Дакумент транспартнага сродку {documentName} хутка заканчваецца",
-    "body": "Дакумент {documentCategoryName} ({documentName}) для транспартнага сродку {registrationNumber} заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
+    "body": "Дакумент {categoryName} ({documentName}) для транспартнага сродку {registrationNumber} заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
     "consequence": "Калі ласка, абнавіце дакумент як мага хутчэй.",
     "footer": "Ігнараванне гэтага папярэджання можа прывесці да блакавання транспартнага сродку.",
     "registration_category": "рэгістрацыйны дакумент",
@@ -61,7 +61,7 @@
   },
   "vehicle_document_expired": {
     "title": "Дакумент транспартнага сродку {documentName} заканчыўся - патрэбная дыя",
-    "body": "Дакумент {documentCategoryName} ({documentName}) для транспартнага сродку {registrationNumber} заканчыўся {expiryDate}.",
+    "body": "Дакумент {categoryName} ({documentName}) для транспартнага сродку {registrationNumber} заканчыўся {expiryDate}.",
     "consequence": "Транспартны сродок можа быць заблакаваны да абнаўлення.",
     "footer": "Звярніцеся да адміністратара для абнаўлення.",
     "registration_category": "рэгістрацыйны дакумент",

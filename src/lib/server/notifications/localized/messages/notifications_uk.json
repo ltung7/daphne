@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "Документ {documentName} скоро закінчується",
-    "body": "Документ {documentCategoryName} ({documentName}) закінчується через {daysUntilExpiry} днів ({expiryDate}).",
+    "body": "Документ {categoryName} ({documentName}) закінчується через {daysUntilExpiry} днів ({expiryDate}).",
     "consequence": "Будь ласка, подовжте термін дії документу якнайшвидше.",
     "footer": "Ігнорування цього попередження може призвести до обмеження роботи.",
     "driving_license_category": "водійське посвідчення",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "Документ {documentName} закінчився - потрібна дія",
-    "body": "Документ {documentCategoryName} ({documentName}) закінчився {expiryDate}.",
+    "body": "Документ {categoryName} ({documentName}) закінчився {expiryDate}.",
     "consequence": "Ваш обліковий запис може бути обмежений до відновлення.",
     "footer": "Зверніться до адміністратора для відновлення.",
     "driving_license_category": "водійське посвідчення",
@@ -48,7 +48,7 @@
   },
   "vehicle_document_expiring": {
     "title": "Документ транспортного засобу {documentName} скоро закінчується",
-    "body": "Документ {documentCategoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчується через {daysUntilExpiry} днів ({expiryDate}).",
+    "body": "Документ {categoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчується через {daysUntilExpiry} днів ({expiryDate}).",
     "consequence": "Будь ласка, оновіть документ якомога швидше.",
     "footer": "Ігнорування цього попередження може призвести до блокування транспортного засобу.",
     "registration_category": "реєстраційний документ",
@@ -61,7 +61,7 @@
   },
   "vehicle_document_expired": {
     "title": "Документ транспортного засобу {documentName} закінчився - потрібна дія",
-    "body": "Документ {documentCategoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчився {expiryDate}.",
+    "body": "Документ {categoryName} ({documentName}) для транспортного засобу {registrationNumber} закінчився {expiryDate}.",
     "consequence": "Транспортний засіб може бути заблоковано до оновлення.",
     "footer": "Зв'яжіться з адміністратором для оновлення.",
     "registration_category": "реєстраційний документ",

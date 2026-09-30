@@ -8,7 +8,7 @@
   },
   "driver_document_expiring": {
     "title": "დოკუმენტი {documentName} მალე ამოიწურება",
-    "body": "დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "body": "დოკუმენტი {categoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს.",
     "driving_license_category": "მძღოლის მოწმობა",
@@ -18,7 +18,7 @@
   },
   "driver_document_expired": {
     "title": "დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
-    "body": "დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}.",
+    "body": "დოკუმენტი {categoryName} ({documentName}) ამოიწურა {expiryDate}.",
     "consequence": "თქვენი ანგარიში შეიძლება იყოს შეზღუდული მონაწილეობის აღდგენამდე.",
     "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის.",
     "driving_license_category": "მძღოლის მოწმობა",
@@ -48,7 +48,7 @@
   },
   "vehicle_document_expiring": {
     "title": "ავტომობილის დოკუმენტი {documentName} მალე ამოიწურება",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
     "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ამ გაფრთხილების უგულებელყოფამ შეიძლება გამოიწვიოს ავტომობილის დაბლოკვა.",
     "registration_category": "რეგისტრაციის დოკუმენტი",
@@ -61,7 +61,7 @@
   },
   "vehicle_document_expired": {
     "title": "ავტომობილის დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
-    "body": "ავტომობილის {registrationNumber} დოკუმენტი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}-ში.",
+    "body": "ავტომობილის {registrationNumber} დოკუმენტი {categoryName} ({documentName}) ამოიწურა {expiryDate}-ში.",
     "consequence": "განახლებამდე ავტომობილი შეიძლება დაიბლოკოს.",
     "footer": "განახლებისთვის დაუკავშირდით ადმინისტრატორს.",
     "registration_category": "რეგისტრაციის დოკუმენტი",

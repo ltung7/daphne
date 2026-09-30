@@ -67,10 +67,18 @@ export function getNotificationMessageNode(locale: App.Locale, key: App.Notifica
 export function interpolate(template: string, vars: Record<string, string | number>): string {
     return template.replace(/{(\w+)}/g, (_, key) => String(vars[key] ?? ''));
 }
-
     
 export function getBaseMessage (m: MessageStructure, data: any): BaseMessage {
-    return { title: m.title, body: interpolate(m.body, data) };
+    return { title: interpolate(m.title, data), body: interpolate(m.body, data) };
+}
+
+export function getCategorizedBaseMessage(m: MessageStructure, data: any, docTypeKey: string = 'documentType'): BaseMessage {
+    const categoryKey = `${data[docTypeKey]}_category`;
+    const categoryName = m[categoryKey] ?? data[docTypeKey];
+    data.categoryName = categoryName;
+    const interpolatedTitle = interpolate(m.title, data);
+    const interpolatedBody = interpolate(m.body, data);
+    return { title: interpolatedTitle, body: interpolatedBody };
 }
 
 /** Get messages for a specific notification type */

@@ -4,11 +4,10 @@ import { sendLocalizedRenderedEmail } from './localized/localizedMailer';
 import GenericNotificationMail from './channels/GenericNotificationMail.svelte';
 import { sendWebPush, type WebPushPayload } from '../services/webpush.service';
 import { logger, LOGGER_COLORS } from '$lib/utils/logger';
-import { isDev } from '$lib/utils/isDev';
+
 import { getIncidentMatrixRecipients } from '../db/firebase/incidentMatrix.fdb';
 
-// eslint-disable-next-line no-constant-binary-expression
-const DUMP_MESSAGES = true && isDev;
+// Removed DUMP_MESSAGES from here
 
 type UserPreferences = {
     channels: {
@@ -30,9 +29,10 @@ export async function sendNotification<TData>(
     user: App.BaseContact, 
     notification: NotificationDefinition<TData>, 
     data: TData,
-    incidentSource: App.Incident.Source = 'system'
+    incidentSource: App.Incident.Source = 'system',
+    dumpOnly: boolean = false
 ): Promise<void> {
-    return _dispatchNotification(user, notification, data, incidentSource, false);
+    return _dispatchNotification(user, notification, data, incidentSource, false, dumpOnly);
 }
 
 async function _dispatchNotification<TData>(
@@ -40,7 +40,8 @@ async function _dispatchNotification<TData>(
     notification: NotificationDefinition<TData>, 
     data: TData,
     incidentSource: App.Incident.Source,
-    isAdminCopy: boolean
+    isAdminCopy: boolean,
+    dumpOnly: boolean
 ): Promise<void> {
     // 1. Resolve Preferences
     const prefs = await getUserPreferences(user.id);
@@ -76,22 +77,22 @@ async function _dispatchNotification<TData>(
     if (shouldDispatchChannels) {
         // --- EMAIL ---
         if (user.email && notification.email && prefs.channels.email !== false) {
-            promises.push(sendEmail(user.email, notification, data, ctx));
+            promises.push(sendEmail(user.email, notification, data, ctx, dumpOnly));
         }
 
         // --- SMS ---
         if (notification.sms && user.phone && prefs.channels.sms !== false) {
-            promises.push(sendSms(user.phone, notification, data, ctx));
+            promises.push(sendSms(user.phone, notification, data, ctx, dumpOnly));
         }
 
         // --- PUSH ---
         if (notification.push && user.fcmToken && prefs.channels.push !== false) {
-            promises.push(sendPush(user.fcmToken, notification, data, ctx));
+            promises.push(sendPush(user.fcmToken, notification, data, ctx, dumpOnly));
         }
 
         // --- IN-APP ---
         if (notification.inapp) {
-            promises.push(sendInApp(user.id, notification, data, ctx));
+            promises.push(sendInApp(user.id, notification, data, ctx, dumpOnly));
         }
     }
 
@@ -101,7 +102,7 @@ async function _dispatchNotification<TData>(
 			try {
 				const incident = await notification.incident!(data, ctx);
 				if (incident) {
-					await logIncident(notification.id, incident, notification.priority, user, data, incidentSource);
+					await logIncident(notification.id, incident, notification.priority, user, data, incidentSource, dumpOnly);
 				}
 			} catch (err) {
 				logger.error(`Incident logging failed for ${notification.id}:`, err);
@@ -116,7 +117,7 @@ async function _dispatchNotification<TData>(
 				const admins = await getIncidentMatrixRecipients(notification.id);
 				if (admins && admins.length > 0) {
 					const adminPromises = admins.map(admin => {
-						return _dispatchNotification(admin, notification, data, incidentSource, true);
+						return _dispatchNotification(admin, notification, data, incidentSource, true, dumpOnly);
 					});
 					await Promise.allSettled(adminPromises);
 				}
@@ -133,12 +134,13 @@ async function sendEmail<TData>(
     email: string,
     notification: NotificationDefinition<TData>,
     data: TData,
-    ctx: NotificationContext
+    ctx: NotificationContext,
+    dumpOnly: boolean
 ): Promise<void> {
     try {
         const emailData = await notification.email!(data, ctx);
         
-        if (DUMP_MESSAGES) {
+        if (dumpOnly) {
             logger.log(`[DUMP EMAIL] ${notification.id} -> ${email}`, LOGGER_COLORS.MAGENTA);
             logger.inspect({ subject: emailData.subject, htmlBody: emailData.htmlBody, component: emailData.component?.name, props: emailData.props });
             return;
@@ -165,12 +167,13 @@ async function sendSms<TData>(
     phone: string,
     notification: NotificationDefinition<TData>,
     data: TData,
-    ctx: NotificationContext
+    ctx: NotificationContext,
+    dumpOnly: boolean
 ): Promise<void> {
     try {
         const smsText = await notification.sms!(data, ctx);
         
-        if (DUMP_MESSAGES) {
+        if (dumpOnly) {
             logger.log(`[DUMP SMS] ${notification.id} -> ${phone}`, LOGGER_COLORS.MAGENTA);
             logger.inspect(smsText);
             return;
@@ -187,12 +190,13 @@ async function sendPush<TData>(
     fcmToken: string,
     notification: NotificationDefinition<TData>,
     data: TData,
-    ctx: NotificationContext
+    ctx: NotificationContext,
+    dumpOnly: boolean
 ): Promise<void> {
     try {
         const pushData = await notification.push!(data, ctx);
         
-        if (DUMP_MESSAGES) {
+        if (dumpOnly) {
             logger.log(`[DUMP PUSH] ${notification.id} -> ${fcmToken.substring(0, 20)}...`, LOGGER_COLORS.MAGENTA);
             logger.inspect(pushData);
             // return; TODO: DELETE TEST
@@ -210,12 +214,13 @@ async function sendInApp<TData>(
     userId: string,
     notification: NotificationDefinition<TData>,
     data: TData,
-    ctx: NotificationContext
+    ctx: NotificationContext,
+    dumpOnly: boolean
 ): Promise<void> {
     try {
         const body = await notification.inapp!(data, ctx);
         
-        if (DUMP_MESSAGES) {
+        if (dumpOnly) {
             logger.log(`[DUMP IN-APP] ${notification.id} -> ${userId}`, LOGGER_COLORS.MAGENTA);
             logger.inspect(body);
             return;
@@ -257,7 +262,8 @@ async function logIncident<TData>(
     severity: NotificationPriority,
     user: App.BaseContact,
     data: TData,
-    incidentSource: App.Incident.Source
+    incidentSource: App.Incident.Source,
+    dumpOnly: boolean
 ): Promise<void> {
     const newIncident: Omit<App.Incident.IncidentLog, 'id'> = {
         title: incident.title,
@@ -276,7 +282,7 @@ async function logIncident<TData>(
         timestamp: Date.now()
     };
     
-    if (DUMP_MESSAGES) {
+    if (dumpOnly) {
         logger.log(`[DUMP INCIDENT] ${notificationId} - ${incident.title}`, LOGGER_COLORS.MAGENTA);
         logger.inspect(newIncident);
         return;
