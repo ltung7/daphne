@@ -342,39 +342,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		isCashEvent: false,
 		allowNegative: false,
 		requiresReferenceId: true
-	},
-	cash_collection: {
-		caption: 'Zebranie gotówki',
-		color: 'var(--bs-info)',
-		outline: true,
-		size: 6,
-		icon: 'hand-holding-usd',
-		isIncome: false,
-		isCashEvent: true,
-		allowNegative: false,
-		requiresReferenceId: true
-	},
-	cash_deposit: {
-		caption: 'Wpłata gotówki',
-		color: 'var(--bs-secondary)',
-		outline: false,
-		size: 6,
-		icon: 'money-bills',
-		isIncome: false,
-		isCashEvent: true,
-		allowNegative: false,
-		requiresReferenceId: true
-	},
-	cash_adjustment: {
-		caption: 'Korekta gotówki',
-		color: 'var(--bs-dark)',
-		outline: false,
-		size: 6,
-		icon: 'edit',
-		isIncome: false,
-		isCashEvent: true,
-		allowNegative: true,
-		requiresReferenceId: true
 	}
 };
 

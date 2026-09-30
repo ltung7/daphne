@@ -33,15 +33,7 @@ const idempotencyKeyGenerators: Record<DriverBalance.BalanceEventType, (driverId
         return `s:${driverId}:${year}${month}`;
     },
     repayments: (_driverId: string, referenceId?: string) => `r:${referenceId || `rep${Date.now()}`}`,
-    early_settlement_discount: (_driverId: string, referenceId?: string) => `e:${referenceId || `esd${Date.now()}`}`,
-    cash_collection: (driverId: string, _referenceId?: string, date = new Date()) => {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `c:${driverId}:${year}${month}${day}`;
-    },
-    cash_deposit: (_driverId: string, referenceId?: string) => `d:${referenceId || `dep${Date.now()}`}`,
-    cash_adjustment: (_driverId: string, referenceId?: string) => `a:${referenceId || `adj${Date.now()}`}`,
+    early_settlement_discount: (_driverId: string, referenceId?: string) => `e:${referenceId || `esd${Date.now()}`}`
 };
 
 export function generateIdempotencyKey(

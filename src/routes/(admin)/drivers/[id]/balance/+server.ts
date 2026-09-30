@@ -75,10 +75,7 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
         'income_bolt',
         'penalty',
         'settlement',
-        'repayments',
-        'cash_collection',
-        'cash_deposit',
-        'cash_adjustment'
+        'repayments'
     ];
 
     if (!validTypes.includes(type)) {
@@ -104,10 +101,7 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
         income_bolt: 'bolt_report',
         penalty: 'penalty',
         settlement: 'settlement',
-        repayments: 'settlement',
-        cash_collection: 'cash',
-        cash_deposit: 'cash',
-        cash_adjustment: 'cash'
+        repayments: 'settlement'
     };
 
     const eventData: DriverBalance.BalanceEvent = {

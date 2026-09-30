@@ -74,10 +74,8 @@
 		driverId={driver.id}
 		driverName={driver.name}
 		currentBalance={data.currentBalance}
-		cashBalance={data.cashBalance}
-		onBalanceUpdate={(cb, cash) => {
+		onBalanceUpdate={(cb) => {
 			data.currentBalance = cb;
-			data.cashBalance = cash;
 		}}
 	/>
 

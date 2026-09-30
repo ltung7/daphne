@@ -694,10 +694,7 @@ declare global {
 			| 'penalty'
 			| 'settlement'
 			| 'repayments'
-			| 'early_settlement_discount'
-			| 'cash_collection'
-			| 'cash_deposit'
-			| 'cash_adjustment';
+			| 'early_settlement_discount';
 
 		type BalanceEventStatus = 'confirmed' | 'cancelled' | 'reversed';
 
@@ -710,9 +707,9 @@ declare global {
 			runningBalance: number;
 			referenceId?: string;
 			// referenceType identifies the EXTERNAL SOURCE DOCUMENT, not the BalanceEventType.
-			// Multiple event types can share a referenceType (e.g., cash_collection, cash_deposit, cash_adjustment all → 'cash').
+			// Multiple event types can share a referenceType (e.g., income_uber + income_bolt → 'uber_report').
 			// referenceId + referenceType together identify the source record for reconciliation.
-			referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement' | 'cash';
+			referenceType?: 'uber_report' | 'bolt_report' | 'penalty' | 'settlement';
 			metadata: Record<string, any>;
 			timestamp: number;
 			createdBy: string;
@@ -728,9 +725,6 @@ declare global {
 			settlement: `s:${string}:${number}${number}`;
 			repayments: `r:${string}`;
 			early_settlement_discount: `e:${string}`;
-			cash_collection: `c:${string}:${number}${number}${number}`;
-			cash_deposit: `d:${string}`;
-			cash_adjustment: `a:${string}`;
 		}
 
 		type BalanceEventTypeKey = keyof BalanceIdempotencyKeyFormats;

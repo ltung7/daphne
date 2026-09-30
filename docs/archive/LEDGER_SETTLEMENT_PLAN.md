@@ -6,6 +6,8 @@
 > The ledger infrastructure IS IMPLEMENTED (Firestore collection, API, admin UI).
 > The calculation layer was DEFERRED and never created.
 > 
+> **Cash Balance: DEFERRED** — Everything regarding cash balance (`cash_collection`, `cash_deposit`, `cash_adjustment`, net cash position, and cash reconciliation) is deferred from code and will not be implemented at this stage.
+> 
 > New plan focuses on: fleet profit calculations, driver settlements, income reporting, cost matching.
 
 ## Overview
@@ -26,9 +28,9 @@ namespace DriverBalance {
     | 'settlement' 
     | 'repayments' 
     | 'early_settlement_discount'
-    | 'cash_collection'      // Driver collected cash from trips (negative = owes fleet)
-    | 'cash_deposit'         // Driver deposited cash to office (positive = reduces debt)
-    | 'cash_adjustment';     // Dispute resolution, write-off (signed)
+    | 'cash_collection'      // [DEFERRED] Driver collected cash from trips (negative = owes fleet)
+    | 'cash_deposit'         // [DEFERRED] Driver deposited cash to office (positive = reduces debt)
+    | 'cash_adjustment';     // [DEFERRED] Dispute resolution, write-off (signed)
 
   type EventStatus = 'confirmed' | 'cancelled' | 'reversed';
 
@@ -277,7 +279,8 @@ async function verifyBalance(driverId: string) {
         metadata: { earlySettlement: true, requested: X, fee, payout: actualPayout }
  ```
  
- **Cash Position Logic:**
+ **Cash Position Logic (DEFERRED):**
+ > *Note: Everything about cash balance is deferred from code and will not be implemented at this stage.*
  - Net cash = sum(`cash_collection` + `cash_deposit` + `cash_adjustment`)
  - If negative at `settlement` → deducted from payout (create `settlement` with reduced amount)
  - Reconciliation report: Bolt/Uber reported cash vs driver reported vs deposits
@@ -343,7 +346,7 @@ recordEvent({
  | Event type storage | Full type string (not prefix) |
  | Running balance | Stored on each event for O(1) lookup |
  | Idempotency | DB-level via document ID + app-layer transaction |
- | Cash events | `cash_collection` (negative), `cash_deposit` (positive), `cash_adjustment` (signed) |
+ | Cash events | `cash_collection` (negative), `cash_deposit` (positive), `cash_adjustment` (signed) — **DEFERRED from code** |
  | Event statuses | `confirmed` | `cancelled` | `reversed` (no `pending` — all ledger events are final) |
  | Confirmed fields | Removed — all events confirmed at write; early settlement uses separate entity |
  | Created by name | Added `createdByName` field for UI display |
@@ -365,6 +368,8 @@ recordEvent({
 ---
 
 ## Current State (Important Notes)
+
+**Cash balance is DEFERRED from code** — Everything about cash balance (`cash_collection`, `cash_deposit`, `cash_adjustment`, cash position tracking, and cash reconciliation) is deferred from code and will not be implemented at this stage.
 
 **Uber/Bolt integration NOT implemented yet** — income events (`income_uber_weekly`, `income_bolt_weekly`) exist only as test/mock data. Real sync from Uber/Bolt APIs is deferred.
 

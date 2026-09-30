@@ -9,6 +9,5 @@ export const load = (async ({ params }) => {
     if (!driver) throw error(404, 'Driver not found');
     const documents = await findDriverDocuments({ driverId: driver.id });
     const currentBalance = await getCurrentBalance(driver.id);
-    const cashBalance = driver.cashBalance ?? 0;
-    return { driver, documents, currentBalance, cashBalance }
+    return { driver, documents, currentBalance }
 }) satisfies PageServerLoad;

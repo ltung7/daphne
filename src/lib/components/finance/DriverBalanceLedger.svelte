@@ -12,21 +12,16 @@
 		driverId: string;
 		driverName: string;
 		currentBalance: number;
-		cashBalance: number;
-		onBalanceUpdate?: (currentBalance: number, cashBalance: number) => void;
+		onBalanceUpdate?: (currentBalance: number) => void;
 	}
 
-	let { driverId, driverName, currentBalance, cashBalance, onBalanceUpdate }: Props = $props();
+	let { driverId, driverName, currentBalance, onBalanceUpdate }: Props = $props();
 
 	let animatedCurrentBalance = tweened(0, { duration: 500, easing: cubicOut });
-	let animatedCashBalance = tweened(0, { duration: 500, easing: cubicOut });
+	let lastUpdate: number = $state(0)
 
 	$effect(() => {
 		animatedCurrentBalance.set(currentBalance);
-	});
-
-	$effect(() => {
-		animatedCashBalance.set(cashBalance);
 	});
 
 	let modalEventType = $state<DriverBalance.BalanceEventType | null>(null);
@@ -49,7 +44,8 @@
 			if (response.success) {
 				const event: DriverBalance.BalanceEvent = response.eventData;
 				currentBalance = event.runningBalance;
-				onBalanceUpdate?.(currentBalance, cashBalance);
+				onBalanceUpdate?.(currentBalance);
+				lastUpdate = Date.now();
 			}
 
 			closeModal();
@@ -76,32 +72,19 @@
 
 <SectionCard title="Saldo kierowcy">
 	{#snippet cta()}
-		<DriverBalanceHistory {driverId} />
+		<DriverBalanceHistory {driverId} {lastUpdate} />
 	{/snippet}
 
 	<div class="row g-3 mb-3">
-		<div class="col-md-6">
+		<div class="col-12">
 			<div class="h-100 shadow-sm border border-dark border-radius-xl p-3 px-lg-4">
 				<div class="d-flex justify-content-between align-items-start mb-2">
 					<span class="text-muted small fw-medium">Saldo bieżące</span>
-					<span class="badge bg-light text-dark small">Główne</span>
 				</div>
 				<div class="display-5 fw-bold {getBalanceColor(currentBalance)} mb-0">
 					{formatPLN($animatedCurrentBalance)}
 				</div>
 				<div class="text-muted xsmall mt-1">Stan po ostatnim rozliczeniu</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="h-100 shadow-sm border border-dark border-radius-xl p-3 px-lg-4">
-				<div class="d-flex justify-content-between align-items-start mb-2">
-					<span class="text-muted small fw-medium">Saldo gotówkowe</span>
-					<span class="badge bg-light text-dark small">Kasa</span>
-				</div>
-				<div class="display-5 fw-bold {getBalanceColor(cashBalance)} mb-0">
-					{formatPLN($animatedCashBalance)}
-				</div>
-				<div class="text-muted xsmall mt-1">Gotówka do rozliczenia</div>
 			</div>
 		</div>
 	</div>
@@ -111,14 +94,11 @@
 		<IconButton icon="money-bill-lock" caption="Potrącenie" color="warning" size={6} onclick={() => openModal('repayments')} />
 		<IconButton icon="money-bills" caption="Wypłata" color="success" size={6} onclick={() => openModal('settlement')} />
 		<EarlySettlementRequest {driverId} {driverName} balance={currentBalance} />
-		<IconButton icon="money-bills" caption="Wpłata gotówki" color="secondary" size={6} onclick={() => openModal('cash_deposit')} />
-		<IconButton icon="edit" caption="Korekta gotówki" color="dark" size={6} onclick={() => openModal('cash_adjustment')} />
 	</div>
 
 	<div class="d-flex flex-wrap gap-2 mt-2">
 		<IconButton icon="taxi" caption="Przychód Uber (test)" color="primary" outline size={6} onclick={() => openModal('income_uber')} />
 		<IconButton icon="bolt" caption="Przychód Bolt (test)" color="dark" outline size={6} onclick={() => openModal('income_bolt')} />
-		<IconButton icon="hand-holding-usd" caption="Zebranie gotówki (test)" color="info" outline size={6} onclick={() => openModal('cash_collection')} />
 	</div>
 </SectionCard>
 
