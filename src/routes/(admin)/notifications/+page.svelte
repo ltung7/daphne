@@ -19,7 +19,6 @@
 
 	const headers: SvelteCustom.DatatableHeaders<keyof App.InAppNotification> = [
 		[ 'title', 'Tytuł' ],
-		[ 'type', 'Typ' ],
 		[ 'read', 'Status' ],
         [ 'timestamp', 'Data' ]
 	];
@@ -37,7 +36,6 @@
 					<TooltipSquareIconLink icon="link" hoverText="Pokaż szczegóły" href="/notifications/{row.id}" size={5} />
 				</td>
 				<td>{row.title}</td>
-				<td>{row.type}</td>
 				<td class="py-1"><NotificationStatus status={row.read} /></td>
                 <td>{formatDateTimePL(row.timestamp)}</td>
 			{/snippet}

@@ -199,7 +199,7 @@ async function sendPush<TData>(
         if (dumpOnly) {
             logger.log(`[DUMP PUSH] ${notification.id} -> ${fcmToken.substring(0, 20)}...`, LOGGER_COLORS.MAGENTA);
             logger.inspect(pushData);
-            // return; TODO: DELETE TEST
+            return;
         }
 
         if (pushData) sendWebPush(fcmToken, pushData as WebPushPayload)

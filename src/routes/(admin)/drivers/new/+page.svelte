@@ -81,7 +81,7 @@
 			sex,
 			notes: `Test ${faker.number.int({ min: 10000, max: 99999 })}`,
 			id: '',
-			preferredLanguage: 'en', // TODO: Automate
+			preferredLanguage: 'en',
 			taxiAuthorization: {
 				expirationDate: taxiExpiry,
 				market: 'WAW',

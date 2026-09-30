@@ -3,8 +3,6 @@
 	import type { PageProps } from './$types';
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
-	import PageTopActions from '$lib/misc/PageTopActions.svelte';
-	import NotificationStatus from '$lib/components/notification/NotificationStatus.svelte';
 	import { formatDateTimePL } from '$lib/utils/dateFormat';
 	import IncidentMetadata from '../../incidents/[id]/IncidentMetadata.svelte';
 	import { internal } from '$lib/nav/internal';
@@ -22,10 +20,6 @@
 </script>
 
 <PageTitle title={item.title} subtitle={formatDateTimePL(item.timestamp)} back="/notifications" />
-
-<PageTopActions>
-	<NotificationStatus status={item.read} />
-</PageTopActions>
 
 <SectionCard title="Treść powiadomienia">
 	{@html item.body}

@@ -21,7 +21,7 @@ import { earlySettlementApprovedNotification, type EarlySettlementApprovedData }
 import { earlySettlementRejectedNotification, type EarlySettlementRejectedData } from './driver/earlySettlementRejectedNotification';
 
 // eslint-disable-next-line no-constant-binary-expression
-const DUMP_MESSAGES = true && isDev;
+const DUMP_MESSAGES = false && isDev;
 
 const testReceiver: App.BaseContact = {
     email: 'admin@macropart.com',
@@ -46,7 +46,7 @@ const notificationsMap: Partial<Record<App.NotificationType, NotificationDefinit
 };
 
 const defaultTestData: Record<App.NotificationType, any> = {
-    /** TODO: Test notification */
+    /** No test */
     reset_password: {},
 
     /** No test */

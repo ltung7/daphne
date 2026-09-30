@@ -4,7 +4,7 @@
 
 	let { metadata }: { metadata: Record<string, string> } = $props();
 
-	const EXCLUDED_FIELDS = [ 'userId', 'userName', 'driverName', 'requestedAmount', 'expiryDate', 'daysUntilExpiry', 'driverId' ];
+	const EXCLUDED_FIELDS = [ 'userId', 'userName', 'driverName', 'requestedAmount', 'expiryDate', 'daysUntilExpiry', 'driverId', 'registrationNumber', 'documentName', 'categoryName', 'documentType' ];
 
 	const renderableMetadata = $derived(Object.entries(metadata || {}).filter(([ key ]) => !EXCLUDED_FIELDS.includes(key)));
 	const hasData = $derived(metadata && Object.keys(metadata).length > 0);
@@ -14,28 +14,46 @@
 	<SectionCard title="Metadane">
 		<table class="table small mb-0">
 			<tbody>
-				{#if metadata.userId && metadata.userName}
-					<tr>
-						<td style="width: 200px">Zgłaszający</td>
-						<td>
-							{#if metadata.driverName === metadata.userName}
-								Kierowca {metadata.driverName}
-							{:else}
-								Użytkownik {metadata.userName}
-							{/if}
-						</td>
-					</tr>
-				{/if}
-				{#if metadata.driverId && metadata.driverName}
-					<tr>
-						<td style="width: 200px">Kierowca</td>
-						<td>
-							<a href="/drivers/{metadata.driverId}">{metadata.driverName}</a>
-						</td>
-					</tr>
-				{/if}
+<!-- CUSTOM FIELDS -->
+			{#if metadata.userId && metadata.userName}
+				<tr>
+					<td style="width: 200px">Żądający</td>
+					<td>
+						{#if metadata.driverName === metadata.userName}
+							Kierowca {metadata.driverName}
+						{:else}
+							Użytkownik {metadata.userName}
+						{/if}
+					</td>
+				</tr>
+			{/if}
+			
+			{#if metadata.driverId && metadata.driverName}
+				<tr>
+					<td style="width: 200px">Kierowca</td>
+					<td>
+						<a href="/drivers/{metadata.driverd}">{metadata.driverName}</a>
+					</td>
+				</tr>
+			{/if}
 
-				{#if metadata.expiryDate}
+{#if metadata.registrationNumber}
+			<tr>
+				<td style="width: 200px">Pojazd</td>
+				<td>
+					<a href="/vehicles/{metadata.registrationNumber}">{metadata.registrationNumber}</a>
+				</td>
+			</tr>
+		{/if}
+
+		{#if metadata.documentName && metadata.categoryName}
+			<tr>
+				<td style="width: 200px">Dokument</td>
+				<td>{metadata.categoryName} {metadata.documentName}</td>
+			</tr>
+		{/if}
+
+		{#if metadata.expiryDate}
 					<tr>
 						<td style="width: 200px">Data ważności</td>
 						<td>
@@ -44,6 +62,7 @@
 					</tr>
 				{/if}
 
+				<!-- GENERIC FIELDS -->
 				{#each renderableMetadata as [ key, value ]}
 					<tr>
 						<td style="width: 200px">{key}</td>
