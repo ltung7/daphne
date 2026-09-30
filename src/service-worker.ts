@@ -28,12 +28,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-// Handle background messages
+// Default fallback icon
+const DEFAULT_ICON = 'https://eisg.pl/wp-content/uploads/2015/12/eisg_logo.png';
+
+// Handle background messages (data-only messages)
 onBackgroundMessage(messaging, (payload) => {
-    const notificationTitle = payload.notification?.title || 'Notification';
+    const data = payload.data || {};
+    const notificationTitle = data.title || 'Notification';
     const notificationOptions = {
-        body: payload.notification?.body,
-        icon: 'https://eisg.pl/wp-content/uploads/2015/12/eisg_logo.png'
+        body: data.body,
+        icon: data.icon || DEFAULT_ICON,
+        data: {
+            click_action: data.click_action
+        }
     };
 
     // Need to cast `self` to ServiceWorkerGlobalScope to access registration
@@ -41,4 +48,27 @@ onBackgroundMessage(messaging, (payload) => {
         notificationTitle,
         notificationOptions
     );
+});
+
+// Handle notification click
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    const clickAction = event.notification.data?.click_action;
+    if (clickAction) {
+        event.waitUntil(
+            clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+                // Check if there's already a window open
+                for (const client of clientList) {
+                    if (client.url === clickAction && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                // Open new window
+                if (clients.openWindow) {
+                    return clients.openWindow(clickAction);
+                }
+            })
+        );
+    }
 });

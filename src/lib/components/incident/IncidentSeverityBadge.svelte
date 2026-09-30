@@ -9,11 +9,11 @@
 	function getSeverityInfo(sev: typeof severity): { label: string; class: string } {
 		switch (sev) {
 			case 'critical':
-				return { label: 'KRYTYCZNE', class: 'bg-dark' };
+				return { label: 'KRYTYCZNE', class: 'bg-danger' };
 			case 'high':
-				return { label: 'WYSOKIE', class: 'bg-danger' };
+				return { label: 'WYSOKIE', class: 'bg-warning text-dark' };
 			case 'medium':
-				return { label: 'ŚREDNIE', class: 'bg-warning text-dark' };
+				return { label: 'ŚREDNIE', class: 'bg-dark' };
 			case 'low':
 				return { label: 'NISKIE', class: 'bg-secondary' };
 			default:

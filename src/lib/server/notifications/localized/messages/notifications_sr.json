@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Dokument uskoro istekne",
-    "body": "Vaš dokument {documentName} ističe za {days} dana ({expiryDate}).",
+    "title": "Dokument {documentName} uskoro istekne",
+    "body": "Vaš {documentCategoryName} ({documentName}) ističe za {daysUntilExpiry} dana ({expiryDate}).",
     "consequence": "Molimo obnovite dokument što pre.",
     "footer": "Ignorisanje ovog upozorenja može rezultirati ograničenjima rada."
   },
   "driver_document_expired": {
-    "title": "Dokument isteklo - potrebna akcija",
-    "body": "Vaš dokument {documentName} je istekao {expiryDate}.",
+    "title": "Dokument {documentName} je istekao - potrebna akcija",
+    "body": "Vaš {documentCategoryName} ({documentName}) je istekao {expiryDate}.",
     "consequence": "Vaš nalog može biti ograničen do obnove.",
     "footer": "Kontaktirajte administratora za obnavljanje."
   },

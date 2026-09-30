@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Документ скоро закінчується",
-    "body": "Ваш документ {documentName} закінчується через {days} днів ({expiryDate}).",
+    "title": "Документ {documentName} скоро закінчується",
+    "body": "Ваш {documentCategoryName} ({documentName}) закінчується через {daysUntilExpiry} днів ({expiryDate}).",
     "consequence": "Будь ласка, подовжте термін дії документу якнайшвидше.",
     "footer": "Ігнорування цього попередження може призвести до обмеження роботи."
   },
   "driver_document_expired": {
-    "title": "Документ закінчився - потрібна дія",
-    "body": "Ваш документ {documentName} закінчився {expiryDate}.",
+    "title": "Документ {documentName} закінчився - потрібна дія",
+    "body": "Ваш {documentCategoryName} ({documentName}) закінчився {expiryDate}.",
     "consequence": "Ваш обліковий запис може бути обмежений до відновлення.",
     "footer": "Зверніться до адміністратора для відновлення."
   },

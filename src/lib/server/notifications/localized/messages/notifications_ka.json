@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "დოკუმენტი თუ Tämäences",
-    "body": "თქვენი დოკუმენტი {documentName} ამოიწურება {days} დღეში ({expiryDate}).",
-    "consequence": "გთხოვთ, რაც შეიძლება該文档をご更新ください。",
+    "title": "დოკუმენტი {documentName} თუesto 가깝습니다",
+    "body": "თქვენი {documentCategoryName} ({documentName}) ამოიწურება {daysUntilExpiry} დღეში ({expiryDate}).",
+    "consequence": "გთხოვთ, რაც შეიძლება მალე განაახლოთ დოკუმენტი.",
     "footer": "ეს გაფრთხილების უგულებელყოფა შეიძლება მუშაობის შეზღუდვას გამოიწვიოს."
   },
   "driver_document_expired": {
-    "title": "დოკუმენტი ამოიწურა - საჭიროა მოქმედება",
-    "body": "თქვენი დოკუმენტი {documentName} ამოიწურა {expiryDate}.",
+    "title": "დოკუმენტი {documentName} ამოიწურა - საჭიროა მოქმედება",
+    "body": "თქვენი {documentCategoryName} ({documentName}) ამოიწურა {expiryDate}.",
     "consequence": "თქვენი ანგარიში შეიძლება იყოს შეზღუდული მონაწილეობის აღდგენამდე.",
     "footer": "დაუკავშირდით ადმინისტრატორს აღდგენისთვის."
   },

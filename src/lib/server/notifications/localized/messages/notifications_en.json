@@ -7,16 +7,24 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Document expiring soon",
-    "body": "Your document {documentName} expires in {days} days ({expiryDate}).",
+    "title": "Document {documentName} expiring soon",
+    "body": "Your {documentCategoryName} ({documentName}) expires in {daysUntilExpiry} days ({expiryDate}).",
     "consequence": "Please renew the document as soon as possible.",
-    "footer": "Ignoring this warning may result in work restrictions."
+    "footer": "Ignoring this warning may result in work restrictions.",
+    "driving_license_category": "driving license",
+    "taxi_authorization_category": "taxi authorization",
+    "identification_category": "identity document",
+    "medical_category": "medical certificate"
   },
   "driver_document_expired": {
-    "title": "Document expired - action required",
-    "body": "Your document {documentName} expired on {expiryDate}.",
+    "title": "Document {documentName} expired - action required",
+    "body": "Your {documentCategoryName} ({documentName}) expired on {expiryDate}.",
     "consequence": "Your account may be restricted until renewal.",
-    "footer": "Contact the administrator to renew."
+    "footer": "Contact the administrator to renew.",
+    "driving_license_category": "driving license",
+    "taxi_authorization_category": "taxi authorization",
+    "identification_category": "identity document",
+    "medical_category": "medical certificate"
   },
   "push_enabled": {
     "title": "Push Notifications Enabled",

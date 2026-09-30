@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Ang dokumento ay malapit nang mag-expire",
-    "body": "Ang iyong dokumentong {documentName} ay mag-eexpire sa loob ng {days} na araw ({expiryDate}).",
+    "title": "Ang dokumentong {documentName} ay malapit nang mag-expire",
+    "body": "Ang iyong {documentCategoryName} ({documentName}) ay mag-eexpire sa loob ng {daysUntilExpiry} na araw ({expiryDate}).",
     "consequence": "Pakirenew ang dokumento sa lalong madaling panahon.",
     "footer": "Ang pagwalang-bahala sa babalang ito ay maaaring magresulta sa pagbawal sa trabaho."
   },
   "driver_document_expired": {
-    "title": "Ang dokumento ay expired - kailangan ng aksyon",
-    "body": "Ang iyong dokumentong {documentName} ay expire noong {expiryDate}.",
+    "title": "Ang dokumentong {documentName} ay expired - kailangan ng aksyon",
+    "body": "Ang iyong {documentCategoryName} ({documentName}) ay expire noong {expiryDate}.",
     "consequence": "Ang iyong account ay maaaring limitahan hanggang sa ma-renew.",
     "footer": "Makipag-ugnayan sa administrator para sa renewal."
   },

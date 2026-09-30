@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Дакумент хутка заканчваецца",
-    "body": "Ваш дакумент {documentName} заканчваецца праз {days} дзён ({expiryDate}).",
+    "title": "Дакумент {documentName} хутка заканчваецца",
+    "body": "Ваш {documentCategoryName} ({documentName}) заканчваецца праз {daysUntilExpiry} дзён ({expiryDate}).",
     "consequence": "Калі ласка, пады enamor термін дзейнасці дакумента якнайхутчэй.",
     "footer": "Ігнораванне гэтага папярэджання можа прывесці да абмежавання працы."
   },
   "driver_document_expired": {
-    "title": "Дакумент заканчыўся - патрэбная дыя",
-    "body": "Ваш дакумент {documentName} заканчыўся {expiryDate}.",
+    "title": "Дакумент {documentName} заканчыўся - патрэбная дыя",
+    "body": "Ваш {documentCategoryName} ({documentName}) заканчыўся {expiryDate}.",
     "consequence": "Ваш уліковы запіс можа быць абмежаваны да аднаўлення.",
     "footer": "Звярніцеся да адміністратара для аднаўлення."
   },

@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "कागजात चाँडै समाप्त हुनेछ",
-    "body": "तपाईंको कागजात {documentName} {days} दिनमा समाप्त हुनेछ ({expiryDate})।",
+    "title": "कागजात {documentName} चाँडै समाप्त हुनेछ",
+    "body": "तपाईंको {documentCategoryName} ({documentName}) {daysUntilExpiry} दिनमा समाप्त हुनेछ ({expiryDate})।",
     "consequence": "कृपया यथाशीघ्र कागजात नवीकरण गर्नुहोस्।",
     "footer": "यो चेतावनी उपेक्षा गर्नुभए काममा प्रतिबन्ध हुन सक्छ।"
   },
   "driver_document_expired": {
-    "title": "कागजात समाप्त - कारवाही आवश्यक",
-    "body": "तपाईंको कागजात {documentName} {expiryDate} मा समाप्त भएको छ।",
+    "title": "कागजात {documentName} समाप्त - कारवाही आवश्यक",
+    "body": "तपाईंको {documentCategoryName} ({documentName}) {expiryDate} मा समाप्त भएको छ।",
     "consequence": "नवीकरण सम्म तपाईंको खाता प्रतिबन्ध हुन सक्छ।",
     "footer": "नवीकरणका लागि प्रशासकलाई सम्पर्क गर्नुहोस्।"
   },

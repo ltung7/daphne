@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Documentul expiră curând",
-    "body": "Documentul dumneavoastră {documentName} expiră în {days} zile ({expiryDate}).",
+    "title": "Documentul {documentName} expiră curând",
+    "body": "Dumneavoastră {documentCategoryName} ({documentName}) expiră în {daysUntilExpiry} zile ({expiryDate}).",
     "consequence": "Vă rugăm să prelungiți documentul cât mai curând posibil.",
     "footer": "Ignorarea acestui avertisment poate duce la restricții de muncă."
   },
   "driver_document_expired": {
-    "title": "Document expirat - acțiune necesară",
-    "body": "Documentul dumneavoastră {documentName} a expirat pe {expiryDate}.",
+    "title": "Documentul {documentName} a expirat - acțiune necesară",
+    "body": "Dumneavoastră {documentCategoryName} ({documentName}) a expirat pe {expiryDate}.",
     "consequence": "Contul dumneavoastră poate fi restricționat până la reînnoire.",
     "footer": "Contactați administratorul pentru reînnoire."
   },

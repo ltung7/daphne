@@ -20,3 +20,8 @@ export const fetchDrivers = async (filters: Partial<Driver.Driver> = {}, fields?
     const response = await internal.get('/drivers/api', { fields: fieldsString, ...filters  })
     return response.vehicles as Driver.Driver[];
 }
+
+export const fetchNotifications = async () => {
+    const response = await internal.get('/notifications/api', {});
+    return response.items as App.InAppNotification[];
+}

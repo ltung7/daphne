@@ -7,14 +7,14 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Hujjat tez orada amal qilishni to'xtatadi",
-    "body": "Sizning {documentName} hujjatingiz {days} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
+    "title": "Hujjat {documentName} tez orada amal qilishni to'xtatadi",
+    "body": "Sizning {documentCategoryName} ({documentName}) {daysUntilExpiry} kun ichida amal qilishni to'xtatadi ({expiryDate}).",
     "consequence": "Iltimos, hujjatni qadar-yetarli darhol yangilang.",
     "footer": "Ushbu ogohlantirishni e'tiborsiz qoldirish ish cheklovlariga olib kelishi mumkin."
   },
   "driver_document_expired": {
-    "title": "Hujjat amal qilmasdan qolgan - harakat kerak",
-    "body": "Sizning {documentName} hujjatingiz {expiryDate} da amal qilishni to'xtatgan.",
+    "title": "Hujjat {documentName} amal qilmasdan qolgan - harakat kerak",
+    "body": "Sizning {documentCategoryName} ({documentName}) {expiryDate} da amal qilishni to'xtatgan.",
     "consequence": "Hisobingiz yangilanmaguncha cheklanishi mumkin.",
     "footer": "Yangilash uchun administrator bilan bog'laning."
   },

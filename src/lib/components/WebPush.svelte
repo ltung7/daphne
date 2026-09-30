@@ -1,9 +1,5 @@
 <script lang="ts">
-	import * as firebase from '$lib/firebase';
-	const messaging = firebase.messaging;
-	const getToken = firebase.getToken;
-	const onMessage = firebase.onMessage;
-	const deleteToken = firebase.deleteToken;
+import { messaging, getToken, onMessage, deleteToken } from '$lib/firebase/client';
 	import { onMount } from 'svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import { m } from '$lib/paraglide/messages.js';
@@ -73,8 +69,9 @@
 		// Listen for messages while the application is in the foreground
 		if (messaging) {
 			const unsubscribe = onMessage(messaging as any, (payload: any) => {
-				if (payload.notification) {
-					addToast(payload.notification.body, 'primary', payload.notification.title);
+				const data = payload.data || payload.notification;
+				if (data) {
+					addToast(data.body, 'primary', data.title);
 				}
 			});
 

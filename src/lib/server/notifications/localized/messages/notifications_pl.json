@@ -7,16 +7,24 @@
     "body": ""
   },
   "driver_document_expiring": {
-    "title": "Dokument wkrótce wygasa",
-    "body": "Twój dokument {documentName} wygasa {days} dni ({expiryDate}).",
+    "title": "Dokument {documentName} wkrótce wygasa",
+    "body": "Twój {documentCategoryName} ({documentName}) wygasa za {daysUntilExpiry} dni ({expiryDate}).",
     "consequence": "Proszę o przedłużenie dokumentu jak najszybciej.",
-    "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy."
+    "footer": "Ignorowanie tego ostrzeżenia może skutkować blokadą pracy.",
+    "driving_license_category": "prawo jazdy",
+    "taxi_authorization_category": "uprawnienia taksówkarza",
+    "identification_category": "dokument tożsamości",
+    "medical_category": "zaświadczenie lekarskie"
   },
   "driver_document_expired": {
-    "title": "Dokument wygasł - konieczna akcja",
-    "body": "Twój dokument {documentName} wygasł {expiryDate}.",
+    "title": "Dokument {documentName} wygasł - konieczna akcja",
+    "body": "Twój {documentCategoryName} ({documentName}) wygasł {expiryDate}.",
     "consequence": "Twoje konto może zostać ograniczone do momentu odnowienia.",
-    "footer": "Skontaktuj się z administratorem w celu odnowienia."
+    "footer": "Skontaktuj się z administratorem w celu odnowienia.",
+    "driving_license_category": "prawo jazdy",
+    "taxi_authorization_category": "uprawnienia taksówkarza",
+    "identification_category": "dokument tożsamości",
+    "medical_category": "zaświadczenie lekarskie"
   },
   "push_enabled": {
     "title": "Powiadomienia włączone",
