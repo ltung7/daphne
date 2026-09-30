@@ -93,9 +93,9 @@ const generateHandoverDocument = async (handoverDocument: DocumentGenerator.Hand
                 .replaceAll('{vin}', handoverDocument.vin)
 
             for (let i = 0; i < images.length; i++) {
-                if (i % 2 === 0) helpers.addAttachmentPage(translation.imagesAttachmentHeader, subtitle)
+                if (i % 3 === 0) helpers.addAttachmentPage(translation.imagesAttachmentHeader, subtitle)
                 helpers.padY(10);
-                helpers.drawImage(i + 1, images[i], translation.imageNumer);
+                helpers.drawImage(i + 1, images[i], translation.imageNumer, 4);
             }
         }
     })

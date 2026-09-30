@@ -16,7 +16,7 @@
 <SessionRefresher exp={data.exp} />
 
 <div class="d-flex min-vh-100 bg-light">
-	<Sidebar openIncidentsCount={data.openIncidentsCount} />
+	<Sidebar />
 
 	<main class="flex-grow-1 d-flex flex-column overflow-hidden">
 		<div class="p-3 px-md-4 overflow-y-auto flex-grow-1 page-content">

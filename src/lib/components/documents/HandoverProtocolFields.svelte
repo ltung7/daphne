@@ -5,7 +5,7 @@
 	import CustomFormLanguage from '$lib/form/CustomFormLanguage.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
 	import CustomFormTextarea from '$lib/form/CustomFormTextarea.svelte';
-	import UploadHandoverImages from '$lib/form/UploadHandoverImages.svelte';
+	import CameraCaptureInspection from '$lib/misc/CameraCaptureInspection.svelte';
 	import { browserTranslate } from '$lib/nav/translate';
 	import { addToast } from '$lib/toast';
 
@@ -14,15 +14,14 @@
 		errors?: Record<string, string>;
 		touch?: (field: keyof DocumentGenerator.HandoverDocument) => void;
 		readonly?: boolean;
-		handoverId?: string;
 	}
 
-	let { handoverProtocol = $bindable(), handoverId = '', errors = {}, touch, readonly }: Props = $props();
+	let { handoverProtocol = $bindable(), errors = {}, touch, readonly }: Props = $props();
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
 
-	const onUploaded = (url: string) => {
-		if (handoverProtocol.images.includes(url)) return;
-		handoverProtocol.images.push(url);
+	const onFinished = (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => {
+		const urls = Object.values(progress).map((file) => file?.src).filter(Boolean) as string[];
+		handoverProtocol.images = urls;
 	};
 
 	const translateVisual = async () => {
@@ -128,7 +127,8 @@
 	{/if}
 	{#if !readonly}
 		<div class="col-12 mb-3">
-			<UploadHandoverImages {onUploaded} {handoverId} />
+			<!-- <UploadHandoverImages {onUploaded} {handoverId} /> -->
+			<CameraCaptureInspection onfinished={onFinished} />
 		</div>
 	{/if}
 	<div class="col-12 border-top pt-3">

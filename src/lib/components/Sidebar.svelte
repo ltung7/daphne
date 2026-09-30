@@ -5,8 +5,6 @@
 	import UIcon from '$lib/misc/UIcon.svelte'; // Assuming this is your icon component
 	import TooltipText from '$lib/misc/TooltipText.svelte';
 
-	
-
 	// TypeScript Interfaces
 	interface SubItem {
 		title: string;
@@ -33,7 +31,7 @@
 		{ id: 7, title: 'Rozliczenia', icon: 'money', link: '/earlysettlements' },
 		{ id: 8, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' },
 		{ id: 9, title: 'Zdarzenia', icon: 'triangle-warning', link: '/incidents' },
-		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' },
+		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' }
 	]);
 
 	function toggleSidebar() {
@@ -119,9 +117,8 @@
 								<span class="nav-icon-wrapper">
 									<UIcon name={item.icon} size={4} />
 								</span>
-								{#if layoutState.isSidebarExpanded}
-<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
-								</a>
+								<span class="ms-3 text-truncate flex-grow-1">{item.title}</span>
+							</a>
 						</TooltipText>
 					{/if}
 				</li>
