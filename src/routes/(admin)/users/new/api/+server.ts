@@ -30,6 +30,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		timestamp: now,
 		updatedAt: now,
 		canSignHandovers: data.user.canSignHandovers || false,
+		canAproveSettlements: data.user.canAproveSettlements || false,
 		lastLoggedIn: 0
 	};
 	

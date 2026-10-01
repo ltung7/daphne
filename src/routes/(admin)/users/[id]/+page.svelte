@@ -5,6 +5,7 @@
 	import SectionCard from '$lib/misc/SectionCard.svelte';
 	import { plTimezone } from '$lib/utils/tz';
 	import CustomFormRoleSelect from '$lib/form/CustomFormRoleSelect.svelte';
+	import CustomFormCheckSwitch from '$lib/form/CustomFormCheckSwitch.svelte';
 	import ResetPasswordSection from '$lib/components/ResetPasswordSection.svelte';
 	import { confirmSuccess, internal } from '$lib/nav/internal';
 
@@ -18,6 +19,24 @@
 			user = response.user;
 		} else {
 			user.role = role;
+		}
+	};
+
+	const handleCanSignHandoversChange = async (checked: boolean) => {
+		const response = await confirmSuccess(internal.postApi({ canSignHandovers: checked }, 'patch'));
+		if (response?.user) {
+			user = response.user;
+		} else {
+			user.canSignHandovers = checked;
+		}
+	};
+
+	const handleCanApproveSettlementsChange = async (checked: boolean) => {
+		const response = await confirmSuccess(internal.postApi({ canAproveSettlements: checked }, 'patch'));
+		if (response?.user) {
+			user = response.user;
+		} else {
+			user.canAproveSettlements = checked;
 		}
 	};
 </script>
@@ -49,6 +68,27 @@
 
 <SectionCard title="Rola">
 	<CustomFormRoleSelect bind:value={user.role} readonly={data._user?.role !== 'admin'} onclick={handleRoleChange} />
+</SectionCard>
+
+<SectionCard title="Uprawnienia">
+	<div class="row mb-3">
+		<div class="col-12">
+			<CustomFormCheckSwitch
+				bind:checked={user.canSignHandovers}
+				caption="Może podpisywać protokoły przekazania pojazdu"
+				onChange={(e) => handleCanSignHandoversChange((e.target as HTMLInputElement).checked)}
+			/>
+		</div>
+	</div>
+	<div class="row mb-3">
+		<div class="col-12">
+			<CustomFormCheckSwitch
+				bind:checked={user.canAproveSettlements}
+				caption="Może zatwierdzać rozliczenia kierowców"
+				onChange={(e) => handleCanApproveSettlementsChange((e.target as HTMLInputElement).checked)}
+			/>
+		</div>
+	</div>
 </SectionCard>
 
 <ResetPasswordSection />

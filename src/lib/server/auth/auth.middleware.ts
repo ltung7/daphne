@@ -97,7 +97,8 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
 		} else {
 			event.locals._user = {
 				...user,
-				canSignHandovers: true // default for admins
+				canSignHandovers: true, // default for admins
+				canAproveSettlements: true // default for admins
 			} as unknown as App.User;
 		}
 	}

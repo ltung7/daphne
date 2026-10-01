@@ -42,6 +42,7 @@
 				<CustomFormText bind:value={user.email} caption="Email" error={errors.email} onblur={() => touch('email')} placeholder="user@example.com" />
 				<label for="#" class="form-label small mb-1">Podpisywanie dokumentów</label>
 				<CustomFormCheckSwitch bind:checked={user.canSignHandovers} caption="Może podpisywać protokoły zdawcze" onChange={() => touch('canSignHandovers')} />
+				<CustomFormCheckSwitch bind:checked={user.canAproveSettlements} caption="Może zatwierdzać rozliczenia" onChange={() => touch('canAproveSettlements')} />
 			</div>
 			<div class="col-12 col-md-6">
 				<CustomFormRoleSelect bind:value={user.role} hideRevoked />

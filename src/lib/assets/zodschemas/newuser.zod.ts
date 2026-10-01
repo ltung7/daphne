@@ -9,7 +9,8 @@ export const newUserSchema = z.object({
 	timestamp: z.number(),
 	updatedAt: z.number(),
 	lastLoggedIn: z.number(),
-	canSignHandovers: z.boolean()
+	canSignHandovers: z.boolean(),
+	canAproveSettlements: z.boolean(),
 });
 
 export type NewUserInput = z.infer<typeof newUserSchema>;

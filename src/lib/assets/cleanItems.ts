@@ -95,5 +95,6 @@ export const cleanUser: App.User = {
     timestamp: Date.now(),
     updatedAt: Date.now(),
     lastLoggedIn: 0,
-    canSignHandovers: false
+    canSignHandovers: false,
+    canAproveSettlements: false
 }
