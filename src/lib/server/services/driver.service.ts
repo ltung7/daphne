@@ -2,6 +2,7 @@ import { DRIVER_STATUS } from "$lib/assets/enums";
 import randomString from "$lib/utils/randomString";
 import { getDriver, setDriver, updateDriver } from "../db/firebase/drivers.fdb";
 import { getFirebaseAuth, revokeRefreshTokens, setCustomClaims } from '$lib/server/auth/firebaseAdmin.js';
+import { authCache } from '$lib/server/auth/authCache.js';
 import { validateDriverRequirements } from "$lib/assets/requirements";
 import { error } from "@sveltejs/kit";
 import { addVehicleDriverStatusChange } from "../db/firebase/vehicleDriverStatusChange.fdb";
@@ -98,11 +99,15 @@ export const changeDriverStatus = async (driverOrId: string | Driver.Driver, new
     
     // If driver is banned, revoke Firebase tokens and set custom claims for immediate effect
     if (newStatus === 'banned') {
+        authCache.banUser(driver.id);
         await revokeRefreshTokens(driver.id);
         await setCustomClaims(driver.id, { role: 'revoked' });
     } else if (currentStatus === 'banned') {
         // If unbanned, restore driver role in custom claims
+        authCache.unbanUser(driver.id);
         await setCustomClaims(driver.id, { role: 'driver' });
+    } else {
+        authCache.invalidateUser(driver.id);
     }
     
     return { success: true, status: newStatus };
@@ -137,7 +142,6 @@ export const addNewDriver = async (newDriverData: Driver.NewDriverData, password
         earnings: 0,
         experience: 0,
         passengerRatings: 0,
-        pendingWithdrawals: 0,
         profileImageUrl: '',
         safetyScore: 0,
         tripsCompleted: 0,

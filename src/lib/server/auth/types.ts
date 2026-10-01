@@ -38,16 +38,19 @@ export const DRIVER_COOKIE = 'app.driver.session';
 export const PREFS_COOKIE = 'app.prefs';
 export const PARAGLIDE_LOCALE_COOKIE = 'PARAGLIDE_LOCALE';
 
-export const SESSION_MAX_AGE = 60 * 60 * 2;
+// Session durations (in seconds)
+// Firebase Admin SDK createSessionCookie allows minimum 5 minutes, maximum 14 days (1,209,600 seconds)
+export const SESSION_REMEMBER_MAX_AGE = 60 * 60 * 24 * 14; // 14 days when "Remember Me" is checked
+export const SESSION_DEFAULT_MAX_AGE = 60 * 60 * 12;      // 12 hours (1 half day)
 export const PREFS_MAX_AGE = 60 * 60 * 24 * 365;
-export const REFRESH_THRESHOLD = 1800;
+export const REFRESH_THRESHOLD = 60 * 60 * 2;             // 2 hours threshold
 
 export const COOKIE_OPTIONS = {
 	httpOnly: true,
 	secure: !isDev,
 	sameSite: 'lax' as const,
 	path: '/',
-	maxAge: SESSION_MAX_AGE
+	maxAge: SESSION_DEFAULT_MAX_AGE
 };
 
 export const PREFS_COOKIE_OPTIONS = {
@@ -68,5 +71,4 @@ export const PARAGLIDE_COOKIE_OPTIONS = {
 
 import { isDev } from '$lib/utils/isDev';
 
-// TODO: Remove after testing - disable all auth checks
-export const CHECK_AUTH = isDev;
+export const CHECK_AUTH = true;

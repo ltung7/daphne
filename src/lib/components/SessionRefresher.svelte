@@ -7,12 +7,23 @@
 	let currentExp = $state(0);
 
 	$effect(() => {
-		console.log({ exp })
-		if (exp && !currentExp) {
+		if (exp && exp !== currentExp) {
 			currentExp = exp;
 			if (browser) scheduleRefresh();
 		}
 	});
+
+	async function getAuthUser(auth: any): Promise<any> {
+		if (auth.currentUser) return auth.currentUser;
+		const { onAuthStateChanged } = await import('firebase/auth');
+		return new Promise((resolve) => {
+			const unsubscribe = onAuthStateChanged(auth, (u: any) => {
+				unsubscribe();
+				resolve(u);
+			});
+			setTimeout(() => resolve(null), 3000);
+		});
+	}
 
 	async function refreshSession() {
 		try {
@@ -21,17 +32,20 @@
 			if (!app) return;
 
 			const auth = getAuth(app);
-			const user = auth.currentUser;
+			const user = await getAuthUser(auth);
 			if (!user) {
-				window.location.href = '/login?expired=true';
+				// Don't kick the user out - the server cookie may still be valid
+				// Retry checking after 5 minutes
+				if (refreshTimer) clearTimeout(refreshTimer);
+				refreshTimer = setTimeout(scheduleRefresh, 5 * 60 * 1000);
 				return;
 			}
 
-			const idToken = await user.getIdToken(true);
+			const idToken = await user.getIdToken();
 			const response = await fetch('/api/auth/refresh', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ idToken })
+				body: JSON.stringify({ idToken, rememberMe: true })
 			});
 
 			if (response.ok) {
@@ -41,10 +55,14 @@
 					scheduleRefresh();
 				}
 			} else {
-				window.location.href = '/login?expired=true';
+				// Network error or temporary server issue - retry in 5 minutes without kicking user out
+				if (refreshTimer) clearTimeout(refreshTimer);
+				refreshTimer = setTimeout(scheduleRefresh, 5 * 60 * 1000);
 			}
 		} catch (err) {
 			console.warn('Background session refresh failed:', err);
+			if (refreshTimer) clearTimeout(refreshTimer);
+			refreshTimer = setTimeout(scheduleRefresh, 5 * 60 * 1000);
 		}
 	}
 
@@ -54,13 +72,19 @@
 
 		const timeUntilExpiry = (currentExp * 1000) - Date.now();
 		
-		// If expired or expiring in less than 5 minutes, refresh immediately
-		if (timeUntilExpiry <= 5 * 60 * 1000) {
+		// For long sessions (>24h), refresh when less than 24 hours remain.
+		// For shorter sessions (<=24h), refresh when less than 2 hours remain.
+		const threshold = timeUntilExpiry > 24 * 60 * 60 * 1000
+			? 24 * 60 * 60 * 1000
+			: 2 * 60 * 60 * 1000;
+
+		if (timeUntilExpiry <= threshold) {
 			refreshSession();
 		} else {
-			// Schedule refresh for 5 minutes before expiration
-			const delay = timeUntilExpiry - (5 * 60 * 1000);
-			refreshTimer = setTimeout(refreshSession, delay);
+			// Schedule refresh before expiration, capped at 6 hours to prevent long setTimeout issues
+			const targetDelay = timeUntilExpiry - threshold;
+			const delay = Math.min(targetDelay, 6 * 60 * 60 * 1000);
+			refreshTimer = setTimeout(scheduleRefresh, delay);
 		}
 	}
 

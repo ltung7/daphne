@@ -17,7 +17,7 @@
 	let auth: Auth | null = $state(null);
 	let googleProvider: any = $state(null);
 	let error = $state('');
-	let rememberMe = $state(false);
+	let rememberMe = $state(true);
 
 	const message = page.url.searchParams.get('message');
 
@@ -111,24 +111,23 @@
 		if (app) {
 			auth = getAuth(app);
 
-			// Silent Auto-Restore Logic
-			onAuthStateChanged(auth, async (user) => {
-				if (user && !loading && !googleLoading) {
-					// The Client SDK remembers the user, but they were redirected here 
-					// because the server's Firebase session cookie expired (2 hour limit).
-					// We can silently log them back in!
-					loading = true;
-					try {
-						const idToken = await user.getIdToken(true);
-						const result = await internal.postApi({ action: 'signin', idToken, rememberMe: true });
-						if (result?.redirect) {
-							window.location.href = result.redirect;
+			// Silent Auto-Restore fallback only if not explicitly logged out or revoked
+			if (message !== 'loggedOut' && message !== 'revoked') {
+				onAuthStateChanged(auth, async (user) => {
+					if (user && !loading && !googleLoading) {
+						loading = true;
+						try {
+							const idToken = await user.getIdToken();
+							const result = await internal.postApi({ action: 'signin', idToken, rememberMe: true });
+							if (result?.redirect) {
+								window.location.href = result.redirect;
+							}
+						} catch (_err) {
+							loading = false;
 						}
-					} catch (_err) {
-						loading = false;
 					}
-				}
-			});
+				});
+			}
 
 			// Initialize Google provider
 			googleProvider = new GoogleAuthProvider();

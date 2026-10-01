@@ -1,11 +1,21 @@
 import type { Cookies } from '@sveltejs/kit';
 import { verifySessionCookie as firebaseVerifySessionCookie } from './firebaseAdmin.js';
 import type { SessionClaims, UserBase } from './types.js';
-import { ADMIN_COOKIE, DRIVER_COOKIE, PREFS_COOKIE, PARAGLIDE_LOCALE_COOKIE, COOKIE_OPTIONS, PREFS_COOKIE_OPTIONS, PARAGLIDE_COOKIE_OPTIONS, SESSION_MAX_AGE } from './types.js';
+import {
+	ADMIN_COOKIE,
+	DRIVER_COOKIE,
+	PREFS_COOKIE,
+	PARAGLIDE_LOCALE_COOKIE,
+	COOKIE_OPTIONS,
+	PREFS_COOKIE_OPTIONS,
+	PARAGLIDE_COOKIE_OPTIONS,
+	SESSION_REMEMBER_MAX_AGE,
+	SESSION_DEFAULT_MAX_AGE
+} from './types.js';
 
-export async function createSessionCookie(idToken: string): Promise<string> {
+export async function createSessionCookie(idToken: string, maxAgeSeconds: number = SESSION_DEFAULT_MAX_AGE): Promise<string> {
 	const { createSessionCookie: firebaseCreateSessionCookie } = await import('./firebaseAdmin.js');
-	return firebaseCreateSessionCookie(idToken, SESSION_MAX_AGE * 1000); // strictly 2 hours
+	return firebaseCreateSessionCookie(idToken, maxAgeSeconds * 1000);
 }
 
 export async function verifySessionCookie(cookieValue: string, userType: 'admin' | 'driver'): Promise<SessionClaims | null> {
@@ -18,31 +28,16 @@ export async function verifySessionCookie(cookieValue: string, userType: 'admin'
 			driverId: (decoded as any).driverId,
 			emailVerified: decoded.email_verified || false,
 			iat: decoded.iat || Math.floor(Date.now() / 1000),
-			exp: decoded.exp || Math.floor(Date.now() / 1000) + SESSION_MAX_AGE
+			exp: decoded.exp || Math.floor(Date.now() / 1000) + SESSION_DEFAULT_MAX_AGE
 		};
 	} catch {
 		return null;
 	}
 }
 
-export async function refreshSessionCookie(event: { cookies: Cookies; locals: App.Locals }): Promise<void> {
-	const { cookies, locals } = event;
-	
-	if (!locals.sessionClaims) return;
-	
-	const userType = locals._userType;
-	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
-	const currentCookie = cookies.get(cookieName);
-	
-	if (!currentCookie) return;
-	
-	try {
-		const newCookie = await createSessionCookie(currentCookie);
-		const options = { ...COOKIE_OPTIONS }; // Will reset to SESSION_MAX_AGE for sliding, or we can read the old maxAge, but relying on Client Refresh is better.
-		cookies.set(cookieName, newCookie, options);
-	} catch {
-		// Refresh failed, will be handled on next request
-	}
+export async function refreshSessionCookie(_event: { cookies: Cookies; locals: App.Locals }): Promise<void> {
+	// Deprecated: Server cannot refresh Firebase session cookies directly without an ID token.
+	// Session refresh is handled via POST /api/auth/refresh using client SDK ID tokens.
 }
 
 export async function clearSessionCookie(cookies: Cookies, userType: 'admin' | 'driver'): Promise<void> {
@@ -80,11 +75,10 @@ export async function setSessionAndPrefs(
 	userData: UserBase,
 	rememberMe: boolean = false
 ): Promise<void> {
-	const sessionCookie = await createSessionCookie(idToken);
+	const maxAge = rememberMe ? SESSION_REMEMBER_MAX_AGE : SESSION_DEFAULT_MAX_AGE;
+	const sessionCookie = await createSessionCookie(idToken, maxAge);
 	const cookieName = userType === 'driver' ? DRIVER_COOKIE : ADMIN_COOKIE;
 	
-	// Browser cookie duration: 7 days if rememberMe, otherwise 6 hours (fallback if not sliding)
-	const maxAge = rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 6;
 	const options = { ...COOKIE_OPTIONS, maxAge };
 	event.cookies.set(cookieName, sessionCookie, options);
 	
@@ -115,6 +109,6 @@ export async function setSessionAndPrefs(
 		role: userData.role,
 		emailVerified: true,
 		iat: Math.floor(Date.now() / 1000),
-		exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE
+		exp: Math.floor(Date.now() / 1000) + maxAge
 	};
 }

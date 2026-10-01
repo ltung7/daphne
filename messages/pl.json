@@ -94,7 +94,7 @@
   "inspection_needed_text": "Regularne inspekcje pojazdów są wymagane, aby zapewnić bezpieczeństwo i zgodność.",
   "inspection_start": "Rozpocznij inspekcję",
   "inspection_no_vehicle": "Brak pojazdu przypisanego do inspekcji.",
-  "take_pictures": "Zrobdź zdjęcia",
+  "take_pictures": "Zrób zdjęcia",
   "camera_permission_denied": "Odmowa dostępu do kamery. Proszę zezwolić na dostęp do kamery.",
   "camera_not_found": "Nie znaleziono kamery na tym urządzeniu.",
   "camera_access_error": "Nie można uzyskać dostępu do kamery: {message}",

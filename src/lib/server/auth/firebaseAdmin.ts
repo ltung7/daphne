@@ -43,7 +43,7 @@ export async function createSessionCookie(idToken: string, expiresIn: number) {
 
 export async function verifySessionCookie(sessionCookie: string) {
 	const auth = getFirebaseAuth();
-	return auth.verifySessionCookie(sessionCookie, true);
+	return auth.verifySessionCookie(sessionCookie, false);
 }
 
 export async function revokeRefreshTokens(uid: string) {

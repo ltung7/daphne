@@ -1,6 +1,7 @@
 import { getDriver } from '$lib/server/db/firebase/drivers.fdb.js';
 import { getUser } from '$lib/server/db/firebase/users.fdb.js';
 import type { SessionClaims, UserBase, AuthResult } from './types.js';
+import { authCache } from './authCache.js';
 
 export async function resolveUser(uid: string): Promise<AuthResult> {
 	// 1. Check drivers collection by id (which is the Firebase UID)
@@ -30,6 +31,12 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 			updatedAt: now,
 			lastLoggedIn: now
 		};
+
+		if (role === 'revoked') {
+			authCache.banUser(driver.id);
+		} else {
+			authCache.setUser(driver.id, user);
+		}
 
 		return {
 			userType: 'driver',
@@ -63,6 +70,12 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 			lastLoggedIn: admin.lastLoggedIn || admin.timestamp
 		};
 
+		if (role === 'revoked') {
+			authCache.banUser(admin.id);
+		} else {
+			authCache.setUser(admin.id, user);
+		}
+
 		return {
 			userType: 'admin',
 			userData: user,
@@ -74,14 +87,26 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 	throw new Error('User not found in drivers or admin collections');
 }
 
-export async function getUserById(uid: string) {
+export async function getUserById(uid: string): Promise<UserBase | null> {
+	// Fast path: In-memory ban check
+	if (authCache.isBanned(uid)) {
+		return null;
+	}
+
+	// Fast path: In-memory cache hit (0ms)
+	const cached = authCache.getUser(uid);
+	if (cached) {
+		return cached;
+	}
+
+	// Cache miss: query Firestore
 	// Try driver first
 	const driver = await getDriver(uid);
 	if (driver) {
 		const role = driver.status === 'banned' ? 'revoked' : 'driver';
 
 		const now = Date.now();
-		return {
+		const user: UserBase = {
 			id: driver.id,
 			email: driver.email,
 			name: driver.name,
@@ -90,13 +115,21 @@ export async function getUserById(uid: string) {
 			timestamp: now,
 			updatedAt: now,
 			lastLoggedIn: now
-		} as UserBase;
+		};
+
+		if (role === 'revoked') {
+			authCache.banUser(driver.id);
+		} else {
+			authCache.setUser(driver.id, user);
+		}
+
+		return user;
 	}
 
 	// Try admin
 	const admin = await getUser(uid);
 	if (admin) {
-		return {
+		const user: UserBase = {
 			id: admin.id,
 			email: admin.email,
 			name: admin.name,
@@ -105,7 +138,15 @@ export async function getUserById(uid: string) {
 			timestamp: admin.timestamp,
 			updatedAt: admin.updatedAt,
 			lastLoggedIn: admin.lastLoggedIn || admin.timestamp
-		} as UserBase;
+		};
+
+		if (user.role === 'revoked') {
+			authCache.banUser(admin.id);
+		} else {
+			authCache.setUser(admin.id, user);
+		}
+
+		return user;
 	}
 
 	return null;
