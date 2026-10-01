@@ -47,9 +47,14 @@ assignedVehicle: false | {
 ### 3. HandoverDocumentRecord (line 802)
 Extend with ONLY the specific unilateral fields needed (since return logic creates a NEW document of type 'return' or 'unilateral', it automatically inherits the base `HandoverDocument` fields for mileage, fuel, visual condition, location, and manager/retriever).
 
+Add `handoverId?: string` to both return and unilateral handover documents — this stores the ID of the original assignment handover document that this return/unilateral document reverses.
+
 ```typescript
 interface HandoverDocumentRecord extends HandoverDocument {
     // ... existing fields
+    
+    // Return/Unilateral: link to the original assignment handover being reversed
+    handoverId?: string;
     
     // Unilateral fields (uses base HandoverDocument for mileage, fuel, place, etc.)
     witness?: string;
@@ -126,13 +131,13 @@ Steps:
 ### 1. /handovers/[id]/return
 Full endpoint implemented:
 - `+page.server.ts`: Loads handover document, associated vehicle, and driver.
-- `+page.svelte`: Header with link to `/handovers/[id]/unilateral` and back to `/handovers/[id]`; reuses `NewHandoverProtocol` with `type="return"` and prefilled data.
+- `+page.svelte`: Header with link to `/handovers/[id]/unilateral` and back to `/handovers/[id]`; uses `NewReturnHandoverProtocol` with prefilled data.
 - `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverReturnDocument`), and `close` (`returnVehicleAndCloseHandover`).
 
 ### 2. /handovers/[id]/unilateral
 Full endpoint implemented:
 - `+page.server.ts`: Loads handover document, associated vehicle, and driver.
-- `+page.svelte`: Header with link to `/handovers/[id]/return` and back to `/handovers/[id]`; placeholder body for unilateral form.
+- `+page.svelte`: Header with link to `/handovers/[id]/return` and back to `/handovers/[id]`; uses `NewReturnHandoverProtocol` with `unilateral={true}`.
 - `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverUnilateralDocument`), and `close` (`unilateralReturnVehicleAndCloseHandover`).
 
 ---
@@ -159,7 +164,7 @@ Full endpoint implemented:
 - [x] Add `unilateralReturnVehicleAndCloseHandover` (deterministic status, update status in transaction, use `closed: timestamp`)
 
 ### Phase 3: Full Endpoints & UI Routes
-- [x] Enhance `NewHandoverProtocol.svelte` with `apiUrl`, `type`, and `initialHandover` props
+- [x] Create `NewReturnHandoverProtocol.svelte` for return & unilateral protocols (keeping `NewHandoverProtocol.svelte` clean for initial handovers)
 - [x] Create `src/routes/(admin)/handovers/[id]/return/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
 - [x] Create `src/routes/(admin)/handovers/[id]/unilateral/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
 - [x] Cross-link headers between return and unilateral pages
