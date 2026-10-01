@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import HandoverStatus from '$lib/misc/HandoverStatus.svelte';
-	import IconLink from '$lib/misc/IconLink.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
-	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import { internal } from '$lib/nav/internal';
 	import { endLoad, startLoad } from '$lib/nav/loader';
 	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
-	import { optionalTimestamp } from '$lib/utils/tz';
 	import axios from 'axios';
 	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
+	import HandoverProtocolStatusCard from './HandoverProtocolStatusCard.svelte';
+	import SectionCard from '$lib/misc/SectionCard.svelte';
 
 	interface Props {
 		handoverProtocol: DocumentGenerator.HandoverDocumentRecord;
@@ -37,53 +35,23 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Protokół zdawczo - odbiorczy</title>
-</svelte:head>
-{#if handoverProtocol.type === 'assign'}
-	<PageTopActions>
-		<IconLink icon="undo" caption="Zwrot pojazdu" size={6} href="/handovers/{handoverProtocol.id}/return" />
-		<IconLink icon="exclamation" caption="Odbiór jednostronny" outline color="danger" size={6} href="/handovers/{handoverProtocol.id}/unilateral" />
-	</PageTopActions>
-{/if}
+<HandoverProtocolStatusCard {handoverProtocol} />
 
-<div class="card mt-3">
-	<h5 class="card-header">Protokół zdawczo - odbiorczy</h5>
-	<div class="card-body">
-		<section class="pb-3 mb-3 border-bottom text-dark">
-			<div style="max-width: 400px" class="mx-auto datatable">
-				<table class="table table-striped table-between">
-					<tbody>
-						<tr>
-							<td>Status protokołu</td>
-							<td><HandoverStatus handover={handoverProtocol} /></td>
-						</tr>
-						<tr>
-							<td>Data wydruku</td>
-							<td>{optionalTimestamp(handoverProtocol.printed)}</td>
-						</tr>
-						<tr>
-							<td>Data wysyłki DocusSign</td>
-							<td>{optionalTimestamp(handoverProtocol.docusignSent)}</td>
-						</tr>
-						<tr>
-							<td>Data podpisu DocusSign</td>
-							<td>{optionalTimestamp(handoverProtocol.docusignSigned)}</td>
-						</tr>
-					</tbody>
-				</table>
+<SectionCard title="Edycja" noCard>
+	<div class="card mt-3">
+		<h5 class="card-header">Protokół zdawczo - odbiorczy</h5>
+		<div class="card-body">
+			<HandoverProtocolFields {handoverProtocol} readonly />
+		</div>
+		<div class="card-footer">
+			<div class="d-flex justify-content-end">
+				{#if handoverProtocol.url}
+					<IconButton icon="print" caption="Pobierz z DocuSign" color="primary" size={6} class="ms-2 mb-0" onclick={() => downloadBlob()} />
+				{:else}
+					<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" onclick={() => sendAction('pdf')} />
+				{/if}
+				<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" onclick={() => sendAction('docusign')} disabled={Boolean(handoverProtocol.docusignSigned)} />
 			</div>
-		</section>
-		<HandoverProtocolFields {handoverProtocol} readonly />
-	</div>
-	<div class="card-footer">
-		<div class="d-flex justify-content-end">
-			{#if handoverProtocol.url}
-				<IconButton icon="print" caption="Pobierz z DocuSign" color="primary" size={6} class="ms-2 mb-0" onclick={() => downloadBlob()} />
-			{:else}
-				<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" onclick={() => sendAction('pdf')} />
-			{/if}
-			<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" onclick={() => sendAction('docusign')} disabled={Boolean(handoverProtocol.docusignSigned)} />
 		</div>
 	</div>
-</div>
+</SectionCard>

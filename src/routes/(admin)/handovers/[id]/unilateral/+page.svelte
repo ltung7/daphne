@@ -1,4 +1,5 @@
 <script lang="ts">
+	import NewReturnHandoverProtocol from '$lib/components/documents/NewReturnHandoverProtocol.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import type { PageProps } from './$types';
@@ -17,6 +18,9 @@
 	</div>
 </PageTitle>
 
-<div class="card p-5 text-center text-muted">
-	<p class="mb-0">Formularz jednostronnego odbioru pojazdu jest w przygotowaniu.</p>
-</div>
+<NewReturnHandoverProtocol
+	vehicle={data.vehicle}
+	driver={data.driver}
+	initialHandover={data.handover}
+	unilateral={true}
+/>

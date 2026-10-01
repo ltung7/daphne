@@ -93,9 +93,17 @@ declare global {
 			uid: string;
 			email: string;
 			role: AdminRole | 'driver' | 'revoked';
+			driverId?: string;
 			emailVerified: boolean;
 			iat: number;
 			exp: number;
+		}
+
+		// Auth result from resolveUser
+		interface AuthResult {
+			userType: UserType;
+			userData: UserBase;
+			claims: SessionClaims;
 		}
 
 		// Locals populated by hooks.server.ts
@@ -164,6 +172,7 @@ declare global {
 		interface User extends UserBase {
 			role: AdminRole | 'revoked';
 			canSignHandovers: boolean;
+			canAproveSettlements: boolean;
 		}
 	}
 
@@ -790,6 +799,10 @@ declare global {
 			phoneCharger: boolean
 			carWashCard: boolean
 			images: string[]
+			handoverId?: string;
+			witness?: string;
+			reasonForRecovery?: string;
+			foundItems?: string[]; // Driver's personal items found in vehicle
 		}
 
 		interface HandoverDocumentRecord extends HandoverDocument {
@@ -803,14 +816,6 @@ declare global {
 			printed?: number;
 			closed: false | number;
 			url?: string;
-
-			// Return/Unilateral: link to the original assignment handover being reversed
-			handoverId?: string;
-
-			// Unilateral fields (uses base HandoverDocument for mileage, fuel, place, etc.)
-			witness?: string;
-			reasonForRecovery?: string;
-			foundItems?: string[]; // Driver's personal items found in vehicle
 		}
 
 		type HandoverImageType = 'signedprintout' | 'image';

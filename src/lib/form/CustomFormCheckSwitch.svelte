@@ -8,6 +8,7 @@
         id?: any;
         size?: number;
         disabled?: boolean;
+        required?: boolean;
         onChange?: (ev: Event) => any;
     }
 
@@ -20,6 +21,7 @@
         id = $bindable(null),
         size = 4,
         disabled = false,
+        required = false,
         onChange
     }: Props = $props();
     
@@ -29,7 +31,7 @@
 </script>
 
 <div class="form-check form-switch ps-0 is-filled {className}" class:is-filled={checked} style="--size:{6 + size * 5}px">
-	<input {name} {value} class="form-check-input ms-auto" type="checkbox" {id} {disabled} bind:checked={checked} onchange={onChange}>
+	<input {name} {value} class="form-check-input ms-auto" type="checkbox" {id} {disabled} {required} bind:checked={checked} onchange={onChange}>
     {#if caption}
 	    <label class="form-check-label ms-3 mb-0 text-inherit transition fs-{8 - Math.ceil(size / 2)}" class:fw-bold={checked} for={id}>{caption}</label>
     {/if}

@@ -101,6 +101,28 @@ export const identificationDocumentNames: Record<Driver.IdentificationDocumentTy
     travel_document: 'Document podróży',
 }
 
+export const handoverEquipmentList = [
+	{ key: 'key', label: 'Kluczyk główny' },
+	{ key: 'spareKey', label: 'Kluczyk zapasowy' },
+	{ key: 'registration', label: 'Dowód rejestracyjny' },
+	{ key: 'roofSign', label: 'Lampa dachowa TAXI' },
+	{ key: 'fuelCard', label: 'Karta paliwowa' },
+	{ key: 'carWashCard', label: 'Karta myjni' },
+	{ key: 'tire', label: 'Koło zapasowe i zestaw naprawczy' },
+	{ key: 'exinguisher', label: 'Gaśnica' },
+	{ key: 'triangle', label: 'Trójkąt ostrzegawczy' },
+	{ key: 'vest', label: 'Kamizelka odblaskowa' },
+	{ key: 'firstAidKit', label: 'Apteczka' },
+	{ key: 'mats', label: 'Dywaniki' },
+	{ key: 'phoneHolder', label: 'Uchwyt na telefon' },
+	{ key: 'phoneCharger', label: 'Ładowarka samochodowa' }
+] as const;
+
+export type HandoverEquipmentKey = (typeof handoverEquipmentList)[number]['key'];
+export const equipmentList = handoverEquipmentList;
+export type EquipmentKey = HandoverEquipmentKey;
+export type RequiredEquipment = Partial<Record<HandoverEquipmentKey, boolean>>;
+
 interface VehicleDocumentCategory {
     name: string;
     fields: Vehicle.DocumentType[]

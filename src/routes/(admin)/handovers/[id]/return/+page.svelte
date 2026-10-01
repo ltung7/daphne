@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NewHandoverProtocol from '$lib/components/documents/NewHandoverProtocol.svelte';
+	import NewReturnHandoverProtocol from '$lib/components/documents/NewReturnHandoverProtocol.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import type { PageProps } from './$types';
@@ -18,10 +18,8 @@
 	</div>
 </PageTitle>
 
-<NewHandoverProtocol
-	vehicle={data.vehicle ?? undefined}
-	driver={data.driver ?? undefined}
-	apiUrl={`/handovers/${data.handover.id}/return/api`}
-	type="return"
+<NewReturnHandoverProtocol
+	vehicle={data.vehicle}
+	driver={data.driver}
 	initialHandover={data.handover}
 />

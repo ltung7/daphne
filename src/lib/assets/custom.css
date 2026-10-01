@@ -1149,3 +1149,18 @@ select.form-control {
 .offcanvas-body .timeline.timeline-one-side .timeline-block .timeline-content button.btn-clear {
 	width: calc(100% - 100px);
 }
+
+.form-switch .form-check-input:checked {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-primary);
+}
+
+.form-check-input:required:not(:checked):not(:disabled) {
+  background-color: var(--bs-danger);
+  border-color: var(--bs-secondary);
+}
+
+.form-check-input:required:not(:checked):not(:disabled)::after {
+  background-color: red;
+  border-color: var(--bs-secondary);
+}

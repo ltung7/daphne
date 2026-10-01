@@ -50,7 +50,7 @@
 		{ key: 'manage_drivers', label: 'Zarządzanie pojazdami', roles: [ 'moderator', 'manager', 'admin' ] },
 		{ key: 'manage_vehicles', label: 'Zarządzanie pojazdami', roles: [ 'moderator', 'manager', 'admin' ] },
 		{ key: 'view_finance', label: 'Przegląd raportów finansowych', roles: [ 'manager', 'admin' ] },
-		{ key: 'manage_finance', label: 'Zarządzanie finansami (płatności, provizje)', roles: [ 'manager', 'admin' ] },
+		{ key: 'manage_finance', label: 'Zarządzanie finansami (płatności, prowizje)', roles: [ 'manager', 'admin' ] },
 		{ key: 'manage_admins', label: 'Zarządzanie użytkownikami', roles: [ 'admin' ] },
 		{ key: 'system_settings', label: 'Ustawienia systemu', roles: [ 'manager', 'admin' ] }
 	];

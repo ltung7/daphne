@@ -1,6 +1,5 @@
 <script lang="ts" generics="T extends DocumentGenerator.HandoverDocument = DocumentGenerator.HandoverDocument">
 	import { identificationDocumentNames } from '$lib/assets/constants';
-	import CustomFormCheckSwitch from '$lib/form/CustomFormCheckSwitch.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
 	import CustomFormLanguage from '$lib/form/CustomFormLanguage.svelte';
 	import CustomFormText from '$lib/form/CustomFormText.svelte';
@@ -8,6 +7,8 @@
 	import CameraCaptureInspection from '$lib/misc/CameraCaptureInspection.svelte';
 	import { browserTranslate } from '$lib/nav/translate';
 	import { addToast } from '$lib/toast';
+	import HandoverProtocolEquipment from './HandoverProtocolEquipment.svelte';
+	import type { RequiredEquipment } from '$lib/assets/constants';
 
 	const BASE_VISUAL_TRANSLATE = {
 		pl: 'Pojazd czysty na zewnątrz i wewnątrz. Brak uszkodzeń karoserii, szyb i wnętrza. Pojazd sprawny technicznie, brak komunikatów o błędach.',
@@ -21,12 +22,13 @@
 
 	interface Props {
 		handoverProtocol: T;
+		requiredEquipment?: RequiredEquipment;
 		errors?: Record<string, string>;
 		touch?: (field: any) => void;
 		readonly?: boolean;
 	}
 
-	let { handoverProtocol = $bindable(), errors = {}, touch, readonly }: Props = $props();
+	let { handoverProtocol = $bindable(), requiredEquipment, errors = {}, touch, readonly }: Props = $props();
 	let record = $derived(handoverProtocol as unknown as DocumentGenerator.HandoverDocumentRecord);
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
 
@@ -113,24 +115,7 @@
 	<div class="col-12 border-top pt-3">
 		<h5>3. Wyposażenie i dokumenty flotowe</h5>
 	</div>
-	<div class="col-12 col-md-6 mb-3">
-		<CustomFormCheckSwitch caption="Klucz zapasowy" bind:checked={handoverProtocol.spareKey} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Dowód rejestracyjny" bind:checked={handoverProtocol.registration} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Karta paliwowa" bind:checked={handoverProtocol.fuelCard} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Karta myjni" bind:checked={handoverProtocol.carWashCard} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Dywaniki" bind:checked={handoverProtocol.mats} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Uchwyt na telefon" bind:checked={handoverProtocol.phoneHolder} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Ładowarka telefonu" bind:checked={handoverProtocol.phoneCharger} disabled={readonly} />
-	</div>
-	<div class="col-12 col-md-6 mb-3">
-		<CustomFormCheckSwitch caption="Klucz" bind:checked={handoverProtocol.key} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Gaśnica" bind:checked={handoverProtocol.exinguisher} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Lampa dachowa TAXI" bind:checked={handoverProtocol.roofSign} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Trójkąt" bind:checked={handoverProtocol.triangle} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Kamizelka odblaskowa" bind:checked={handoverProtocol.vest} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Apteczka" bind:checked={handoverProtocol.firstAidKit} disabled={readonly} />
-		<CustomFormCheckSwitch caption="Koło zapasowe i zestaw naprawczy" bind:checked={handoverProtocol.tire} disabled={readonly} />
-	</div>
+	<HandoverProtocolEquipment bind:handoverProtocol {requiredEquipment} {readonly} />
 	<div class="col-12 border-top pt-3">
 		<h5>4. STAN WIZUALNY, TECHNICZNY I UWAGI</h5>
 	</div>
@@ -145,7 +130,7 @@
 	</div>
 	{#if handoverProtocol.images?.length}
 		{#each handoverProtocol.images as src, i}
-			<div class="col-12 col-md-6 col-lg-3 my-2">
+			<div class="col-12 col-md-6 col-lg-3 col-xl-2 my-2">
 				<img {src} class="mw-100 border rounded" alt="Img {i}" />
 			</div>
 		{/each}
@@ -155,7 +140,7 @@
 		</div>
 	{/if}
 	{#if !readonly}
-		<div class="col-12 mb-3">
+		<div class="col-12 mb-3 flex-center">
 			<!-- <UploadHandoverImages {onUploaded} {handoverId} /> -->
 			<CameraCaptureInspection onfinished={onFinished} />
 		</div>

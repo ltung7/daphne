@@ -55,6 +55,12 @@ export const handoverDocumentSchema = z.object({
     phoneHolder: z.boolean(),
     phoneCharger: z.boolean(),
     carWashCard: z.boolean(),
+
+    // Optional fields for return/unilateral handovers
+    handoverId: z.string().optional(),
+    witness: z.string().optional(),
+    reasonForRecovery: z.string().optional(),
+    foundItems: z.array(z.string()).optional(),
 });
 
 export type HandoverDocument = z.infer<typeof handoverDocumentSchema>;

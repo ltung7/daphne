@@ -5,9 +5,10 @@
 		title: string;
 		children: Snippet;
 		cta?: Snippet;
+		noCard?: boolean;
 	}
 
-	let { title, children, cta }: Props = $props();
+	let { title, children, cta, noCard }: Props = $props();
 </script>
 
 <section class="section-card">
@@ -22,7 +23,7 @@
 		{/if}
 	</div>
 
-	<div class="card card-body">
+	<div class="{noCard ? '' : 'card card-body'}">
 		{@render children()}
 	</div>
 </section>

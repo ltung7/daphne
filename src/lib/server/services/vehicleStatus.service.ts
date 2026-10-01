@@ -149,6 +149,7 @@ export interface ReturnVehicleData {
 	handoverId: string;
 	uploadedDocumentUrl?: string;
 	user?: App.User;
+	originalHandoverId?: string;
 }
 
 export interface UnilateralReturnVehicleData {
@@ -157,6 +158,7 @@ export interface UnilateralReturnVehicleData {
 	handoverId: string;
 	uploadedDocumentUrl?: string;
 	user?: App.User;
+	originalHandoverId?: string;
 }
 
 async function closeReturnHandover(
@@ -201,6 +203,7 @@ async function closeReturnHandover(
 		closed: timestamp
 	};
 	if (uploadedDocumentUrl?.length) updateHandoverData.url = uploadedDocumentUrl;
+	if (data.originalHandoverId) updateHandoverData.handoverId = data.originalHandoverId;
 
 	const logTag = type === 'unilateral' ? 'UnilateralReturnTransaction' : 'ReturnTransaction';
 	insertRandomLog(logTag, { updateVehicleData, updateDriverData, vehicleAssignmentData, updateHandoverData });
