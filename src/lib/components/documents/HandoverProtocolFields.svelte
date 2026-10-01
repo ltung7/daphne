@@ -9,6 +9,16 @@
 	import { browserTranslate } from '$lib/nav/translate';
 	import { addToast } from '$lib/toast';
 
+	const BASE_VISUAL_TRANSLATE = {
+		pl: 'Pojazd czysty na zewnątrz i wewnątrz. Brak uszkodzeń karoserii, szyb i wnętrza. Pojazd sprawny technicznie, brak komunikatów o błędach.',
+		en: 'Vehicle is clean inside and out. No damage to bodywork, glass, or interior. Vehicle is technically sound, no error messages.',
+		uk: 'Транспортний засіб чистий зовні та всередині. Відсутні пошкодження кузова, скла та салону. Автомобіль технічно справний, повідомлення про помилки відсутні.',
+		be: 'Транспартны сродак чысты звонку і ўнутры. Няма пашкоджанняў кузава, шкла і салона. Транспартны сродак тэхнічна спраўны, паведамленні пра памылкі адсутнічаюць.',
+		ne: 'सवारी साधन बाहिर र भित्र सफा छ। बडी, सिसा र भित्री भागमा कुनै क्षति छैन। सवारी साधन प्राविधिक रूपमा दुरुस्त छ, कुनै त्रुटि सन्देश छैन।',
+		cs: 'Vozidlo je čisté zvenku i uvnitř. Bez poškození karoserie, skel a interiéru. Vozidlo je technicky v pořádku, bez chybových hlášení.',
+		sr: 'Vozilo je čisto spolja i iznutra. Bez oštećenja karoserije, stakala i enterijera. Vozilo je tehnički ispravno, bez poruka o greškama.'
+	};
+
 	interface Props {
 		handoverProtocol: T;
 		errors?: Record<string, string>;
@@ -21,12 +31,20 @@
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
 
 	const onFinished = (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => {
-		const urls = Object.values(progress).map((file) => file?.src).filter(Boolean) as string[];
+		const urls = Object.values(progress)
+			.map((file) => file?.src)
+			.filter(Boolean) as string[];
 		handoverProtocol.images = urls;
 	};
 
 	const translateVisual = async () => {
 		if (handoverProtocol.locale === 'pl') return;
+
+		if (handoverProtocol.visual === BASE_VISUAL_TRANSLATE.pl && BASE_VISUAL_TRANSLATE[handoverProtocol.locale]) {
+			handoverProtocol.translatedVisual = BASE_VISUAL_TRANSLATE[handoverProtocol.locale];
+			return;
+		}
+
 		const translation = await browserTranslate.chrome(handoverProtocol.visual, 'pl', handoverProtocol.locale);
 		if (translation?.length) handoverProtocol.translatedVisual = translation;
 		else addToast('Nie udało się przetłumaczyć opisu');

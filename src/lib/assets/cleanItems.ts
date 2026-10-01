@@ -81,7 +81,7 @@ export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
     phoneHolder: false,
     phoneCharger: false,
     carWashCard: false,
-    visual: 'Brak uwag - pojazd czysty i sprawny',
+    visual: 'Pojazd czysty na zewnątrz i wewnątrz. Brak uszkodzeń karoserii, szyb i wnętrza. Pojazd sprawny technicznie, brak komunikatów o błędach.',
     translatedVisual: '',
     images: []
 }

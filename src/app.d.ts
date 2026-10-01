@@ -804,6 +804,9 @@ declare global {
 			closed: false | number;
 			url?: string;
 
+			// Return/Unilateral: link to the original assignment handover being reversed
+			handoverId?: string;
+
 			// Unilateral fields (uses base HandoverDocument for mileage, fuel, place, etc.)
 			witness?: string;
 			reasonForRecovery?: string;

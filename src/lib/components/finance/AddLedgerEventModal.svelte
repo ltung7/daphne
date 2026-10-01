@@ -72,8 +72,4 @@
 	{/if}
 
 	<CustomFormTextarea caption="Notatka (opcjonalnie)" bind:value={note} size={3} />
-
-	{#if config.isCashEvent}
-		<div class="alert alert-info small mb-0">Zdarzenie gotówkowe wpłynie na saldo gotówkowe kierowcy.</div>
-	{/if}
 </ClosableModal>
