@@ -1,6 +1,5 @@
 import type { Cookies } from '@sveltejs/kit';
 import { verifySessionCookie as firebaseVerifySessionCookie } from './firebaseAdmin.js';
-import type { SessionClaims, UserBase } from './types.js';
 import {
 	ADMIN_COOKIE,
 	DRIVER_COOKIE,
@@ -18,7 +17,7 @@ export async function createSessionCookie(idToken: string, maxAgeSeconds: number
 	return firebaseCreateSessionCookie(idToken, maxAgeSeconds * 1000);
 }
 
-export async function verifySessionCookie(cookieValue: string, userType: 'admin' | 'driver'): Promise<SessionClaims | null> {
+export async function verifySessionCookie(cookieValue: string, userType: 'admin' | 'driver'): Promise<App.SessionClaims | null> {
 	try {
 		const decoded = await firebaseVerifySessionCookie(cookieValue);
 		return {
@@ -72,7 +71,7 @@ export async function setSessionAndPrefs(
 	event: { cookies: Cookies; locals: App.Locals },
 	userType: 'admin' | 'driver',
 	idToken: string,
-	userData: UserBase,
+	userData: App.UserBase,
 	rememberMe: boolean = false
 ): Promise<void> {
 	const maxAge = rememberMe ? SESSION_REMEMBER_MAX_AGE : SESSION_DEFAULT_MAX_AGE;
@@ -97,7 +96,8 @@ export async function setSessionAndPrefs(
 	} else {
 		event.locals._user = {
 			...userData,
-			canSignHandovers: true // default for admins
+			canSignHandovers: true, // default for admins
+			canAproveSettlements: true // default for admins
 		} as unknown as App.User;
 		event.locals._driver = null;
 	}

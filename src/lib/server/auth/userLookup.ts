@@ -1,16 +1,15 @@
 import { getDriver } from '$lib/server/db/firebase/drivers.fdb.js';
 import { getUser } from '$lib/server/db/firebase/users.fdb.js';
-import type { SessionClaims, UserBase, AuthResult } from './types.js';
 import { authCache } from './authCache.js';
 
-export async function resolveUser(uid: string): Promise<AuthResult> {
+export async function resolveUser(uid: string): Promise<App.AuthResult> {
 	// 1. Check drivers collection by id (which is the Firebase UID)
 	const driver = await getDriver(uid);
 
 	if (driver) {
 		const role = driver.status === 'banned' ? 'revoked' : 'driver';
 
-		const claims: SessionClaims = {
+		const claims: App.SessionClaims = {
 			uid: driver.id,
 			email: driver.email,
 			role,
@@ -21,7 +20,7 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 		};
 
 		const now = Date.now();
-		const user: UserBase = {
+		const user: App.UserBase = {
 			id: driver.id,
 			email: driver.email,
 			name: driver.name,
@@ -50,7 +49,7 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 	if (admin) {
 		const role = admin.role;
 
-		const claims: SessionClaims = {
+		const claims: App.SessionClaims = {
 			uid: admin.id,
 			email: admin.email,
 			role,
@@ -59,7 +58,7 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 			exp: Math.floor(Date.now() / 1000) + 7200
 		};
 
-		const user: UserBase = {
+		const user: App.UserBase = {
 			id: admin.id,
 			email: admin.email,
 			name: admin.name,
@@ -87,7 +86,7 @@ export async function resolveUser(uid: string): Promise<AuthResult> {
 	throw new Error('User not found in drivers or admin collections');
 }
 
-export async function getUserById(uid: string): Promise<UserBase | null> {
+export async function getUserById(uid: string): Promise<App.UserBase | null> {
 	// Fast path: In-memory ban check
 	if (authCache.isBanned(uid)) {
 		return null;
@@ -106,7 +105,7 @@ export async function getUserById(uid: string): Promise<UserBase | null> {
 		const role = driver.status === 'banned' ? 'revoked' : 'driver';
 
 		const now = Date.now();
-		const user: UserBase = {
+		const user: App.UserBase = {
 			id: driver.id,
 			email: driver.email,
 			name: driver.name,
@@ -129,7 +128,7 @@ export async function getUserById(uid: string): Promise<UserBase | null> {
 	// Try admin
 	const admin = await getUser(uid);
 	if (admin) {
-		const user: UserBase = {
+		const user: App.UserBase = {
 			id: admin.id,
 			email: admin.email,
 			name: admin.name,

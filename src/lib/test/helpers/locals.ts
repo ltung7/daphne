@@ -1,43 +1,11 @@
 import { vi } from 'vitest';
 
-// Match exactly src/app.d.ts App.Locale
-type Locale = 'en' | 'pl' | 'hi' | 'ne' | 'uk' | 'be' | 'uz' | 'ka' | 'tl' | 'ro';
-
-type AdminRole = 'moderator' | 'manager' | 'admin';
-
-interface SessionClaims {
-  uid: string;
-  email: string;
-  role: AdminRole | 'driver' | 'revoked';
-  driverId?: string;
-  emailVerified: boolean;
-  iat: number;
-  exp: number;
-}
-
-interface UserBase {
-  id: string;
-  email: string;
-  name: string;
-  role: AdminRole | 'driver' | 'revoked';
-  preferredLanguage: Locale;
-  timestamp: number;
-  updatedAt: number;
-  lastLoggedIn: number;
-}
-
-interface User extends UserBase {
-  role: AdminRole | 'revoked';
-  canSignHandovers: boolean;
-}
-
-interface Locals {
-  _userType: 'driver' | 'admin' | null;
-  _user: User | null;
-  _driver: UserBase | null;
-  sessionClaims: SessionClaims | null;
-  locale: Locale;
-}
+type Locals = App.Locals;
+type User = App.User;
+type UserBase = App.UserBase;
+type SessionClaims = App.SessionClaims;
+type AdminRole = App.AdminRole;
+type Locale = App.Locale;
 
 export function createMockLocals(overrides: Partial<Locals> = {}): Locals {
   return {
@@ -63,6 +31,7 @@ export function createAdminLocals(role: AdminRole = 'admin', overrides: Partial<
       updatedAt: Date.now(),
       lastLoggedIn: Date.now(),
       canSignHandovers: true,
+      canAproveSettlements: true,
     },
     sessionClaims: {
       uid: 'admin-uid',

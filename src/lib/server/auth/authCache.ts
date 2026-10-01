@@ -1,7 +1,5 @@
-import type { UserBase } from './types.js';
-
 interface CacheEntry {
-	user: UserBase;
+	user: App.UserBase;
 	expiresAt: number;
 }
 
@@ -38,7 +36,7 @@ class AuthCache {
 	/**
 	 * Get cached user profile if present and not expired
 	 */
-	getUser(uid: string): UserBase | null {
+	getUser(uid: string): App.UserBase | null {
 		if (this.bannedUids.has(uid)) return null;
 
 		const entry = this.userCache.get(uid);
@@ -55,7 +53,7 @@ class AuthCache {
 	/**
 	 * Cache a validated user profile
 	 */
-	setUser(uid: string, user: UserBase, ttlMs: number = DEFAULT_TTL_MS): void {
+	setUser(uid: string, user: App.UserBase, ttlMs: number = DEFAULT_TTL_MS): void {
 		if (user.role === 'revoked') {
 			this.banUser(uid);
 			return;

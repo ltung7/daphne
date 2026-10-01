@@ -1,6 +1,4 @@
-import type { UserBase } from './types.js';
-
-export function restrictDriver(locals: App.Locals): UserBase {
+export function restrictDriver(locals: App.Locals): App.UserBase {
 	if (!locals._driver || locals._userType !== 'driver') {
 		throw new Error('Driver access required');
 	}
