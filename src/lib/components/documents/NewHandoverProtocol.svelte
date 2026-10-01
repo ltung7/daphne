@@ -17,6 +17,9 @@
 	interface Props {
 		vehicle?: Vehicle.Vehicle;
 		driver?: Driver.Driver;
+		apiUrl?: string;
+		type?: 'assign' | 'return' | 'unilateral';
+		initialHandover?: DocumentGenerator.HandoverDocumentRecord;
 	}
 
 	interface Manager {
@@ -24,7 +27,13 @@
 		email: string;
 	}
 
-	let { vehicle, driver }: Props = $props();
+	let {
+		vehicle,
+		driver,
+		apiUrl = '/handovers/new/api',
+		type = 'assign',
+		initialHandover
+	}: Props = $props();
 	let vehicles: Vehicle.Vehicle[] = $state([]);
 	let drivers: Driver.Driver[] = $state([]);
 	let managers: Manager[] = $state([]);
@@ -63,18 +72,19 @@
 		}
 	};
 
-	const sendAction = async (action: 'pdf' | 'docusign' | 'close' | 'save') => {
+	const sendAction = async (action: 'pdf' | 'docusign' | 'save') => {
 		startLoad();
+		const docTitle = type === 'return' ? 'Protokół zwrotu pojazdu' : 'Protokół wydania pojazdu';
 		if (action === 'pdf') {
-			const response = await internal.post('/handovers/new/api', { id, action: 'save', handover: handoverProtocol });
+			const response = await internal.post(apiUrl, { id, action: 'save', handover: handoverProtocol });
 			if (response.id) id = response.id;
 
-			const pdfBlob: Blob = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol }, { responseType: 'blob' });
+			const pdfBlob: Blob = await internal.post(apiUrl, { id, action, handover: handoverProtocol }, { responseType: 'blob' });
 			if (pdfBlob.type === 'application/json') {
 				endLoad();
 				return addToast('Nie udało się wygenerować wydruku');
 			}
-			downloadFileBlob(pdfBlob, `Protokół wydania pojazdu ${handoverProtocol.registrationNumber} ${handoverProtocol.driverName}`, pdfBlob.type);
+			downloadFileBlob(pdfBlob, `${docTitle} ${handoverProtocol.registrationNumber} ${handoverProtocol.driverName}`, pdfBlob.type);
 			endLoad();
 
 			if (id) {
@@ -83,7 +93,7 @@
 				}, 500);
 			}
 		} else {
-			const response = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol });
+			const response = await internal.post(apiUrl, { id, action, handover: handoverProtocol });
 			endLoad();
 			if (response.id) goto(`/handovers/${response.id}`);
 		}
@@ -99,12 +109,42 @@
 	}
 
 	onMount(async () => {
-		await Promise.all([
-			// !vehicle && fetchVehicles({ status: 'available' }).then(list => vehicles = list),
-			// !driver && fetchDrivers({ status: 'inactive' }).then(list => drivers = list)
-			!vehicle && fetchVehicles({}, [ 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
-			!driver && fetchDrivers({}, [ 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list))
-		]);
+		if (!initialHandover) {
+			await Promise.all([
+				!vehicle && fetchVehicles({}, [ 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
+				!driver && fetchDrivers({}, [ 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list))
+			]);
+		}
+
+		if (initialHandover) {
+			handoverProtocol.registrationNumber = initialHandover.registrationNumber;
+			handoverProtocol.vin = initialHandover.vin;
+			handoverProtocol.model = initialHandover.model;
+			handoverProtocol.driverId = initialHandover.driverId;
+			handoverProtocol.driverName = initialHandover.driverName;
+			handoverProtocol.driverEmail = initialHandover.driverEmail;
+			handoverProtocol.identificationDocumentType = initialHandover.identificationDocumentType;
+			handoverProtocol.identificationDocumentNumber = initialHandover.identificationDocumentNumber;
+			handoverProtocol.managerName = initialHandover.managerName;
+			handoverProtocol.managerEmail = initialHandover.managerEmail;
+			handoverProtocol.place = initialHandover.place;
+			handoverProtocol.fuelCard = initialHandover.fuelCard;
+			handoverProtocol.carWashCard = initialHandover.carWashCard;
+			handoverProtocol.key = initialHandover.key;
+			handoverProtocol.spareKey = initialHandover.spareKey;
+			handoverProtocol.registration = initialHandover.registration;
+			handoverProtocol.roofSign = initialHandover.roofSign;
+			handoverProtocol.tire = initialHandover.tire;
+			handoverProtocol.exinguisher = initialHandover.exinguisher;
+			handoverProtocol.triangle = initialHandover.triangle;
+			handoverProtocol.vest = initialHandover.vest;
+			handoverProtocol.firstAidKit = initialHandover.firstAidKit;
+			handoverProtocol.mats = initialHandover.mats;
+			handoverProtocol.phoneHolder = initialHandover.phoneHolder;
+			handoverProtocol.phoneCharger = initialHandover.phoneCharger;
+			handoverProtocol.isElectric = initialHandover.isElectric;
+			if (initialHandover.locale) handoverProtocol.locale = initialHandover.locale;
+		}
 
 		if (vehicle) {
 			handoverProtocol.registrationNumber = vehicle.registrationNumber;
@@ -121,29 +161,33 @@
 			{ name: 'Grażyna Chrząszcz', email: 'veleanor@finnergroup.com' }
 		];
 
-		handoverProtocol.managerName = managers[0].name;
-		handoverProtocol.managerEmail = managers[0].email;
+		if (!handoverProtocol.managerName) {
+			handoverProtocol.managerName = managers[0].name;
+			handoverProtocol.managerEmail = managers[0].email;
+		}
 	});
 </script>
 
 <svelte:head>
-	<title>Wygeneruj protokół wydania pojazdu</title>
+	<title>{type === 'return' ? 'Wygeneruj protokół zwrotu pojazdu' : 'Wygeneruj protokół wydania pojazdu'}</title>
 </svelte:head>
 
 <CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
 	{#snippet children({ errors, touch })}
 		<section class="pb-3 mb-3 border-bottom">
-			{#if vehicle}
-				<h4>Pojazd <strong>{vehicle.registrationNumber}</strong></h4>
+			<!-- {#if vehicle || initialHandover}
+				<h4>Pojazd <strong>{handoverProtocol.registrationNumber || vehicle?.registrationNumber}</strong></h4>
 			{/if}
-			{#if driver}
-				<h4>Kierowca <strong>{driver.name}</strong></h4>
-			{/if}
-			{#if vehicles.length}
-				<SearchBar data={vehicles} caption="Wybierz pojazd" search="registrationNumber" onselect={(e) => updateVehicle(e)} />
-			{/if}
-			{#if drivers.length}
-				<SearchBar data={drivers} caption="Wybierz kierowcę" search="name" onselect={(e) => updateDriver(e)} />
+			{#if driver || initialHandover}
+				<h4>Kierowca <strong>{handoverProtocol.driverName || driver?.name}</strong></h4>
+			{/if} -->
+			{#if !initialHandover}
+				{#if vehicles.length}
+					<SearchBar data={vehicles} caption="Wybierz pojazd" search="registrationNumber" onselect={(e) => updateVehicle(e)} />
+				{/if}
+				{#if drivers.length}
+					<SearchBar data={drivers} caption="Wybierz kierowcę" search="name" onselect={(e) => updateDriver(e)} />
+				{/if}
 			{/if}
 			{#if managers.length}
 				<SearchBar data={managers} caption="Wybierz menadżera floty" search="name" onselect={(e) => updateManager(e)} />
@@ -153,7 +197,7 @@
 	{/snippet}
 	{#snippet submitSnippet({ isValid, errors })}
 		{@const halfValid = hasOnlyAllowedErrors<DocumentGenerator.HandoverDocument>(errors, [ 'managerName', 'managerEmail' ])}
-		<IconButton icon="cross" caption="Wydaj bez dokumentu" color="dark" size={6} class="ms-2 mb-0" disabled={!halfValid} onclick={() => sendAction('close')} />
+		<IconButton icon="disk" caption='Zapisz bez wydania' size={6} color="dark" class="ms-2 mb-0" disabled={!isValid} onclick={() => sendAction('save')} />
 		<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" disabled={!halfValid} onclick={() => sendAction('pdf')} />
 		<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" disabled={!isValid} onclick={() => sendAction('docusign')} />
 	{/snippet}

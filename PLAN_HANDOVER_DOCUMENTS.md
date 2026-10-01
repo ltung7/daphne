@@ -1,21 +1,32 @@
 # Handover Return & Unilateral Return Implementation Plan
 
 ## Overview
-Implement voluntary return and unilateral return workflows for vehicle handovers. Both require vehicle status transition from `assigned` to target status (`available` | `under_maintenance` | `broken` | `unmovable`).
+Implement voluntary return and unilateral return workflows for vehicle handovers.
+
+### Core Handover & Status Rules (CRITICAL)
+1. **Handover documents do not apply to the status transition matrix**: All handover document workflows (assignment, voluntary return, unilateral return) operate independently of the `statusTransitions` matrix and change vehicle status directly with appropriate audit logging.
+2. **Deterministic status calculation (no `targetStatus` parameter)**:
+   - Returning does NOT accept a `targetStatus` from the client/manager.
+   - Status transitions automatically: **status stays the same unless it was `'assigned'` — if `'assigned'`, it becomes `'available'`**.
+   - If the vehicle was already `'unmovable'` (e.g., automatically flagged by health check background jobs for expired inspection or insurance), `'under_maintenance'`, or `'broken'`, it retains that exact status upon return—it is simply unassigned from the driver.
+3. **Status applied atomically via transaction**: Vehicle status change is executed within the Firestore transaction alongside clearing assignment fields, matching the pattern in `assignVehicleAndCloseHandover`.
+4. **Use `timestamp` instead of `returnedAt`**: Every handover document is an independent record in `vehicleHandovers` (with its own `type: 'assign' | 'return' | 'unilateral'`). Closing a return document simply sets `closed: timestamp` (and `timestamp` of the document). There is no need for duplicate fields like `returnedAt`.
+5. **Returning does not require status `'assigned'`**: A vehicle may be returned when already `'broken'`, `'under_maintenance'`, or legally `'unmovable'`.
+6. **Meaning of `'assigned'` status**: The `'assigned'` status strictly indicates that the vehicle has passed all legal/technical checks, is actively assigned to an authorized driver, and is ready to earn on platforms.
 
 ---
 
 ## Type Changes (src/app.d.ts)
 
 ### 1. Vehicle interface (line 233)
-Add `assignedHandoverId?: string` field to track which handover document assigned this vehicle.
+Add `handoverId?: string` field to track which handover document assigned this vehicle.
 
 ```typescript
 interface Vehicle extends NewVehicleData {
     // ... existing fields
     assignedDriverName?: string;
     assignedDriverId?: string;
-    assignedHandoverId?: string;  // NEW: link to handover document
+    handoverId?: string;  // link to handover document
     // ...
 }
 ```
@@ -29,28 +40,21 @@ assignedVehicle: false | {
     model: string;
     imageUrl?: string;
     timestamp: number;
-    handoverId: string;  // NEW: link to handover document
+    handoverId: string;  // link to handover document
 }
 ```
 
 ### 3. HandoverDocumentRecord (line 802)
-Extend with return/unilateral fields per plan:
+Extend with ONLY the specific unilateral fields needed (since return logic creates a NEW document of type 'return' or 'unilateral', it automatically inherits the base `HandoverDocument` fields for mileage, fuel, visual condition, location, and manager/retriever).
 
 ```typescript
 interface HandoverDocumentRecord extends HandoverDocument {
     // ... existing fields
-    // Return fields
-    returnedAt?: number;
-    returnMileage?: number;
-    returnFuel?: number;
-    returnVisual?: string;
-    returnNotes?: string;
     
-    // Unilateral fields
-    recoveryLocation?: string;
+    // Unilateral fields (uses base HandoverDocument for mileage, fuel, place, etc.)
     witness?: string;
     reasonForRecovery?: string;
-    retriever?: string;
+    foundItems?: string[]; // Driver's personal items found in vehicle
 }
 ```
 
@@ -58,155 +62,114 @@ interface HandoverDocumentRecord extends HandoverDocument {
 
 ## Service Changes (src/lib/server/services/vehicleStatus.service.ts)
 
-### 1. Update `assignVehicleAndCloseHandover` (line 27)
-Save `handoverId` on both Vehicle and Driver:
+### 1. Update `assignVehicleAndCloseHandover` (already completed)
+Saves `handoverId` on both Vehicle and Driver and sets `status: 'assigned'` inside transaction.
+
+### 2. Update `returnVehicle` -> `returnVehicleAndCloseHandover`
+Atomically closes a voluntary return handover, clears driver assignment, determines new status, and updates vehicle status in the transaction.
 
 ```typescript
-// Vehicle update
-const updateVehicleData: Partial<Vehicle.Vehicle> = {
-    assignedDriverId: driverId,
-    assignedDriverName: driverName,
-    assignedHandoverId: handoverId,  // NEW
-    status: 'assigned'
+export interface ReturnVehicleData {
+    registrationNumber: string;
+    driverId?: string;
+    handoverId: string;
+    user?: App.User;
+    uploadedDocumentUrl?: string;
 }
 
-// Driver update
-const updateDriverData: Partial<Driver.Driver> = {
-    assignedVehicle: {
-        model,
-        registrationNumber,
-        timestamp,
-        handoverId  // NEW
-    }
-}
-```
-
-### 2. Update `returnVehicle` (line 152)
-Read `handoverId` from Vehicle (or Driver) instead of requiring it as parameter. Add status transition.
-
-```typescript
-export async function returnVehicle(
-    registrationNumber: string, 
-    driverId: string, 
-    options: {
-        targetStatus: 'available' | 'under_maintenance' | 'broken' | 'unmovable';
-        mileage?: number;
-        fuel?: number;
-        notes?: string;
-        handoverId?: string;  // optional fallback
-        user: App.User;
-    }
-): Promise<{ success: boolean; assignmentId?: string; error?: string }>
+export async function returnVehicleAndCloseHandover(data: ReturnVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }>
 ```
 
 Steps:
-1. Get vehicle to read `assignedHandoverId` (fallback to options.handoverId)
-2. Call `handleChangeVehicleStatus(vehicle, targetStatus, extraData, user)`
-3. Transaction: clear assignments + create assignment record type 'return' + update handover with return data
+1. Fetch vehicle document:
+   - Verify vehicle exists and is currently assigned to `driverId` (reads from vehicle if not passed).
+   - Calculate new status: `const newStatus = vehicle.status === 'assigned' ? 'available' : vehicle.status;`
+2. Firestore Transaction:
+   - **Vehicle (`vehicles/{reg}`)**: Delete `assignedDriverId`, `assignedDriverName`, `handoverId` via `FieldValue.delete()`, set `status: newStatus`, `updatedAt: timestamp`.
+   - **Driver (`vehicleDriver/{driverId}`)**: Set `assignedVehicle: false`, `updatedAt: timestamp`.
+   - **Assignment (`vehicleAssignment`)**: Add record `{ registrationNumber, driverId, handoverId, timestamp, type: 'return' }`.
+   - **Handover (`vehicleHandovers/{handoverId}`)**: Set `closed: timestamp`, `updatedAt: timestamp`, and `url` if uploaded.
+3. Audit Log:
+   - If status changed (or on return event), log to `vehicleStatusChange` via `addVehicleStatusChange`.
 
-### 3. Add `unilateralReturnVehicle` (NEW function)
+### 3. Add `unilateralReturnVehicleAndCloseHandover`
+Atomically closes a unilateral recovery handover, clears driver assignment, determines new status, and updates vehicle status in the transaction.
 
 ```typescript
-export async function unilateralReturnVehicle(
-    registrationNumber: string,
-    driverId: string,
-    options: {
-        targetStatus: 'available' | 'under_maintenance' | 'broken' | 'unmovable';
-        recoveryData: {
-            recoveryLocation: string;
-            witness: string;
-            reasonForRecovery: string;
-            retriever: string;
-            mileage?: number;
-            fuel?: number;
-            visual?: string;
-        };
-        handoverId?: string;  // optional fallback
-        user: App.User;
-    }
-): Promise<{ success: boolean; assignmentId?: string; error?: string }>
+export interface UnilateralReturnVehicleData {
+    registrationNumber: string;
+    driverId?: string;
+    handoverId: string;
+    user?: App.User;
+    uploadedDocumentUrl?: string;
+}
+
+export async function unilateralReturnVehicleAndCloseHandover(data: UnilateralReturnVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }>
 ```
 
 Steps:
-1. Get vehicle to read `assignedHandoverId`
-2. Call `handleChangeVehicleStatus(vehicle, targetStatus, extraData, user)`
-3. Transaction: clear assignments + create assignment record type 'unilateral' + update handover with unilateral data
+1. Fetch vehicle document:
+   - Verify vehicle exists and is assigned to `driverId` (reads from vehicle if not passed).
+   - Calculate new status: `const newStatus = vehicle.status === 'assigned' ? 'available' : vehicle.status;`
+2. Firestore Transaction:
+   - **Vehicle (`vehicles/{reg}`)**: Delete `assignedDriverId`, `assignedDriverName`, `handoverId` via `FieldValue.delete()`, set `status: newStatus`, `updatedAt: timestamp`.
+   - **Driver (`vehicleDriver/{driverId}`)**: Set `assignedVehicle: false`, `updatedAt: timestamp`.
+   - **Assignment (`vehicleAssignment`)**: Add record `{ registrationNumber, driverId, handoverId, timestamp, type: 'unilateral' }`.
+   - **Handover (`vehicleHandovers/{handoverId}`)**: Set `closed: timestamp`, `updatedAt: timestamp`, and `url` if uploaded.
+3. Audit Log:
+   - Log status transition to `vehicleStatusChange` via `addVehicleStatusChange`.
 
 ---
 
-## API Endpoints
+## Full Endpoints & UI Routes
 
-### 1. POST /handovers/[id]/return
-Create new file: `src/routes/(admin)/handovers/[id]/return/+server.ts`
+### 1. /handovers/[id]/return
+Full endpoint implemented:
+- `+page.server.ts`: Loads handover document, associated vehicle, and driver.
+- `+page.svelte`: Header with link to `/handovers/[id]/unilateral` and back to `/handovers/[id]`; reuses `NewHandoverProtocol` with `type="return"` and prefilled data.
+- `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverReturnDocument`), and `close` (`returnVehicleAndCloseHandover`).
 
-```typescript
-// Body: { targetStatus, mileage?, fuel?, notes? }
-// Validates: handover.closed === true (vehicle currently assigned)
-// Calls: returnVehicle() with handoverId from params.id
-```
-
-### 2. POST /handovers/[id]/unilateral
-Create new file: `src/routes/(admin)/handovers/[id]/unilateral/+server.ts`
-
-```typescript
-// Body: { targetStatus, recoveryData: { recoveryLocation, witness, reasonForRecovery, retriever, mileage?, fuel?, visual? } }
-// Validates: handover.closed === true
-// Calls: unilateralReturnVehicle() with handoverId from params.id
-```
+### 2. /handovers/[id]/unilateral
+Full endpoint implemented:
+- `+page.server.ts`: Loads handover document, associated vehicle, and driver.
+- `+page.svelte`: Header with link to `/handovers/[id]/return` and back to `/handovers/[id]`; placeholder body for unilateral form.
+- `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverUnilateralDocument`), and `close` (`unilateralReturnVehicleAndCloseHandover`).
 
 ---
 
-## Validation Rules
-
-1. **Only allowed if** `handover.closed === true` (vehicle currently assigned)
-2. **Target status** must be one of: `available`, `under_maintenance`, `broken`, `unmovable`
-3. **Role checks** via `handleChangeVehicleStatus` (moderator can return to all four statuses)
-4. **Manager/Admin** choose target status based on vehicle condition at return
-
----
-
-## Notifications (per plan)
-- Driver notified of return completion
-- Managers notified if vehicle goes to `unmovable`/`broken`
-
----
-
-## Files to Create/Modify
-
-| File | Action |
-|------|--------|
-| `src/app.d.ts` | Add `assignedHandoverId` to Vehicle, `handoverId` to Driver.assignedVehicle, extend HandoverDocumentRecord |
-| `src/lib/server/services/vehicleStatus.service.ts` | Update `assignVehicleAndCloseHandover`, update `returnVehicle`, add `unilateralReturnVehicle` |
-| `src/routes/(admin)/handovers/[id]/return/+server.ts` | NEW - voluntary return endpoint |
-| `src/routes/(admin)/handovers/[id]/unilateral/+server.ts` | NEW - unilateral return endpoint |
-
----
-
-## Dependencies
-- Existing: `handleChangeVehicleStatus`, `vehicleStatusChange` audit log, `vehicleAssignment` collection
-- Existing: `getVehicle`, `updateVehicle`, `getDriver`, `updateDriver` from firebase db modules
-- Existing: Handover PDF templates (`generateHandoverDocument` for return/unilateral types)
-
----
-
-## Additional Requirements (Added Later)
+## PDF Document Templates
 
 ### Unilateral Document - Items Found Page
-**Requirement**: Unilateral handover requires a new page listing driver's personal items found in the vehicle.
+- File: `src/lib/documents/handover-unilateral.documents.ts`
+- Render `foundItems` list in `generateHandoverUnilateralDocument` after Section 4 (Visual/Notes) and before clauses/signatures.
 
-**Reason**: Since it's unilateral (driver absent/unreachable), they cannot retrieve their belongings. For legal protection, we must document all items found in the vehicle at time of recovery.
+---
 
-**Implementation**:
-- Add `foundItems: string[]` field to unilateral handover data
-- Add new section/page in `generateHandoverUnilateralDocument` after Section 4 (Visual/Notes)
-- Section header: "Przedmioty znalezione w pojeździe" (Items found in vehicle)
-- Render as numbered list or bullet points
-- Include in PDF before clauses/signatures
+## Implementation Todo List
 
-**Data Model Update** (src/app.d.ts - HandoverDocumentRecord):
-```typescript
-// Unilateral fields (add foundItems)
-foundItems?: string[];  // NEW: driver's personal items found in vehicle
-```
+### Phase 1: Type Definitions
+- [x] Add `handoverId?: string` to Vehicle interface (`src/app.d.ts:241`)
+- [x] Add `handoverId: string` to Driver.assignedVehicle (`src/app.d.ts:640`)
+- [x] Extend HandoverDocumentRecord with return/unilateral fields (`src/app.d.ts:811-813`)
+- [x] Add `foundItems?: string[]` to HandoverDocumentRecord for unilateral
 
-**API Update**: Include `foundItems` in unilateral endpoint body validation.
+### Phase 2: Service Layer (`src/lib/server/services/vehicleStatus.service.ts`)
+- [x] Update `assignVehicleAndCloseHandover` to save `handoverId` on Vehicle and Driver
+- [x] Update `returnVehicle` to `returnVehicleAndCloseHandover` (deterministic status: `assigned` -> `available`, otherwise unchanged; update status in transaction; use `closed: timestamp`)
+- [x] Add `unilateralReturnVehicleAndCloseHandover` (deterministic status, update status in transaction, use `closed: timestamp`)
+
+### Phase 3: Full Endpoints & UI Routes
+- [x] Enhance `NewHandoverProtocol.svelte` with `apiUrl`, `type`, and `initialHandover` props
+- [x] Create `src/routes/(admin)/handovers/[id]/return/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
+- [x] Create `src/routes/(admin)/handovers/[id]/unilateral/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
+- [x] Cross-link headers between return and unilateral pages
+
+### Phase 4: Unilateral Document - Items Found Section & UI Form
+- [ ] Update `src/lib/documents/handover-unilateral.documents.ts` to render `foundItems`
+- [ ] Build unilateral recovery form in `src/routes/(admin)/handovers/[id]/unilateral/+page.svelte`
+
+### Phase 5: Testing & Verification
+- [x] Run type-check: `npm run check` (0 errors, 0 warnings)
+- [ ] Run lint: `npm run lint`
+- [ ] Test return workflow end-to-end
+- [ ] Test unilateral workflow end-to-end

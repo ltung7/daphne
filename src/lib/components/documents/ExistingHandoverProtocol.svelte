@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import HandoverStatus from '$lib/misc/HandoverStatus.svelte';
+	import IconLink from '$lib/misc/IconLink.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
+	import PageTopActions from '$lib/misc/PageTopActions.svelte';
 	import { internal } from '$lib/nav/internal';
 	import { endLoad, startLoad } from '$lib/nav/loader';
 	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
@@ -21,7 +23,7 @@
 		downloadFileBlob(pdfBlob, `Protokół wydania pojazdu ${handoverProtocol.registrationNumber} ${handoverProtocol.driverName}`, pdfBlob.type);
 	};
 
-	const sendAction = async (action: 'pdf' | 'docusign' | 'close') => {
+	const sendAction = async (action: 'pdf' | 'docusign') => {
 		startLoad();
 		if (action === 'pdf') {
 			const pdfBlob: Blob = await internal.postApi({ action }, 'post', { responseType: 'blob' });
@@ -38,6 +40,12 @@
 <svelte:head>
 	<title>Protokół zdawczo - odbiorczy</title>
 </svelte:head>
+{#if handoverProtocol.type === 'assign'}
+	<PageTopActions>
+		<IconLink icon="undo" caption="Zwrot pojazdu" size={6} href="/handovers/{handoverProtocol.id}/return" />
+		<IconLink icon="exclamation" caption="Odbiór jednostronny" outline color="danger" size={6} href="/handovers/{handoverProtocol.id}/unilateral" />
+	</PageTopActions>
+{/if}
 
 <div class="card mt-3">
 	<h5 class="card-header">Protokół zdawczo - odbiorczy</h5>
@@ -70,7 +78,6 @@
 	</div>
 	<div class="card-footer">
 		<div class="d-flex justify-content-end">
-			<IconButton icon="cross" caption="Wydaj bez dokumentu" color="dark" size={6} class="ms-2 mb-0" onclick={() => sendAction('close')} disabled={Boolean(handoverProtocol.closed)} />
 			{#if handoverProtocol.url}
 				<IconButton icon="print" caption="Pobierz z DocuSign" color="primary" size={6} class="ms-2 mb-0" onclick={() => downloadBlob()} />
 			{:else}

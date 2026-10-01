@@ -30,7 +30,11 @@ const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : get
 let messaging: Messaging | null = null;
 
 if (browser) {
-  messaging = getMessaging(app);
+  try {
+    messaging = getMessaging(app);
+  } catch {
+    messaging = null;
+  }
 }
 
 export { app, messaging, getToken, onMessage, deleteToken };

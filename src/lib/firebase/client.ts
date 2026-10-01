@@ -33,7 +33,12 @@ if (!import.meta.env.SSR) {
 		app = getApps()[0];
 	}
 	auth = getAuth(app);
-	messaging = getMessaging(app);
+	try {
+		messaging = getMessaging(app);
+	} catch {
+		// Web messaging is not supported in all browser contexts (e.g. non-HTTPS, unsupported browsers)
+		messaging = null;
+	}
 }
 
 export { app, auth, messaging, getToken, onMessage, deleteToken };

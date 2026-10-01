@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T extends DocumentGenerator.HandoverDocument = DocumentGenerator.HandoverDocument">
 	import { identificationDocumentNames } from '$lib/assets/constants';
 	import CustomFormCheckSwitch from '$lib/form/CustomFormCheckSwitch.svelte';
 	import CustomFormDate from '$lib/form/CustomFormDate.svelte';
@@ -10,13 +10,14 @@
 	import { addToast } from '$lib/toast';
 
 	interface Props {
-		handoverProtocol: DocumentGenerator.HandoverDocument;
+		handoverProtocol: T;
 		errors?: Record<string, string>;
-		touch?: (field: keyof DocumentGenerator.HandoverDocument) => void;
+		touch?: (field: any) => void;
 		readonly?: boolean;
 	}
 
 	let { handoverProtocol = $bindable(), errors = {}, touch, readonly }: Props = $props();
+	let record = $derived(handoverProtocol as unknown as DocumentGenerator.HandoverDocumentRecord);
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
 
 	const onFinished = (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => {
@@ -58,11 +59,21 @@
 		<CustomFormText caption="Imię i nazwisko kierowcy" value={handoverProtocol.driverName} readonly />
 	</div>
 	<div class="col-12 col-md-6">
-		<CustomFormText caption="Rodzaj dokumentu tożsamości" value={idType} readonly />
+		<CustomFormText caption="Rodzaj dokumentu tożsamości kierowcy" value={idType} readonly />
 	</div>
 	<div class="col-12 col-md-6">
-		<CustomFormText caption="Numer dokumentu tożsamości" value={handoverProtocol.identificationDocumentNumber} readonly />
+		<CustomFormText caption="Numer dokumentu tożsamości kierowcy" value={handoverProtocol.identificationDocumentNumber} readonly />
 	</div>
+	{#if record.witness}
+		<div class="col-12 col-md-6">
+			<CustomFormText caption="Świadek" value={record.witness} readonly />
+		</div>
+	{/if}
+	{#if record.reasonForRecovery}
+		<div class="col-12">
+			<CustomFormText caption="Powód odbioru" value={record.reasonForRecovery} readonly />
+		</div>
+	{/if}
 	<div class="col-12 border-top pt-3">
 		<h5>2. Pojazd i stan licznika</h5>
 	</div>
@@ -140,4 +151,16 @@
 	<div class="col-12 col-md-6">
 		<CustomFormText caption="Adres e‑mail kierowcy" bind:value={handoverProtocol.driverEmail} {readonly} />
 	</div>
+	{#if record.foundItems?.length}
+		<div class="col-12 border-top pt-3">
+			<h5>7. ZNALEZIONE PRZEDMIOTY</h5>
+		</div>
+		<div class="col-12">
+			<ul>
+				{#each record.foundItems as item}
+					<li class="text-dark">{item}</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
 </div>

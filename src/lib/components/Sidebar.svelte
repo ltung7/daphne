@@ -8,6 +8,7 @@
 
 	// TypeScript Interfaces
 	interface SubItem {
+		id: number;
 		title: string;
 		link: string;
 		icon?: string;
@@ -30,10 +31,10 @@
 			title: 'Flota',
 			icon: 'cars',
 			subItems: [
-				{ title: 'Pojazdy', icon: 'car-side', link: '/vehicles' },
-				{ title: 'Wydania', icon: 'user-key', link: '/handovers' },
-				{ title: 'Inspekcje', icon: 'assessment', link: '/inspections' },
-				{ title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' }
+				{ id: 201, title: 'Pojazdy', icon: 'car-side', link: '/vehicles' },
+				{ id: 202, title: 'Wydania', icon: 'user-key', link: '/handovers' },
+				{ id: 203, title: 'Inspekcje', icon: 'assessment', link: '/inspections' },
+				{ id: 204, title: 'Zdrowie floty', icon: 'first-aid-kit', link: '/health' }
 			]
 		},
 		{ id: 3, title: 'Kierowcy', icon: 'steering-wheel', link: '/drivers' },
@@ -79,15 +80,28 @@
 	// Set active menu item based on current URL on mount
 	onMount(() => {
 		const currentPath = window.location.pathname;
-		const matchingItem = menuItems.find((item) => {
-			if (!item.link) return false;
-			if (item.link === '/') {
-				return currentPath === '/';
+		let foundId = 0;
+
+		for (const item of menuItems) {
+			// Check top-level link
+			if (item.link && (item.link === '/' ? currentPath === '/' : currentPath.startsWith(item.link))) {
+				foundId = item.id;
+				break;
 			}
-			return currentPath.startsWith(item.link);
-		});
-		if (matchingItem) {
-			setActive(matchingItem.id);
+
+			// Check sub-items
+			if (item.subItems) {
+				const matchingSub = item.subItems.find((sub) => currentPath.startsWith(sub.link));
+				if (matchingSub) {
+					item.isOpen = true;
+					foundId = matchingSub.id;
+					break;
+				}
+			}
+		}
+
+		if (foundId) {
+			setActive(foundId);
 		}
 
 		setTimeout(fetchNotificationCount, 1000);
@@ -127,7 +141,7 @@
 								<ul class="list-unstyled ps-3 ms-2 mt-1 border-start">
 									{#each item.subItems as sub}
 										<li>
-											<a href={sub.link} class="d-flex align-items-center py-2 px-3 text-decoration-none nav-link-sub text-truncate small text-dark" onclick={() => setActive(item.id)}>
+											<a href={sub.link} class="d-flex align-items-center py-2 px-3 text-decoration-none nav-link-sub text-truncate small text-dark rounded-2" class:active={layoutState.activeMenuId === sub.id} onclick={() => setActive(sub.id)}>
 												{#if sub.icon}
 													<span class="me-2 d-flex align-items-center">
 														<UIcon name={sub.icon} size={5} />
@@ -158,3 +172,11 @@
 		</ul>
 	</nav>
 </aside>
+
+<style>
+	.nav-link-sub.active {
+		background-color: var(--bs-light);
+		color: var(--bs-primary) !important;
+		font-weight: 600;
+	}
+</style>

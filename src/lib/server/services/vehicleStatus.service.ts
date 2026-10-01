@@ -143,63 +143,131 @@ export async function releaseVehicle(vehicleId: string, driverId: string): Promi
 	}
 }
 
-/**
- * Atomically returns a vehicle from a driver (reverse of assignVehicleAndCloseHandover).
- * Updates:
- * 1. Vehicle document - removes assignedDriverId, assignedDriverName (uses FieldValue.delete())
- * 2. Driver document - sets assignedVehicle to false
- * 3. Creates vehicleAssignment record with type 'return'
- * 4. Updates vehicleHandovers with returnedAt timestamp
- */
-export async function returnVehicle(registrationNumber: string, driverId: string, handoverId: string): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
+export interface ReturnVehicleData {
+	registrationNumber: string;
+	driverId?: string;
+	handoverId: string;
+	uploadedDocumentUrl?: string;
+	user?: App.User;
+}
+
+export interface UnilateralReturnVehicleData {
+	registrationNumber: string;
+	driverId?: string;
+	handoverId: string;
+	uploadedDocumentUrl?: string;
+	user?: App.User;
+}
+
+async function closeReturnHandover(
+	data: ReturnVehicleData,
+	type: 'return' | 'unilateral'
+): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
+	const { registrationNumber, handoverId, uploadedDocumentUrl, user } = data;
+	const vehicle = await getVehicle(registrationNumber);
+	if (!vehicle) throw new Error('Vehicle does not exist');
+
+	const driverId = data.driverId || vehicle.assignedDriverId;
+	if (!driverId) throw new Error('Vehicle is not assigned to a driver');
+
 	const firestore = db();
 	const timestamp = Date.now();
 
+	// Deterministic status: status stays the same unless it was 'assigned' (becomes 'available')
+	const newStatus: Vehicle.Status = vehicle.status === 'assigned' ? 'available' : vehicle.status;
+
+	const updateVehicleData: any = {
+		assignedDriverId: admin.firestore.FieldValue.delete(),
+		assignedDriverName: admin.firestore.FieldValue.delete(),
+		handoverId: admin.firestore.FieldValue.delete(),
+		status: newStatus,
+		updatedAt: timestamp
+	};
+
+	const updateDriverData: Partial<Driver.Driver> = {
+		assignedVehicle: false,
+		updatedAt: timestamp
+	};
+
+	const vehicleAssignmentData: Vehicle.VehicleAssignmentData = {
+		driverId,
+		handoverId,
+		registrationNumber,
+		timestamp,
+		type
+	};
+
+	const updateHandoverData: Partial<DocumentGenerator.HandoverDocumentRecord> = {
+		closed: timestamp
+	};
+	if (uploadedDocumentUrl?.length) updateHandoverData.url = uploadedDocumentUrl;
+
+	const logTag = type === 'unilateral' ? 'UnilateralReturnTransaction' : 'ReturnTransaction';
+	insertRandomLog(logTag, { updateVehicleData, updateDriverData, vehicleAssignmentData, updateHandoverData });
+
 	try {
-		await firestore.runTransaction(async (transaction) => {
-			// 1. Update vehicle document - remove driver assignment fields
+		const assignmentId = await firestore.runTransaction(async (transaction) => {
+			// 1. Update vehicle document - clear driver assignment fields & update status
 			const vehicleRef = firestore.collection('vehicles').doc(registrationNumber);
-			transaction.update(vehicleRef, {
-				assignedDriverId: admin.firestore.FieldValue.delete(),
-				assignedDriverName: admin.firestore.FieldValue.delete(),
-				updatedAt: timestamp
-			});
+			transaction.update(vehicleRef, updateVehicleData);
 
-			// 2. Update driver document - clear assigned vehicle (set to false)
+			// 2. Update driver document - clear assigned vehicle
 			const driverRef = firestore.collection('vehicleDriver').doc(driverId);
-			transaction.update(driverRef, {
-				assignedVehicle: false,
-				updatedAt: timestamp
-			});
+			transaction.update(driverRef, updateDriverData);
 
-			// 3. Create vehicle assignment record with type 'return'
+			// 3. Create vehicle assignment record
 			const assignmentRef = firestore.collection('vehicleAssignment').doc();
-			transaction.set(assignmentRef, {
-				registrationNumber,
-				driverId,
-				handoverId,
-				timestamp,
-				type: 'return'
-			});
+			transaction.set(assignmentRef, vehicleAssignmentData);
 
-			// 4. Update vehicle handover with return timestamp
+			// 4. Close the vehicle handover
 			const handoverRef = firestore.collection('vehicleHandovers').doc(handoverId);
-			transaction.update(handoverRef, {
-				returnedAt: timestamp,
-				updatedAt: timestamp
-			});
+			transaction.update(handoverRef, updateHandoverData);
 
 			return assignmentRef.id;
 		});
 
-		return { success: true };
+		if (newStatus !== vehicle.status) {
+			await addVehicleStatusChange({
+				extraData: { handoverId, type },
+				vehicleId: registrationNumber,
+				status: newStatus,
+				timestamp,
+				userId: user?.id || 'system',
+				userName: user?.name || 'System'
+			});
+		}
+
+		return { success: true, assignmentId };
 	} catch (error) {
-		console.error('Return transaction failed:', error);
+		console.error(`${logTag} failed:`, error);
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : 'Unknown transaction error'
 		};
 	}
+}
+
+/**
+ * Atomically returns a vehicle from a driver and closes the voluntary return handover.
+ * Deterministic status: status stays the same unless it was 'assigned' (becomes 'available').
+ */
+export async function returnVehicleAndCloseHandover(data: ReturnVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
+	return closeReturnHandover(data, 'return');
+}
+
+/**
+ * Atomically returns a vehicle from a driver and closes the unilateral return handover.
+ * Deterministic status: status stays the same unless it was 'assigned' (becomes 'available').
+ */
+export async function unilateralReturnVehicleAndCloseHandover(data: UnilateralReturnVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
+	return closeReturnHandover(data, 'unilateral');
+}
+
+/**
+ * @deprecated Use returnVehicleAndCloseHandover
+ */
+export async function returnVehicle(registrationNumber: string, driverId: string, handoverId: string): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
+	return returnVehicleAndCloseHandover({ registrationNumber, driverId, handoverId });
 }
 
 
@@ -209,15 +277,15 @@ const statusTransitions: Partial<Record<Vehicle.Status, Partial<Record<Vehicle.S
 	precheck: {
 		available: async (vehicle, extraData) => {
 			if (!extraData.verificationResult) throw error(400, 'Missing verification data');
-			
+
 			// Get all required requirement nodes
 			const requiredNodes = vehicleRequirements
 				.filter(req => req.required)
 				.map(req => req.node);
-			
+
 			// Check all required requirements are satisfied
 			const allRequiredMet = requiredNodes.every(node => extraData.verificationResult[node] === true);
-			
+
 			if (!allRequiredMet) {
 				const failedRequirements = requiredNodes
 					.filter(node => extraData.verificationResult[node] !== true)

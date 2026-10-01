@@ -271,7 +271,6 @@ export interface BalanceEventTypeConfig {
 	size: number;
 	icon: string;
 	isIncome: boolean;
-	isCashEvent: boolean;
 	allowNegative: boolean;
 	requiresReferenceId: boolean;
 }
@@ -284,7 +283,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'taxi',
 		isIncome: true,
-		isCashEvent: false,
 		allowNegative: false,
 		requiresReferenceId: true
 	},
@@ -295,7 +293,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'bolt',
 		isIncome: true,
-		isCashEvent: false,
 		allowNegative: false,
 		requiresReferenceId: true
 	},
@@ -306,7 +303,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'user-police',
 		isIncome: false,
-		isCashEvent: false,
 		allowNegative: true,
 		requiresReferenceId: true
 	},
@@ -317,7 +313,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'money-bills',
 		isIncome: false,
-		isCashEvent: false,
 		allowNegative: true,
 		requiresReferenceId: true
 	},
@@ -328,7 +323,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'money-bill-lock',
 		isIncome: false,
-		isCashEvent: false,
 		allowNegative: false,
 		requiresReferenceId: true
 	},
@@ -339,7 +333,6 @@ export const balanceEventTypeConfig: Record<DriverBalance.BalanceEventType, Bala
 		size: 6,
 		icon: 'fee',
 		isIncome: false,
-		isCashEvent: false,
 		allowNegative: false,
 		requiresReferenceId: true
 	}

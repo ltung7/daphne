@@ -627,9 +627,6 @@ declare global {
 
 			// Financial Tracking
 			balance: number;
-			cashBalance: number;
-
-			pendingWithdrawals: number; // Pending withdrawals in PLN
 
 			// Current Vehicle Assignment
 			assignedVehicle: false | {
