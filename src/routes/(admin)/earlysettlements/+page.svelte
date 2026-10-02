@@ -1,21 +1,11 @@
 <script lang="ts">
 	import DatatableWrapper from '$lib/misc/DatatableWrapper.svelte';
-	import { onMount } from 'svelte';
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
-	import { internal } from '$lib/nav/internal';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
-	import IconButton from '$lib/misc/IconButton.svelte';
 
 	let earlySettlements: DriverBalance.EarlySettlement[] = $state([]);
 	let loaded = $state(false);
-
-	const loadData = (force: boolean = false) => {
-		internal.getApi({}, force).then((response) => {
-			earlySettlements = response.earlySettlements;
-			loaded = true;
-		});
-	};
 
 	const headers: SvelteCustom.DatatableHeaders<keyof DriverBalance.EarlySettlement> = [
 		[ 'createdAt', 'Data zgłoszenia' ],
@@ -59,15 +49,17 @@
 	function formatDate(timestamp: number) {
 		return new Date(timestamp).toLocaleString('pl-PL');
 	}
-
-	onMount(loadData);
 </script>
 
-<PageTitle title="Wcześniejsze rozliczenia" subtitle="Lista wniosków o wcześniejsze rozliczenie">
-	<div class="flex-center gap-3">
-		<IconButton size={5} icon="refresh" caption="Odśwież" onclick={() => loadData(true)} />
-		<IconLink size={5} icon="add" href="/earlysettlements/new" caption="Nowy wniosek" />
-	</div>
+<PageTitle 
+	title="Wcześniejsze rozliczenia" 
+	subtitle="Lista wniosków o wcześniejsze rozliczenie"
+	onDataLoaded={(response) => {
+		earlySettlements = response.earlySettlements;
+		loaded = true;
+	}}
+>
+	<IconLink size={5} icon="add" href="/earlysettlements/new" caption="Nowy wniosek" />
 </PageTitle>
 
 <div class="card">

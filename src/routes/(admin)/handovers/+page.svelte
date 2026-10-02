@@ -1,22 +1,15 @@
 <script lang="ts">
 	import DatatableWrapper from '$lib/misc/DatatableWrapper.svelte';
-	import { onMount } from 'svelte';
 	import TooltipSquareIconLink from '$lib/misc/TooltipSquareIconLink.svelte';
 	import { internal } from '$lib/nav/internal';
 	import HandoverStatus from '$lib/misc/HandoverStatus.svelte';
 	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import { sortByTimestamp } from '$lib/utils/sortByTimestamp';
 
 	let handovers: DocumentGenerator.HandoverDocumentRecord[] = $state([]);
 	let loaded = $state(false);
-
-	const loadData = () => {
-		internal.getApi().then((response) => {
-			handovers = response.handovers;
-			loaded = true;
-		});
-	};
 
 	const headers: SvelteCustom.DatatableHeaders<keyof DocumentGenerator.HandoverDocumentRecord> = [
 		[ 'date', 'Data' ],
@@ -33,11 +26,16 @@
 			handovers = handovers.filter((item) => item.id !== id);
 		}
 	};
-
-	onMount(loadData);
 </script>
 
-<PageTitle title="Wydania pojazdów" subtitle="Lista protokołów zdawczo odbiorczych">
+<PageTitle 
+	title="Wydania pojazdów" 
+	subtitle="Lista protokołów zdawczo odbiorczych"
+	onDataLoaded={(response) => {
+		handovers = sortByTimestamp(response.handovers);
+		loaded = true;
+	}}
+>
 	<IconLink icon="add" caption="Nowy protokół" href="/handovers/new" />
 </PageTitle>
 
@@ -64,7 +62,11 @@
 				<td class="py-1"><HandoverStatus handover={row} /></td>
 				<td>{row.registrationNumber}</td>
 				<td>{row.driverName}</td>
-				<td>{row.visual}</td>
+				<td>
+					<div class="text-truncate" style="max-width: 250px;">
+						{row.visual}
+					</div>
+				</td>
 			{/snippet}
 		</DatatableWrapper>
 	</div>
