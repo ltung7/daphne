@@ -116,6 +116,8 @@ const generateHandoverDocument = async (handoverDocument: DocumentGenerator.Hand
             metadata: {
                 driver: handoverDocument.driverId,
                 vehicle: handoverDocument.registrationNumber,
+                managerId: handoverDocument.managerId,
+                managerName: handoverDocument.managerName,
                 handoverId
             }
         })

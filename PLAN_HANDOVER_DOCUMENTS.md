@@ -68,7 +68,7 @@ interface HandoverDocumentRecord extends HandoverDocument {
 ## Service Changes (src/lib/server/services/vehicleStatus.service.ts)
 
 ### 1. Update `assignVehicleAndCloseHandover` (already completed)
-Saves `handoverId` on both Vehicle and Driver and sets `status: 'assigned'` inside transaction.
+Saves `handoverId` on both Vehicle and Driver and sets `status: 'assigned'` inside transaction. Additionally, logs the status change to `vehicleStatusChange` via `addVehicleStatusChange` with `handoverId` populated in `extraData`. The `userId` and `userName` are extracted from the required `approver: { id: string; name: string }` parameter.
 
 ### 2. Update `returnVehicle` -> `returnVehicleAndCloseHandover`
 Atomically closes a voluntary return handover, clears driver assignment, determines new status, and updates vehicle status in the transaction.
@@ -78,7 +78,7 @@ export interface ReturnVehicleData {
     registrationNumber: string;
     driverId?: string;
     handoverId: string;
-    user?: App.User;
+    approver: { id: string; name: string };
     uploadedDocumentUrl?: string;
 }
 
@@ -95,7 +95,7 @@ Steps:
    - **Assignment (`vehicleAssignment`)**: Add record `{ registrationNumber, driverId, handoverId, timestamp, type: 'return' }`.
    - **Handover (`vehicleHandovers/{handoverId}`)**: Set `closed: timestamp`, `updatedAt: timestamp`, and `url` if uploaded.
 3. Audit Log:
-   - If status changed (or on return event), log to `vehicleStatusChange` via `addVehicleStatusChange`.
+   - If status changed (or on return event), log to `vehicleStatusChange` via `addVehicleStatusChange` with `handoverId` and `type` populated in `extraData`. The `userId` and `userName` will be extracted from the required `approver: { id: string; name: string }` parameter.
 
 ### 3. Add `unilateralReturnVehicleAndCloseHandover`
 Atomically closes a unilateral recovery handover, clears driver assignment, determines new status, and updates vehicle status in the transaction.
@@ -105,7 +105,7 @@ export interface UnilateralReturnVehicleData {
     registrationNumber: string;
     driverId?: string;
     handoverId: string;
-    user?: App.User;
+    approver: { id: string; name: string };
     uploadedDocumentUrl?: string;
 }
 
@@ -122,7 +122,7 @@ Steps:
    - **Assignment (`vehicleAssignment`)**: Add record `{ registrationNumber, driverId, handoverId, timestamp, type: 'unilateral' }`.
    - **Handover (`vehicleHandovers/{handoverId}`)**: Set `closed: timestamp`, `updatedAt: timestamp`, and `url` if uploaded.
 3. Audit Log:
-   - Log status transition to `vehicleStatusChange` via `addVehicleStatusChange`.
+   - Log status transition to `vehicleStatusChange` via `addVehicleStatusChange` with `handoverId` and `type` populated in `extraData`. The `userId` and `userName` will be extracted from the required `approver: { id: string; name: string }` parameter.
 
 ---
 
@@ -130,13 +130,13 @@ Steps:
 
 ### 1. /handovers/[id]/return
 Full endpoint implemented:
-- `+page.server.ts`: Loads handover document, associated vehicle, and driver.
+- `+page.server.ts`: Loads handover document.
 - `+page.svelte`: Header with link to `/handovers/[id]/unilateral` and back to `/handovers/[id]`; uses `NewReturnHandoverProtocol` with prefilled data.
 - `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverReturnDocument`), and `close` (`returnVehicleAndCloseHandover`).
 
 ### 2. /handovers/[id]/unilateral
 Full endpoint implemented:
-- `+page.server.ts`: Loads handover document, associated vehicle, and driver.
+- `+page.server.ts`: Loads handover document.
 - `+page.svelte`: Header with link to `/handovers/[id]/return` and back to `/handovers/[id]`; uses `NewReturnHandoverProtocol` with `unilateral={true}`.
 - `api/+server.ts`: Handles `save`, `pdf` (`generateHandoverUnilateralDocument`), and `close` (`unilateralReturnVehicleAndCloseHandover`).
 

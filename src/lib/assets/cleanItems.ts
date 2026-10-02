@@ -54,6 +54,7 @@ export const cleanHandoverProtocol: DocumentGenerator.HandoverDocument = {
     date: new Date().toLocaleDateString('en-CA'),
     owner: 'APT, NIP 1234567890',
     managerName: '',
+    managerId: '',
     managerEmail: '',
     driverName: '',
     driverId: '',

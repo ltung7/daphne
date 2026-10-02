@@ -43,7 +43,11 @@ const processEnvelopeCompleted = async (payload: DocusignWebhookEvent<[EventCust
             driverName,
             handoverId: customFields.handoverId,
             registrationNumber: customFields.vehicle,
-            uploadedDocumentUrl
+            uploadedDocumentUrl,
+            approver: {
+                id: customFields.managerId || 'system',
+                name: customFields.managerName || 'System'
+            }
         })
     }
 }

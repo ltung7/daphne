@@ -19,7 +19,5 @@
 </PageTitle>
 
 <NewReturnHandoverProtocol
-	vehicle={data.vehicle}
-	driver={data.driver}
 	initialHandover={data.handover}
 />

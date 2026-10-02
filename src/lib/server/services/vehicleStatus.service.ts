@@ -11,6 +11,7 @@ export interface AssignVehicleData {
 	driverId: string;
 	driverName: string;
 	handoverId: string;
+	approver: { id: string; name: string };
 	model?: string;
 	imageUrl?: string;
 	uploadedDocumentUrl?: string
@@ -25,7 +26,7 @@ export interface AssignVehicleData {
  * 4. Sets vehicleHandovers.closed = Date.now()
  */
 export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
-	const { registrationNumber, driverId, driverName, handoverId, uploadedDocumentUrl } = data;
+	const { registrationNumber, driverId, driverName, handoverId, uploadedDocumentUrl, approver } = data;
 	let model = data.model;
 	let imageUrl = data.imageUrl
 	if (!model || !imageUrl) {
@@ -88,54 +89,19 @@ export async function assignVehicleAndCloseHandover(data: AssignVehicleData): Pr
 			// Return assignment ID for caller reference
 			return assignmentRef.id;
 		});
-		return { success: true };
-	} catch (error) {
-		console.error('Transaction failed:', error);
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : 'Unknown transaction error'
-		};
-	}
-}
 
-/**
- * Releases a vehicle from a driver (reverse of assignVehicleAndCloseHandover)
- * Clears assignment fields and creates an unassignment record
- */
-export async function releaseVehicle(vehicleId: string, driverId: string): Promise<{ success: boolean; error?: string }> {
-	const firestore = db();
-	const timestamp = Date.now();
-
-	try {
-		await firestore.runTransaction(async (transaction) => {
-			// 1. Clear vehicle assignment
-			const vehicleRef = firestore.collection('vehicles').doc(vehicleId);
-			transaction.update(vehicleRef, {
-				assignedDriverId: null,
-				assignedDriverName: null,
-				updatedAt: timestamp
-			});
-
-			// 2. Clear driver assignment
-			const driverRef = firestore.collection('vehicleDriver').doc(driverId);
-			transaction.update(driverRef, {
-				assignedVehicle: null,
-				updatedAt: timestamp
-			});
-
-			// 3. Create unassignment record (optional - could use same collection with status field)
-			const assignmentRef = firestore.collection('vehicleAssignment').doc();
-			transaction.set(assignmentRef, {
-				registrationNumber: vehicleId,
-				driverId,
-				timestamp,
-				type: 'unassignment'
-			});
+		await addVehicleStatusChange({
+			extraData: { handoverId },
+			vehicleId: registrationNumber,
+			status: 'assigned',
+			timestamp,
+			userId: approver.id,
+			userName: approver.name
 		});
 
 		return { success: true };
 	} catch (error) {
-		console.error('Release transaction failed:', error);
+		console.error('Transaction failed:', error);
 		return {
 			success: false,
 			error: error instanceof Error ? error.message : 'Unknown transaction error'
@@ -148,7 +114,7 @@ export interface ReturnVehicleData {
 	driverId?: string;
 	handoverId: string;
 	uploadedDocumentUrl?: string;
-	user?: App.User;
+	approver: { id: string; name: string };
 	originalHandoverId?: string;
 }
 
@@ -157,7 +123,7 @@ export interface UnilateralReturnVehicleData {
 	driverId?: string;
 	handoverId: string;
 	uploadedDocumentUrl?: string;
-	user?: App.User;
+	approver: { id: string; name: string };
 	originalHandoverId?: string;
 }
 
@@ -165,7 +131,7 @@ async function closeReturnHandover(
 	data: ReturnVehicleData,
 	type: 'return' | 'unilateral'
 ): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
-	const { registrationNumber, handoverId, uploadedDocumentUrl, user } = data;
+	const { registrationNumber, handoverId, uploadedDocumentUrl, approver } = data;
 	const vehicle = await getVehicle(registrationNumber);
 	if (!vehicle) throw new Error('Vehicle does not exist');
 
@@ -235,8 +201,8 @@ async function closeReturnHandover(
 				vehicleId: registrationNumber,
 				status: newStatus,
 				timestamp,
-				userId: user?.id || 'system',
-				userName: user?.name || 'System'
+				userId: approver.id,
+				userName: approver.name
 			});
 		}
 
@@ -270,7 +236,7 @@ export async function unilateralReturnVehicleAndCloseHandover(data: UnilateralRe
  * @deprecated Use returnVehicleAndCloseHandover
  */
 export async function returnVehicle(registrationNumber: string, driverId: string, handoverId: string): Promise<{ success: boolean; assignmentId?: string; error?: string }> {
-	return returnVehicleAndCloseHandover({ registrationNumber, driverId, handoverId });
+	return returnVehicleAndCloseHandover({ registrationNumber, driverId, handoverId, approver: { id: 'system', name: 'System' } });
 }
 
 

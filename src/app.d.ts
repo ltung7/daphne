@@ -769,6 +769,7 @@ declare global {
 			date: string
 			owner: string;
 			managerName: string
+			managerId: string;
 			managerEmail: string;
 			driverName: string;
 			driverEmail: string;

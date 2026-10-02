@@ -1,18 +1,10 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { cleanHandoverProtocol } from '$lib/assets/cleanItems';
-	import { handoverDocumentSchema } from '$lib/assets/zodschemas/handover.zod';
-	import CardForm from '$lib/form/CardForm.svelte';
-	import IconButton from '$lib/misc/IconButton.svelte';
 	import SearchBar from '$lib/misc/SearchBar.svelte';
 	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
 	import { fetchDrivers, fetchVehicles, fetchHandoverSigners } from '$lib/nav/fetchData';
-	import { internal } from '$lib/nav/internal';
-	import { endLoad, startLoad } from '$lib/nav/loader';
 	import { onMount } from 'svelte';
-	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
-	import { addToast } from '$lib/toast';
-	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
+	import AssignmentHandoverProtocolForm from './AssignmentHandoverProtocolForm.svelte';
 
 	interface Props {
 		vehicle?: Vehicle.Vehicle;
@@ -20,6 +12,7 @@
 	}
 
 	interface Manager {
+		id: string;
 		name: string;
 		email: string;
 	}
@@ -43,6 +36,7 @@
 	};
 
 	const updateManager = (event: SelectEventDetail<Manager>) => {
+		handoverProtocol.managerId = event.original.id;
 		handoverProtocol.managerName = event.original.name;
 		handoverProtocol.managerEmail = event.original.email;
 	};
@@ -63,49 +57,12 @@
 		}
 	};
 
-	const sendAction = async (action: 'pdf' | 'docusign' | 'save') => {
-		startLoad();
-		if (action === 'pdf') {
-			const response = await internal.post('/handovers/new/api', { id, action: 'save', handover: handoverProtocol });
-			if (response.id) id = response.id;
-
-			const pdfBlob: Blob = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol }, { responseType: 'blob' });
-			if (pdfBlob.type === 'application/json') {
-				endLoad();
-				return addToast('Nie udało się wygenerować wydruku');
-			}
-			downloadFileBlob(pdfBlob, `Protokół wydania pojazdu ${handoverProtocol.registrationNumber} ${handoverProtocol.driverName}`, pdfBlob.type);
-			endLoad();
-
-			if (id) {
-				setTimeout(() => {
-					goto(`/handovers/${response.id}`);
-				}, 500);
-			}
-		} else {
-			const response = await internal.post('/handovers/new/api', { id, action, handover: handoverProtocol });
-			endLoad();
-			if (response.id) goto(`/handovers/${response.id}`);
-		}
-	};
-
-	function hasOnlyAllowedErrors<T extends object>(errors: Partial<Record<keyof T, string | undefined>>, allowedKeys: (keyof T)[]): boolean {
-		const allowedSet = new Set<string>(allowedKeys as string[]);
-
-		return Object.entries(errors).every(([ key, value ]) => {
-			if (!value) return true;
-			return allowedSet.has(key);
-		});
-	}
-
 	onMount(async () => {
 		await Promise.all([
 			!vehicle && fetchVehicles({ status: 'available' }, [ 'status', 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
 			!driver && fetchDrivers({ status: 'available' }, [ 'status', 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list)),
-			fetchHandoverSigners([ 'name', 'email' ]).then((list) => (managers = list))
+			fetchHandoverSigners([ 'id', 'name', 'email' ]).then((list) => (managers = list))
 		]);
-
-		console.log({ drivers })
 
 		if (vehicle) {
 			handoverProtocol.registrationNumber = vehicle.registrationNumber;
@@ -119,8 +76,8 @@
 	});
 </script>
 
-<CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
-	{#snippet children({ errors, touch })}
+<AssignmentHandoverProtocolForm bind:handoverProtocol bind:id postUrl="/handovers/new/api">
+	{#snippet header()}
 		<section class="pb-3 mb-3 border-bottom">
 			{#if !vehicle}
 				{#if vehicles.length}
@@ -142,12 +99,5 @@
 				<p class="text-muted">Brak dostępnych menedżerów</p>
 			{/if}
 		</section>
-		<HandoverProtocolFields bind:handoverProtocol {touch} {errors} />
 	{/snippet}
-	{#snippet submitSnippet({ isValid, errors })}
-		{@const halfValid = hasOnlyAllowedErrors<DocumentGenerator.HandoverDocument>(errors, [ 'managerName', 'managerEmail' ])}
-		<IconButton icon="disk" caption='Zapisz bez wydania' size={6} color="dark" class="ms-2 mb-0" disabled={!isValid} onclick={() => sendAction('save')} />
-		<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" disabled={!halfValid} onclick={() => sendAction('pdf')} />
-		<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" disabled={!isValid} onclick={() => sendAction('docusign')} />
-	{/snippet}
-</CardForm>
+</AssignmentHandoverProtocolForm>

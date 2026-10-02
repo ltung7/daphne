@@ -3,18 +3,12 @@
 	import { handoverDocumentSchema } from '$lib/assets/zodschemas/handover.zod';
 	import CardForm from '$lib/form/CardForm.svelte';
 	import IconButton from '$lib/misc/IconButton.svelte';
-	import SearchBar from '$lib/misc/SearchBar.svelte';
-	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
 	import { internal } from '$lib/nav/internal';
 	import { endLoad, startLoad } from '$lib/nav/loader';
 	import { addToast } from '$lib/toast';
 	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
 	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
-
-	interface Manager {
-		name: string;
-		email: string;
-	}
+	import type { Snippet } from 'svelte';
 
 	interface Props<T extends DocumentGenerator.HandoverDocument & { id?: string; type?: Vehicle.HandoverDocumentType; foundItems?: string[] }> {
 		handoverProtocol: T;
@@ -25,15 +19,10 @@
 		docTitle: string;
 		id?: string;
 		admin?: boolean;
-		managers?: Manager[];
+		header?: Snippet;
 	}
 
-	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), admin = false, managers = [] }: Props<T> = $props();
-
-	const updateManager = (event: SelectEventDetail<Manager>) => {
-		handoverProtocol.managerName = event.original.name;
-		handoverProtocol.managerEmail = event.original.email;
-	};
+	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), admin = false, header }: Props<T> = $props();
 
 	const sendAction = async (action: 'pdf' | 'save' | 'close') => {
 		startLoad();
@@ -77,11 +66,9 @@
 
 <CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema as any}>
 	{#snippet children({ errors, touch })}
-		<section class="pb-3 mb-3 border-bottom">
-			{#if managers.length}
-				<SearchBar data={managers} caption="Wybierz menadżera floty" search="name" onselect={(e) => updateManager(e)} />
-			{/if}
-		</section>
+		{#if header}
+			{@render header()}
+		{/if}
 		<HandoverProtocolFields bind:handoverProtocol {requiredEquipment} {touch} errors={errors as Partial<Record<keyof DocumentGenerator.HandoverDocument, string | undefined>>} />
 	{/snippet}
 	{#snippet submitSnippet({ isValid, errors })}

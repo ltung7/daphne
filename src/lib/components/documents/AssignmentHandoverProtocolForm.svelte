@@ -9,6 +9,7 @@
 	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
 	import { addToast } from '$lib/toast';
 	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
+	import type { Snippet } from 'svelte';
 
 	interface Props {
 		handoverProtocol: DocumentGenerator.HandoverDocument;
@@ -17,9 +18,10 @@
 		id?: string;
 		readonly?: boolean;
 		admin?: boolean;
+		header?: Snippet;
 	}
 
-	let { handoverProtocol, cleanHandoverProtocol = defaultCleanHandoverProtocol, postUrl, id, readonly = false, admin = false }: Props = $props();
+	let { handoverProtocol = $bindable(), cleanHandoverProtocol = defaultCleanHandoverProtocol, postUrl, id = $bindable(), readonly = false, admin = false, header }: Props = $props();
 
 	function hasOnlyAllowedErrors<T extends object>(errors: Partial<Record<keyof T, string | undefined>>, allowedKeys: (keyof T)[]): boolean {
 		const allowedSet = new Set<string>(allowedKeys as string[]);
@@ -63,6 +65,9 @@
 
 <CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
 	{#snippet children({ errors, touch })}
+		{#if header}
+			{@render header()}
+		{/if}
 		<HandoverProtocolFields bind:handoverProtocol {touch} {errors} {readonly} />
 	{/snippet}
 	{#snippet submitSnippet({ isValid, errors })}

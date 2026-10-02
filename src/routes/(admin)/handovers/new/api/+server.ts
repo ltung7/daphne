@@ -5,7 +5,7 @@ import makeResponse from "$lib/utils/makePdfBufferResponse";
 import { createVehicleHandover, setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
 import { assignVehicleAndCloseHandover } from "$lib/server/services/vehicleStatus.service";
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, locals }) => {
     const data = await request.json();
     const variables = data.handover as DocumentGenerator.HandoverDocument;
     let id: string | undefined = data.id;
@@ -43,7 +43,11 @@ export const POST: RequestHandler = async ({ request }) => {
                 driverId: variables.driverId,
                 driverName: variables.driverName,
                 handoverId: id,
-                registrationNumber: variables.registrationNumber
+                registrationNumber: variables.registrationNumber,
+                approver: {
+                    id: locals._user!.id,
+                    name: locals._user!.name
+                }
             })
             break;
         }

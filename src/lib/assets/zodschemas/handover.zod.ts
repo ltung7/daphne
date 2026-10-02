@@ -9,6 +9,7 @@ export const handoverDocumentSchema = z.object({
 
     // Can be empty strings
     managerName: c.firstAndLastName(),
+    managerId: c.nonEmptyString('ID Managera'),
     managerEmail: z.email('Niepoprawny format adresu email'),
 
     // Driver details

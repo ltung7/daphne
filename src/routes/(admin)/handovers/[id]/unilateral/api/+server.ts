@@ -39,7 +39,10 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				registrationNumber: variables.registrationNumber,
 				driverId: variables.driverId,
 				handoverId: id,
-				user: locals._user ?? undefined
+				approver: {
+					id: locals._user!.id,
+					name: locals._user!.name
+				}
 			});
 			if (!result.success) {
 				throw error(500, result.error || 'Failed to close unilateral return handover');

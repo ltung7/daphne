@@ -6,7 +6,7 @@ import { deleteVehicleHandover, getVehicleHandovers, setVehicleHandovers } from 
 import { assignVehicleAndCloseHandover } from "$lib/server/services/vehicleStatus.service";
 import { resendEnvelope } from "$lib/server/services/docusign/docusign.service";
 
-export const POST: RequestHandler = async ({ params, request }) => {
+export const POST: RequestHandler = async ({ params, request, locals }) => {
     const data = await request.json();
     const handover = await getVehicleHandovers(params.id);
     if (!handover) throw error(404, 'Invalid handover document')
@@ -31,7 +31,11 @@ export const POST: RequestHandler = async ({ params, request }) => {
                 driverId: handover.driverId,
                 driverName: handover.driverName,
                 handoverId: handover.id,
-                registrationNumber: handover.registrationNumber
+                registrationNumber: handover.registrationNumber,
+                approver: {
+                    id: locals._user!.id,
+                    name: locals._user!.name
+                }
             })
             break;
         }
