@@ -168,10 +168,13 @@ Full endpoint implemented:
 - [x] Create `src/routes/(admin)/handovers/[id]/return/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
 - [x] Create `src/routes/(admin)/handovers/[id]/unilateral/` (`+page.server.ts`, `+page.svelte`, `api/+server.ts`)
 - [x] Cross-link headers between return and unilateral pages
+- [x] Implement rendering logic in `src/routes/(admin)/handovers/[id]/+page.svelte` based on handover type and close state
+- [x] Implement EditAssignmentHandoverProtocol and EditReturnHandoverProtocol components
+- [x] Extract status display into reusable HandoverProtocolStatusCard
 
 ### Phase 4: Unilateral Document - Items Found Section & UI Form
+- [x] Build unilateral recovery form in `src/routes/(admin)/handovers/[id]/unilateral/+page.svelte` (via ReturnHandoverProtocolForm and components)
 - [ ] Update `src/lib/documents/handover-unilateral.documents.ts` to render `foundItems`
-- [ ] Build unilateral recovery form in `src/routes/(admin)/handovers/[id]/unilateral/+page.svelte`
 
 ### Phase 5: Testing & Verification
 - [x] Run type-check: `npm run check` (0 errors, 0 warnings)

@@ -2,6 +2,7 @@
 	import { cleanHandoverProtocol } from '$lib/assets/cleanItems';
 	import { handoverEquipmentList as equipmentList } from '$lib/assets/constants';
 	import { onMount } from 'svelte';
+	import { fetchHandoverSigners } from '$lib/nav/fetchData';
 	import ReturnHandoverProtocolForm from './ReturnHandoverProtocolForm.svelte';
 
 	interface Props {
@@ -11,18 +12,14 @@
 		unilateral?: boolean;
 	}
 
-	let {
-		vehicle,
-		driver,
-		initialHandover,
-		unilateral = false
-	}: Props = $props();
+	let { vehicle, driver, initialHandover, unilateral = false }: Props = $props();
 
 	let handoverProtocol: DocumentGenerator.HandoverDocumentRecord = $state({
 		...cleanHandoverProtocol,
 		type: 'return'
 	} as DocumentGenerator.HandoverDocumentRecord);
 	let id: string | undefined = $state();
+	let managers: { name: string; email: string }[] = $state([]);
 
 	const postUrl = $derived(unilateral ? `/handovers/${initialHandover.id}/unilateral/api` : `/handovers/${initialHandover.id}/return/api`);
 	const docTitle = $derived(unilateral ? 'Protokół jednostronnego odbioru pojazdu' : 'Protokół zwrotu pojazdu');
@@ -45,8 +42,11 @@
 		}
 	};
 
-	onMount(() => {
+	onMount(async () => {
 		handoverProtocol.type = unilateral ? 'unilateral' : 'return';
+
+		const signersList = await fetchHandoverSigners([ 'name', 'email' ]);
+		managers = signersList;
 
 		if (initialHandover) {
 			handoverProtocol.registrationNumber = initialHandover.registrationNumber;
@@ -78,15 +78,12 @@
 		if (driver) {
 			setDriverData(driver);
 		}
+
+		if (!handoverProtocol.managerName && managers.length) {
+			handoverProtocol.managerName = managers[0].name;
+			handoverProtocol.managerEmail = managers[0].email;
+		}
 	});
 </script>
 
-<ReturnHandoverProtocolForm
-	bind:handoverProtocol
-	{cleanHandoverProtocol}
-	{postUrl}
-	{unilateral}
-	requiredEquipment={initialHandover}
-	{docTitle}
-	bind:id
-/>
+<ReturnHandoverProtocolForm bind:handoverProtocol {cleanHandoverProtocol} {postUrl} {unilateral} requiredEquipment={initialHandover} {docTitle} bind:id {managers} />

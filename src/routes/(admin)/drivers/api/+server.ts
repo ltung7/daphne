@@ -6,7 +6,7 @@ import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
     const { filters, fields } = parseFiltersAndFields<Vehicle.Vehicle>(url);
-    const vehicles = await findDrivers(filters, fields);
+    const drivers = await findDrivers(filters, fields);
     cacheControl(setHeaders);
-    return json({ success: true, vehicles })
+    return json({ success: true, drivers })
 };

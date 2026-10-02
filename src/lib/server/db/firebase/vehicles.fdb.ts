@@ -15,7 +15,7 @@ export const getVehicle = async <T = Vehicle.Vehicle>(id: string): Promise<T | n
     return getItemById(id, collectionName);
 }
 
-export const findVehicles = async <T = Vehicle.Vehicle>(query: App.FirebaseItemsQuery = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
+export const findVehicles = async <T = Vehicle.Vehicle>(query: App.FirebaseItemsQuery<keyof Vehicle.Vehicle> = false, select: App.FirebaseItemsFields = false): Promise<T[]> => {
     return getItems(collectionName, query, select);
 }
 

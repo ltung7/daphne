@@ -19,7 +19,7 @@
 
 <PageTitle title={title} subtitle={data.handover.id} back="/handovers" />
 
-{#if data.handover.type === 'assign' && data.handover.closed === false}
+{#if data.handover.type === 'assign' && data.handover.closed !== false}
 	<PageTopActions>
 		<IconLink icon="undo" caption="Zwrot pojazdu" size={6} href="/handovers/{data.handover.id}/return" />
 		<IconLink icon="exclamation" caption="Odbiór jednostronny" outline color="danger" size={6} href="/handovers/{data.handover.id}/unilateral" />

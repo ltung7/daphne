@@ -10,7 +10,6 @@
 	import { addToast } from '$lib/toast';
 	import { downloadFileBlob } from '$lib/utils/downloadDataLink';
 	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
-	import { onMount } from 'svelte';
 
 	interface Manager {
 		name: string;
@@ -26,11 +25,10 @@
 		docTitle: string;
 		id?: string;
 		admin?: boolean;
+		managers?: Manager[];
 	}
 
-	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), admin = false }: Props<T> = $props();
-
-	let managers: Manager[] = $state([]);
+	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), admin = false, managers = [] }: Props<T> = $props();
 
 	const updateManager = (event: SelectEventDetail<Manager>) => {
 		handoverProtocol.managerName = event.original.name;
@@ -75,18 +73,6 @@
 			return allowedSet.has(key);
 		});
 	}
-
-	onMount(() => {
-		managers = [
-			{ name: 'Janusz Brzęczyszczykiewicz', email: 'admin@macropart.com' },
-			{ name: 'Grażyna Chrząszcz', email: 'veleanor@finnergroup.com' }
-		];
-
-		if (!handoverProtocol.managerName) {
-			handoverProtocol.managerName = managers[0].name;
-			handoverProtocol.managerEmail = managers[0].email;
-		}
-	});
 </script>
 
 <CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema as any}>

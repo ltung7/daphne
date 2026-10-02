@@ -14,5 +14,5 @@
 <HandoverProtocolStatusCard {handoverProtocol} />
 
 <SectionCard title="Edycja" noCard>
-	<AssignmentHandoverProtocolForm {handoverProtocol} postUrl="/handovers/[id]/api" id={handoverProtocol.id} readonly={Boolean(handoverProtocol.docusignSigned)} {admin} />
+	<AssignmentHandoverProtocolForm {handoverProtocol} postUrl="/handovers/{handoverProtocol.id}/api" id={handoverProtocol.id} readonly={Boolean(handoverProtocol.docusignSigned)} {admin} />
 </SectionCard>

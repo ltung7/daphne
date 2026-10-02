@@ -6,7 +6,7 @@
 	import IconButton from '$lib/misc/IconButton.svelte';
 	import SearchBar from '$lib/misc/SearchBar.svelte';
 	import type { SelectEventDetail } from '$lib/misc/Typeahead.svelte';
-	import { fetchDrivers, fetchVehicles } from '$lib/nav/fetchData';
+	import { fetchDrivers, fetchVehicles, fetchHandoverSigners } from '$lib/nav/fetchData';
 	import { internal } from '$lib/nav/internal';
 	import { endLoad, startLoad } from '$lib/nav/loader';
 	import { onMount } from 'svelte';
@@ -100,9 +100,12 @@
 
 	onMount(async () => {
 		await Promise.all([
-			!vehicle && fetchVehicles({}, [ 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
-			!driver && fetchDrivers({}, [ 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list))
+			!vehicle && fetchVehicles({ status: 'available' }, [ 'status', 'registrationNumber', 'modelMake', 'vin', 'fuelCardId' ]).then((list) => (vehicles = list)),
+			!driver && fetchDrivers({ status: 'available' }, [ 'status', 'email', 'name', 'polishLanguage', 'additionalLanguages', 'identificationDocumentNumber', 'identificationDocumentType' ]).then((list) => (drivers = list)),
+			fetchHandoverSigners([ 'name', 'email' ]).then((list) => (managers = list))
 		]);
+
+		console.log({ drivers })
 
 		if (vehicle) {
 			handoverProtocol.registrationNumber = vehicle.registrationNumber;
@@ -113,30 +116,30 @@
 		if (driver) {
 			setDriverData(driver);
 		}
-
-		managers = [
-			{ name: 'Janusz Brzęczyszczykiewicz', email: 'admin@macropart.com' },
-			{ name: 'Grażyna Chrząszcz', email: 'veleanor@finnergroup.com' }
-		];
-
-		if (!handoverProtocol.managerName) {
-			handoverProtocol.managerName = managers[0].name;
-			handoverProtocol.managerEmail = managers[0].email;
-		}
 	});
 </script>
 
 <CardForm item={handoverProtocol} cleanItem={cleanHandoverProtocol} name="handover" schema={handoverDocumentSchema}>
 	{#snippet children({ errors, touch })}
 		<section class="pb-3 mb-3 border-bottom">
-			{#if !vehicle && vehicles.length}
-				<SearchBar data={vehicles} caption="Wybierz pojazd" search="registrationNumber" onselect={(e) => updateVehicle(e)} />
+			{#if !vehicle}
+				{#if vehicles.length}
+					<SearchBar data={vehicles} caption="Wybierz pojazd" search="registrationNumber" onselect={(e) => updateVehicle(e)} />
+				{:else}
+					<p class="text-muted">Brak dostępnych pojazdów</p>
+				{/if}
 			{/if}
-			{#if !driver && drivers.length}
-				<SearchBar data={drivers} caption="Wybierz kierowcę" search="name" onselect={(e) => updateDriver(e)} />
+			{#if !driver}
+				{#if drivers.length}
+					<SearchBar data={drivers} caption="Wybierz kierowcę" search="name" onselect={(e) => updateDriver(e)} />
+				{:else}
+					<p class="text-muted">Brak dostępnych kierowców</p>
+				{/if}
 			{/if}
 			{#if managers.length}
 				<SearchBar data={managers} caption="Wybierz menadżera floty" search="name" onselect={(e) => updateManager(e)} />
+			{:else}
+				<p class="text-muted">Brak dostępnych menedżerów</p>
 			{/if}
 		</section>
 		<HandoverProtocolFields bind:handoverProtocol {touch} {errors} />

@@ -16,6 +16,7 @@
 	import VehicleStatusChanger from '$lib/components/vehicle/VehicleStatusChanger.svelte';
 	import VehicleStatusHistory from '$lib/components/vehicle/VehicleStatusHistory.svelte';
 	import { Offcanvas } from '@sveltestrap/sveltestrap';
+	import IconLink from '$lib/misc/IconLink.svelte';
 
 	let { data }: PageProps = $props();
 	let vehicle: Vehicle.Vehicle = $state(untrack(() => data.vehicle));
@@ -76,7 +77,13 @@
 {#if vehicle.status !== 'precheck'}
 	<SectionCard title="Kierowca">
 		{#if vehicle.assignedDriverId}
-			Przypisano do <a href="/drivers/{vehicle.assignedDriverId}">{vehicle.assignedDriverName}</a>
+			<div>
+				Przypisano do <a href="/drivers/{vehicle.assignedDriverId}" class="fw-bold">{vehicle.assignedDriverName}</a>
+			</div>
+			<div class="d-flex gap-2 mt-3">
+				<IconLink href="/driver/{vehicle.assignedDriverId}" icon="user" caption="Kerowca" size={6} class="mb-0" />
+				<IconLink href="/handovers/{vehicle.handoverId}" icon="user-key" caption="Protokół wydania" size={6} class="mb-0" />
+			</div>
 		{:else}
 			<div class="flex-center flex-column">
 				<div class="mb-3">Nie przypisano żadnego pojazdu</div>

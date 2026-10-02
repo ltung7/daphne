@@ -18,10 +18,17 @@ export const fetchDrivers = async (filters: Partial<Driver.Driver> = {}, fields?
     const DEFAULT_FIELDS: (keyof Driver.Driver)[] = [ 'name', 'notes', 'status', 'balance', 'phone', 'assignedVehicle' ];
     const fieldsString = (fields ?? DEFAULT_FIELDS).join(',')
     const response = await internal.get('/drivers/api', { fields: fieldsString, ...filters  })
-    return response.vehicles as Driver.Driver[];
+    return response.drivers as Driver.Driver[];
 }
 
 export const fetchNotifications = async () => {
     const response = await internal.get('/notifications/api', {});
     return response.items as App.InAppNotification[];
+}
+
+export const fetchHandoverSigners = async (fields?: (keyof App.User)[]) => {
+    const DEFAULT_FIELDS: (keyof App.User)[] = [ 'name', 'email', 'canSignHandovers' ];
+    const fieldsString = (fields ?? DEFAULT_FIELDS).join(',')
+    const response = await internal.get('/users/api', { fields: fieldsString, canSignHandovers: true })
+    return response.users as App.User[];
 }

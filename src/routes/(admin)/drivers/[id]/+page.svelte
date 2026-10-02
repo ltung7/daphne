@@ -104,8 +104,9 @@
 					</table>
 				</div>
 			</div>
-			<div class="d-flex gap-2 mt-2">
+			<div class="d-flex gap-2 mt-3">
 				<IconLink href="/vehicles/{driver.assignedVehicle.registrationNumber}" icon="car" caption="Szczegóły pojazdu" size={6} class="mb-0" />
+				<IconLink href="/handovers/{driver.assignedVehicle.handoverId}" icon="user-key" caption="Protokół wydania" size={6} class="mb-0" />
 			</div>
 		{:else}
 			<div class="flex-center flex-column">
