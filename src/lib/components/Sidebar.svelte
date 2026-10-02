@@ -44,12 +44,13 @@
 			icon: 'money',
 			subItems: [
 				{ id: 401, title: 'Wczesne Rozliczenia', icon: 'time-forward', link: '/earlysettlements' },
-				{ id: 402, title: 'Import Tygodniowy', icon: 'file-import', link: '/weeklyingestations' }
+				{ id: 402, title: 'Rozliczenia Tygodniowe', icon: 'file-import', link: '/weeklyingestations' }
 			]
 		},
 		{ id: 6, title: 'Użytkownicy', icon: 'users', link: '/users' },
 		{ id: 9, title: 'Zdarzenia', icon: 'triangle-warning', link: '/incidents' },
 		{ id: 10, title: 'Powiadomienia', icon: 'bell', link: '/notifications' },
+		{ id: 12, title: 'Ustawienia', icon: 'settings', link: '/settings' },
 		{ id: 11, title: 'Wyloguj', icon: 'power', link: '/logout' }
 	]);
 
