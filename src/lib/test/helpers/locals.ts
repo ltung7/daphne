@@ -1,11 +1,5 @@
-import { vi } from 'vitest';
-
 type Locals = App.Locals;
-type User = App.User;
-type UserBase = App.UserBase;
-type SessionClaims = App.SessionClaims;
 type AdminRole = App.AdminRole;
-type Locale = App.Locale;
 
 export function createMockLocals(overrides: Partial<Locals> = {}): Locals {
   return {

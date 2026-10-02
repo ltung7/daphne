@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { restrictDriver, checkDriverAccess, isDriver, getDriverId } from '$lib/server/auth/driverAuth';
 import { createDriverLocals, createAdminLocals, createMockLocals } from '$lib/test/helpers/locals';
 
