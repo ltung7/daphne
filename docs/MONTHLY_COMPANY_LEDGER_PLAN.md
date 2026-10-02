@@ -282,6 +282,11 @@ namespace CompanyLedger {
 }
 ```
 
+### 3.3 BigQuery Storage (Statistical & Historical Data - Deferred)
+While Firestore handles lean operational ledgers (running balances, payouts), **BigQuery** is designated for fat, analytical, and historical record-keeping. 
+
+For details on the architecture, schema, and rollout plan for this split, see the [BigQuery Migration Plan](./BIGQUERY_MIGRATION_PLAN.md).
+
 ---
 
 ## 4. Manual-First Operational Workflows
@@ -320,21 +325,22 @@ Admins receive weekly summary sheets or CSV files from Uber and Bolt. Rather tha
 * **Atomic Execution per Driver**:
   1. Calculate Fleet Cut: `2500.00 * 0.12 = 300.00 PLN`
   2. Calculate Driver Net: `2500.00 (Gross) - 625.00 (Platform Fee) - 300.00 (Fleet Cut) = 1575.00 PLN`
-  3. Write to `driverBalanceEvents`:
+  3. Write to `driverBalanceEvents` (Lean Operational Record):
      * `type`: `'income_uber'`
      * `amount`: `+1575.00`
      * `id`: `"u:drv_kuba123:2026W04"`
      * `referenceId`: `"2026-W04"`
-     * `metadata`: `{ gross: 2500.00, commission: 625.00, provision: 300.00, trips: 54, period: "2026-01" }`
-  4. Write to `companyLedgerEvents`:
+     * `metadata`: `{ period: "2026-01" }` *(Keep minimal, no stats)*
+  4. Write to `companyLedgerEvents` (Lean Operational Record):
      * `type`: `'platform_payout_uber'`
      * `amount`: `+300.00`
      * `id`: `"up:drv_kuba123:2026W04"`
      * `driverId`: `"drv_kuba123"`
      * `referenceId`: `"2026-W04"`
-     * `metadata`: `{ week: "2026-W04", grossEarnings: 2500.00 }`
+     * `metadata`: `{ week: "2026-W04" }` *(Keep minimal, no stats)*
+  5. **Deferred (BigQuery)**: Insert a statistical row into BigQuery `weekly_platform_earnings` containing the raw CSV data, gross amounts, trip counts, and hours online.
 
-This guarantees that every złoty credited to the company's ledger directly reconciles with what was earned by the driver.
+This guarantees that every złoty credited to the company's ledger directly reconciles with what was earned by the driver, while keeping Firestore lean.
 
 ### Workflow B: Logging Operating Expenses & Recoveries
 When an invoice is paid (e.g. monthly Orlen fuel card bill of 15,000 PLN):
@@ -426,9 +432,10 @@ src/routes/(admin)/finance/
 * [x] Create `src/lib/server/services/companyLedger.service.ts` (idempotent writes, platform payout & expense logging, period summary).
 
 ### Phase 2: Manual Weekly Ingestion Engine
-* [ ] Create `manualSettlement.service.ts` with atomic transaction (driver net + company provision).
-* [ ] Create endpoint `POST /api/finance/settlements/manual`.
-* [ ] Build Admin UI `/finance/manual-settlement` for submitting weekly Uber/Bolt sheets.
+* [x] Create `weeklyIngestation.service.ts` with atomic transaction (driver net + company provision).
+* [x] Create endpoint `POST /weeklyingestations/new/api`.
+* [x] Build Admin UI `/weeklyingestations` & `/weeklyingestations/new` (with `CardForm` & `ClosableModal` driver picker) for submitting weekly Uber/Bolt sheets.
+* [x] Add Finances section to sidebar (`Sidebar.svelte`).
 
 ### Phase 3: Cost Logging & Driver Recovery
 * [ ] Implement expense logging modal/page with dual-tagging (`vehicleId`, `driverId`).
