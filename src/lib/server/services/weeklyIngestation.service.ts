@@ -15,6 +15,7 @@ export interface ProcessWeeklyIngestionParams {
 	week: string;
 	platform: 'uber' | 'bolt';
 	provisionRate: number;
+	boltRate?: number;
 	driverEntries: WeeklyIngestionDriverEntry[];
 	createdBy: string;
 	createdByName: string;

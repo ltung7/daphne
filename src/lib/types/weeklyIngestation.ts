@@ -3,6 +3,7 @@ export interface WeeklyIngestionFormData {
 	week: string;
 	platform: 'uber' | 'bolt';
 	provisionRate: number;
+	boltRate: number;
 	driverEntries: {
 		driverId: string;
 		grossEarnings: number;

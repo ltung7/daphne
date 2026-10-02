@@ -4,16 +4,24 @@
 	import ClosableModal from '$lib/misc/ClosableModal.svelte';
 	import WeeklyIngestionForm from '$lib/components/finance/WeeklyIngestionForm.svelte';
 	import type { WeeklyIngestionFormData } from '$lib/types/weeklyIngestation';
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	const defaultProvisionRate = $derived(data.provisionRate ?? 0.50);
+	const defaultBoltRate = $derived(data.boltRate ?? 0.25);
 
 	const getCleanItem = (): WeeklyIngestionFormData => ({
 		period: '',
 		week: '',
 		platform: 'bolt',
-		provisionRate: 0.12,
+		provisionRate: defaultProvisionRate,
+		boltRate: defaultBoltRate,
 		driverEntries: []
 	});
 
 	let item: WeeklyIngestionFormData = $state(getCleanItem());
+	let cleanItem = $derived(getCleanItem());
 	let showCreated = $state(false);
 	let processedCount = $state(0);
 
@@ -38,7 +46,7 @@
 	subtitle="Ręczne wprowadzanie danych o przychodach z platform" 
 />
 
-<WeeklyIngestionForm bind:item {onResponse} {onReset} />
+<WeeklyIngestionForm bind:item {cleanItem} {onResponse} {onReset} />
 
 <ClosableModal bind:isOpen={showCreated} headerText="Rozliczenie zapisane" buttonCaption="OK" onClick={() => {
 	showCreated = false;

@@ -17,11 +17,12 @@
 
 	interface Props {
 		item: WeeklyIngestionFormData;
+		cleanItem?: WeeklyIngestionFormData;
 		onResponse?: (res: any) => void;
 		onReset?: () => void;
 	}
 
-	let { item = $bindable(), onResponse, onReset }: Props = $props();
+	let { item = $bindable(), cleanItem: customCleanItem, onResponse, onReset }: Props = $props();
 
 	let drivers: Record<string, string> = $state({});
 	let showDriverModal = $state(false);
@@ -93,20 +94,54 @@
 		item.driverEntries = item.driverEntries.filter((_, i) => i !== index);
 	};
 
-	const calculateNet = (entry: any) => {
-		const cut = entry.grossEarnings * item.provisionRate;
-		return entry.grossEarnings - entry.platformCommission - cut;
+	const calculateBoltCut = (entry: any) => {
+		const rate = item.boltRate ?? 0.25;
+		return Math.round((Number(entry.grossEarnings) || 0) * rate * 100) / 100;
 	};
 
 	const calculateFleetCut = (entry: any) => {
-		return entry.grossEarnings * item.provisionRate;
+		const rate = item.provisionRate ?? 0.50;
+		return Math.round((Number(entry.grossEarnings) || 0) * rate * 100) / 100;
 	};
 
-	let cleanItem = $state({
+	const calculateNet = (entry: any) => {
+		const gross = Number(entry.grossEarnings) || 0;
+		const boltCut = calculateBoltCut(entry);
+		const fleetCut = calculateFleetCut(entry);
+		return Math.round((gross - boltCut - fleetCut) * 100) / 100;
+	};
+
+	let totalGross = $derived(
+		item.driverEntries.reduce((sum, e) => sum + (Number(e.grossEarnings) || 0), 0)
+	);
+	let totalBoltCut = $derived(
+		item.driverEntries.reduce((sum, e) => sum + calculateBoltCut(e), 0)
+	);
+	let totalFleetCut = $derived(
+		item.driverEntries.reduce((sum, e) => sum + calculateFleetCut(e), 0)
+	);
+	let totalNet = $derived(
+		item.driverEntries.reduce((sum, e) => sum + calculateNet(e), 0)
+	);
+
+	const handleBeforeSubmit = (val: WeeklyIngestionFormData) => {
+		const rate = val.boltRate ?? item.boltRate ?? 0.25;
+		const updatedEntries = val.driverEntries.map((entry) => ({
+			...entry,
+			platformCommission: Math.round((Number(entry.grossEarnings) || 0) * rate * 100) / 100
+		}));
+		return {
+			...val,
+			driverEntries: updatedEntries
+		};
+	};
+
+	let cleanItem = $derived(customCleanItem ?? {
 		period: '',
 		week: '',
 		platform: 'bolt' as const,
-		provisionRate: 0.12,
+		provisionRate: item.provisionRate,
+		boltRate: item.boltRate ?? 0.25,
 		driverEntries: []
 	});
 
@@ -133,13 +168,43 @@
 		</div>
 		<div class="col-md-3 mb-3">
 			<label class="form-label" for="provisionRate">Prowizja floty</label>
-			<input type="number" step="0.01" class="form-control" id="provisionRate" bind:value={item.provisionRate} />
+			<div class="input-group">
+				<input type="number" step="0.01" min="0" max="1" class="form-control" id="provisionRate" bind:value={item.provisionRate} />
+				<span class="input-group-text bg-light">{((item.provisionRate ?? 0) * 100).toFixed(0)}%</span>
+			</div>
 		</div>
 		<div class="col-md-3 mb-3">
+			<label class="form-label" for="boltRate">Prowizja Bolt</label>
+			<div class="input-group">
+				<input type="number" step="0.01" min="0" max="1" class="form-control" id="boltRate" bind:value={item.boltRate} />
+				<span class="input-group-text bg-light">{((item.boltRate ?? 0) * 100).toFixed(0)}%</span>
+			</div>
+		</div>
+		<div class="col-12 mb-2">
 			<span class="form-label d-block text-muted small mb-1">Podsumowanie okresu</span>
-			<div class="p-2 bg-light border rounded text-muted small h-100 d-flex flex-column justify-content-center">
-				<div class="fw-bold text-dark">Okres rozliczeniowy: {calculatedPeriod}</div>
-				<div>Zakres: {datesRangeText}</div>
+			<div class="p-3 bg-light border rounded text-muted small d-flex flex-row align-items-center gap-4 flex-wrap">
+				<div>
+					<span class="text-secondary me-1">Okres rozliczeniowy:</span>
+					<strong class="text-dark">{calculatedPeriod}</strong>
+				</div>
+				<div>
+					<span class="text-secondary me-1">Zakres dat:</span>
+					<strong class="text-dark">{datesRangeText}</strong>
+				</div>
+				<div>
+					<span class="text-secondary me-1">Prowizja floty:</span>
+					<strong class="text-primary">{((item.provisionRate ?? 0) * 100).toFixed(0)}%</strong>
+				</div>
+				<div>
+					<span class="text-secondary me-1">Prowizja Bolt:</span>
+					<strong class="text-dark">{((item.boltRate ?? 0) * 100).toFixed(0)}%</strong>
+				</div>
+				{#if item.driverEntries.length > 0}
+					<div class="ms-md-auto">
+						<span class="text-secondary me-1">Kierowcy:</span>
+						<strong class="text-dark">{item.driverEntries.length}</strong>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -150,7 +215,7 @@
 		<IconButton icon="plus" caption="Dodaj kierowcę" onclick={openDriverModal} size={6} outline class="mb-0" />
 	{/snippet}
 
-	<CardForm {item} {cleanItem} schema={newWeeklyIngestationDataSchema} {onResponse} {onReset} name="payload">
+	<CardForm {item} {cleanItem} schema={newWeeklyIngestationDataSchema} {onResponse} {onReset} beforeSubmit={handleBeforeSubmit} name="payload">
 		{#snippet children({ errors })}
 			{#if errors['driverEntries']}
 				<div class="text-danger mb-3">{errors['driverEntries']}</div>
@@ -162,9 +227,9 @@
 						<thead class="table-light">
 							<tr>
 								<th>Kierowca</th>
-								<th style="width: 150px">Przychód brutto</th>
-								<th style="width: 150px">Prowizja platformy</th>
-								<th>Prowizja floty</th>
+								<th style="width: 170px">Przychód brutto</th>
+								<th>Prowizja Bolt ({((item.boltRate ?? 0) * 100).toFixed(0)}%)</th>
+								<th>Prowizja floty ({((item.provisionRate ?? 0) * 100).toFixed(0)}%)</th>
 								<th>Netto dla kierowcy</th>
 								<th class="text-end" style="width: 80px">Akcje</th>
 							</tr>
@@ -176,10 +241,22 @@
 										<div class="fw-bold">{drivers[entry.driverId] || entry.driverId}</div>
 									</td>
 									<td>
-										<input type="number" step="0.01" class="form-control form-control-sm {getError(errors, `driverEntries.${index}.grossEarnings`) ? 'is-invalid' : ''}" bind:value={entry.grossEarnings} />
+										<div class="input-group input-group-sm">
+											<input 
+												type="number" 
+												step="0.01" 
+												min="0"
+												class="form-control {getError(errors, `driverEntries.${index}.grossEarnings`) ? 'is-invalid' : ''}" 
+												bind:value={entry.grossEarnings}
+												oninput={() => {
+													entry.platformCommission = calculateBoltCut(entry);
+												}}
+											/>
+											<span class="input-group-text">PLN</span>
+										</div>
 									</td>
 									<td>
-										<input type="number" step="0.01" class="form-control form-control-sm {getError(errors, `driverEntries.${index}.platformCommission`) ? 'is-invalid' : ''}" bind:value={entry.platformCommission} />
+										<span class="text-muted">{calculateBoltCut(entry).toFixed(2)} PLN</span>
 									</td>
 									<td>
 										<span class="text-muted">{calculateFleetCut(entry).toFixed(2)} PLN</span>
@@ -188,11 +265,21 @@
 										<span class="text-success fw-bold">{calculateNet(entry).toFixed(2)} PLN</span>
 									</td>
 									<td class="text-end">
-										<IconButton icon="trash" color="danger" class="mb-0" size={5} outline onclick={() => removeDriver(index)} />
+										<IconButton icon="trash" color="danger" class="mb-0" size={6} caption="Usuń" outline onclick={() => removeDriver(index)} />
 									</td>
 								</tr>
 							{/each}
 						</tbody>
+						<tfoot class="table-light fw-bold">
+							<tr>
+								<td>Razem ({item.driverEntries.length})</td>
+								<td>{totalGross.toFixed(2)} PLN</td>
+								<td class="text-muted">{totalBoltCut.toFixed(2)} PLN</td>
+								<td class="text-muted">{totalFleetCut.toFixed(2)} PLN</td>
+								<td class="text-success">{totalNet.toFixed(2)} PLN</td>
+								<td></td>
+							</tr>
+						</tfoot>
 					</table>
 				</div>
 			{/if}
