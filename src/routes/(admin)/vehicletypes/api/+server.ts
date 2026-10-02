@@ -1,22 +1,12 @@
 import { findVehicleType } from "$lib/server/db/firebase/vehicleType.fdb";
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { isDev } from "$lib/utils/isDev";
+import { parseFiltersAndFields } from "$lib/utils/parseUrlParams";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
-    let fields: (keyof Vehicle.Type)[] | false = false;
-    if (url.searchParams.get('fields')) {
-        fields = url.searchParams.get('fields')!.split(',') as (keyof Vehicle.Type)[];
-    }
-    const types = await findVehicleType(false, fields);
-    if (isDev) {
-        setHeaders({
-            "cache-control": "max-age=60000"
-        });
-    } else {
-        setHeaders({
-            "cache-control": "max-age=300"
-        });
-    }
+    const { filters, fields } = parseFiltersAndFields<Vehicle.Type>(url);
+    const types = await findVehicleType(filters, fields);
+    cacheControl(setHeaders);
     return json({ success: true, types })
 };

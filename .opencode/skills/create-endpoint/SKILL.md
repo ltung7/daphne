@@ -64,6 +64,7 @@ Before building the UI, ensure the core types, constants, and database functions
    ```typescript
    export const fetch{EndpointPlural} = () => internal.getApi({}).then(r => r.{endpointPlural});
    ```
+	 Add this is only when explicitly told to, otherwise use getApi for all purposes
 
 6. **Shared Components** (`src/lib/components/{endpoint}/`):
    - `{Endpoint}Status.svelte`, `{Endpoint}StatusChanger.svelte`, `{Endpoint}StatusHistory.svelte`
@@ -128,19 +129,13 @@ Before building the UI, ensure the core types, constants, and database functions
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { find{EndpointPlural} } from "$lib/server/db/firebase/{endpoint}.fdb";
-import { isDev } from "$lib/utils/isDev";
+import { parseFiltersAndFields } from "$lib/utils/parseUrlParams";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
-	let fields: (keyof {Endpoint}.{Endpoint})[] | false = false;
-	if (url.searchParams.get('fields')) {
-		fields = url.searchParams.get('fields')!.split(',') as (keyof {Endpoint}.{Endpoint})[];
-	}
-	const items = await find{EndpointPlural}(false, fields);
-	if (isDev) {
-		setHeaders({ "cache-control": "max-age=60000" });
-	} else {
-		setHeaders({ "cache-control": "max-age=300" });
-	}
+	const { filters, fields } = parseFiltersAndFields<{Endpoint}.{Endpoint}>(url);
+	const items = await find{EndpointPlural}(filters, fields);
+	cacheControl(setHeaders);
 	return json({ success: true, items })
 };
 ```

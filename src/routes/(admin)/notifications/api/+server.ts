@@ -1,7 +1,7 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { getUserNotifications, getUnreadCount } from "$lib/server/db/firebase/userNotifications.fdb";
-import { isDev } from "$lib/utils/isDev";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders, locals }) => {
 	const uid = locals.sessionClaims?.uid;
@@ -12,22 +12,14 @@ export const GET: RequestHandler = async ({ url, setHeaders, locals }) => {
 	if (url.searchParams.has('count')) {
 		const count = await getUnreadCount(uid);
 		
-		if (isDev) {
-			setHeaders({ "cache-control": "max-age=60000" });
-		} else {
-			setHeaders({ "cache-control": "max-age=300" });
-		}
+		cacheControl(setHeaders);
 		
 		return json({ success: true, count });
 	}
 
 	const items = await getUserNotifications(uid);
 	
-	if (isDev) {
-		setHeaders({ "cache-control": "max-age=60000" });
-	} else {
-		setHeaders({ "cache-control": "max-age=300" });
-	}
+	cacheControl(setHeaders);
 	
 	return json({ success: true, items })
 };

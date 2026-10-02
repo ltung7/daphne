@@ -7,9 +7,9 @@ import {
 } from "$lib/server/db/firebase/driverBalanceEvents.fdb";
 import { generateIdempotencyKey } from "$lib/server/services/ledger.service";
 import { createEarlySettlement } from "$lib/server/services/earlySettlements.service";
-import { isDev } from "$lib/utils/isDev";
 import type { RequestHandler } from "./$types";
 import { json, error } from "@sveltejs/kit";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ params, url, locals, setHeaders }) => {
     restrictAdmin(locals);
@@ -20,10 +20,7 @@ export const GET: RequestHandler = async ({ params, url, locals, setHeaders }) =
 
     const events = await getBalanceEventsByDriver(driverId, { limit, offset });
 
-    if (isDev) setHeaders({
-        "cache-control": "max-age=3600"
-    });
-
+    cacheControl(setHeaders);
     return json({ events });
 };
 

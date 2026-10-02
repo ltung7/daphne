@@ -1,22 +1,12 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { findVehicleInspections } from "$lib/server/db/firebase/vehicleInspections.fdb";
-import { isDev } from "$lib/utils/isDev";
+import { parseFiltersAndFields } from "$lib/utils/parseUrlParams";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
-    let fields: (keyof DocumentGenerator.InspectionDocumentRecord)[] | false = false;
-    if (url.searchParams.get('fields')) {
-        fields = url.searchParams.get('fields')!.split(',') as (keyof DocumentGenerator.InspectionDocumentRecord)[];
-    }
-    const inspections = await findVehicleInspections(false, fields);
-    if (isDev) {
-        setHeaders({
-            "cache-control": "max-age=60000"
-        });
-    } else {
-        setHeaders({
-            "cache-control": "max-age=300"
-        });
-    }
+    const { filters, fields } = parseFiltersAndFields<DocumentGenerator.InspectionDocumentRecord>(url);
+    const inspections = await findVehicleInspections(filters, fields);
+    cacheControl(setHeaders);
     return json({ success: true, inspections })
 };

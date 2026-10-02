@@ -3,8 +3,8 @@ import type { RequestHandler } from "./$types";
 import { findDrivers } from "$lib/server/db/firebase/drivers.fdb";
 import { findVehicles } from "$lib/server/db/firebase/vehicles.fdb";
 import { VEHICLE_STATUS } from "$lib/assets/enums";
-import { isDev } from "$lib/utils/isDev";
 import { getFleedProblemsSummary } from "$lib/server/services/health/healthCheck.service";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ setHeaders }) => {
     const [ drivers, vehicles, problems ] = await Promise.all([
@@ -30,11 +30,7 @@ export const GET: RequestHandler = async ({ setHeaders }) => {
     const totalTrips = drivers.reduce((sum, d) => sum + (d.tripsCompleted || 0), 0);
 
 
-    if (isDev) {
-        setHeaders({ "cache-control": "max-age=60000" });
-    } else {
-        setHeaders({ "cache-control": "max-age=300" });
-    }
+    cacheControl(setHeaders);
 
     return json({
         success: true,

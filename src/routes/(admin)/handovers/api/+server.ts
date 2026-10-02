@@ -2,16 +2,13 @@ import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { deleteVehicleHandover, findVehicleHandovers, getVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
 import { error } from "console";
+import { parseFiltersAndFields } from "$lib/utils/parseUrlParams";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
-    let fields: (keyof Vehicle.Vehicle)[] | false = false;
-    if (url.searchParams.get('fields')) {
-        fields = url.searchParams.get('fields')!.split(',') as (keyof Vehicle.Vehicle)[];
-    }
-    const handovers = await findVehicleHandovers(false, fields);
-    setHeaders({
-        "cache-control": "max-age=300"
-    });
+    const { filters, fields } = parseFiltersAndFields<Vehicle.Vehicle>(url);
+    const handovers = await findVehicleHandovers(filters, fields);
+    cacheControl(setHeaders);
     return json({ success: true, handovers })
 };
 

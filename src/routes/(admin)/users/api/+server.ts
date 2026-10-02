@@ -1,22 +1,12 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import { findUsers } from "$lib/server/db/firebase/users.fdb";
-import { isDev } from "$lib/utils/isDev";
+import { parseFiltersAndFields } from "$lib/utils/parseUrlParams";
+import { cacheControl } from "$lib/utils/cacheControl";
 
 export const GET: RequestHandler = async ({ url, setHeaders }) => {
-    let fields: (keyof App.User)[] | false = false;
-    if (url.searchParams.get('fields')) {
-        fields = url.searchParams.get('fields')!.split(',') as (keyof App.User)[];
-    }
-    const users = await findUsers<App.User>(false, fields);
-    if (isDev) {
-        setHeaders({
-            "cache-control": "max-age=60000"
-        });
-    } else {
-        setHeaders({
-            "cache-control": "max-age=300"
-        });
-    }
+    const { filters, fields } = parseFiltersAndFields<App.User>(url);
+    const users = await findUsers(filters, fields);
+    cacheControl(setHeaders);
     return json({ success: true, users })
 };
