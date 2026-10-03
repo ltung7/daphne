@@ -4,7 +4,7 @@ import { thrower } from "$lib/utils/logger";
 import { insertRandomLog } from "$lib/server/db/tables/randomLogs.db";
 import { uploadVehicleDocument } from "../uploadDocument.service";
 import { setVehicleHandovers } from "../../db/firebase/vehicleHandovers.fdb";
-import { assignVehicleAndCloseHandover } from "../vehicleStatus.service";
+import { assignVehicleAndCloseHandover } from "../vehicleHandover.service";
 import { getDocusignApi } from "./docusign.token";
 
 const processEnvelopeCompleted = async (payload: DocusignWebhookEvent<[EventCustomFields]>) => {

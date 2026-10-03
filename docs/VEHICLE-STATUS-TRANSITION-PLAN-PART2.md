@@ -1,138 +1,142 @@
 # Vehicle Status Transition Plan (v2)
 
-> **Status**: Active implementation plan
+> **Status**: Completed (Core status refactor, handover extraction, criticality policy, notifications, and UI integration complete; deferred items tracked in dedicated plans)
 > **Archived plan**: `@docs/archive/VEHICLE-STATUS-TRANSITION-PLAN.md` (v1, closed)
 > **Reference**: Implementation status from v1 — transition validation ✅, audit trail ✅, API endpoints ✅
 
 ---
 
-## Open Tasks from v1 (Carried Forward)
+## Overview & Completed Architecture
 
-### 1. Auto-Transition to Unmovable (Expired Documents)
-**Problem**: Health checks (`checkVehicleExpirationDates`) create `HealthIssue` records with `severity: 'critical'` for expired insurance/technical inspection, but **no automatic status change** occurs.
-
-**Required**: Scheduled job (Firebase Cloud Function or cron) that:
-- Runs daily
-- Queries `healthIssues` for `entityType: 'vehicle'` + `severity: 'critical'` + types `insurance_expiring` / `technical_expiring` where `expirationDate < now()`
-- For each vehicle: calls `changeVehicleStatus(vehicleId, 'unmovable', { reason: 'Auto-transition: expired insurance/technical', source: 'health_check' }, { id: 'system', name: 'Auto Health Check', role: 'system' })`
-- Logs transition in `vehicleStatusChange` with `extraData.source: 'auto_health_check'` and `changedBy: 'system'`
-- **Note**: A vehicle in `unmovable` status cannot be assigned and requires manual intervention (Manager/Admin) to return to `available`.
-
-**Files to create/modify**:
-- `src/lib/server/jobs/vehicleHealthAutoTransition.ts` — new job *(deferred to Job Scheduling Plan)*
-- Firebase scheduled function config or `package.json` cron script *(deferred to Job Scheduling Plan)*
+This plan covers the vehicle status state machine, separation of concerns for vehicle handovers, a boolean-driven criticality policy in the status transition matrix, unified vehicle status change notifications, and incident UI visualization.
 
 ---
 
-### 2. Role-Based Transition Permissions
-**Structure**:
-- **Moderator**: Day-to-day operators for small decisions. Handle standard maintenance cycles, availability, and reporting broken vehicles.
+## 1. Handover Logic Extraction
+
+**Goal:** Separate handover-specific logic from `vehicleStatus.service.ts` into a dedicated `vehicleHandover.service.ts`.
+
+**Implementation:**
+- Created `src/lib/server/services/vehicleHandover.service.ts`.
+- Encapsulated atomic Firestore transaction functions:
+  - `assignVehicleAndCloseHandover`: Assigns vehicle to driver, sets status to `'assigned'`, links `handoverId`, and closes the handover record.
+  - `returnVehicleAndCloseHandover`: Handles voluntary driver return. Deterministic status: transitions `'assigned'` → `'available'`, while preserving operational statuses (`'under_maintenance'`, `'broken'`, `'unmovable'`).
+  - `unilateralReturnVehicleAndCloseHandover`: Handles unilateral fleet repossession/return using the same deterministic status logic.
+  - `closeReturnHandover`: Shared transaction implementation for returns.
+- Updated all referencing endpoints and webhook services:
+  - `src/lib/server/services/docusign/docusignWebhook.service.ts`
+  - `src/routes/(admin)/handovers/new/api/+server.ts`
+  - `src/routes/(admin)/handovers/[id]/api/+server.ts`
+  - `src/routes/(admin)/handovers/[id]/return/api/+server.ts`
+  - `src/routes/(admin)/handovers/[id]/unilateral/api/+server.ts`
+
+---
+
+## 2. Status Transition Matrix & Criticality Policy
+
+**Goal:** Modify the `statusTransitions` matrix in `src/lib/server/services/vehicleStatus.service.ts` so that the boolean result indicates whether a transition is **critical** rather than merely whether it is allowed.
+
+**Policy:**
+- Return `true`: Transition allowed AND **critical** (triggers manager/driver notifications via email, push, in-app; high priority).
+- Return `false`: Transition allowed BUT **non-critical** (logged as incident/audit trail; low priority; no outbound alerts to drivers/managers).
+- Throw error / undefined: Blocked / invalid transition.
+
+### Criticality Mapping in `statusTransitions`:
+- `precheck`:
+  - `available`: `false` (validates required verification checklist nodes, non-critical)
+  - `broken`: `true` (critical)
+  - `under_maintenance`: `false` (non-critical)
+  - `unmovable`: `true` (critical)
+- `available`:
+  - `under_maintenance`: `false` (non-critical)
+  - `broken`: `true` (critical)
+  - `unmovable`: `true` (critical)
+  - `retired`: `false` (non-critical)
+- `assigned`:
+  - `broken`: `true` (critical)
+  - `unmovable`: `true` (critical)
+- `under_maintenance`:
+  - `available`: `false` (non-critical)
+  - `broken`: `false` (deliberately non-critical)
+  - `unmovable`: `true` (critical)
+- `broken`:
+  - `available`: `true` (critical recovery)
+  - `under_maintenance`: `false` (deliberately non-critical)
+  - `unmovable`: `true` (critical)
+- `unmovable`:
+  - `available`: `true` (critical recovery)
+  - `under_maintenance`: `false` (non-critical)
+  - `broken`: `true` (critical)
+- `retired`:
+  - `precheck`: `false` (non-critical fleet recovery)
+
+### Smart Driver-Assigned Fallback:
+- When the requested change target is `'available'` and the vehicle has an assigned driver (`vehicle.assignedDriverId` is present), the status is transitioned to `'assigned'` instead of `'available'`.
+- This ensures vehicles returning from repairs or maintenance immediately resume active assignment without clearing or conflicting with driver allocations.
+
+---
+
+## 3. Role-Based Transition Permissions
+
+**Structure:**
+- **Moderator**: Day-to-day operators for standard maintenance cycles, availability, and reporting broken vehicles. Cannot retire vehicles (`user.role === 'moderator' && newStatus === 'retired'` throws 403).
 - **Manager**: Responsible for company assets and signing off important documents. Handles "unmovable" flags, asset retirement, and status recovery.
-- **Admin**: Technical superuser. Has technical abilities over other users and will technically have all permissions to "fix" data inconsistencies or bypass blocks.
+- **Admin**: Technical superuser with full permissions.
 
-**Transition Matrix** (Simplified):
-
+**Permission Summary:**
 | Transition | Admin | Manager | Moderator |
 |------------|-------|---------|-----------|
-| `any` → `available` | ✅ | ✅ | ✅ |
+| `any` → `available` / `assigned` | ✅ | ✅ | ✅ |
 | `available` → `under_maintenance` / `broken` | ✅ | ✅ | ✅ |
 | `available` → `unmovable` | ✅ | ✅ | ✅ |
 | `unmovable` → `available` | ✅ | ✅ | ✅ |
 | `any` → `retired` | ✅ | ✅ | ❌ (Asset disposal) |
 | Auto-transition (system) | ✅ | N/A | N/A |
 
-**Implementation** (simplified — single check in `handleChangeVehicleStatus`):
-- Remove `retired` from `statusTransitions` matrix (except `retired` → `precheck` for recovery)
-- Add moderator check: `if (user.role === 'moderator' && newStatus === 'retired') throw 403`
-- No separate permission map, no handler signature changes
+---
 
-## New Tasks (Not in v1)
+## 4. Notifications Architecture (Unified Single Message Type)
 
-### 3. Damage Incident Workflow
-**Gap**: Transition to `broken` or `unmovable` due to accidents requires a structured audit trail.
+**Goal:** A single, clean notification definition `vehicle_status_changed` rather than fragmented critical/normal message types.
 
-**Required**:
-- New collection `damageIncidents`:
-  ```typescript
-  interface DamageIncident {
-    id: string;
-    vehicleId: string;
-    driverId?: string;           // if during assignment
-    reportedAt: number;
-    reportedBy: string;
-    description: string;
-    location?: { lat: number; lng: number; address: string };
-    severity: 'minor' | 'major' | 'total_loss';
-    status: 'reported' | 'assessing' | 'approved' | 'in_repair' | 'repaired' | 'written_off';
-    photos: string[];            // Firebase Storage URLs
-    documents: string[];         // Police report, insurance forms
-    resolvedAt?: number;
-  }
-  ```
-- Transition `available`/`assigned` → `broken` requires creating damage incident
-- Transition `broken` → `available`/`under_maintenance` requires linking repair completion
-- **Note**: Financial cost tracking for repairs is handled by the **Finance/Incomes & Costs** module; this workflow is for operational status and safety documentation only.
+### Definition & Configuration (`src/lib/server/notifications/vehicle/vehicleStatusNotifications.ts`):
+- **Single Definition ID:** `vehicle_status_changed`
+- **Payload (`VehicleStatusChangedData`):**
+  - `registrationNumber: string`
+  - `previousStatus: Vehicle.Status`
+  - `newStatus: Vehicle.Status`
+  - `reason: string`
+  - `userId: string`
+  - `userName: string` (replaces legacy `changedBy`)
+- **Fused Channels:** Uses `prepareNotificationChannels({ action: PUBLIC_URL + '/admin/vehicles', incidentCategory: 'vehicle_issue' })`.
+- **Dynamic Priority & Targeting:**
+  - Critical (`isCritical === true`): `priority: 'high'`, `client: true` (dispatches to assigned driver), `admin: true` (dispatches to matrix managers).
+  - Non-critical (`isCritical === false`): `priority: 'low'`, `client: false`, `admin: false` (persists incident log and in-app updates only).
+- **Driver Contact Hook:** Driver contact is resolved automatically from `vehicle.assignedDriverId` when `isCritical` is true.
 
-### 4. Status Change Notifications
-**Gap**: No notifications on status changes.
-
-**Required** (integrate with notifications plan):
-- In-app: Real-time badge update via Firestore listener
-- Email/Alert: Notify Managers if a vehicle becomes `unmovable` or `retired`.
-- Push (PWA): Notify assigned drivers if their vehicle is flagged as `under_maintenance` or `unmovable`.
-- Slack/Webhook: Ops channel for critical transitions
-
-### 5. Handover Return & Unilateral Return Workflow
-**Gap**: Vehicle return flows (voluntary and unilateral) exist as PDF templates and a `returnVehicle()` function, but **no API endpoints, no status transition, and no unilateral implementation**.
-
-**Current State**:
-- `returnVehicle(registrationNumber, driverId, handoverId)` — transactional function in `vehicleStatus.service.ts:151` that clears assignment, creates `vehicleAssignment` record type `'return'`, updates handover with `returnedAt`. **Does not change vehicle status** (stays `'assigned'`).
-- `generateHandoverReturnDocument` — PDF template for voluntary return (driver + manager signatures)
-- `generateHandoverUnilateralDocument` — PDF template for unilateral return (manager + witness, no driver)
-- Types support: `HandoverDocumentType = 'assign' | 'return' | 'unilateral'`, `VehicleAssignmentData.type` includes all three
-- **No API endpoints** for return/unilateral actions
-- **No `unilateralReturnVehicle()` function**
-- **No status transition** on return (`assigned` → `available`/`under_maintenance`/`broken`/`unmovable`)
-- **Handover record `type` field** never updated from `'assign'`
-- **Unilateral-specific fields missing** from `HandoverDocumentRecord` (`recoveryLocation`, `witness`, `reasonForRecovery`, `retriever`)
-
-**Required**:
-
-#### 5.1 Voluntary Return (`assigned` → `available` | `under_maintenance` | `broken` | `unmovable`)
-- API: `POST /handovers/[id]/return` — body: `{ targetStatus: 'available' | 'under_maintenance' | 'broken' | 'unmovable', mileage?, fuel?, notes? }`
-- Calls `returnVehicle()` + `handleChangeVehicleStatus(vehicleId, targetStatus, ...)`
-- Updates handover record: `type: 'return'`, `returnedAt`, `mileage`, `fuel`, `visual` (condition notes)
-- Generates return PDF (DocuSign or printed)
-- Audit trail via `vehicleStatusChange` + `vehicleAssignment`
-
-#### 5.2 Unilateral Return (`assigned` → `available` | `under_maintenance` | `broken` | `unmovable`)
-- New function: `unilateralReturnVehicle(registrationNumber, driverId, handoverId, recoveryData)` 
-  - `recoveryData`: `{ recoveryLocation, witness, reasonForRecovery, retriever, mileage, fuel, visual }`
-- API: `POST /handovers/[id]/unilateral` — body: `{ targetStatus, recoveryData }`
-- Creates `vehicleAssignment` type `'unilateral'`
-- Updates handover record: `type: 'unilateral'`, unilateral fields, `returnedAt`
-- Generates unilateral PDF (manager + witness signatures)
-- Same status transition as voluntary
-
-#### 5.3 Shared Requirements
-- Validation: only allowed if handover `closed: true` (vehicle currently assigned)
-- Vehicle status transition uses existing `handleChangeVehicleStatus` with role checks (moderator can return to available/under_maintenance/broken/unmovable)
-- Manager/Admin choose target status based on vehicle condition at return
-- Notification: driver notified of return completion; managers notified if vehicle goes to `unmovable`/`broken`
-
-**Files to create/modify**:
-- `src/lib/server/services/vehicleStatus.service.ts` — add `unilateralReturnVehicle()`, add status transition in `returnVehicle()` or new wrapper
-- `src/routes/(admin)/handovers/[id]/api/+server.ts` — add `action: 'return'` and `action: 'unilateral'` cases
-- `src/app.d.ts` — extend `HandoverDocumentRecord` with unilateral fields (`recoveryLocation`, `witness`, `reasonForRecovery`, `retriever`, `returnedAt`, `mileage`, `fuel`)
-- `src/lib/server/db/firebase/vehicleHandovers.fdb.ts` — ensure update supports new fields
+### Status Localization:
+- Implemented `getStatusBaseMessage` in `src/lib/server/notifications/localized/localizedMailerMessages.ts`.
+- Automatically maps status codes (e.g. `under_maintenance`, `assigned`) to localized names (e.g. `W naprawie`, `Przypisany`) via `{status}_status` dictionary entries.
+- Translations synchronized across all supported language JSON files (`notifications_*.json`).
 
 ---
 
-## Implementation Progress (New Section)
+## 5. UI Integration
 
-### ✅ Completed: Checker/Resolver Architecture Refactor
+- **Incident Metadata (`src/routes/(admin)/incidents/[id]/IncidentMetadata.svelte`):**
+  - Displays vehicle status transitions with `<VehicleStatus status={...} />` component.
+  - Dedicated display for `Status (przed)` (`metadata.previousStatus`), `Status (po)` (`metadata.newStatus`), and `Powód` (`metadata.reason`).
+  - Added to `EXCLUDED_FIELDS` to avoid redundant raw rendering in the generic metadata table.
+- **Vehicle Status Changer (`src/lib/components/vehicle/VehicleStatusChanger.svelte`):**
+  - Modularized actions with `<VehicleStatusQuickActions>` and `<VehicleStatusRequests>`.
+- **Vehicle Status Quick Actions (`src/lib/components/vehicle/VehicleStatusQuickActions.svelte`):**
+  - Dynamically updates client state with `res.status || status` to stay in sync when the backend returns `'assigned'` for a vehicle with an assigned driver.
 
-**Checker/Resolver separation** — Implemented to separate detection (pure) from resolution (effectful):
+---
+
+## 6. Health Checks & Resolver Architecture
+
+**Checker/Resolver separation** in `src/lib/server/services/health/`:
 
 | Layer | Files | Responsibility |
 |-------|-------|----------------|
@@ -140,85 +144,43 @@
 | **Resolvers** | `src/lib/server/services/health/resolvers/*.resolver.ts` | Consume issues → change status + notify |
 | **Orchestrator** | `src/lib/server/services/health/healthCheck.service.ts` | Runs checkers → saves issues → runs resolvers |
 
-**Files created/modify**:
-- `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` (moved from `.health.ts`)
-- `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` (moved from `.health.ts`)
-- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` (new — **implemented**)
-- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` (new — **implemented**)
-- `src/lib/server/services/health/healthCheck.service.ts` (updated: runs resolvers after checkers, separate try/catch per resolver)
-
-**Driver resolver implementation** (`driverExpirationDates.resolver.ts`):
-- **Warning (expiring)**: Sends `documentExpiringNotification` via email/SMS/push/in-app
-- **Critical (expired)**: Sends `documentExpiredNotification` + updates driver status to `'documents_expired'`
-- Uses `params.drivers` from `HealthCheckParams` for contact info (falls back to DB query)
-
-**Vehicle resolver implementation** (`vehicleExpirationDates.resolver.ts`):
-- **Critical (expired)**: Auto-transitions vehicle to `'unmovable'` via `updateVehicle()` + logs audit trail via `addVehicleStatusChange()` with `userId: 'system'`, `source: 'auto_health_check'`
-- Idempotent: skips if already `unmovable`
-- Uses `params.vehicles` from `HealthCheckParams` for vehicle data (falls back to DB query)
-- **Warning (expiring)**: TODO — notification only (not yet implemented)
-- **Notifications**: TODO — notify managers/admins + assigned driver (not yet implemented)
-
-**Idempotency strategy**: Notifications tied to actual status change — resolver only fires when status actually changes (checked via current status before update).
+- **Driver Expiration Resolver** (`driverExpirationDates.resolver.ts`):
+  - Warning (expiring): Sends `documentExpiringNotification`.
+  - Critical (expired): Sends `documentExpiredNotification` + updates driver status to `'documents_expired'`.
+- **Vehicle Expiration Resolver** (`vehicleExpirationDates.resolver.ts`):
+  - Critical (expired): Auto-transitions vehicle to `'unmovable'` via `updateVehicle()` + logs audit trail via `addVehicleStatusChange()` with `userId: 'system'`, `source: 'auto_health_check'`.
+  - Sends specific `vehicle_document_expired` notification (no redundant generic status notification).
+  - Idempotent: Skips if vehicle is already `unmovable`.
 
 ---
 
-## Notes & Deferred Items
+## Implementation Status Summary
 
-### Deferred/Externalized
-- **Maintenance Records & Costs**: The structured tracking of maintenance costs has been moved to the centralized **Finance/Income-Cost Module**. This plan only tracks the *status* of the vehicle (`under_maintenance`).
-- **Platform Status Sync (Uber/Bolt)**: Not being implemented at this stage. Internal fleet status takes precedence.
-- **Lease/Contract Expiry**: Not being implemented at this stage unless explicitly requested.
-- **Firestore Indexes**: Already implemented as required by the environment; no further action needed in this plan.
-- **General Fleet Incidents**: Incident types not directly tied to vehicle status transitions (e.g., license/permit expiry, driver deactivation, GPS offline, unauthorized movement, fuel anomalies, provision mismatches, tax invoice issues, police seizures, platform warnings) are **out of scope** for this plan. These will be addressed in a separate **Fleet Incident Management Plan**.
-- **Job Scheduling Infrastructure**: The scheduled job for auto-transition (daily cron/Cloud Function) is deferred to a separate **Job Scheduling & Infrastructure Plan**. This plan only defines the resolver logic; invocation mechanism is external.
-
----
-
-## Implementation Priority
-
-| Priority | Task | Effort | Dependencies | Status |
-|----------|------|--------|--------------|--------|
-| **P0** | Auto-transition to `unmovable` (resolver) | Medium | Health checks exist | ✅ Resolver implemented |
-| **P0** | Role-based transition permissions | Medium | Auth system complete | ✅ Implemented (simplified) |
-| **P1** | Damage incident workflow | Medium | New collection | ⏳ Not started |
-| **P1** | Voluntary return workflow (API + status transition) | Medium | `returnVehicle()` exists | ⏳ Not started |
-| **P1** | Unilateral return workflow (function + API + status transition) | Medium | PDF template exists | ⏳ Not started |
-| **P2** | Status change notifications | Medium | Notifications plan | 🔄 Driver notifications done |
-
-> **Deferred to separate plans**: Auto-transition scheduled job (Job Scheduling Plan), General fleet incidents (Fleet Incident Management Plan)
+| Priority | Task | Status | Notes |
+|----------|------|--------|-------|
+| **P0** | Handover logic extraction | ✅ Completed | Moved to `vehicleHandover.service.ts` |
+| **P0** | Criticality policy in `statusTransitions` | ✅ Completed | Boolean return indicates criticality |
+| **P0** | Smart driver assignment fallback | ✅ Completed | Target `available` with driver becomes `assigned` |
+| **P0** | Role-based transition permissions | ✅ Completed | Moderator restriction on `retired` |
+| **P0** | Auto-transition to `unmovable` (resolver) | ✅ Completed | Resolver in `vehicleExpirationDates.resolver.ts` |
+| **P1** | Voluntary & Unilateral return workflows | ✅ Completed | See `PLAN_HANDOVER_DOCUMENTS.md` |
+| **P1** | Unified vehicle status notification | ✅ Completed | `vehicle_status_changed` with dynamic priority |
+| **P1** | Notification localization across all locales | ✅ Completed | All `{status}_status` keys in translation files |
+| **P2** | UI incident metadata & status changer updates | ✅ Completed | `IncidentMetadata.svelte`, `VehicleStatusQuickActions.svelte` |
+| **P3** | Damage incident workflow | ⏳ Deferred | Tracked in Fleet Incident Management Plan |
+| **P3** | Job scheduling infrastructure (daily cron) | ⏳ Deferred | Tracked in Job Scheduling Plan |
 
 ---
 
-## Current Implementation Reference
+## File Reference
 
-**Working (from v1)**:
-- `statusTransitions` matrix in `vehicleStatus.service.ts:205-252`
-- `changeVehicleStatus()` with validation + audit log at line 283
-- `assignVehicleAndCloseHandover()` / `returnVehicle()` / `releaseVehicle()` / `unilateralReturnVehicle()` — atomic transactions
-- `PATCH /vehicles/[id]/status` endpoint with `restrictAdmin`
-- `vehicleStatusChange` collection for audit trail
-- Health checks: `checkVehicleExpirationDates` → `HealthIssue` records
-- Handover PDF templates: assign, return, unilateral
-
-**New (this plan)**:
-- Checker/Resolver separation in `src/lib/server/services/health/`
-- Driver expiration resolver with notifications + status update
-- Vehicle expiration resolver with auto-transition to `unmovable` + audit log
-- Role-based transition permissions (moderator cannot retire vehicles)
-- Voluntary return API + status transition (`assigned` → target status)
-- Unilateral return function + API + status transition
-
-> **Not in this plan**: Scheduled job invocation (see Job Scheduling Plan), General fleet incident types (see Fleet Incident Management Plan)
-
-**Files**:
-- `src/lib/server/services/vehicleStatus.service.ts` — core logic (incl. `returnVehicle`, `unilateralReturnVehicle`)
-- `src/lib/server/db/firebase/vehicleStatusChange.fdb.ts` — audit log
-- `src/routes/(admin)/vehicles/[id]/status/+server.ts` — API
-- `src/routes/(admin)/handovers/[id]/api/+server.ts` — handover actions (assign, return, unilateral)
-- `src/lib/server/services/health/checkers/vehicleExpirationDates.checker.ts` — vehicle checker
-- `src/lib/server/services/health/checkers/driverExpirationDates.checker.ts` — driver checker
-- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` — vehicle resolver (**implemented**)
-- `src/lib/server/services/health/resolvers/driverExpirationDates.resolver.ts` — driver resolver (**implemented**)
-- `src/lib/server/services/health/healthCheck.service.ts` — orchestrator
-- `src/app.d.ts` — `HandoverDocumentRecord` extensions (unilateral fields, return data)
+- `src/lib/server/services/vehicleStatus.service.ts` — Core status transition state machine, criticality validation, driver assignment fallback, and notification triggers.
+- `src/lib/server/services/vehicleHandover.service.ts` — Atomic handover assignments, voluntary returns, and unilateral returns.
+- `src/lib/server/db/firebase/vehicleStatusChange.fdb.ts` — Audit log persistence for all status transitions.
+- `src/lib/server/notifications/vehicle/vehicleStatusNotifications.ts` — Unified `vehicle_status_changed` notification definition.
+- `src/lib/server/notifications/localized/localizedMailerMessages.ts` — Localization parser for status names and messages.
+- `src/lib/server/services/health/resolvers/vehicleExpirationDates.resolver.ts` — Auto-transition to `unmovable` for expired documents.
+- `src/routes/(admin)/vehicles/[id]/status/+server.ts` — Status change API endpoint.
+- `src/routes/(admin)/incidents/[id]/IncidentMetadata.svelte` — Status change display in incident views.
+- `src/lib/components/vehicle/VehicleStatusQuickActions.svelte` — Quick action UI component with server-response sync.
+- `src/lib/components/vehicle/VehicleStatusRequests.svelte` — Modal-based status change request component.

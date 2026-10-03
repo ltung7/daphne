@@ -10,9 +10,10 @@
 	interface Props {
 		initialHandover: DocumentGenerator.HandoverDocumentRecord;
 		unilateral?: boolean;
+		extraFields?: import('svelte').Snippet<[{ model: any, errors: any, touch: any }]>;
 	}
 
-	let { initialHandover, unilateral = false }: Props = $props();
+	let { initialHandover, unilateral = false, extraFields }: Props = $props();
 
 	let handoverProtocol: DocumentGenerator.HandoverDocumentRecord = $state({
 		...cleanHandoverProtocol,
@@ -70,7 +71,7 @@
 	});
 </script>
 
-<ReturnHandoverProtocolForm bind:handoverProtocol {cleanHandoverProtocol} {postUrl} {unilateral} requiredEquipment={initialHandover} {docTitle} bind:id>
+<ReturnHandoverProtocolForm bind:handoverProtocol {cleanHandoverProtocol} {postUrl} {unilateral} requiredEquipment={initialHandover} {docTitle} bind:id {extraFields}>
 	{#snippet header()}
 		<section class="pb-3 mb-3 border-bottom">
 			{#if managers.length}

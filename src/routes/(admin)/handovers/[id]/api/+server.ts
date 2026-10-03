@@ -3,7 +3,7 @@ import type { RequestHandler } from "./$types";
 import generateHandoverDocument from "$lib/documents/handover.document";
 import makeResponse from "$lib/utils/makePdfBufferResponse";
 import { deleteVehicleHandover, getVehicleHandovers, setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
-import { assignVehicleAndCloseHandover } from "$lib/server/services/vehicleStatus.service";
+import { assignVehicleAndCloseHandover } from "$lib/server/services/vehicleHandover.service";
 import { resendEnvelope } from "$lib/server/services/docusign/docusign.service";
 
 export const POST: RequestHandler = async ({ params, request, locals }) => {
@@ -39,6 +39,10 @@ export const POST: RequestHandler = async ({ params, request, locals }) => {
             })
             break;
         }
+        case 'cancel': {
+            await setVehicleHandovers(handover.id, { cancelled: Date.now() });
+            break;
+        }
     }
 
     return json({ success: true })
@@ -48,6 +52,7 @@ export const DELETE: RequestHandler = async ({ params }) => {
     const handover = await getVehicleHandovers(params.id);
     if (!handover) throw error(404, 'Dokument nie został odnaleziony');
     if (handover.closed) throw error(400, 'Dokument został już zamknięty - nie można go usunąć');
+    if (handover.cancelled) throw error(400, 'Dokument został anulowany - nie można go usunąć');
     if (handover.docusignId) throw error(400, 'Dokument został wysłany do DocuSign - nie można go usunąć');
     await deleteVehicleHandover(params.id);
     return json({  success: true })

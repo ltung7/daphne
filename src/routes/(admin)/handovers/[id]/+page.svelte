@@ -19,7 +19,7 @@
 
 <PageTitle title={title} subtitle={data.handover.id} back="/handovers" />
 
-{#if data.handover.type === 'assign' && data.handover.closed !== false}
+{#if data.handover.type === 'assign' && data.handover.closed !== false && !data.handover.cancelled}
 	<PageTopActions>
 		<IconLink icon="undo" caption="Zwrot pojazdu" size={6} href="/handovers/{data.handover.id}/return" />
 		<IconLink icon="exclamation" caption="Odbiór jednostronny" outline color="danger" size={6} href="/handovers/{data.handover.id}/unilateral" />
@@ -32,7 +32,7 @@
 	</PageTopActions>
 {/if}
 
-{#if data.handover.closed !== false}
+{#if data.handover.closed !== false || data.handover.cancelled}
 	<ExistingHandoverProtocol handoverProtocol={data.handover} />
 {:else if data.handover.type === 'assign'}
 	<EditAssignmentHandoverProtocol handoverProtocol={data.handover} admin={data.admin} />

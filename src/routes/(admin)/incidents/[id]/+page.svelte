@@ -76,12 +76,12 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-12 col-md-6 mb-3">
+		<div class="col-12 col-md-6 mt-3">
 			<ul class="list-unstyled mb-0">
 				<li class="mb-2"><strong>Data zgłoszenia:</strong> <br /> {new Date(incident.timestamp).toLocaleString()}</li>
 			</ul>
 		</div>
-		<div class="col-12 col-md-6 mb-3">
+		<div class="col-12 col-md-6 mt-3">
 			<ul class="list-unstyled mb-0">
 				{#if incident.resolvedAt}
 					<li class="mb-2"><strong>Rozwiązano:</strong> <br /> {new Date(incident.resolvedAt).toLocaleString()}</li>

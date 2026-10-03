@@ -50,7 +50,7 @@
 				{:else}
 					<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" onclick={() => sendAction('pdf')} />
 				{/if}
-				<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" onclick={() => sendAction('docusign')} disabled={Boolean(handoverProtocol.docusignSigned)} />
+				<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" onclick={() => sendAction('docusign')} disabled={Boolean(handoverProtocol.docusignSigned) || Boolean(handoverProtocol.cancelled)} />
 			</div>
 		</div>
 	</div>

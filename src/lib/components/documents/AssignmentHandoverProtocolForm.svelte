@@ -23,6 +23,10 @@
 
 	let { handoverProtocol = $bindable(), cleanHandoverProtocol = defaultCleanHandoverProtocol, postUrl, id = $bindable(), readonly = false, admin = false, header }: Props = $props();
 
+	const isClosed = $derived(Boolean((handoverProtocol as any).closed));
+	const isCancelled = $derived(Boolean(handoverProtocol.cancelled));
+	const isLocked = $derived(readonly || isClosed || isCancelled);
+
 	function hasOnlyAllowedErrors<T extends object>(errors: Partial<Record<keyof T, string | undefined>>, allowedKeys: (keyof T)[]): boolean {
 		const allowedSet = new Set<string>(allowedKeys as string[]);
 
@@ -32,7 +36,10 @@
 		});
 	}
 
-	const sendAction = async (action: 'pdf' | 'docusign' | 'save' | 'close') => {
+	const sendAction = async (action: 'pdf' | 'docusign' | 'save' | 'close' | 'cancel') => {
+		if (action === 'cancel') {
+			if (!confirm('Czy na pewno chcesz anulować ten protokół?')) return;
+		}
 		startLoad();
 		if (action === 'pdf') {
 			const response = await internal.post(postUrl, { id, action: 'save', handover: handoverProtocol });
@@ -54,7 +61,7 @@
 		} else {
 			const response = await internal.post(postUrl, { id, action, handover: handoverProtocol });
 			endLoad();
-			if (action === 'close') {
+			if (action === 'close' || action === 'cancel') {
 				location.reload();
 			} else if (response.id) {
 				goto(`/handovers/${response.id}`);
@@ -68,15 +75,18 @@
 		{#if header}
 			{@render header()}
 		{/if}
-		<HandoverProtocolFields bind:handoverProtocol {touch} {errors} {readonly} />
+		<HandoverProtocolFields bind:handoverProtocol {touch} {errors} readonly={isLocked} />
 	{/snippet}
 	{#snippet submitSnippet({ isValid, errors })}
 		{@const halfValid = hasOnlyAllowedErrors<DocumentGenerator.HandoverDocument>(errors, [ 'managerName', 'managerEmail' ])}
-		<IconButton icon="disk" caption='Zapisz bez wydania' size={6} color="dark" class="ms-2 mb-0" disabled={!isValid || readonly} onclick={() => sendAction('save')} />
-		<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" disabled={!halfValid || readonly} onclick={() => sendAction('pdf')} />
-		<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" disabled={!isValid || readonly} onclick={() => sendAction('docusign')} />
+		<IconButton icon="disk" caption='Zapisz bez wydania' size={6} color="dark" class="ms-2 mb-0" disabled={!isValid || isLocked} onclick={() => sendAction('save')} />
+		<IconButton icon="print" caption="Pobierz PDF" color="primary" size={6} class="ms-2 mb-0" disabled={!halfValid || isLocked} onclick={() => sendAction('pdf')} />
+		<IconButton icon="digital-signature" caption="Wyślij DocuSign" color="success" size={6} class="ms-2 mb-0" disabled={!isValid || isLocked} onclick={() => sendAction('docusign')} />
+		{#if id}
+			<IconButton icon="cross-circle" caption="Anuluj" color="danger" size={6} class="ms-2 mb-0" disabled={isLocked} onclick={() => sendAction('cancel')} />
+		{/if}
 		{#if admin}
-			<IconButton icon="handshake" caption="Zakończ (test)" color="warning" size={6} class="ms-2 mb-0" onclick={() => sendAction('close')} />
+			<IconButton icon="handshake" caption="Zakończ (test)" color="warning" size={6} class="ms-2 mb-0" disabled={isLocked} onclick={() => sendAction('close')} />
 		{/if}
 	{/snippet}
 </CardForm>

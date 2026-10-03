@@ -6,6 +6,7 @@
 	import TooltipSquareIconButton from '$lib/misc/TooltipSquareIconButton.svelte';
 	import IconLink from '$lib/misc/IconLink.svelte';
 	import PageTitle from '$lib/misc/PageTitle.svelte';
+	import TruncatedText from '$lib/misc/TruncatedText.svelte';
 	import { sortByTimestamp } from '$lib/utils/sortByTimestamp';
 
 	let handovers: DocumentGenerator.HandoverDocumentRecord[] = $state([]);
@@ -63,9 +64,9 @@
 				<td>{row.registrationNumber}</td>
 				<td>{row.driverName}</td>
 				<td>
-					<div class="text-truncate" style="max-width: 250px;">
+					<TruncatedText width="20vw">
 						{row.visual}
-					</div>
+					</TruncatedText>
 				</td>
 			{/snippet}
 		</DatatableWrapper>

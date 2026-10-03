@@ -335,7 +335,7 @@ declare global {
 			driverId: string;
 			handoverId: string;
 			timestamp: number;
-			type: 'assign' | 'return' | 'unilateral'
+			type: HandoverDocumentType;
 		}
 
 		type ImageInspectionCategory =
@@ -807,6 +807,7 @@ declare global {
 			witness?: string;
 			reasonForRecovery?: string;
 			foundItems?: string[]; // Driver's personal items found in vehicle
+			cancelled?: number;
 		}
 
 		interface HandoverDocumentRecord extends HandoverDocument {
@@ -819,6 +820,7 @@ declare global {
 			docusignSigned?: number;
 			printed?: number;
 			closed: false | number;
+			cancelled?: number;
 			url?: string;
 		}
 

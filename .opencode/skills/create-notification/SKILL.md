@@ -17,6 +17,7 @@ When asked to "create a notification", "add the [X] notification", or "implement
 ### 1. Define the Types
 - Determine the required data payload for the notification.
 - Create an interface `[Name]Data` (e.g., `SettlementData`).
+- **Note:** Use `userName` and `userId` to denote the requester or person responsible, but NOT the driver.
 
 ### 2. Update Translations First
 - Add the necessary translation keys to the English base file first (`src/lib/server/notifications/localized/messages/notifications_en.json`).

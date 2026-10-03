@@ -7,17 +7,11 @@
 	let { data }: PageProps = $props();
 </script>
 
-<PageTitle
-	title="Zwrot pojazdu"
-	subtitle={`Wprowadź szczegóły zwrotu pojazdu dla ${data.handover.registrationNumber}`}
-	back={`/handovers/${data.handover.id}`}
->
+<PageTitle title="Zwrot pojazdu" subtitle={`Wprowadź szczegóły zwrotu pojazdu dla ${data.handover.registrationNumber}`} back={`/handovers/${data.handover.id}`}>
 	<div class="d-flex gap-2">
-		<IconLink icon="car" color="warning" caption="Odbiór jednostronny" href={`/handovers/${data.handover.id}/unilateral`} />
+		<IconLink icon="garage-car" color="danger" caption="Odbiór jednostronny" href={`/handovers/${data.handover.id}/unilateral`} />
 		<IconLink icon="left" color="dark" caption="Powrót" href={`/handovers/${data.handover.id}`} />
 	</div>
 </PageTitle>
 
-<NewReturnHandoverProtocol
-	initialHandover={data.handover}
-/>
+<NewReturnHandoverProtocol initialHandover={data.handover} />

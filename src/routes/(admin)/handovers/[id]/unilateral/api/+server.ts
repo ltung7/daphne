@@ -3,7 +3,7 @@ import type { RequestHandler } from "./$types";
 import generateHandoverUnilateralDocument from "$lib/documents/handover-unilateral.documents";
 import makeResponse from "$lib/utils/makePdfBufferResponse";
 import { createVehicleHandover, setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
-import { unilateralReturnVehicleAndCloseHandover } from "$lib/server/services/vehicleStatus.service";
+import { unilateralReturnVehicleAndCloseHandover } from "$lib/server/services/vehicleHandover.service";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const data = await request.json();

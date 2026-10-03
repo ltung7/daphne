@@ -3,7 +3,8 @@ import type { RequestHandler } from "./$types";
 import generateHandoverDocument from "$lib/documents/handover.document";
 import makeResponse from "$lib/utils/makePdfBufferResponse";
 import { createVehicleHandover, setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
-import { assignVehicleAndCloseHandover } from "$lib/server/services/vehicleStatus.service";
+import { getUser } from "$lib/server/db/firebase/users.fdb";
+import { sendHandoverDocumentCreatedNotification } from "$lib/server/notifications";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
     const data = await request.json();
@@ -15,12 +16,33 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     } else {
         const newData: Omit<DocumentGenerator.HandoverDocumentRecord, 'id'> = { 
             ...variables,
-            manualClose: data.action === 'close',
+            manualClose: false,
             timestamp: Date.now(),
             type: 'assign',
             closed: false
         };
         id = await createVehicleHandover(newData);
+        if (id) {
+            try {
+                const manager = variables.managerId ? await getUser(variables.managerId) : null;
+                const recipient: App.BaseContact = manager ?? {
+                    id: variables.managerId || locals._user?.id || 'system',
+                    name: variables.managerName || locals._user?.name || 'Manager',
+                    email: variables.managerEmail || locals._user?.email || '',
+                    preferredLanguage: 'pl'
+                };
+
+                await sendHandoverDocumentCreatedNotification(recipient, {
+                    registrationNumber: variables.registrationNumber,
+                    documentType: 'assign',
+                    userId: locals._user?.id ?? 'system',
+                    userName: locals._user?.name ?? 'System',
+                    handoverId: id
+                }, 'admin_manual');
+            } catch (err) {
+                console.error('Failed to send handover created notification:', err);
+            }
+        }
     }
 
     if (!id) {
@@ -36,19 +58,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
         }
         case 'docusign': {
             await generateHandoverDocument(variables, id, true);
-            break;
-        }
-        case 'close': {
-            await assignVehicleAndCloseHandover({
-                driverId: variables.driverId,
-                driverName: variables.driverName,
-                handoverId: id,
-                registrationNumber: variables.registrationNumber,
-                approver: {
-                    id: locals._user!.id,
-                    name: locals._user!.name
-                }
-            })
             break;
         }
     }

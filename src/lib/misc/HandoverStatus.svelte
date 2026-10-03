@@ -2,7 +2,7 @@
 	import { Tooltip } from '@sveltestrap/sveltestrap';
 	import UIcon from "./UIcon.svelte";
 
-	type Status = 'closed' | 'printed' | 'signed' | 'pending' | 'open';
+	type Status = 'cancelled' | 'closed' | 'printed' | 'signed' | 'pending' | 'open';
 
 	interface Props {
 		handover: DocumentGenerator.HandoverDocumentRecord;
@@ -19,6 +19,12 @@
 	}
 
 	const statusMap: Record<Status, StatusConfig> = {
+		cancelled: {
+			icon: 'cross-circle',
+			caption: "Anulowany",
+			text: "Protokół został anulowany",
+			color: '#d32f2f'
+		},
 		closed: {
 			icon: 'check-circle',
 			caption: "Zamknięty",
@@ -53,6 +59,7 @@
 	};
 
 	let status: Status = $derived.by(() => {
+		if (handover.cancelled) return 'cancelled';
 		if (handover.docusignId) {
 			if (handover.docusignSigned) return 'signed';
 			else return 'pending';
