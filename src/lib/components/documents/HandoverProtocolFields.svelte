@@ -26,11 +26,29 @@
 		errors?: Record<string, string>;
 		touch?: (field: any) => void;
 		readonly?: boolean;
+		unilateral?: boolean;
 	}
 
-	let { handoverProtocol = $bindable(), requiredEquipment, errors = {}, touch, readonly }: Props = $props();
+	let { handoverProtocol = $bindable(), requiredEquipment, errors = {}, touch, readonly, unilateral = false }: Props = $props();
 	let record = $derived(handoverProtocol as unknown as DocumentGenerator.HandoverDocumentRecord);
 	let idType: string = $derived(identificationDocumentNames[handoverProtocol.identificationDocumentType as Driver.IdentificationDocumentType]);
+
+	let foundItemsText = $state('');
+	let isFocusedOnFoundItems = $state(false);
+
+	$effect(() => {
+		const r = record as any;
+		if (r.foundItems) {
+			const currentText = r.foundItems.join('\n');
+			if (currentText !== foundItemsText && !isFocusedOnFoundItems) {
+				foundItemsText = currentText;
+			}
+		}
+	});
+
+	const updateFoundItems = () => {
+		(handoverProtocol as any).foundItems = foundItemsText.split('\n').filter((s) => s.trim() !== '');
+	};
 
 	const onFinished = (progress: SvelteCustom.SavedProgress<Vehicle.ImageInspectionCategory>) => {
 		const urls = Object.values(progress)
@@ -84,12 +102,29 @@
 	<div class="col-12 col-md-6">
 		<CustomFormText caption="Numer dokumentu tożsamości kierowcy" value={handoverProtocol.identificationDocumentNumber} readonly />
 	</div>
-	{#if record.witness}
+	{#if unilateral && typeof (handoverProtocol as any).witness === 'string'}
+		<div class="col-12 col-md-6">
+			<CustomFormText caption="Świadek" bind:value={(handoverProtocol as any).witness} {readonly} placeholder={readonly ? '' : 'Imię i nazwisko świadka'} error={errors.witness} onblur={() => touch?.('witness')} />
+		</div>
+	{:else if record.witness}
 		<div class="col-12 col-md-6">
 			<CustomFormText caption="Świadek" value={record.witness} readonly />
 		</div>
 	{/if}
-	{#if record.reasonForRecovery}
+	{#if unilateral && typeof (handoverProtocol as any).witnessEmail === 'string'}
+		<div class="col-12 col-md-6">
+			<CustomFormText caption="Email świadka" bind:value={(handoverProtocol as any).witnessEmail} {readonly} placeholder={readonly ? '' : 'adres@email.com'} error={errors.witnessEmail} onblur={() => touch?.('witnessEmail')} />
+		</div>
+	{:else if (record as any).witnessEmail}
+		<div class="col-12 col-md-6">
+			<CustomFormText caption="Email świadka" value={(record as any).witnessEmail} readonly />
+		</div>
+	{/if}
+	{#if unilateral && typeof (handoverProtocol as any).reasonForRecovery === 'string'}
+		<div class="col-12">
+			<CustomFormText caption="Powód odbioru" bind:value={(handoverProtocol as any).reasonForRecovery} {readonly} error={errors.reasonForRecovery} onblur={() => touch?.('reasonForRecovery')} />
+		</div>
+	{:else if record.reasonForRecovery}
 		<div class="col-12">
 			<CustomFormText caption="Powód odbioru" value={record.reasonForRecovery} readonly />
 		</div>
@@ -154,7 +189,26 @@
 	<div class="col-12 col-md-6">
 		<CustomFormText caption="Adres e‑mail kierowcy" bind:value={handoverProtocol.driverEmail} {readonly} />
 	</div>
-	{#if record.foundItems?.length}
+	{#if unilateral && (handoverProtocol as any).foundItems !== undefined}
+		<div class="col-12 border-top pt-3">
+			<h5>7. ZNALEZIONE PRZEDMIOTY</h5>
+		</div>
+		<div class="col-12">
+			<CustomFormTextarea
+				bind:value={foundItemsText}
+				caption="Rzeczy pozostawione przez kierowcę (każdy przedmiot od nowej linii)"
+				error={errors.foundItems}
+				onblur={() => {
+					touch?.('foundItems');
+					isFocusedOnFoundItems = false;
+				}}
+				onChange={updateFoundItems}
+				onInput={updateFoundItems}
+				id="foundItemsTextarea"
+				{readonly}
+			/>
+		</div>
+	{:else if record.foundItems?.length}
 		<div class="col-12 border-top pt-3">
 			<h5>7. ZNALEZIONE PRZEDMIOTY</h5>
 		</div>

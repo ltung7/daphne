@@ -60,6 +60,7 @@ export const handoverDocumentSchema = z.object({
     // Optional fields for return/unilateral handovers
     handoverId: z.string().optional(),
     witness: z.string().optional(),
+    witnessEmail: z.string().email().optional().or(z.literal('')),
     reasonForRecovery: z.string().optional(),
     foundItems: z.array(z.string()).optional(),
 });

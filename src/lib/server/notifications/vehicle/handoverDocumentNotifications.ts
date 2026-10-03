@@ -6,25 +6,20 @@ import { getCategorizedBaseMessage } from '../localized/localizedMailerMessages'
 
 export interface HandoverDocumentCreatedData {
     registrationNumber: string;
-    documentType: 'assign' | 'return' | 'unilateral';
+    documentType: Vehicle.HandoverDocumentType;
     userId: string;
     userName: string;
     handoverId: string;
 }
 
-export interface HandoverDocumentClosedData {
-    registrationNumber: string;
-    documentType: 'assign' | 'return' | 'unilateral';
-    userId: string;
-    userName: string;
-    vehicleStatus: string;
-    handoverId: string;
+export interface HandoverDocumentClosedData extends HandoverDocumentCreatedData {
+    newStatus: Vehicle.Status;
 }
 
 const handoverChannels = prepareNotificationChannels({
     action: PUBLIC_URL + '/admin/handovers',
-    incidentCategory: 'compliance',
-    channels: ['sms', 'push', 'inapp', 'incident']
+    incidentCategory: 'vehicle_issue',
+    channels: [ 'sms', 'push', 'inapp', 'incident' ]
 });
 
 export const handoverDocumentCreatedNotification: NotificationDefinition<HandoverDocumentCreatedData> = {
@@ -32,7 +27,15 @@ export const handoverDocumentCreatedNotification: NotificationDefinition<Handove
     priority: 'medium',
     client: true,
     admin: true,
-    getBaseMessage: (m, data) => getCategorizedBaseMessage(m, { ...data }),
+    getBaseMessage: (m, data) => {
+        const base = getCategorizedBaseMessage(m, { ...data });
+        return {
+            ...base,
+            title: data.registrationNumber && !base.title.includes(data.registrationNumber)
+                ? `${base.title} (${data.registrationNumber})`
+                : base.title
+        };
+    },
     email: (data, ctx) => ({
         subject: ctx.title,
         htmlBody: `
@@ -40,7 +43,7 @@ export const handoverDocumentCreatedNotification: NotificationDefinition<Handove
                 ${ctx.body}
             </p>
             <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
-                <strong>${ctx.m.consequence}</strong>
+                <strong><a href="${PUBLIC_URL}/handovers/${data.handoverId}">${ctx.m.consequence}</a></strong>
             </p>
             <p style="font-size: 13px; color: #666; margin-top: 24px;">
                 ${ctx.m.footer.replace('{userName}', data.userName).replace('{userId}', data.userId)}
@@ -55,7 +58,15 @@ export const handoverDocumentClosedNotification: NotificationDefinition<Handover
     priority: 'low',
     client: false,
     admin: true,
-    getBaseMessage: (m, data) => getCategorizedBaseMessage(m, { ...data }),
+    getBaseMessage: (m, data) => {
+        const base = getCategorizedBaseMessage(m, { ...data });
+        return {
+            ...base,
+            title: data.registrationNumber && !base.title.includes(data.registrationNumber)
+                ? `${base.title} (${data.registrationNumber})`
+                : base.title
+        };
+    },
     email: (data, ctx) => ({
         subject: ctx.title,
         htmlBody: `
@@ -63,7 +74,7 @@ export const handoverDocumentClosedNotification: NotificationDefinition<Handover
                 ${ctx.body}
             </p>
             <p style="font-size: 15px; line-height: 1.6; margin-bottom: 16px;">
-                <strong>${ctx.m.consequence.replace('{vehicleStatus}', data.vehicleStatus)}</strong>
+                <strong><a href="${PUBLIC_URL}/handovers/${data.handoverId}">${ctx.m.consequence.replace('{vehicleStatus}', data.newStatus)}</a></strong>
             </p>
             <p style="font-size: 13px; color: #666; margin-top: 24px;">
                 ${ctx.m.footer.replace('{userName}', data.userName).replace('{userId}', data.userId)}

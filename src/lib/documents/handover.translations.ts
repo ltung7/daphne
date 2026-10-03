@@ -6,6 +6,7 @@ export const handoverTranslations: Record<string, DocumentGenerator.HandoverDocu
         unilateralSubtitle: 'Jednostronne przejęcie pojazdu',
         recoveryLocation: 'Dokładne miejsce odzyskania pojazdu (adres/opis)',
         witness: 'Świadek odbioru (Imię i Nazwisko)',
+        witnessEmail: 'Adres e-mail świadka odbioru',
         reasonForRecovery: 'Powód jednostronnego przejęcia', // np. brak kontaktu, koniec umowy, porzucenie
 
         section1Header: '1. DATA I STRONY UMOWY',
@@ -76,6 +77,7 @@ export const handoverTranslations: Record<string, DocumentGenerator.HandoverDocu
         unilateralSubtitle: 'Unilateral Acquisition of Vehicle',
         recoveryLocation: 'Exact location of vehicle recovery (address/description)',
         witness: 'Recovery witness (Name and Surname)',
+        witnessEmail: 'Recovery witness email',
         reasonForRecovery: 'Reason for unilateral acquisition', // e.g., no contact, contract ended, abandonment
 
         section1Header: '1. DATE & PARTIES',

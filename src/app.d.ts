@@ -805,6 +805,7 @@ declare global {
 			images: string[]
 			handoverId?: string;
 			witness?: string;
+			witnessEmail?: string;
 			reasonForRecovery?: string;
 			foundItems?: string[]; // Driver's personal items found in vehicle
 			cancelled?: number;
@@ -838,6 +839,7 @@ declare global {
 			unilateralSubtitle: string
 			recoveryLocation: string
 			witness: string
+			witnessEmail: string
 			reasonForRecovery: string
 			section1Header: string
 			place: string

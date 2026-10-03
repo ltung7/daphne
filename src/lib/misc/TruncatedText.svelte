@@ -3,41 +3,28 @@
 	import type { Snippet } from 'svelte';
 
 	interface Props {
-		text?: string;
 		width?: string;
 		children?: Snippet;
 	}
 
-	let { text = '', width = '20vw', children }: Props = $props();
+	let { width = '20vw', children }: Props = $props();
 	let expanded = $state(false);
 
-	const handleClick = () => expanded = !expanded;
+	const handleClick = () => (expanded = !expanded);
 	const handleKeydown = (e: KeyboardEvent) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
 			handleClick();
 		}
 	};
+
+	const tooltipText = $derived(expanded ? 'Kliknij, aby zwinąć' : 'Kliknij, aby rozwinąć');
 </script>
 
-<TooltipText
-	{text}
-	hoverText={text}
-	tooltipClass="max-w-none"
->
-	<span
-		role="button"
-		tabindex={0}
-		class:truncate={!expanded}
-		class:cursor-pointer={!!text || !!children}
-		style="max-width: {width};"
-		onclick={handleClick}
-		onkeydown={handleKeydown}
-	>
+<TooltipText hoverText={tooltipText} tooltipClass="max-w-none">
+	<span role="button" tabindex={0} class:truncate={!expanded} style="max-width: {width};" onclick={handleClick} onkeydown={handleKeydown}>
 		{#if children}
 			{@render children()}
-		{:else}
-			{text}
 		{/if}
 	</span>
 </TooltipText>

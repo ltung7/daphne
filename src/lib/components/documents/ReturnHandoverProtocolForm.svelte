@@ -1,4 +1,4 @@
-<script lang="ts" generics="T extends DocumentGenerator.HandoverDocument & { id?: string; type?: Vehicle.HandoverDocumentType; foundItems?: string[] }">
+<script lang="ts" generics="T extends DocumentGenerator.HandoverDocument & { id?: string; type?: Vehicle.HandoverDocumentType; foundItems?: string[]; witness?: string; witnessEmail?: string; reasonForRecovery?: string; cancelled?: number; closed?: false | number }">
 	import { goto } from '$app/navigation';
 	import { handoverDocumentSchema } from '$lib/assets/zodschemas/handover.zod';
 	import CardForm from '$lib/form/CardForm.svelte';
@@ -10,7 +10,7 @@
 	import HandoverProtocolFields from './HandoverProtocolFields.svelte';
 	import type { Snippet } from 'svelte';
 
-	interface Props<T extends DocumentGenerator.HandoverDocument & { id?: string; type?: Vehicle.HandoverDocumentType; foundItems?: string[]; cancelled?: number; closed?: false | number }> {
+	interface Props<T extends DocumentGenerator.HandoverDocument & { id?: string; type?: Vehicle.HandoverDocumentType; foundItems?: string[]; witness?: string; witnessEmail?: string; reasonForRecovery?: string; cancelled?: number; closed?: false | number }> {
 		handoverProtocol: T;
 		cleanHandoverProtocol: T;
 		postUrl: string;
@@ -21,10 +21,9 @@
 		readonly?: boolean;
 		admin?: boolean;
 		header?: Snippet;
-		extraFields?: Snippet<[{ model: T, errors: Partial<Record<keyof T, string | undefined>>, touch: (field: keyof T) => void }]>;
 	}
 
-	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), readonly = false, admin = false, header, extraFields }: Props<T> = $props();
+	let { handoverProtocol = $bindable(), cleanHandoverProtocol, postUrl, unilateral = false, requiredEquipment, docTitle, id = $bindable(), readonly = false, admin = false, header }: Props<T> = $props();
 
 	const isClosed = $derived(Boolean((handoverProtocol as any).closed));
 	const isCancelled = $derived(Boolean(handoverProtocol.cancelled));
@@ -78,10 +77,7 @@
 		{#if header}
 			{@render header()}
 		{/if}
-		{#if extraFields}
-			{@render extraFields({ model: handoverProtocol, errors: errors as any, touch: touch as any })}
-		{/if}
-		<HandoverProtocolFields bind:handoverProtocol {requiredEquipment} {touch} errors={errors as Partial<Record<keyof DocumentGenerator.HandoverDocument, string | undefined>>} readonly={isLocked} />
+		<HandoverProtocolFields bind:handoverProtocol {requiredEquipment} {touch} errors={errors as Partial<Record<keyof DocumentGenerator.HandoverDocument, string | undefined>>} readonly={isLocked} {unilateral} />
 	{/snippet}
 	{#snippet submitSnippet({ isValid, errors })}
 		{@const halfValid = hasOnlyAllowedErrors<DocumentGenerator.HandoverDocument>(errors, [ 'managerName', 'managerEmail' ])}

@@ -3,7 +3,8 @@ import type { RequestHandler } from "./$types";
 import generateHandoverUnilateralDocument from "$lib/documents/handover-unilateral.documents";
 import makeResponse from "$lib/utils/makePdfBufferResponse";
 import { createVehicleHandover, setVehicleHandovers } from "$lib/server/db/firebase/vehicleHandovers.fdb";
-import { unilateralReturnVehicleAndCloseHandover } from "$lib/server/services/vehicleHandover.service";
+import { getUser } from "$lib/server/db/firebase/users.fdb";
+import { sendHandoverDocumentCreatedNotification } from "$lib/server/notifications";
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	const data = await request.json();
@@ -21,6 +22,27 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			manualClose: false
 		};
 		id = await createVehicleHandover(newData);
+		if (id) {
+			try {
+				const manager = variables.managerId ? await getUser(variables.managerId) : null;
+				const recipient: App.BaseContact = manager ?? {
+					id: variables.managerId || locals._user?.id || 'system',
+					name: variables.managerName || locals._user?.name || 'Manager',
+					email: variables.managerEmail || locals._user?.email || '',
+					preferredLanguage: 'pl'
+				};
+
+				await sendHandoverDocumentCreatedNotification(recipient, {
+					registrationNumber: variables.registrationNumber,
+					documentType: 'unilateral',
+					userId: locals._user?.id ?? 'system',
+					userName: locals._user?.name ?? 'System',
+					handoverId: id
+				}, 'admin_manual');
+			} catch (err) {
+				console.error('Failed to send unilateral handover created notification:', err);
+			}
+		}
 	}
 
 	if (!id) {
@@ -34,19 +56,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 			await setVehicleHandovers(id, { printed: Date.now() });
 			return makeResponse(buffer, name);
 		}
-		case 'close': {
-			const result = await unilateralReturnVehicleAndCloseHandover({
-				registrationNumber: variables.registrationNumber,
-				driverId: variables.driverId,
-				handoverId: id,
-				approver: {
-					id: locals._user!.id,
-					name: locals._user!.name
-				}
-			});
-			if (!result.success) {
-				throw error(500, result.error || 'Failed to close unilateral return handover');
-			}
+		case 'cancel': {
+			await setVehicleHandovers(id, { cancelled: Date.now() });
 			break;
 		}
 	}
