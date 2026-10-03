@@ -9,7 +9,8 @@ const defaultMatrix: Record<App.MatrixNotificationType, App.BaseContact[]> = {
 	driver_document_expired: [],
 	early_settlement_requested: [],
 	early_settlement_approved: [],
-	early_settlement_rejected: []
+	early_settlement_rejected: [],
+	vehicle_status_changed: []
 };
 
 export const GET: RequestHandler = async () => {

@@ -89,5 +89,35 @@
     "title": "Maagang Settlement Tinanggihan",
     "body": "Ang iyong kahilingan sa maagang settlement para sa {requestedAmount} PLN ay tinanggihan.",
     "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa fleet administrator."
+  },
+  "handover_document_created": {
+    "title": "Nalikha ang protokol ng paglilipat at pagtanggap",
+    "body": "Nalikha ang protokol ng paglilipat at pagtanggap ({categoryName}) para sa sasakyang {registrationNumber}.",
+    "consequence": "Pakisuri ang protokol.",
+    "footer": "Nilikha ni: {userName} ({userId})",
+    "assign_category": "paglilipat ng sasakyan",
+    "return_category": "pagbabalik ng sasakyan",
+    "unilateral_category": "unilateral na pagbawi"
+  },
+  "handover_document_closed": {
+    "title": "Isinara ang protokol ng paglilipat at pagtanggap",
+    "body": "Isinara ang protokol ng paglilipat at pagtanggap ({categoryName}) para sa sasakyang {registrationNumber}.",
+    "consequence": "Katayuan ng sasakyan: {vehicleStatus}.",
+    "footer": "Isinara ni: {userName} ({userId})",
+    "assign_category": "paglilipat ng sasakyan",
+    "return_category": "pagbabalik ng sasakyan",
+    "unilateral_category": "unilateral na pagbawi"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

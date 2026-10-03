@@ -89,5 +89,35 @@
     "title": "प्रारंभिक निपटान अस्वीकृत",
     "body": "{requestedAmount} PLN के लिए आपका प्रारंभिक निपटान अनुरोध अस्वीकृत कर दिया गया है।",
     "footer": "यदि आपके कोई प्रश्न हैं, तो कृपया बेड़े के व्यवस्थापक से संपर्क करें।"
+  },
+  "handover_document_created": {
+    "title": "वाहन सुपुर्दगी प्रोटोकॉल बनाया गया",
+    "body": "वाहन {registrationNumber} के लिए सुपुर्दगी एवं स्वीकृति प्रोटोकॉल ({categoryName}) बनाया गया है।",
+    "consequence": "कृपया प्रोटोकॉल की समीक्षा करें।",
+    "footer": "निर्माता: {userName} ({userId})",
+    "assign_category": "वाहन सौंपना",
+    "return_category": "वाहन वापसी",
+    "unilateral_category": "एकपक्षीय अधिग्रहण"
+  },
+  "handover_document_closed": {
+    "title": "वाहन सुपुर्दगी प्रोटोकॉल बंद किया गया",
+    "body": "वाहन {registrationNumber} के लिए सुपुर्दगी एवं स्वीकृति प्रोटोकॉल ({categoryName}) बंद किया गया है।",
+    "consequence": "वाहन स्थिति: {vehicleStatus}।",
+    "footer": "बंद कर्ता: {userName} ({userId})",
+    "assign_category": "वाहन सौंपना",
+    "return_category": "वाहन वापसी",
+    "unilateral_category": "एकपक्षीय अधिग्रहण"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

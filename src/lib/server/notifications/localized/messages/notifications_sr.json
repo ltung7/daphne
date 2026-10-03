@@ -89,5 +89,35 @@
     "title": "Rano izmirenje odbijeno",
     "body": "Vaš zahtev za rano izmirenje u iznosu od {requestedAmount} PLN je odbijen.",
     "footer": "Ako imate bilo kakvih pitanja, kontaktirajte administratora voznog parka."
+  },
+  "handover_document_created": {
+    "title": "Zapisnik o primopredaji kreiran",
+    "body": "Kreiran je zapisnik o primopredaji ({categoryName}) za vozilo {registrationNumber}.",
+    "consequence": "Molimo vas da pregledate zapisnik.",
+    "footer": "Sastavio: {userName} ({userId})",
+    "assign_category": "predaja vozila",
+    "return_category": "povraćaj vozila",
+    "unilateral_category": "jednostrano preuzimanje"
+  },
+  "handover_document_closed": {
+    "title": "Zapisnik o primopredaji zatvoren",
+    "body": "Zapisnik o primopredaji ({categoryName}) za vozilo {registrationNumber} je zatvoren.",
+    "consequence": "Status vozila: {vehicleStatus}.",
+    "footer": "Zatvorio: {userName} ({userId})",
+    "assign_category": "predaja vozila",
+    "return_category": "povraćaj vozila",
+    "unilateral_category": "jednostrano preuzimanje"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

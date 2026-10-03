@@ -1,34 +1,34 @@
 <script lang="ts">
 	interface Props {
-		category: 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
+		category: App.Incident.Category;
 		small?: boolean;
 	}
 
 	let { category, small = false }: Props = $props();
 
-	function getCategoryInfo(cat: typeof category): { label: string; class: string } {
+	function getCategoryInfo(cat: typeof category): { label: string; bg: string; text: string } {
 		switch (cat) {
 			case 'safety':
-				return { label: 'Bezpieczeństwo', class: 'bg-danger' };
+				return { label: 'Bezpieczeństwo', bg: '#dc3545', text: '#ffffff' };
 			case 'platform_account':
-				return { label: 'Konto platformy', class: 'bg-primary' };
+				return { label: 'Redesharing', bg: '#0d6efd', text: '#ffffff' };
 			case 'compliance':
-				return { label: 'Zgodność', class: 'bg-info text-dark' };
+				return { label: 'Zgodność', bg: '#fd7e14', text: '#ffffff' };
 			case 'driver_conduct':
-				return { label: 'Postępowanie kierowcy', class: 'bg-warning text-dark' };
+				return { label: 'Kierowca', bg: '#ffc107', text: '#212529' };
 			case 'vehicle_issue':
-				return { label: 'Problem z pojazdem', class: 'bg-secondary' };
+				return { label: 'Pojazd', bg: '#0dcaf0', text: '#212529' };
 			case 'data_sync':
-				return { label: 'Synchronizacja danych', class: 'bg-success' };
+				return { label: 'Synchronizacja', bg: '#198754', text: '#ffffff' };
 			case 'financial':
-				return { label: 'Finanse', class: 'bg-dark' };
+				return { label: 'Finanse', bg: '#6f42c1', text: '#ffffff' };
 			default:
-				return { label: cat, class: 'bg-light text-dark' };
+				return { label: cat, bg: '#d63384', text: '#ffffff' };
 		}
 	}
 
-	const { label, class: badgeClass } = $derived(getCategoryInfo(category));
+	const { label, bg, text } = $derived(getCategoryInfo(category));
 	const sizeClass = $derived(small ? 'small' : 'fs-6');
 </script>
 
-<span class="badge {badgeClass} {sizeClass}">{label}</span>
+<span class="badge {sizeClass}" style="background-color: {bg}; color: {text};">{label}</span>

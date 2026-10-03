@@ -11,15 +11,11 @@ export const GET: RequestHandler = async ({ url, setHeaders, locals }) => {
 
 	if (url.searchParams.has('count')) {
 		const count = await getUnreadCount(uid);
-		
 		cacheControl(setHeaders);
-		
 		return json({ success: true, count });
 	}
 
 	const items = await getUserNotifications(uid);
-	
 	cacheControl(setHeaders);
-	
 	return json({ success: true, items })
 };

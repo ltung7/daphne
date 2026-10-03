@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		status: 'info' | 'open' | 'resolved';
+		status: App.Incident.Status;
 		small?: boolean;
 	}
 

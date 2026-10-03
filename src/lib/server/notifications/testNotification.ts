@@ -23,6 +23,9 @@ import { earlySettlementRejectedNotification, type EarlySettlementRejectedData }
 // eslint-disable-next-line no-constant-binary-expression
 const DUMP_MESSAGES = false && isDev;
 
+import { vehicleStatusChangedNotification, type VehicleStatusChangedData } from './vehicle/vehicleStatusNotifications';
+import { handoverDocumentCreatedNotification, handoverDocumentClosedNotification, type HandoverDocumentCreatedData, type HandoverDocumentClosedData } from './vehicle/handoverDocumentNotifications';
+
 const testReceiver: App.BaseContact = {
     email: 'admin@macropart.com',
     id: 'test-user',
@@ -43,6 +46,9 @@ const notificationsMap: Partial<Record<App.NotificationType, NotificationDefinit
     early_settlement_requested: earlySettlementRequestedNotification,
     early_settlement_approved: earlySettlementApprovedNotification,
     early_settlement_rejected: earlySettlementRejectedNotification,
+    vehicle_status_changed: vehicleStatusChangedNotification,
+    handover_document_created: handoverDocumentCreatedNotification,
+    handover_document_closed: handoverDocumentClosedNotification
 };
 
 const defaultTestData: Record<App.NotificationType, any> = {
@@ -121,7 +127,36 @@ const defaultTestData: Record<App.NotificationType, any> = {
     early_settlement_rejected: {
         driverName: 'Jan Kowalski',
         requestedAmount: 500
-    } as EarlySettlementRejectedData
+    } as EarlySettlementRejectedData,
+
+    /** TODO: Test notification */
+    vehicle_status_changed: {
+        registrationNumber: 'WA12345',
+        previousStatus: 'available',
+        newStatus: 'broken',
+        reason: 'Accident reported',
+        userId: 'admin-123',
+        userName: 'Admin Name'
+    } as VehicleStatusChangedData,
+
+    /** TODO: Test notification */
+    handover_document_created: {
+        registrationNumber: 'WA12345',
+        documentType: 'assign',
+        userId: 'admin-123',
+        userName: 'Admin Name',
+        handoverId: 'handover_123'
+    } as HandoverDocumentCreatedData,
+
+    /** TODO: Test notification */
+    handover_document_closed: {
+        registrationNumber: 'WA12345',
+        documentType: 'return',
+        userId: 'admin-123',
+        userName: 'Admin Name',
+        vehicleStatus: 'available',
+        handoverId: 'handover_123'
+    } as HandoverDocumentClosedData
 };
 
 export const sendTestNotification = async <TData = any>(

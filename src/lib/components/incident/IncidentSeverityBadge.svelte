@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		severity: 'low' | 'medium' | 'high' | 'critical';
+		severity: App.Incident.Severity;
 		small?: boolean;
 	}
 

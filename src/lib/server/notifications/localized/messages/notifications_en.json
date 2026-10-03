@@ -79,9 +79,9 @@
   },
   "vehicle_document_expired": {
     "title": "Vehicle document {categoryName} expired - action required",
-    "body": "The {categoryName} for vehicle {registrationNumber} expired on {expiryDate}.",
-    "consequence": "The vehicle may be disabled until renewal.",
-    "footer": "Contact the administrator to renew.",
+    "body": "Document {categoryName} for vehicle {registrationNumber} expired on {expiryDate}.",
+    "consequence": "Vehicle may be blocked until renewed.",
+    "footer": "Contact administrator for renewal.",
     "registration_category": "registration document",
     "insurance_category": "insurance policy",
     "technical_category": "technical inspection",
@@ -89,5 +89,35 @@
     "platform_category": "platform approval",
     "equipment_category": "equipment certificate",
     "handover_category": "handover document"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
+  },
+  "handover_document_created": {
+    "title": "Vehicle Handover Protocol Created",
+    "body": "A vehicle handover and acceptance protocol ({categoryName}) has been created for vehicle {registrationNumber}.",
+    "consequence": "Please review the protocol.",
+    "footer": "Created by: {userName} ({userId})",
+    "assign_category": "vehicle handover",
+    "return_category": "vehicle return",
+    "unilateral_category": "unilateral takeover"
+  },
+  "handover_document_closed": {
+    "title": "Vehicle Handover Protocol Closed",
+    "body": "The vehicle handover and acceptance protocol ({categoryName}) for vehicle {registrationNumber} has been closed.",
+    "consequence": "Vehicle status: {vehicleStatus}.",
+    "footer": "Closed by: {userName} ({userId})",
+    "assign_category": "vehicle handover",
+    "return_category": "vehicle return",
+    "unilateral_category": "unilateral takeover"
   }
 }

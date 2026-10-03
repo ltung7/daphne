@@ -89,5 +89,35 @@
     "title": "Раннє розрахування відхилено",
     "body": "Ваш запит на раннє розрахування на суму {requestedAmount} PLN було відхилено.",
     "footer": "Якщо у вас є запитання, зверніться до адміністратора автопарку."
+  },
+  "handover_document_created": {
+    "title": "Створено акт приймання-передачі",
+    "body": "Створено акт приймання-передачі ({categoryName}) для транспортного засобу {registrationNumber}.",
+    "consequence": "Будь ласка, ознайомтеся з актом.",
+    "footer": "Склав: {userName} ({userId})",
+    "assign_category": "видача автомобіля",
+    "return_category": "повернення автомобіля",
+    "unilateral_category": "одностороннє вилучення"
+  },
+  "handover_document_closed": {
+    "title": "Закрито акт приймання-передачі",
+    "body": "Акт приймання-передачі ({categoryName}) для транспортного засобу {registrationNumber} закрито.",
+    "consequence": "Статус транспортного засобу: {vehicleStatus}.",
+    "footer": "Закрив: {userName} ({userId})",
+    "assign_category": "видача автомобіля",
+    "return_category": "повернення автомобіля",
+    "unilateral_category": "одностороннє вилучення"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

@@ -89,5 +89,35 @@
     "title": "प्रारम्भिक सेटलमेन्ट अस्वीकृत",
     "body": "{requestedAmount} PLN को लागी तपाईंको प्रारम्भिक सेटलमेन्ट अनुरोध अस्वीकृत गरिएको छ।",
     "footer": "यदि तपाइँसँग कुनै प्रश्नहरू छन् भने, कृपया फ्लीट प्रशासकलाई सम्पर्क गर्नुहोस्।"
+  },
+  "handover_document_created": {
+    "title": "सवारी हस्तान्तरण प्रोटोकल सिर्जना भयो",
+    "body": "सवारी साधन {registrationNumber} को लागि हस्तान्तरण र स्वीकृति प्रोटोकल ({categoryName}) सिर्जना गरिएको छ।",
+    "consequence": "कृपया प्रोटोकलको समीक्षा गर्नुहोस्।",
+    "footer": "सिर्जनाकर्ता: {userName} ({userId})",
+    "assign_category": "सवारी हस्तान्तरण",
+    "return_category": "सवारी फिर्ता",
+    "unilateral_category": "एकपक्षीय पुन:प्राप्ति"
+  },
+  "handover_document_closed": {
+    "title": "सवारी हस्तान्तरण प्रोटोकल बन्द भयो",
+    "body": "सवारी साधन {registrationNumber} को लागि हस्तान्तरण र स्वीकृति प्रोटोकल ({categoryName}) बन्द गरिएको छ।",
+    "consequence": "सवारी स्थिति: {vehicleStatus}।",
+    "footer": "बन्दकर्ता: {userName} ({userId})",
+    "assign_category": "सवारी हस्तान्तरण",
+    "return_category": "सवारी फिर्ता",
+    "unilateral_category": "एकपक्षीय पुन:प्राप्ति"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

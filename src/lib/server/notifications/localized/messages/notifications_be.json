@@ -89,5 +89,35 @@
     "title": "Ранейшы разлік адхілены",
     "body": "Ваш запыт на ранейшы разлік на суму {requestedAmount} PLN быў адхілены.",
     "footer": "Калі ў вас ёсць пытанні, звярніцеся да адміністратара аўтапарка."
+  },
+  "handover_document_created": {
+    "title": "Створаны акт прыёму-перадачы",
+    "body": "Створаны акт прыёму-перадачы ({categoryName}) для транспартнага сродку {registrationNumber}.",
+    "consequence": "Калі ласка, азнаёмцеся з актам.",
+    "footer": "Склаў: {userName} ({userId})",
+    "assign_category": "выдача аўтамабіля",
+    "return_category": "вяртанне аўтамабіля",
+    "unilateral_category": "аднабаковае канфіскаванне"
+  },
+  "handover_document_closed": {
+    "title": "Закрыты акт прыёму-перадачы",
+    "body": "Акт прыёму-перадачы ({categoryName}) для транспартнага сродку {registrationNumber} закрыты.",
+    "consequence": "Статус транспартнага сродку: {vehicleStatus}.",
+    "footer": "Закрыў: {userName} ({userId})"
+    ,"assign_category": "выдача аўтамабіля",
+    "return_category": "вяртанне аўтамабіля",
+    "unilateral_category": "аднабаковае канфіскаванне"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

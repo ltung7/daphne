@@ -89,5 +89,35 @@
     "title": "ადრეული ანგარიშსწორება უარყოფილია",
     "body": "თქვენი მოთხოვნა ადრეულ ანგარიშსწორებაზე {requestedAmount} PLN-სთვის უარყოფილია.",
     "footer": "თუ გაქვთ კითხვები, გთხოვთ დაუკავშირდეთ ფლოტის ადმინისტრატორს."
+  },
+  "handover_document_created": {
+    "title": "მიღება-ჩაბარების აქტი შექმნილია",
+    "body": "ტრანსპორტის საშუალებისთვის {registrationNumber} შექმნილია მიღება-ჩაბარების აქტი ({categoryName}).",
+    "consequence": "გთხოვთ, გაეცნოთ აქტს.",
+    "footer": "შეადგინა: {userName} ({userId})",
+    "assign_category": "ავტომობილის გადაცემა",
+    "return_category": "ავტომობილის დაბრუნება",
+    "unilateral_category": "ცალმხრივი ამოღება"
+  },
+  "handover_document_closed": {
+    "title": "მიღება-ჩაბარების აქტი დახურულია",
+    "body": "ტრანსპორტის საშუალების {registrationNumber} მიღება-ჩაბარების აქტი ({categoryName}) დახურულია.",
+    "consequence": "ტრანსპორტის საშუალების სტატუსი: {vehicleStatus}.",
+    "footer": "დახურა: {userName} ({userId})",
+    "assign_category": "ავტომობილის გადაცემა",
+    "return_category": "ავტომობილის დაბრუნება",
+    "unilateral_category": "ცალმხრივი ამოღება"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

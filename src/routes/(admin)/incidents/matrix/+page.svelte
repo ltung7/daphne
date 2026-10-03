@@ -25,7 +25,8 @@
 		driver_document_expired: 'Wygaśnięcie dokumentu kierowcy',
 		
 		vehicle_document_expiring: 'Zbliżające się wygaśnięcie dokumentu pojazdu (np. polisa, przegląd techniczny)',
-		vehicle_document_expired: 'Wygaśnięcie dokumentu pojazdu'
+		vehicle_document_expired: 'Wygaśnięcie dokumentu pojazdu',
+		vehicle_status_changed: 'Zmiana statusu pojazdu'
 	};
 
 	async function loadMatrix() {

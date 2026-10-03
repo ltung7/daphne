@@ -2,7 +2,7 @@ import type { NotificationDefinition } from '../types';
 import { sendNotification } from '../service';
 import { PUBLIC_URL } from '$env/static/public';
 import { prepareNotificationChannels } from '../general/prepareNotificationChannels';
-import { getVehicleStatusBaseMessage, interpolate } from '../localized/localizedMailerMessages';
+import { getStatusBaseMessage, interpolate } from '../localized/localizedMailerMessages';
 
 export interface VehicleStatusChangedData {
     registrationNumber: string;
@@ -23,7 +23,7 @@ export const vehicleStatusChangedNotification: NotificationDefinition<VehicleSta
     priority: 'high',
     client: true,
     admin: true,
-    getBaseMessage: getVehicleStatusBaseMessage,
+    getBaseMessage: getStatusBaseMessage,
     email: (data, ctx) => {
         const localizedData = { 
             ...data, 

@@ -89,5 +89,35 @@
     "title": "Decontare anticipată respinsă",
     "body": "Solicitarea dumneavoastră de decontare anticipată pentru {requestedAmount} PLN a fost respinsă.",
     "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
+  },
+  "handover_document_created": {
+    "title": "Proces-verbal de predare-primire creat",
+    "body": "A fost creat un proces-verbal de predare-primire ({categoryName}) pentru vehiculul {registrationNumber}.",
+    "consequence": "Vă rugăm să consultați procesul-verbal.",
+    "footer": "Întocmit de: {userName} ({userId})",
+    "assign_category": "predare vehicul",
+    "return_category": "restituire vehicul",
+    "unilateral_category": "preluare unilaterală"
+  },
+  "handover_document_closed": {
+    "title": "Proces-verbal de predare-primire închis",
+    "body": "Procesul-verbal de predare-primire ({categoryName}) pentru vehiculul {registrationNumber} a fost închis.",
+    "consequence": "Stare vehicul: {vehicleStatus}.",
+    "footer": "Închis de: {userName} ({userId})",
+    "assign_category": "predare vehicul",
+    "return_category": "restituire vehicul",
+    "unilateral_category": "preluare unilaterală"
+  },
+  "vehicle_status_changed": {
+    "title": "Vehicle status changed to {newStatus}",
+    "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
+    "footer": "Changed by: {userName}",
+    "available_status": "Available",
+    "assigned_status": "Assigned",
+    "under_maintenance_status": "Under maintenance",
+    "broken_status": "Broken",
+    "unmovable_status": "Unmovable",
+    "retired_status": "Retired",
+    "precheck_status": "Precheck"
   }
 }

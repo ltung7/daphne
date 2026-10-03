@@ -89,5 +89,35 @@
     "platform_category": "zatwierdzenie platformy",
     "equipment_category": "certyfikat wyposażenia",
     "handover_category": "dokument przekazania"
+  },
+  "vehicle_status_changed": {
+    "title": "Status pojazdu zmieniony na {newStatus}",
+    "body": "Status pojazdu {registrationNumber} został zmieniony z {previousStatus} na {newStatus}. Powód: {reason}",
+    "footer": "Zmienione przez: {userName}",
+    "available_status": "Dostępny",
+    "assigned_status": "Przypisany",
+    "under_maintenance_status": "W naprawie",
+    "broken_status": "Uszkodzony",
+    "unmovable_status": "Unieruchomiony",
+    "retired_status": "Wycofany",
+    "precheck_status": "Weryfikacja"
+  },
+  "handover_document_created": {
+    "title": "Utworzono protokół zdawczo-odbiorczy",
+    "body": "Utworzono protokół zdawczo-odbiorczy ({categoryName}) dla pojazdu {registrationNumber}.",
+    "consequence": "Proszę zapoznać się z treścią protokołu.",
+    "footer": "Sporządził: {userName} ({userId})",
+    "assign_category": "wydanie pojazdu",
+    "return_category": "zwrot pojazdu",
+    "unilateral_category": "jednostronne przejęcie"
+  },
+  "handover_document_closed": {
+    "title": "Zamknięto protokół zdawczo-odbiorczy",
+    "body": "Protokół zdawczo-odbiorczy ({categoryName}) dla pojazdu {registrationNumber} został zamknięty.",
+    "consequence": "Status pojazdu: {vehicleStatus}.",
+    "footer": "Zamknął: {userName} ({userId})",
+    "assign_category": "wydanie pojazdu",
+    "return_category": "zwrot pojazdu",
+    "unilateral_category": "jednostronne przejęcie"
   }
 }

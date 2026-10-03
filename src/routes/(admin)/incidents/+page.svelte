@@ -107,7 +107,7 @@
 	];
 </script>
 
-<PageTitle title="Zdarzenia" subtitle="Zgłoszone problemy i wydarzenia">
+<PageTitle title="Zdarzenia" subtitle="Zgłoszone problemy i wydarzenia" onDataLoaded={(response) => incidents = response.incidents}>
 	<IconLink href="/incidents/matrix" caption="Matryca odpowiedzialności" icon="table" />
 </PageTitle>
 
