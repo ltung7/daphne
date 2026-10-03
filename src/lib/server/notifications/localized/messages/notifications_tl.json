@@ -91,7 +91,7 @@
     "footer": "Kung mayroon kang anumang mga katanungan, mangyaring makipag-ugnayan sa fleet administrator."
   },
   "handover_document_created": {
-    "title": "Nalikha ang protokol ng paglilipat at pagtanggap",
+    "title": "Nalikha ang protokol ng paglilipat at pagtanggap para sa {registrationNumber}",
     "body": "Nalikha ang protokol ng paglilipat at pagtanggap ({categoryName}) para sa sasakyang {registrationNumber}.",
     "consequence": "Pakisuri ang protokol.",
     "footer": "Nilikha ni: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "unilateral na pagbawi"
   },
   "handover_document_closed": {
-    "title": "Isinara ang protokol ng paglilipat at pagtanggap",
+    "title": "Isinara ang protokol ng paglilipat at pagtanggap para sa {registrationNumber}",
     "body": "Isinara ang protokol ng paglilipat at pagtanggap ({categoryName}) para sa sasakyang {registrationNumber}.",
     "consequence": "Katayuan ng sasakyan: {vehicleStatus}.",
     "footer": "Isinara ni: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "unilateral na pagbawi"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Katayuan ng sasakyang {registrationNumber} ay pinalitan sa {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

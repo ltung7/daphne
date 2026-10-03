@@ -91,7 +91,7 @@
     "handover_category": "handover document"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Vehicle status of {registrationNumber} changed to {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",
@@ -103,7 +103,7 @@
     "precheck_status": "Precheck"
   },
   "handover_document_created": {
-    "title": "Vehicle Handover Protocol Created",
+    "title": "Vehicle Handover Protocol Created for {registrationNumber}",
     "body": "A vehicle handover and acceptance protocol ({categoryName}) has been created for vehicle {registrationNumber}.",
     "consequence": "Please review the protocol.",
     "footer": "Created by: {userName} ({userId})",
@@ -112,7 +112,7 @@
     "unilateral_category": "unilateral takeover"
   },
   "handover_document_closed": {
-    "title": "Vehicle Handover Protocol Closed",
+    "title": "Vehicle Handover Protocol Closed for {registrationNumber}",
     "body": "The vehicle handover and acceptance protocol ({categoryName}) for vehicle {registrationNumber} has been closed.",
     "consequence": "Vehicle status: {vehicleStatus}.",
     "footer": "Closed by: {userName} ({userId})",

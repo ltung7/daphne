@@ -91,7 +91,7 @@
     "footer": "თუ გაქვთ კითხვები, გთხოვთ დაუკავშირდეთ ფლოტის ადმინისტრატორს."
   },
   "handover_document_created": {
-    "title": "მიღება-ჩაბარების აქტი შექმნილია",
+    "title": "მიღება-ჩაბარების აქტი შექმნილია {registrationNumber}-სთვის",
     "body": "ტრანსპორტის საშუალებისთვის {registrationNumber} შექმნილია მიღება-ჩაბარების აქტი ({categoryName}).",
     "consequence": "გთხოვთ, გაეცნოთ აქტს.",
     "footer": "შეადგინა: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "ცალმხრივი ამოღება"
   },
   "handover_document_closed": {
-    "title": "მიღება-ჩაბარების აქტი დახურულია",
+    "title": "მიღება-ჩაბარების აქტი დახურულია {registrationNumber}-სთვის",
     "body": "ტრანსპორტის საშუალების {registrationNumber} მიღება-ჩაბარების აქტი ({categoryName}) დახურულია.",
     "consequence": "ტრანსპორტის საშუალების სტატუსი: {vehicleStatus}.",
     "footer": "დახურა: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "ცალმხრივი ამოღება"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "ტრანსპორტის {registrationNumber} სტატუსი შეიცვალა: {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

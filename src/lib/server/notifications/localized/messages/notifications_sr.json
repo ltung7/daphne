@@ -91,7 +91,7 @@
     "footer": "Ako imate bilo kakvih pitanja, kontaktirajte administratora voznog parka."
   },
   "handover_document_created": {
-    "title": "Zapisnik o primopredaji kreiran",
+    "title": "Zapisnik o primopredaji kreiran za {registrationNumber}",
     "body": "Kreiran je zapisnik o primopredaji ({categoryName}) za vozilo {registrationNumber}.",
     "consequence": "Molimo vas da pregledate zapisnik.",
     "footer": "Sastavio: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "jednostrano preuzimanje"
   },
   "handover_document_closed": {
-    "title": "Zapisnik o primopredaji zatvoren",
+    "title": "Zapisnik o primopredaji zatvoren za {registrationNumber}",
     "body": "Zapisnik o primopredaji ({categoryName}) za vozilo {registrationNumber} je zatvoren.",
     "consequence": "Status vozila: {vehicleStatus}.",
     "footer": "Zatvorio: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "jednostrano preuzimanje"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Status vozila {registrationNumber} promenjen u {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

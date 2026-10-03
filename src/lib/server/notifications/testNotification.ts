@@ -19,12 +19,12 @@ import { templateNotification, type TemplateNotificationData } from './driver/te
 import { earlySettlementRequestedNotification, type EarlySettlementRequestedData } from './driver/earlySettlementRequestedNotification';
 import { earlySettlementApprovedNotification, type EarlySettlementApprovedData } from './driver/earlySettlementApprovedNotification';
 import { earlySettlementRejectedNotification, type EarlySettlementRejectedData } from './driver/earlySettlementRejectedNotification';
+import { vehicleStatusChangedNotification, type VehicleStatusChangedData } from './vehicle/vehicleStatusNotifications';
+import { handoverDocumentCreatedNotification, handoverDocumentClosedNotification, type HandoverDocumentCreatedData, type HandoverDocumentClosedData } from './vehicle/handoverDocumentNotifications';
+
 
 // eslint-disable-next-line no-constant-binary-expression
 const DUMP_MESSAGES = false && isDev;
-
-import { vehicleStatusChangedNotification, type VehicleStatusChangedData } from './vehicle/vehicleStatusNotifications';
-import { handoverDocumentCreatedNotification, handoverDocumentClosedNotification, type HandoverDocumentCreatedData, type HandoverDocumentClosedData } from './vehicle/handoverDocumentNotifications';
 
 const testReceiver: App.BaseContact = {
     email: 'admin@macropart.com',
@@ -129,7 +129,7 @@ const defaultTestData: Record<App.NotificationType, any> = {
         requestedAmount: 500
     } as EarlySettlementRejectedData,
 
-    /** TODO: Test notification */
+    /** Tested 03.10 */
     vehicle_status_changed: {
         registrationNumber: 'WA12345',
         previousStatus: 'available',
@@ -154,7 +154,7 @@ const defaultTestData: Record<App.NotificationType, any> = {
         documentType: 'return',
         userId: 'admin-123',
         userName: 'Admin Name',
-        vehicleStatus: 'available',
+        newStatus: 'available',
         handoverId: 'handover_123'
     } as HandoverDocumentClosedData
 };
@@ -169,5 +169,5 @@ export const sendTestNotification = async <TData = any>(
     }
     const payload = data ?? (defaultTestData[notificationId] as TData);
     const dumpOnly = DUMP_MESSAGES;
-    return sendNotification(testReceiver, notification, payload, 'system', dumpOnly);
+    return sendNotification(testReceiver, notification, payload, 'test', dumpOnly);
 };

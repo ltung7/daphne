@@ -91,7 +91,7 @@
     "footer": "Якщо у вас є запитання, зверніться до адміністратора автопарку."
   },
   "handover_document_created": {
-    "title": "Створено акт приймання-передачі",
+    "title": "Створено акт приймання-передачі для {registrationNumber}",
     "body": "Створено акт приймання-передачі ({categoryName}) для транспортного засобу {registrationNumber}.",
     "consequence": "Будь ласка, ознайомтеся з актом.",
     "footer": "Склав: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "одностороннє вилучення"
   },
   "handover_document_closed": {
-    "title": "Закрито акт приймання-передачі",
+    "title": "Закрито акт приймання-передачі для {registrationNumber}",
     "body": "Акт приймання-передачі ({categoryName}) для транспортного засобу {registrationNumber} закрито.",
     "consequence": "Статус транспортного засобу: {vehicleStatus}.",
     "footer": "Закрив: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "одностороннє вилучення"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Статус транспортного засобу {registrationNumber} змінено на {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

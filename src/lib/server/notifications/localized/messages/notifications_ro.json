@@ -91,7 +91,7 @@
     "footer": "Dacă aveți întrebări, vă rugăm să contactați administratorul flotei."
   },
   "handover_document_created": {
-    "title": "Proces-verbal de predare-primire creat",
+    "title": "Proces-verbal de predare-primire creat pentru {registrationNumber}",
     "body": "A fost creat un proces-verbal de predare-primire ({categoryName}) pentru vehiculul {registrationNumber}.",
     "consequence": "Vă rugăm să consultați procesul-verbal.",
     "footer": "Întocmit de: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "preluare unilaterală"
   },
   "handover_document_closed": {
-    "title": "Proces-verbal de predare-primire închis",
+    "title": "Proces-verbal de predare-primire închis pentru {registrationNumber}",
     "body": "Procesul-verbal de predare-primire ({categoryName}) pentru vehiculul {registrationNumber} a fost închis.",
     "consequence": "Stare vehicul: {vehicleStatus}.",
     "footer": "Închis de: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "preluare unilaterală"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Starea vehiculului {registrationNumber} schimbată în {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

@@ -91,7 +91,7 @@
     "footer": "Калі ў вас ёсць пытанні, звярніцеся да адміністратара аўтапарка."
   },
   "handover_document_created": {
-    "title": "Створаны акт прыёму-перадачы",
+    "title": "Створаны акт прыёму-перадачы для {registrationNumber}",
     "body": "Створаны акт прыёму-перадачы ({categoryName}) для транспартнага сродку {registrationNumber}.",
     "consequence": "Калі ласка, азнаёмцеся з актам.",
     "footer": "Склаў: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "аднабаковае канфіскаванне"
   },
   "handover_document_closed": {
-    "title": "Закрыты акт прыёму-перадачы",
+    "title": "Закрыты акт прыёму-перадачы для {registrationNumber}",
     "body": "Акт прыёму-перадачы ({categoryName}) для транспартнага сродку {registrationNumber} закрыты.",
     "consequence": "Статус транспартнага сродку: {vehicleStatus}.",
     "footer": "Закрыў: {userName} ({userId})"
@@ -109,7 +109,7 @@
     "unilateral_category": "аднабаковае канфіскаванне"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "Статус транспартнага сродку {registrationNumber} зменены на {newStatus}",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",

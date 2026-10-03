@@ -91,7 +91,7 @@
     "handover_category": "dokument przekazania"
   },
   "vehicle_status_changed": {
-    "title": "Status pojazdu zmieniony na {newStatus}",
+    "title": "Status pojazdu {registrationNumber} zmieniony na {newStatus}",
     "body": "Status pojazdu {registrationNumber} został zmieniony z {previousStatus} na {newStatus}. Powód: {reason}",
     "footer": "Zmienione przez: {userName}",
     "available_status": "Dostępny",
@@ -103,7 +103,7 @@
     "precheck_status": "Weryfikacja"
   },
   "handover_document_created": {
-    "title": "Utworzono protokół zdawczo-odbiorczy",
+    "title": "Utworzono protokół zdawczo-odbiorczy dla {registrationNumber}",
     "body": "Utworzono protokół zdawczo-odbiorczy ({categoryName}) dla pojazdu {registrationNumber}.",
     "consequence": "Proszę zapoznać się z treścią protokołu.",
     "footer": "Sporządził: {userName} ({userId})",
@@ -112,7 +112,7 @@
     "unilateral_category": "jednostronne przejęcie"
   },
   "handover_document_closed": {
-    "title": "Zamknięto protokół zdawczo-odbiorczy",
+    "title": "Zamknięto protokół zdawczo-odbiorczy dla {registrationNumber}",
     "body": "Protokół zdawczo-odbiorczy ({categoryName}) dla pojazdu {registrationNumber} został zamknięty.",
     "consequence": "Status pojazdu: {vehicleStatus}.",
     "footer": "Zamknął: {userName} ({userId})",

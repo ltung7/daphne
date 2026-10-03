@@ -91,7 +91,7 @@
     "footer": "Agar savollaringiz bo'lsa, iltimos, avtopark ma'muriyatiga murojaat qiling."
   },
   "handover_document_created": {
-    "title": "Qabul qilish-topshirish dalolatnomasi yaratildi",
+    "title": "{registrationNumber} uchun qabul qilish-topshirish dalolatnomasi yaratildi",
     "body": "{registrationNumber} raqamli transport vositasi uchun qabul qilish-topshirish dalolatnomasi ({categoryName}) yaratildi.",
     "consequence": "Iltimos, dalolatnoma bilan tanishib chiqing.",
     "footer": "Tuzuvchi: {userName} ({userId})",
@@ -100,7 +100,7 @@
     "unilateral_category": "bir tomonlama olib qo'yish"
   },
   "handover_document_closed": {
-    "title": "Qabul qilish-topshirish dalolatnomasi yopildi",
+    "title": "{registrationNumber} uchun qabul qilish-topshirish dalolatnomasi yopildi",
     "body": "{registrationNumber} raqamli transport vositasi uchun qabul qilish-topshirish dalolatnomasi ({categoryName}) yopildi.",
     "consequence": "Transport vositasi holati: {vehicleStatus}.",
     "footer": "Yopuvchi: {userName} ({userId})",
@@ -109,7 +109,7 @@
     "unilateral_category": "bir tomonlama olib qo'yish"
   },
   "vehicle_status_changed": {
-    "title": "Vehicle status changed to {newStatus}",
+    "title": "{registrationNumber} transport vositasi holati {newStatus} ga o'zgartirildi",
     "body": "Status of vehicle {registrationNumber} changed from {previousStatus} to {newStatus}. Reason: {reason}",
     "footer": "Changed by: {userName}",
     "available_status": "Available",
