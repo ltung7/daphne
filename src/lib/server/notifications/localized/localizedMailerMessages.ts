@@ -81,6 +81,22 @@ export function getCategorizedBaseMessage(m: MessageStructure, data: any, docTyp
     return { title: interpolatedTitle, body: interpolatedBody };
 }
 
+export function getStatusBaseMessage(m: MessageStructure, data: any): BaseMessage {
+    const prevKey = `${data.previousStatus}_status`;
+    const newKey = `${data.newStatus}_status`;
+    
+    const localizedData = {
+        ...data,
+        previousStatus: m[prevKey] ?? data.previousStatus,
+        newStatus: m[newKey] ?? data.newStatus
+    };
+    
+    return { 
+        title: interpolate(m.title, localizedData), 
+        body: interpolate(m.body, localizedData) 
+    };
+}
+
 /** Get messages for a specific notification type */
 export function getSpecificNotificationMessages<K extends App.NotificationType>(
     locale: App.Locale,

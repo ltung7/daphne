@@ -273,7 +273,7 @@ async function logIncident<TData>(
         description: incident.description,
         category: incident.category,
         severity: severity,
-        status: 'open',
+        status: severity === 'low' ? 'info' : 'open',
         source: incident.source || incidentSource,
         metadata: {
             userId: user?.id || null,

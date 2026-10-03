@@ -29,8 +29,9 @@
 		try {
 			const res = await internal.patch(`/vehicles/${vehicle.registrationNumber}/status`, { status });
 			if (res.success) {
-				vehicle.status = status;
-				onstatuschanged?.(status);
+				const nextStatus = res.status || status;
+				vehicle.status = nextStatus;
+				onstatuschanged?.(nextStatus);
 			} else {
 				alert(res.message || 'Wystąpił błąd podczas zmiany statusu.');
 			}

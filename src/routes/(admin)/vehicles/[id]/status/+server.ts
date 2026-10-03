@@ -10,6 +10,7 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
     restrictAdmin(locals)
 
     // Assuming params.id is the vehicle registration number
+    extraData.source = 'admin_manual' as App.Incident.Source
     const result = await handleChangeVehicleStatus(params.id, status, extraData, locals._user!);
     
     return json(result);

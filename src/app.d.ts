@@ -78,11 +78,14 @@ declare global {
 			| 'early_settlement_requested'
 			| 'early_settlement_approved'
 			| 'early_settlement_rejected'
+			| 'vehicle_status_changed'
+			| 'handover_document_created'
+			| 'handover_document_closed'
 			| 'common';
 
 		type MatrixNotificationType = Exclude<
 			NotificationType,
-			'push_enabled' | 'template_notification' | 'common' | 'reset_password' | 'admin_notification'
+			'push_enabled' | 'template_notification' | 'common' | 'reset_password' | 'admin_notification' | 'handover_document_created' | 'handover_document_closed'
 		>;
 
 		// Admin user roles
@@ -148,7 +151,7 @@ declare global {
 			type Severity = 'low' | 'medium' | 'high' | 'critical';
 			type Status = 'info' | 'open' | 'resolved';
 			type Category = 'safety' | 'platform_account' | 'compliance' | 'driver_conduct' | 'vehicle_issue' | 'data_sync' | 'financial';
-			type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system';
+			type Source = 'webhook' | 'health_check' | 'admin_manual' | 'driver_app' | 'cron_job' | 'system' | 'test';
 
 			interface IncidentLog {
 				id: string;

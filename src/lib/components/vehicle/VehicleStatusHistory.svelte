@@ -15,6 +15,9 @@
 	{#snippet listItem(event: Vehicle.VehicleStatusChange)}
 		<span class="text-dark font-weight-bold fs-6">
 			{vehicleStatusMap[event.status]?.caption || event.status}
+			{#if event.extraData.note?.length}
+				<div class="text-muted small mt-2 fw-light fst-italic">{event.extraData.note}</div>
+			{/if}
 		</span>
 	{/snippet}
 	{#snippet moreDetails(event: Vehicle.VehicleStatusChange)}

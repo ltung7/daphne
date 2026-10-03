@@ -15,6 +15,9 @@
 	{#snippet listItem(event: Driver.DriverStatusChange)}
 		<span class="text-dark font-weight-bold fs-6">
 			{driverStatusMap[event.status]?.caption || event.status}
+			{#if event.extraData.note?.length}
+				<div class="text-muted small mt-2">{event.extraData.note}</div>
+			{/if}
 		</span>
 	{/snippet}
 	{#snippet moreDetails(event: Driver.DriverStatusChange)}

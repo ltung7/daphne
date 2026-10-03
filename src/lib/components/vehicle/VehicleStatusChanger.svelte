@@ -1,8 +1,8 @@
 <script lang="ts">
 	import VehicleVerification from '$lib/components/vehicle/VehicleVerification.svelte';
 	import VehicleStatusQuickActions from './VehicleStatusQuickActions.svelte';
+	import VehicleStatusRequests from './VehicleStatusRequests.svelte';
 	import VehicleMaintenanceRequest from './VehicleMaintenanceRequest.svelte';
-	import VehicleBrokenRequest from './VehicleBrokenRequest.svelte';
 	import VehicleRetireRequest from './VehicleRetireRequest.svelte';
 
 	interface Props {
@@ -30,22 +30,24 @@
 		{/if}
 	{:else if vehicle.status === 'available'}
 		<VehicleMaintenanceRequest {vehicle} {onstatuschanged} />
-		<VehicleBrokenRequest {vehicle} {onstatuschanged} />
-		<VehicleStatusQuickActions actions={[ 'unmovable' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusRequests actions={[ 'broken', 'unmovable' ]} {vehicle} {onstatuschanged} />
 		<VehicleRetireRequest {vehicle} {onstatuschanged} />
 	{:else if vehicle.status === 'assigned'}
 		<VehicleMaintenanceRequest {vehicle} {onstatuschanged} />
-		<VehicleBrokenRequest {vehicle} {onstatuschanged} />
-		<VehicleStatusQuickActions actions={[ 'unmovable' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusRequests actions={[ 'broken', 'unmovable' ]} {vehicle} {onstatuschanged} />
 	{:else if vehicle.status === 'under_maintenance'}
-		<VehicleStatusQuickActions actions={[ 'available', 'broken', 'unmovable' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusQuickActions actions={[ 'available' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusRequests actions={[ 'broken', 'unmovable' ]} {vehicle} {onstatuschanged} />
 		<VehicleRetireRequest {vehicle} {onstatuschanged} />
 	{:else if vehicle.status === 'broken'}
 		<VehicleMaintenanceRequest {vehicle} {onstatuschanged} />
-		<VehicleStatusQuickActions actions={[ 'available', 'unmovable' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusQuickActions actions={[ 'available' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusRequests actions={[ 'unmovable' ]} {vehicle} {onstatuschanged} />
 		<VehicleRetireRequest {vehicle} {onstatuschanged} />
 	{:else if vehicle.status === 'unmovable'}
-		<VehicleStatusQuickActions actions={[ 'available', 'broken', 'under_maintenance' ]} {vehicle} {onstatuschanged} />
+		<VehicleMaintenanceRequest {vehicle} {onstatuschanged} />
+		<VehicleStatusQuickActions actions={[ 'available' ]} {vehicle} {onstatuschanged} />
+		<VehicleStatusRequests actions={[ 'broken' ]} {vehicle} {onstatuschanged} />
 		<VehicleRetireRequest {vehicle} {onstatuschanged} />
 	{:else if vehicle.status === 'retired'}
 		<VehicleStatusQuickActions actions={[ 'precheck' ]} {vehicle} {onstatuschanged} />

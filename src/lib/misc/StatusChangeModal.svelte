@@ -68,7 +68,7 @@
 		try {
 			const payload = {
 				status: targetStatus,
-				...(showNote ? { note } : {}),
+				...(showNote ? { note, reason: note } : {}),
 				...extraPayload
 			};
 

@@ -50,3 +50,16 @@ export {
     sendEarlySettlementRejectedNotification,
     type EarlySettlementRejectedData
 } from './driver/earlySettlementRejectedNotification';
+export {
+    vehicleStatusChangedNotification,
+    sendVehicleStatusChangedNotification,
+    type VehicleStatusChangedData
+} from './vehicle/vehicleStatusNotifications';
+export {
+    handoverDocumentCreatedNotification,
+    handoverDocumentClosedNotification,
+    sendHandoverDocumentCreatedNotification,
+    sendHandoverDocumentClosedNotification,
+    type HandoverDocumentCreatedData,
+    type HandoverDocumentClosedData
+} from './vehicle/handoverDocumentNotifications';
