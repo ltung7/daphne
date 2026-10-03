@@ -386,4 +386,4 @@ When working with BigQuery in this project, always consult this skill first to e
 
 ## 9. Related Documents
 
-- `BIGQUERY_QUERY_AND_COST_CONTROLS.md` — Implementation spec for async query execution, six-layer cost controls, rate limiting, audit logging, and monitoring
+- `BIGQUERY_QUERY_AND_COST_CONTROLS.md` — **Deferred** — Implementation spec for async query execution, six-layer cost controls, rate limiting, audit logging, and monitoring

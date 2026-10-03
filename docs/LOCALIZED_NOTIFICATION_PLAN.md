@@ -426,3 +426,14 @@ driverDocumentExpiredNotification.getBaseMessage = createDriverGetBaseMessage('d
 ```
 
 Callers pass raw document types (e.g., `driving_license_front`), which are auto-mapped to categories via `getDocumentCategory()` helper.
+
+## 9. Observability & Logging
+
+**Separate plan:** [`docs/NOTIFICATION_LOGGING_PLAN.md`](NOTIFICATION_LOGGING_PLAN.md)
+
+Covers:
+- Structured dispatch logs (`notificationDispatchLogs` collection)
+- Provider message ID capture (SMTP `messageId`, FCM `messageId`, Firestore `docId`)
+- Delivery webhook endpoints (email bounces/opens, FCM delivery receipts)
+- Admin query UI (`/admin/notifications/logs`)
+- Retention & GDPR considerations

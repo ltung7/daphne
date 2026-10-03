@@ -20,11 +20,12 @@
 | [HEALTH_CHECK_PLAN.md](./HEALTH_CHECK_PLAN.md) | ⏳ Pending | Medium | Checkers and Resolvers architecture for system health |
 > | [MONTHLY_COMPANY_LEDGER_PLAN.md](./MONTHLY_COMPANY_LEDGER_PLAN.md) | ⏳ Pending | High | Company ledger, driver settlements, cost allocation |
 > | [JOB_SCHEDULING_PLAN.md](./JOB_SCHEDULING_PLAN.md) | ⏳ Pending | Medium | Consolidates all periodic/scheduled jobs |
+> | [BIGQUERY_MIGRATION_PLAN.md](./BIGQUERY_MIGRATION_PLAN.md) | ⏳ Deferred | Low | BigQuery setup, dual-write ingestion, reporting UI, admin query interface |
 > | [ADMIN_INCIDENT_UI_PLAN.md](./ADMIN_INCIDENT_UI_PLAN.md) | ✅ Implemented | Medium | Admin UI for managing system incidents |
 > | [VEHICLE-STATUS-TRANSITION-PLAN-PART2.md](./VEHICLE-STATUS-TRANSITION-PLAN-PART2.md) | ⏳ Pending | Medium | Vehicle health check resolver and automation |
 > | [AUTH_REWORK_PLAN.md](./archive/AUTH_REWORK_PLAN.md) | ✅ Implemented | Critical | Complete auth system rewrite |
 > | [DRIVER-STATUS-TRANSITION-PLAN.md](./archive/DRIVER-STATUS-TRANSITION-PLAN.md) | ✅ Mostly Implemented | High | Driver lifecycle state machine |
-> | [HANDOVER-RETURN-PLAN.md](./archive/HANDOVER-RETURN-PLAN.md) | ✅ Implemented | High | Handover assign/return flow and camera system |
+> | [PLAN_HANDOVER_DOCUMENTS.md](./PLAN_HANDOVER_DOCUMENTS.md) | ✅ Implemented | High | Handover assign/return/unilateral flow |
 > | [TESTING_PLAN.md](./archive/TESTING_PLAN.md) | ✅ Implemented | High | Testing infrastructure |
 > | [VEHICLE-STATUS-TRANSITION-PLAN.md](./archive/VEHICLE-STATUS-TRANSITION-PLAN.md) | 🔄 Partially Implemented | Medium | Vehicle status state machine |
 > | [LEDGER_SETTLEMENT_PLAN.md](./archive/LEDGER_SETTLEMENT_PLAN.md) | 📦 Archived | N/A | Superseded by MONTHLY_COMPANY_LEDGER_PLAN |
